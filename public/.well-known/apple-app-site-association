@@ -1,0 +1,10 @@
+{
+    "applinks": {
+        "details": [
+        {
+            "appID": "67DCNK6RL4.day.cadence.mobile",
+            "paths": [ "/login-callback", "/reset-password" ]
+        }
+        ]
+    }
+}

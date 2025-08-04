@@ -1,0 +1,50 @@
+name: Auto Format on PR
+
+on:
+  pull_request:
+    branches: 
+      - main
+      - staging
+      - dev
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
+      - '**/*.json'
+      - '**/*.css'
+      - '**/*.scss'
+      - '**/*.md'
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.html'
+      - '**/*.svg'
+
+jobs:
+  auto-format:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.title, '[skip ci]') && !contains(github.event.pull_request.body, '[skip ci]') }}
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "23.7.0"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Prettier format
+        run: npx prettier --write .
+
+      - name: Commit and push formatted changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --cached --quiet || git commit -m "chore: auto-format code [skip ci]"
+          git push origin HEAD:${{ github.head_ref }}
