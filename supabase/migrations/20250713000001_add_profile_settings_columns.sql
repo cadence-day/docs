@@ -14,8 +14,8 @@ ALTER TABLE "internal"."profiles"
 ADD COLUMN IF NOT EXISTS "username" character varying(50),
 ADD COLUMN IF NOT EXISTS "phone_number" character varying(20),
 ADD COLUMN IF NOT EXISTS "notifications_enabled" boolean DEFAULT false,
-ADD COLUMN IF NOT EXISTS "wake_up_time" time DEFAULT ADDTIME '07:00:00'::time,
-ADD COLUMN IF NOT EXISTS "sleep_time" time DEFAULT ADDTIME '22:00:00'::time,
+ADD COLUMN IF NOT EXISTS "wake_up_time" time DEFAULT '07:00:00'::time,
+ADD COLUMN IF NOT EXISTS "sleep_time" time DEFAULT '22:00:00'::time,
 ADD COLUMN IF NOT EXISTS "subscription_plan" "internal"."subscription_plan_enum" DEFAULT 'FREE'::"internal"."subscription_plan_enum";
 
 -- Add unique constraint for username
@@ -62,7 +62,4 @@ COMMENT ON COLUMN "internal"."profiles"."sleep_time" IS 'User preferred sleep ti
 COMMENT ON COLUMN "internal"."profiles"."subscription_plan" IS 'User subscription plan level';
 
 
--- Ensure the phone number is a phone number with + country code
-ALTER TABLE "internal"."profiles"
-ADD CONSTRAINT "profiles_phone_number_check"
-CHECK (phone_number IS NULL OR phone_number ~ '^\+?[1-9]\d{1,14}$');
+-- ...existing code...
