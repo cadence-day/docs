@@ -1,0 +1,56 @@
+/**
+ * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
+ * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ */
+
+const tintColorLight = "#B7B7B7";
+const tintColorDark = "#B7B7B7";
+
+export const COLORS = {
+  primary: "#6646EC", // Steel blue
+  secondary: "#FFFFFF", // Light yellow
+  tertiary: "#FF6B5C", // Coral red
+  quaternary: "#1E3C7B", // Navy blue
+  quinary: "#8FAD8E", // Sage green
+  light: {
+    text: "#11181C",
+    background: "#B7B7B7",
+    tint: tintColorLight,
+    icon: "#687076",
+    tabIconDefault: "#687076",
+    tabIconSelected: tintColorLight,
+  },
+  dark: {
+    text: "#ECEDEE",
+    background: "#B7B7B7",
+    tint: tintColorDark,
+    icon: "#9BA1A6",
+    tabIconDefault: "#9BA1A6",
+    tabIconSelected: tintColorDark,
+  },
+};
+
+export const ACTIVITY_COLORS = [
+  "#4A6EA3", // Steel blue
+  "#FFEB99", // Light yellow
+  "#FF6B5C", // Coral red
+  "#1E3C7B", // Navy blue
+  "#8FAD8E", // Sage green
+  "#6B5CFF", // Purple
+  "#A8C7E5", // Light blue
+  "#FFB347", // Orange
+  "#E57BAE", // Rose pink
+  "#CCCCCC", // Gray
+  "#7BAE57", // Forest green
+  "#9C8AC0", // Muted purple
+];
+export const backgroundLinearColors = {
+  primary: {
+    start: "#FFFFFF",
+    end: "#FFFFFF",
+  },
+  secondary: {
+    start: "#2B2B2B",
+    end: "#151414",
+  },
+};
