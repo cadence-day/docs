@@ -23,6 +23,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@clerk/clerk-expo": "^2.14.14",
     "@expo/vector-icons": "^14.1.0",
     "@langchain/core": "0.3.43",
     "@langchain/langgraph": "0.2.62",

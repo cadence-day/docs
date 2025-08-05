@@ -101,12 +101,14 @@ export default ({ config }) => ({
       },
       EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
       EXPO_PUBLIC_SUPABASE_KEY: process.env.EXPO_PUBLIC_SUPABASE_KEY,
+      EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
       EXPO_PUBLIC_LANGGRAPH_API_URL: process.env.EXPO_PUBLIC_LANGGRAPH_API_URL,
       EXPO_PUBLIC_LANGGRAPH_ASSISTANT_ID:
         process.env.EXPO_PUBLIC_LANGGRAPH_ASSISTANT_ID,
       LANGGRAPH_URL: process.env.LANGGRAPH_URL,
       LANGGRAPH_API_KEY: process.env.LANGGRAPH_API_KEY,
       GROQ_API_KEY: process.env.GROQ_API_KEY,
+      EXPO_MISTRAL_API_KEY: process.env.EXPO_MISTRAL_API_KEY,
     },
     runtimeVersion: {
       policy: "appVersion",
