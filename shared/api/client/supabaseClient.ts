@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import { useAuth } from "@clerk/clerk-expo";
 import { SECRETS, validateRequiredSecrets } from "../../constants/SECRETS";
 import { Database } from "../../types/database.types";
 
@@ -12,6 +11,7 @@ const supabaseAnonKey = SECRETS.EXPO_PUBLIC_SUPABASE_KEY!;
 /**
  * Create a base Supabase client for unauthenticated operations
  */
+import { getClerkInstance } from "@clerk/clerk-expo";
 
 export const supabaseClient = createClient<Database>(
     supabaseUrl,
@@ -19,6 +19,10 @@ export const supabaseClient = createClient<Database>(
     {
         // Session accessed from Clerk SDK, either as Clerk.session (vanilla
         // JavaScript) or useSession (React)
-        accessToken: async () => session?.getToken() ?? null,
+        accessToken: async () => {
+            const clerk = getClerkInstance();
+            const token = await clerk.session?.getToken();
+            return token ?? null;
+        },
     },
 );
