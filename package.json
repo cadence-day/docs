@@ -6,7 +6,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "start": "expo start",
+    "start": "NODE_ENV=development expo start",
     "android": "expo start -p android",
     "ios": "expo start -p ios",
     "test": "jest --watchAll",
