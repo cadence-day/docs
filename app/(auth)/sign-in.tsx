@@ -39,7 +39,7 @@ export default function Page() {
   };
 
   return (
-    <View>
+    <View style={{ flex: 1, gap: 10, justifyContent: "center", alignItems: "center" }}>
       <Text>Sign in</Text>
       <TextInput
         autoCapitalize="none"
@@ -55,6 +55,10 @@ export default function Page() {
       />
       <TouchableOpacity onPress={onSignInPress}>
         <Text>Continue</Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity onPress={() => router.back()}>
+        <Text style={{ marginTop: 20, color: "#666" }}>← Back</Text>
       </TouchableOpacity>
     </View>
   );
