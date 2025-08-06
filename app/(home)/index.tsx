@@ -1,12 +1,17 @@
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useUser, useSignIn } from "@clerk/clerk-expo";
 import { Link, router } from "expo-router";
-import { Text, View } from "react-native";
+import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import { useLayoutEffect } from "react";
 import { SignOutButton } from "@/shared/components/SignOutButton";
+import React from "react";
+import SignIn from "@/shared/components/Screens/SignIn";
 
 export default function Page() {
   const { user } = useUser();
+  const { signIn, setActive, isLoaded } = useSignIn();
 
+  const [emailAddress, setEmailAddress] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
   return (
     <View 
@@ -33,12 +38,7 @@ export default function Page() {
           backgroundColor: "blue",
         }}
         >
-          <Link href="/(auth)/sign-in">
-            <Text style={{ color: "white" }}>Sign in</Text>
-          </Link>
-          <Link href="/(auth)/sign-up">
-            <Text style={{ color: "white" }}>Sign up</Text>
-          </Link>
+          <SignIn  />
         </View>
       </SignedOut>
     </View>

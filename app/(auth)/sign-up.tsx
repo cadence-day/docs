@@ -2,6 +2,9 @@ import * as React from "react";
 import { Text, TextInput, Button, View, TouchableOpacity } from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
+import SignUp from "@/shared/components/Screens/SignUp";
+import { styles } from "@/shared/components/Screens/style";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Page() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -82,7 +85,7 @@ export default function Page() {
         />
         <Button title="Verify" onPress={onVerifyPress} />
         
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.replace("/")}>
           <Text style={{ marginTop: 20, color: "#666" }}>← Back</Text>
         </TouchableOpacity>
       </View>
@@ -90,45 +93,15 @@ export default function Page() {
   }
 
   return (
-    <View style={{ flex: 1, gap: 10, justifyContent: "center", alignItems: "center" }}>
-      <Text>Sign up</Text>
-      <TextInput
-        autoCapitalize="none"
-        value={emailAddress}
-        placeholder="Enter email"
-        placeholderTextColor="#666666"
-        onChangeText={(email) => setEmailAddress(email)}
-      />
-      <TextInput
-        value={password}
-        placeholder="Enter password"
-        placeholderTextColor="#666666"
-        secureTextEntry={true}
-        onChangeText={(password) => setPassword(password)}
-      />
-      <TextInput
-        value={firstName}
-        placeholder="Enter first name"
-        placeholderTextColor="#666666"
-        onChangeText={(firstName) => setFirstName(firstName)}
-      />
-      <TextInput
-        value={lastName}
-        placeholder="Enter last name"
-        placeholderTextColor="#666666"
-        onChangeText={(lastName) => setLastName(lastName)}
-      />
-      <TextInput
-        value={username}
-        placeholder="Enter username"
-        placeholderTextColor="#666666"
-        onChangeText={(username) => setUsername(username)}
-      />
-      <Button title="Continue" onPress={onSignUpPress} />
-      
-      <TouchableOpacity onPress={() => router.back()}>
-        <Text style={{ marginTop: 20, color: "#666" }}>← Back</Text>
-      </TouchableOpacity>
-    </View>
+   
+       <LinearGradient
+      colors={["#2B2B2B", "#151414"]}
+      locations={[0, 0.6]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ flex: 1, gap: 10, justifyContent: "center", alignItems: "center" }}
+    >
+      <SignUp/>
+      </LinearGradient>
   );
 }
