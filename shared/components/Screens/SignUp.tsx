@@ -81,14 +81,12 @@ const LoginComponent: React.FC = () => {
       const lastName = nameParts.slice(1).join(' ') || '';
 
       // Create a valid username from email (remove dots and special characters)
-      const validUsername = email.split('@')[0].replace(/[^a-zA-Z0-9_-]/g, '');
       
       await signUp.create({
         emailAddress: email,
         password,
         firstName,
         lastName,
-        username: validUsername,
       });
 
       // Send user an email with verification code
