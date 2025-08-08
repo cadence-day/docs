@@ -10,6 +10,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import {router } from "expo-router";
 import { useSignIn, useAuth } from "@clerk/clerk-expo";
+import { OAuthStrategy } from '@clerk/types'
+import * as AuthSession from 'expo-auth-session'
 
 const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -21,6 +23,7 @@ const LoginComponent: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { signIn, setActive, isLoaded } = useSignIn();
   const { isSignedIn } = useAuth();
+  
 
   // If already signed in, don't render the sign-in form
   if (isSignedIn) {
@@ -61,6 +64,29 @@ const LoginComponent: React.FC = () => {
     }
   };
 
+
+  const signInWith = (strategy: OAuthStrategy) => {
+    if (!signIn) return;
+    console.log('signIn', signIn)
+    
+    try {
+      const redirectUrl = AuthSession.makeRedirectUri({
+        scheme: 'day.cadence',
+        path: '/',
+      });
+      
+      console.log('Redirect URL:', redirectUrl);
+      
+      signIn.authenticateWithRedirect({
+        strategy,
+        redirectUrl,
+        redirectUrlComplete: '/',
+      });
+    } catch (err: any) {
+      console.error('OAuth error:', err);
+      console.error('Error details:', JSON.stringify(err, null, 2));
+    }
+  }
 
 
   return (
@@ -159,6 +185,41 @@ const LoginComponent: React.FC = () => {
           >
             Sign in
           </Text>
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 24,
+          gap:20
+        }}
+      >
+        <TouchableOpacity onPress={() => {
+          console.log('Attempting Google sign in...');
+          signInWith('oauth_google');
+        }}>
+          <Text  style={{
+              textAlign: "center",
+              fontSize: 16,
+              borderWidth: 1,
+              borderColor: "#FFFFFF",
+              color: "#FFFFFF",
+              padding: 10,
+              width: 290,
+            }}>Sign in with Google</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => signInWith('oauth_apple')}>
+          <Text  style={{
+              textAlign: "center",
+              fontSize: 16,
+              borderWidth: 1,
+              borderColor: "#FFFFFF",
+              color: "#FFFFFF",
+              padding: 10,
+              width: 290,
+            }}>Sign in with Apple</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
