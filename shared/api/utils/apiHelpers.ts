@@ -1,4 +1,12 @@
 // Utility functions for API operations
+import { apiCache, buildCacheKey } from "./cache";
+import { handleApiErrorWithRetry, RetryOptions } from "./errorHandler";
+
+export interface ApiCallOptions extends RetryOptions {
+    useCache?: boolean;
+    cacheTtl?: number;
+    cacheKey?: string;
+}
 
 /**
  * Returns the first error message from a Supabase error or a default message.
@@ -79,18 +87,48 @@ function isIsoDateString(value: string): boolean {
 }
 
 /**
- * Centralized API call wrapper for error handling and date conversion.
- * Usage: await apiCall(() => supabaseClient.from(...).select(...))
+ * API call wrapper with caching, retry logic, and performance monitoring.
+ * Usage: await apiCall(() => supabaseClient.from(...).select(...), { useCache: true })
  */
 export async function apiCall<T>(
     fn: () => Promise<{ data: T; error: any }>,
+    options: ApiCallOptions = {},
 ): Promise<T> {
-    try {
+    const {
+        useCache = false,
+        cacheTtl = 5 * 60 * 1000, // 5 minutes default
+        cacheKey,
+        ...retryOptions
+    } = options;
+
+    // Check cache first if enabled
+    if (useCache && cacheKey) {
+        const cached = apiCache.get<T>(cacheKey);
+        if (cached !== null) {
+            return cached;
+        }
+    }
+
+    const apiCallFn = async (): Promise<T> => {
         const { data, error } = await fn();
         if (error) throw error;
         return convertDatesToLocal(data);
+    };
+
+    try {
+        const result = await handleApiErrorWithRetry(
+            "apiCall",
+            apiCallFn,
+            retryOptions,
+        );
+
+        // Cache successful result if caching is enabled
+        if (useCache && cacheKey && result) {
+            apiCache.set(cacheKey, result, cacheTtl);
+        }
+
+        return result;
     } catch (error) {
-        // Optionally, you can import and use handleApiError here
         throw new Error(getSupabaseErrorMessage(error));
     }
 }
