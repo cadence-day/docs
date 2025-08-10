@@ -38,7 +38,7 @@ export default function Page() {
           backgroundColor: "blue",
         }}
         >
-          <SignIn  />
+          {/* <SignIn  /> */}
         </View>
       </SignedOut>
     </View>
