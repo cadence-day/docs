@@ -2,6 +2,10 @@ import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import type { Note } from "@/shared/types/models/";
 import { apiCall } from "@/shared/api/utils/apiHelpers";
 import { handleApiError } from "@/shared/api/utils/errorHandler";
+import {
+    decryptNoteMessage,
+    decryptNotesMessages,
+} from "@/shared/api/encryption/resources/notes";
 
 /* Retrieves a note by its ID.
  * @param noteId - The ID of the note to retrieve.
@@ -9,7 +13,7 @@ import { handleApiError } from "@/shared/api/utils/errorHandler";
  */
 export async function getNoteById(noteId: string): Promise<Note | null> {
     try {
-        return await apiCall(async () => {
+        const result = await apiCall(async () => {
             const { data, error } = await supabaseClient
                 .from("notes")
                 .select()
@@ -17,6 +21,13 @@ export async function getNoteById(noteId: string): Promise<Note | null> {
                 .single();
             return { data, error };
         });
+
+        // Decrypt the note message if result exists
+        if (result) {
+            return await decryptNoteMessage(result);
+        }
+
+        return result;
     } catch (error) {
         handleApiError("getNoteById", error);
     }
@@ -27,18 +38,22 @@ export async function getNoteById(noteId: string): Promise<Note | null> {
  */
 export async function getUserNotes(userId: string): Promise<Note[]> {
     try {
-        return await apiCall(async () => {
+        const result = await apiCall(async () => {
             const { data, error } = await supabaseClient
                 .from("notes")
                 .select()
                 .eq("user_id", userId);
             return { data: data ?? [], error };
         });
+
+        // Decrypt note messages
+        return await decryptNotesMessages(result);
     } catch (error) {
         handleApiError("getUserNotes", error);
     }
 }
 
+// TODO: Update columns in the public notes view to include `created_at`
 /* Retrieves all users notes within a timeframe.
  * @param userId - The ID of the user whose notes to retrieve.
  * @param startDate - The start date of the timeframe in Local time.
@@ -51,7 +66,7 @@ export async function getUserNotesWithinTimeframe(
     endDate: Date,
 ): Promise<Note[]> {
     try {
-        return await apiCall(async () => {
+        const result = await apiCall(async () => {
             const { data, error } = await supabaseClient
                 .from("notes")
                 .select()
@@ -60,6 +75,9 @@ export async function getUserNotesWithinTimeframe(
                 .lte("created_at", endDate.toISOString());
             return { data: data ?? [], error };
         });
+
+        // Decrypt note messages
+        return await decryptNotesMessages(result);
     } catch (error) {
         handleApiError("getUserNotesWithinTimeframe", error);
     }
@@ -75,7 +93,7 @@ export async function getLastXUserNotes(
     limit: number,
 ): Promise<Note[]> {
     try {
-        return await apiCall(async () => {
+        const result = await apiCall(async () => {
             const { data, error } = await supabaseClient
                 .from("notes")
                 .select()
@@ -84,6 +102,9 @@ export async function getLastXUserNotes(
                 .limit(limit);
             return { data: data ?? [], error };
         });
+
+        // Decrypt note messages
+        return await decryptNotesMessages(result);
     } catch (error) {
         handleApiError("getLastXUserNotes", error);
     }

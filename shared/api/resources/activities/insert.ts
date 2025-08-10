@@ -2,6 +2,12 @@ import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import type { Activity } from "@/shared/types/models/activity";
 import { apiCall } from "@/shared/api/utils/apiHelpers";
 import { handleApiError } from "@/shared/api/utils/errorHandler";
+import {
+  decryptActivityName,
+  encryptActivitiesForInsertion,
+  encryptActivityForInsertion,
+  encryptActivityName,
+} from "@/shared/api/encryption/resources/activities";
 
 /**
  * Inserts a new activity into the database.
@@ -12,14 +18,24 @@ export async function insertActivity(
   activity: Omit<Activity, "id">,
 ): Promise<Activity | null> {
   try {
-    return await apiCall(async () => {
+    // Encrypt the activity name before insertion
+    const encryptedActivity = await encryptActivityForInsertion(activity);
+
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
-        .insert(activity)
+        .insert(encryptedActivity)
         .select()
         .single();
       return { data, error };
     });
+
+    // Decrypt the activity name for return
+    if (result) {
+      return await decryptActivityName(result);
+    }
+
+    return result;
   } catch (error) {
     handleApiError("insertActivity", error);
   }
@@ -34,13 +50,19 @@ export async function insertActivities(
   activities: Omit<Activity, "id">[],
 ): Promise<Activity[]> {
   try {
-    return await apiCall(async () => {
+    // Encrypt activity names before insertion
+    const encryptedActivities = await encryptActivitiesForInsertion(activities);
+
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
-        .insert(activities)
+        .insert(encryptedActivities)
         .select();
       return { data: data ?? [], error };
     });
+
+    // Decrypt activity names for return
+    return await Promise.all(result.map(decryptActivityName));
   } catch (error) {
     handleApiError("insertActivities", error);
   }
@@ -59,14 +81,24 @@ export async function upsertActivity(
   activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>,
 ): Promise<Activity | null> {
   try {
-    return await apiCall(async () => {
+    // Encrypt the activity name before upsert
+    const encryptedActivity = await encryptActivityName(activity as Activity);
+
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
-        .upsert(activity, { onConflict: "id" })
+        .upsert(encryptedActivity, { onConflict: "id" })
         .select()
         .single();
       return { data, error };
     });
+
+    // Decrypt the activity name for return
+    if (result) {
+      return await decryptActivityName(result);
+    }
+
+    return result;
   } catch (error) {
     handleApiError("upsertActivity", error);
   }
@@ -85,13 +117,21 @@ export async function upsertActivities(
   activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[],
 ): Promise<Activity[]> {
   try {
-    return await apiCall(async () => {
+    // Encrypt activity names before upsert
+    const encryptedActivities = await Promise.all(
+      activities.map((activity) => encryptActivityName(activity as Activity)),
+    );
+
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
-        .upsert(activities, { onConflict: "id" })
+        .upsert(encryptedActivities, { onConflict: "id" })
         .select();
       return { data: data ?? [], error };
     });
+
+    // Decrypt activity names for return
+    return await Promise.all(result.map(decryptActivityName));
   } catch (error) {
     handleApiError("upsertActivities", error);
   }

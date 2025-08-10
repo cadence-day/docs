@@ -2,6 +2,10 @@ import type { Activity } from "@/shared/types/models";
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import { apiCall } from "@/shared/api/utils/apiHelpers";
 import { handleApiError } from "@/shared/api/utils/errorHandler";
+import {
+  decryptActivitiesNames,
+  decryptActivityName,
+} from "@/shared/api/encryption/resources/activities";
 
 /**
  * Fetches an activity by its ID.
@@ -12,7 +16,7 @@ export async function getActivity(
   activityId: string,
 ): Promise<Activity | null> {
   try {
-    return await apiCall(async () => {
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
         .select("*")
@@ -20,6 +24,13 @@ export async function getActivity(
         .single();
       return { data, error };
     });
+
+    // Decrypt the activity name if result exists
+    if (result) {
+      return await decryptActivityName(result);
+    }
+
+    return result;
   } catch (error) {
     handleApiError("getActivity", error);
   }
@@ -34,7 +45,7 @@ export async function getActivities(
   activityIds: string[],
 ): Promise<Activity[]> {
   try {
-    return await apiCall(async () => {
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
         .select("*")
@@ -42,6 +53,9 @@ export async function getActivities(
       // Ensure array return type
       return { data: data ?? [], error };
     });
+
+    // Decrypt activity names
+    return await decryptActivitiesNames(result);
   } catch (error) {
     handleApiError("getActivities", error);
   }
@@ -56,7 +70,7 @@ export async function getEnabledUserActivities(
   userId: string,
 ): Promise<Activity[]> {
   try {
-    return await apiCall(async () => {
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
         .select("*")
@@ -64,6 +78,9 @@ export async function getEnabledUserActivities(
         .eq("status", "ENABLED");
       return { data: data ?? [], error };
     });
+
+    // Decrypt activity names
+    return await decryptActivitiesNames(result);
   } catch (error) {
     handleApiError("getEnabledUserActivities", error);
   }
@@ -75,13 +92,16 @@ export async function getEnabledUserActivities(
  */
 export async function getAllEnabledActivities(): Promise<Activity[]> {
   try {
-    return await apiCall(async () => {
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
         .select("*")
         .eq("status", "ENABLED");
       return { data: data ?? [], error };
     });
+
+    // Decrypt activity names
+    return await decryptActivitiesNames(result);
   } catch (error) {
     handleApiError("getAllEnabledActivities", error);
   }
@@ -93,13 +113,16 @@ export async function getAllEnabledActivities(): Promise<Activity[]> {
  */
 export async function getAllDisabledActivities(): Promise<Activity[]> {
   try {
-    return await apiCall(async () => {
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
         .select("*")
         .eq("status", "DISABLED");
       return { data: data ?? [], error };
     });
+
+    // Decrypt activity names
+    return await decryptActivitiesNames(result);
   } catch (error) {
     handleApiError("getAllDisabledActivities", error);
   }
@@ -111,13 +134,16 @@ export async function getAllDisabledActivities(): Promise<Activity[]> {
  */
 export async function getAllDeletedActivities(): Promise<Activity[]> {
   try {
-    return await apiCall(async () => {
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
         .select("*")
         .eq("status", "DELETED");
       return { data: data ?? [], error };
     });
+
+    // Decrypt activity names
+    return await decryptActivitiesNames(result);
   } catch (error) {
     handleApiError("getAllDeletedActivities", error);
   }
@@ -132,7 +158,7 @@ export async function getEnabledActivitiesByCategory(
   activityCategoryId: string,
 ): Promise<Activity[]> {
   try {
-    return await apiCall(async () => {
+    const result = await apiCall(async () => {
       const { data, error } = await supabaseClient
         .from("activities")
         .select("*")
@@ -140,7 +166,29 @@ export async function getEnabledActivitiesByCategory(
         .eq("status", "ENABLED");
       return { data: data ?? [], error };
     });
+
+    // Decrypt activity names
+    return await decryptActivitiesNames(result);
   } catch (error) {
     handleApiError("getEnabledActivitiesByCategory", error);
+  }
+}
+
+/**
+ * Get all activities
+ */
+export async function getAllActivities(): Promise<Activity[]> {
+  try {
+    const result = await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("activities")
+        .select("*");
+      return { data: data ?? [], error };
+    });
+
+    // Decrypt activity names
+    return await decryptActivitiesNames(result);
+  } catch (error) {
+    handleApiError("getAllActivities", error);
   }
 }
