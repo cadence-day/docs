@@ -20,18 +20,19 @@ Client-side encryption for sensitive user data in the Cadence app.
 - **AES-256-CBC encryption** - Industry standard
 - **Device-specific keys** - Stored securely using Expo SecureStore
 - **Auto key generation** - Keys created on first use
+- **Prefix-based identification** - Efficient checking of already encrypted data using `enc:` prefix
 - **Error resilient** - Graceful fallback if encryption fails
 
 ## File Structure
 
 ```
 shared/api/encryption/
-├── core.ts          # Base encryption functions
+├── core.ts           # Base encryption functions
 ├── resources/
-│   ├── index.ts     # Exports all resource-specific functions
-│   ├── activities/  # Activity-specific encryption
-│   └── notes/       # Note-specific encryption
-└── index.ts         # Exports all functions
+│   ├── index.ts      # Exports all resource-specific functions
+│   ├── activities.ts # Activity-specific encryption
+│   └── notes.ts      # Note-specific encryption
+└── index.ts          # Exports all functions
 ```
 
 ## Quick Usage Example
