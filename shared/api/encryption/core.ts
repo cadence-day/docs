@@ -102,43 +102,22 @@ export async function encryptString(plaintext: string): Promise<string> {
 
 /**
  * Decrypt a string value
- * @param encryptedData The encrypted string (Base64 encoded)
+ * @param encryptedData The encrypted string
  * @returns Promise<string> The decrypted string
  */
 export async function decryptString(encryptedData: string): Promise<string> {
     if (!encryptedData || typeof encryptedData !== "string") {
         return encryptedData; // Return as-is if invalid input
     }
+
     try {
         const key = await getEncryptionKey();
 
-        // Parse the Base64 encoded data
-        const combinedWordArray = CryptoJS.enc.Base64.parse(encryptedData);
-
-        // Convert to hex for easier manipulation
-        const combinedHex = combinedWordArray.toString(CryptoJS.enc.Hex);
-
-        // Extract IV (first 32 hex chars = 16 bytes)
-        const ivHex = combinedHex.substring(0, 32);
-        const iv = CryptoJS.enc.Hex.parse(ivHex);
-
-        // Extract ciphertext (remaining hex chars)
-        const ciphertextHex = combinedHex.substring(32);
-        const ciphertext = CryptoJS.enc.Hex.parse(ciphertextHex);
-
-        // Decrypt using the extracted IV and ciphertext
-        const cipherParams = CryptoJS.lib.CipherParams.create({
-            ciphertext: ciphertext,
+        // Decrypt using CryptoJS built-in format (handles salt and IV automatically)
+        const decrypted = CryptoJS.AES.decrypt(encryptedData, key, {
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7,
         });
-
-        const decrypted = CryptoJS.AES.decrypt(
-            cipherParams,
-            key,
-            {
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7,
-            },
-        );
 
         // Convert to UTF-8 string
         const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
@@ -149,7 +128,9 @@ export async function decryptString(encryptedData: string): Promise<string> {
     } catch (error) {
         throw new EncryptionError("Failed to decrypt string", error);
     }
-} /**
+}
+
+/**
  * Clear the stored encryption key (useful for logout or key rotation)
  * @returns Promise<void>
  */
