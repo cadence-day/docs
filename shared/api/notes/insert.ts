@@ -13,9 +13,15 @@ export async function insertNote(note: Omit<Note, "id">): Promise<Note> {
             const { data, error } = await supabaseClient
                 .from("notes")
                 .insert(note)
+                .select()
                 .single();
+            if (data == null) {
+                throw new Error(
+                    "Failed to insert note: no data returned from database.",
+                );
+            }
             // data is guaranteed on success
-            return { data: data!, error };
+            return { data, error };
         });
     } catch (error) {
         handleApiError("insertNote", error);

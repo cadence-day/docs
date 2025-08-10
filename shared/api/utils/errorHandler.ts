@@ -103,7 +103,15 @@ export async function handleApiErrorWithRetry<T>(
 }
 
 /**
- * Handles and logs API errors, then throws a formatted error.
+ * Centralized error handler for API functions.
+ *
+ * Logs the provided error with context information and throws an ApiError.
+ * This function never returns; it always throws.
+ *
+ * @param {string} context - A string describing the context in which the error occurred (e.g., function or operation name).
+ * @param {*} error - The original error object to be handled and logged.
+ * @throws {ApiError} Always throws a formatted ApiError containing the context and original error.
+ * @returns {never} This function never returns.
  */
 export function handleApiError(context: string, error: any): never {
     console.error(`[API ERROR] [${context}]`, error);

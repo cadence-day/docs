@@ -58,18 +58,23 @@ export async function insertStates(
 export async function upsertState(
     state: Omit<State, "id"> & Partial<Pick<State, "id">>,
 ): Promise<State | null> {
-    const { data, error } = await supabaseClient
-        .from("states")
-        .upsert(state, { onConflict: "id" })
-        .select()
-        .single();
-
-    if (error) {
-        console.error("Error upserting state:", error);
-        throw new Error(`Failed to upsert state: ${error.message}`);
+    try {
+        return await apiCall(async () => {
+            const { data, error } = await supabaseClient
+                .from("states")
+                .upsert(state, { onConflict: "id" })
+                .select()
+                .single();
+            if (data == null) {
+                throw new Error(
+                    "Failed to upsert state: no data returned from database.",
+                );
+            }
+            return { data, error };
+        });
+    } catch (error) {
+        handleApiError("upsertState", error);
     }
-
-    return data as State | null;
 }
 
 /**
@@ -84,15 +89,20 @@ export async function upsertState(
 export async function upsertStates(
     states: (Omit<State, "id"> & Partial<Pick<State, "id">>)[],
 ): Promise<State[]> {
-    const { data, error } = await supabaseClient
-        .from("states")
-        .upsert(states, { onConflict: "id" })
-        .select();
-
-    if (error) {
-        console.error("Error upserting states:", error);
-        throw new Error(`Failed to upsert states: ${error.message}`);
+    try {
+        return await apiCall(async () => {
+            const { data, error } = await supabaseClient
+                .from("states")
+                .upsert(states, { onConflict: "id" })
+                .select();
+            if (data == null) {
+                throw new Error(
+                    "Failed to upsert states: no data returned from database.",
+                );
+            }
+            return { data, error };
+        });
+    } catch (error) {
+        handleApiError("upsertStates", error);
     }
-
-    return data as State[];
 }

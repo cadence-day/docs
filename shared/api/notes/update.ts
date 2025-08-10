@@ -20,7 +20,12 @@ export async function updateNote(note: Note): Promise<Note> {
                 .eq("id", id)
                 .select()
                 .single();
-            return { data: data!, error };
+            if (data == null) {
+                throw new Error(
+                    "Failed to update note: no data returned from database.",
+                );
+            }
+            return { data, error };
         });
     } catch (error) {
         handleApiError("updateNote", error);
