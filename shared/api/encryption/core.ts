@@ -135,7 +135,7 @@ export async function decryptString(encryptedData: string): Promise<string> {
  * @returns Promise<void>
  */
 
-export async function clearEncryptionKey(): Promise<void> {
+async function clearEncryptionKey(): Promise<void> {
     try {
         await SecureStore.deleteItemAsync(ENCRYPTION_KEY_NAME);
     } catch (error) {
