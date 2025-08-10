@@ -4,7 +4,7 @@ import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import { useLayoutEffect } from "react";
 import { SignOutButton } from "@/shared/components/SignOutButton";
 import React from "react";
-import SignIn from "@/shared/components/Screens/SignIn";
+import SignIn from "../(auth)/sgin-in";
 
 export default function Page() {
   const { user } = useUser();
@@ -38,7 +38,7 @@ export default function Page() {
           backgroundColor: "blue",
         }}
         >
-          {/* <SignIn  /> */}
+    <SignIn/>  
         </View>
       </SignedOut>
     </View>

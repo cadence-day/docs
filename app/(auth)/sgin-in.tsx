@@ -25,11 +25,11 @@ export default function Page() {
   // Use the `useSSO()` hook to access the `startSSOFlow()` method
   const { startSSOFlow } = useSSO()
 
-  const onPress = useCallback(async () => {
+  const onPress = useCallback(async (strategy: string) => {
     try {
       // Start the authentication process by calling `startSSOFlow()`
       const { createdSessionId, setActive, signIn, signUp } = await startSSOFlow({
-        strategy: 'oauth_google',
+        strategy: strategy,
         // For web, defaults to current path
         // For native, you must pass a scheme, like AuthSession.makeRedirectUri({ scheme, path })
         // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
@@ -53,8 +53,9 @@ export default function Page() {
   }, [])
 
   return (
-    <View>
-      <Button title="Sign in with Google" onPress={onPress} />
+    <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+      <Button title="Sign in with Google" onPress={() => onPress('oauth_google')} />
+      <Button title="Sign in with Apple" onPress={() => onPress('oauth_apple')} />
     </View>
   )
 }
