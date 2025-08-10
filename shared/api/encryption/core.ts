@@ -1,13 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import CryptoJS from "crypto-js";
 
-import {
-    getAllActivities,
-    getUserNotes,
-    updateActivities,
-    updateNotes,
-} from "../resources";
-
 // Constants for encryption
 const ENCRYPTION_KEY_NAME = "cadence_app_encryption_key";
 const KEY_SIZE = 256; // AES-256
@@ -175,10 +168,23 @@ export async function hasEncryptionKey(): Promise<boolean> {
  * Get all the data that needs to be re-encrypted (Activities and Notes) and re-encrypt them with the new key.
  * @userId The ID of the user whose data is being re-encrypted
  * @returns Promise<void>
+ *
+ * NOTE: This function is temporarily disabled to resolve circular dependencies.
+ * To implement this, move the function to a higher-level service that can import
+ * both the encryption utilities and the API resources.
  */
 export async function rotateEncryptionKeyAndReEncryptData(
     userId: string,
 ): Promise<void> {
+    throw new Error(
+        "This function is temporarily disabled. Please implement in a higher-level service to avoid circular dependencies.",
+    );
+
+    // TODO: Move this implementation to a service file that can import both:
+    // - The encryption core utilities (this file)
+    // - The API resources (activities, notes)
+
+    /* Original implementation (commented out to fix circular dependency):
     try {
         // Step 1: Fetch all existing data that needs to be re-encrypted
         const activities = await getAllActivities();
@@ -204,4 +210,5 @@ export async function rotateEncryptionKeyAndReEncryptData(
             error,
         );
     }
+    */
 }
