@@ -16,9 +16,6 @@
     "types:update": "supabase gen types typescript --schema public --project-id tfhgasudyjovhulcxzyu > shared/types/database.types.ts",
     "dev:types:update": "supabase gen types typescript --local --schema public > shared/types/database.types.ts"
   },
-  "jest": {
-    "preset": "jest-expo"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
