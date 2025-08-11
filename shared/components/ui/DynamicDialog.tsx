@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from "react-native";
 import DialogHeader, { type DialogHeaderProps } from "./DialogHeader";
-import { NAV_BAR_SIZE } from "@/constants/VIEWPORT";
+import { NAV_BAR_SIZE } from "../../constants/VIEWPORT";
 
 interface DynamicDialogProps {
   visible: boolean;
