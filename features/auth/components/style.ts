@@ -1,19 +1,58 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  form: {
-    width: "90%",
+  // Common styles
+  container: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 40,
     paddingVertical: 40,
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    minHeight: 400,
+    paddingHorizontal: 16,
+  },
+
+  // Form styles
+  form: {
+    width: "100%",
+    paddingVertical: 100,
+    paddingHorizontal: 40,
     alignItems: "center",
     minHeight: "100%",
   },
+  formContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
+
+  // Title styles
   title: {
+    fontSize: 20,
+    fontWeight: "normal",
+    marginBottom: 40,
+    marginTop: 20,
+    textAlign: "center",
+    color: "#FFFFFF",
+  },
+  titleLarge: {
     fontSize: 24,
     marginBottom: 30,
     marginTop: 20,
     color: "#fff",
     fontWeight: "600",
   },
+
+  // Input styles
   input: {
     width: "100%",
     borderBottomWidth: 1,
@@ -43,6 +82,50 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingBottom: 12,
   },
+
+  // Error and message styles
+  error: {
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  message: {
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  errorContainer: {
+    position: "absolute",
+    bottom: 140,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  passwordMismatchText: {
+    color: "#ff6b6b",
+    fontSize: 12,
+    marginTop: 4,
+    marginBottom: 4,
+  },
+
+  // Forgot password styles
+  forgotPasswordContainer: {
+    alignSelf: "flex-start",
+    marginBottom: 30,
+  },
+  forgotPasswordText: {
+    fontSize: 14,
+    fontWeight: "normal",
+    textDecorationLine: "none",
+    color: "#FFFFFF",
+  },
+
+  // Social button styles
+  socialContainer: {
+    marginBottom: 30,
+    gap: 16,
+  },
+  socialButton: {
+    width: "100%",
+  },
   socialButtons: {
     width: "100%",
     height: 100,
@@ -54,6 +137,64 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
+
+  // Sign up/in text styles
+  signupContainer: {
+    marginBottom: 30,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  signupText: {
+    textAlign: "center",
+  },
+  signInTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: "100%",
+    marginTop: 20,
+  },
+  signInText: {
+    color: "#B9B9B9",
+    fontSize: 14,
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: "left",
+  },
+
+  // Action button styles
+  actionButtonContainer: {
+    position: "absolute",
+    bottom: 60,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  signinButton: {
+    width: "100%",
+  },
+  signupButton: {
+    width: "100%",
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: "#fff",
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  signupButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  verifyButton: {
+    width: "100%",
+    marginTop: 10,
+  },
+
+  // Checkbox styles
   checkboxRow: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -86,39 +227,14 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
     lineHeight: 20,
   },
+
+  // Link styles
   link: {
     textDecorationLine: "underline",
     color: "#fff",
   },
-  signInText: {
-    color: "#B9B9B9",
-    width: "100%",
-    fontSize: 14,
-    marginTop: 20,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  signupButton: {
-    width: "100%",
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: "#fff",
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: "center",
-    backgroundColor: "transparent",
-  },
-  signupButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  passwordMismatchText: {
-    color: "#ff6b6b",
-    fontSize: 12,
-    marginTop: 4,
-    marginBottom: 4,
-  },
+
+  // Password requirements styles
   passwordRequirements: {
     width: "100%",
     marginTop: 8,
@@ -127,13 +243,8 @@ export const styles = StyleSheet.create({
   requirementMet: {
     color: "#4CAF50",
   },
-  centerContent: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    minHeight: 400,
-  },
+
+  // Loading and success styles
   loadingText: {
     color: "#fff",
     fontSize: 16,

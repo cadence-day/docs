@@ -5,14 +5,33 @@ import CdButton from "@/shared/components/CdButton";
 import { styles } from "../style";
 import { router } from "expo-router";
 import { useState } from "react";
+import { useSignUp } from "@clerk/clerk-expo";
 
 const EmailVerification = ({ code, setCode }: { code: string, setCode: (code: string) => void }) => {
+  const { isLoaded, signUp, setActive } = useSignUp();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Handle submission of verification form
   const onVerifyPress = async () => {
+    if (!isLoaded) return;
+
     setIsSubmitting(true);
-    // TODO: Implement verification logic
-    setIsSubmitting(false);
+
+    try {
+      const signUpAttempt = await signUp.attemptEmailAddressVerification({
+        code: code,
+      });
+
+      if (signUpAttempt.status === "complete") {
+        await setActive({ session: signUpAttempt.createdSessionId });
+      } else {
+        console.error(JSON.stringify(signUpAttempt, null, 2));
+      }
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
