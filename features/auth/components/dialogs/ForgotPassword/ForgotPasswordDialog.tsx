@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useClerk } from "@clerk/clerk-expo";
 import DynamicDialog from "@/shared/components/ui/DynamicDialog";
+import CdTextInput from "@/shared/components/CdTextInput";
+import CdButton from "@/shared/components/CdButton";
+import CdText from "@/shared/components/CdText";
 
 interface ForgotPasswordDialogProps {
   visible: boolean;
@@ -53,54 +56,39 @@ const ForgotPasswordDialog: React.FC<ForgotPasswordDialogProps> = ({
     <DynamicDialog
       visible={visible}
       onClose={handleCloseDialog}
-      height={60}
-      maxHeight={80}
+      height={84}
+      maxHeight={84}
+      headerProps={{
+        title: "Forgot Password",
+        rightActionElement: "Close",
+        onRightAction: handleCloseDialog,
+      }}      
+
     >
       <View style={styles.form}>
-        <Text style={styles.title}>Reset password</Text>
-        
-        <Text style={styles.description}>
-          Enter your email address and we'll send you a link to reset your
-          password.
-        </Text>
-        
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          placeholderTextColor="#B9B9B9"
+        <CdText variant="body" size="medium" style={styles.description}>
+          Enter your email and we will send you a link to reset your password.
+        </CdText>
+        <CdTextInput
+          placeholder="Email"
           value={email}
           onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
         />
-        
-        {successMessage !== "" && (
-          <Text style={styles.messageText}>
-            {successMessage}
-          </Text>
+       
+        {successMessage && (
+          <Text style={styles.messageText}>{successMessage}</Text>
         )}
-        
-        {errorMessage !== "" && (
-          <Text style={styles.errorText}>
-            {errorMessage}
-          </Text>
+        {errorMessage && (
+          <Text style={styles.errorText}>{errorMessage}</Text>
         )}
-        
-        <TouchableOpacity
-          style={styles.resetButton}
-          onPress={successMessage ? handleCloseDialog : handleResetPassword}
-          disabled={(email === "" || loading) && !successMessage}
-        >
-          <Text
-            style={[
-              styles.resetButtonText,
-              styles.link,
-              { opacity: email === "" || loading ? 0.5 : 1 },
-            ]}
-          >
-            {successMessage ? "Continue" : "Get Reset Link"}
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <CdButton
+            title="Get Reset Link"
+            onPress={handleResetPassword}
+            variant="text"
+            size="large"
+          />
+        </View>
       </View>
     </DynamicDialog>
   );
@@ -121,7 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#B9B9B9",
     marginBottom: 24,
-    textAlign: "center",
+    textAlign: "left",
     lineHeight: 22,
   },
   input: {
@@ -157,6 +145,13 @@ const styles = StyleSheet.create({
     color: "white",
     marginTop: 8,
     textAlign: "center",
+  },
+  buttonContainer: {
+    bottom: 30,
+    left: 0,
+    right: 0,
+    marginTop: 50,
+    alignItems: "center",
   },
 });
 

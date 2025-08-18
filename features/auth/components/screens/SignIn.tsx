@@ -10,6 +10,7 @@ import { useSSO } from '@clerk/clerk-expo';
 import { OAuthStrategy } from '@clerk/types';
 import { styles } from "../style";
 import DirectToSignUp from "../shared/DirectToSignUp";
+import ForgotPasswordDialog from "../dialogs/ForgotPassword/ForgotPasswordDialog";
 
 export const useWarmUpBrowser = () => {
   const { startSSOFlow } = useSSO();
@@ -31,7 +32,7 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  
+  const [isForgotPasswordDialogVisible, setIsForgotPasswordDialogVisible] = useState(false);
   const { startSSOFlow } = useSSO();
   useWarmUpBrowser();
 
@@ -60,8 +61,7 @@ const SignInScreen = () => {
 
 
   const handleForgotPassword = () => {
-    // TODO: Implement forgot password functionality
-    console.log("Forgot password clicked");
+    setIsForgotPasswordDialogVisible(true);
   };
 
   const onPress = useCallback(async (strategy: string) => {
@@ -87,6 +87,10 @@ const SignInScreen = () => {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
+      <ForgotPasswordDialog
+        visible={isForgotPasswordDialogVisible}
+        onClose={() => setIsForgotPasswordDialogVisible(false)}
+      />
       <View style={styles.content}>
         <CdText variant="title" size="large" style={styles.title}>
           Welcome back

@@ -41,8 +41,8 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
   headerAsButton,
   onHeaderPress,
   bottomBorder = true,
-  titleFontSize = 20,
-  rightActionFontSize = 18,
+  titleFontSize = 18,
+  rightActionFontSize = 16,
   onTitleDoubleTap,
 }) => {
   const lastTap = React.useRef<number | null>(null);
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "400",
     textAlign: "left",
     flexShrink: 1,

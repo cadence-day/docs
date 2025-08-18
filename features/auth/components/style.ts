@@ -166,7 +166,7 @@ export const styles = StyleSheet.create({
   // Action button styles
   actionButtonContainer: {
     position: "absolute",
-    bottom: 60,
+    bottom: 70,
     left: 0,
     right: 0,
     alignItems: "center",
