@@ -1,12 +1,12 @@
 import { TouchableOpacity, View } from "react-native";
+import { router } from "expo-router";
 import CdText from "@/shared/components/CdText";
 import { styles } from "../style";
-import { router } from "expo-router";
 
 const DirectToSignUp = () => {
-    const handleSignup = () => {
-        router.push("/(auth)/sign-up");
-    };
+  const handleSignup = () => {
+    router.push("/(auth)/sign-up");
+  };
 
   return (
     <View style={styles.signupContainer}>

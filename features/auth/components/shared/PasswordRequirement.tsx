@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
+import { styles } from "../style";
 
 interface PasswordRequirementProps {
   password: string;
@@ -67,34 +68,5 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  passwordRequirements: {
-    width: "100%",
-    marginTop: 8,
-    marginBottom: 20,
-  },
-  requirementText: {
-    color: "#FE4437",
-    fontSize: 14,
-    marginTop: 2,
-    marginBottom: 2,
-  },
-  requirementMet: {
-    color: "#758A61",
-  },
-  termsText: {
-    color: "#B9B9B9",
-    fontSize: 12,
-    textAlign: "left",
-    lineHeight: 18,
-  },
-  link: {
-    textDecorationLine: "underline",
-    color: "#FFFFFF",
-    fontSize: 12,
-    marginBottom: 6,
-  },
-});
 
 export default PasswordRequirement;

@@ -240,8 +240,26 @@ export const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 20,
   },
+  requirementText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    marginTop: 2,
+    marginBottom: 2,
+  },
   requirementMet: {
-    color: "#4CAF50",
+    color: "#A5A1A0",
+  },
+  termsText: {
+    color: "#B9B9B9",
+    fontSize: 12,
+    textAlign: "left",
+    lineHeight: 18,
+  },
+  termsLink: {
+    textDecorationLine: "underline",
+    color: "#FFFFFF",
+    fontSize: 12,
+    marginBottom: 6,
   },
 
   // Loading and success styles

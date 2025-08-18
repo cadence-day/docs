@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
-import DynamicDialog from "@/shared/components/ui/DynamicDialog";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useClerk } from "@clerk/clerk-expo";
+import DynamicDialog from "@/shared/components/ui/DynamicDialog";
 
 interface ForgotPasswordDialogProps {
   visible: boolean;
@@ -28,6 +28,7 @@ const ForgotPasswordDialog: React.FC<ForgotPasswordDialogProps> = ({
     setLoading(true);
     setSuccessMessage("");
     setErrorMessage("");
+    
     try {
       await client.signIn.create({
         strategy: "reset_password_email_code",
@@ -57,10 +58,12 @@ const ForgotPasswordDialog: React.FC<ForgotPasswordDialogProps> = ({
     >
       <View style={styles.form}>
         <Text style={styles.title}>Reset password</Text>
+        
         <Text style={styles.description}>
           Enter your email address and we'll send you a link to reset your
           password.
         </Text>
+        
         <TextInput
           style={styles.input}
           placeholder="E-mail"
@@ -70,16 +73,19 @@ const ForgotPasswordDialog: React.FC<ForgotPasswordDialogProps> = ({
           autoCapitalize="none"
           keyboardType="email-address"
         />
+        
         {successMessage !== "" && (
-          <Text style={{ color: "white", marginTop: 8, textAlign: "center" }}>
+          <Text style={styles.messageText}>
             {successMessage}
           </Text>
         )}
+        
         {errorMessage !== "" && (
-          <Text style={{ color: "white", marginTop: 8, textAlign: "center" }}>
+          <Text style={styles.errorText}>
             {errorMessage}
           </Text>
         )}
+        
         <TouchableOpacity
           style={styles.resetButton}
           onPress={successMessage ? handleCloseDialog : handleResetPassword}
@@ -141,6 +147,16 @@ const styles = StyleSheet.create({
   },
   link: {
     textDecorationLine: "underline",
+  },
+  messageText: {
+    color: "white",
+    marginTop: 8,
+    textAlign: "center",
+  },
+  errorText: {
+    color: "white",
+    marginTop: 8,
+    textAlign: "center",
   },
 });
 

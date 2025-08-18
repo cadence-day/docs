@@ -1,13 +1,21 @@
+import { useState } from "react";
 import { View, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
+import { useSignUp } from "@clerk/clerk-expo";
 import CdText from "@/shared/components/CdText";
 import CdTextInput from "@/shared/components/CdTextInput";
 import CdButton from "@/shared/components/CdButton";
 import { styles } from "../style";
-import { router } from "expo-router";
-import { useState } from "react";
-import { useSignUp } from "@clerk/clerk-expo";
 
-const EmailVerification = ({ code, setCode }: { code: string, setCode: (code: string) => void }) => {
+interface EmailVerificationProps {
+  code: string;
+  setCode: (code: string) => void;
+}
+
+const EmailVerification: React.FC<EmailVerificationProps> = ({ 
+  code, 
+  setCode 
+}) => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,13 +44,17 @@ const EmailVerification = ({ code, setCode }: { code: string, setCode: (code: st
 
   return (
     <View style={styles.centerContent}>
-      <CdText variant="title" size="large" style={styles.title}>Verify your email</CdText>
+      <CdText variant="title" size="large" style={styles.title}>
+        Verify your email
+      </CdText>
+      
       <CdTextInput
         value={code}
         onChangeText={(code) => setCode(code)}
         keyboardType="number-pad"
         placeholder="Enter your verification code"
       />
+      
       <CdButton
         title="Verify"
         onPress={onVerifyPress}
@@ -53,7 +65,9 @@ const EmailVerification = ({ code, setCode }: { code: string, setCode: (code: st
       />
 
       <TouchableOpacity onPress={() => router.replace("/")}>
-        <CdText variant="body" size="small" style={{ marginTop: 20, color: "#666" }}>← Back</CdText>
+        <CdText variant="body" size="small" style={{ marginTop: 20, color: "#666" }}>
+          ← Back
+        </CdText>
       </TouchableOpacity>
     </View>
   );

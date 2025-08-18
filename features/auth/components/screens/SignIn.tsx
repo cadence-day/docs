@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
 import CdButton from "@/shared/components/CdButton";
 import CdText from "@/shared/components/CdText";
 import CdTextInput from "@/shared/components/CdTextInput";

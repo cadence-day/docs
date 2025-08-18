@@ -3,7 +3,6 @@ import { router } from "expo-router";
 import CdText from "@/shared/components/CdText";
 import { styles } from "../style";
 
-
 const DirectToSignIn = () => {
   return (
     <View style={styles.signInTextContainer}>

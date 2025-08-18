@@ -12,7 +12,7 @@ export const validatePassword = (
   if (password !== repeatPassword) {
     return {
       isValid: false,
-      error: "Passwords do not match"
+      error: "Passwords do not match",
     };
   }
 
@@ -20,7 +20,7 @@ export const validatePassword = (
   if (password.length < 10) {
     return {
       isValid: false,
-      error: "Password must be at least 10 characters"
+      error: "Password must be at least 10 characters",
     };
   }
 
@@ -28,7 +28,7 @@ export const validatePassword = (
   if (!/[a-z]/.test(password)) {
     return {
       isValid: false,
-      error: "Password must contain at least one lowercase letter"
+      error: "Password must contain at least one lowercase letter",
     };
   }
 
@@ -36,7 +36,7 @@ export const validatePassword = (
   if (!/[A-Z]/.test(password)) {
     return {
       isValid: false,
-      error: "Password must contain at least one uppercase letter"
+      error: "Password must contain at least one uppercase letter",
     };
   }
 
@@ -44,7 +44,7 @@ export const validatePassword = (
   if (!/[0-9]/.test(password)) {
     return {
       isValid: false,
-      error: "Password must contain at least one digit"
+      error: "Password must contain at least one digit",
     };
   }
 
@@ -52,7 +52,7 @@ export const validatePassword = (
   if (!/[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/.test(password)) {
     return {
       isValid: false,
-      error: "Password must contain at least one special character"
+      error: "Password must contain at least one special character",
     };
   }
 
@@ -60,13 +60,13 @@ export const validatePassword = (
   if (!agreeToTerms) {
     return {
       isValid: false,
-      error: "You must agree to the terms and conditions"
+      error: "You must agree to the terms and conditions",
     };
   }
 
   // All validations passed
   return {
     isValid: true,
-    error: null
+    error: null,
   };
 };
