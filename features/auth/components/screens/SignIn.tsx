@@ -88,10 +88,7 @@ const SignInScreen = () => {
         <CdText variant="title" size="large" style={localStyles.title}>
           Welcome back
         </CdText>
-        
-        {error && <CdText variant="error" size="small" style={localStyles.error}>{error}</CdText>}
-        {message && <CdText variant="message" size="small" style={localStyles.message}>{message}</CdText>}
-        
+       
         <CdTextInput
           placeholder="E-mail"
           value={email}
@@ -111,7 +108,7 @@ const SignInScreen = () => {
         />
         
         <TouchableOpacity onPress={handleForgotPassword} style={localStyles.forgotPasswordContainer}>
-          <CdText variant="link" size="small">Forgot password?</CdText>
+          <CdText variant="link" size="medium" style={localStyles.forgotPasswordText}>Forgot password?</CdText>
         </TouchableOpacity>
         
         <View style={localStyles.socialContainer}>
@@ -141,8 +138,11 @@ const SignInScreen = () => {
               </CdText>
             </TouchableOpacity>
         </View>
-        
-        <View style={localStyles.signinButtonContainer}>
+        <View style={localStyles.errorContainer}>
+        {error && <CdText variant="error" size="medium" style={localStyles.error}>{error}</CdText>}
+        {message && <CdText variant="message" size="medium" style={localStyles.message}>{message}</CdText>}
+        </View>
+        <View style={localStyles.actionButtonContainer}>
           <CdButton
             title="Sign in"
             onPress={handleLogin}
@@ -187,6 +187,12 @@ const localStyles = StyleSheet.create({
     alignSelf: "flex-start",
     marginBottom: 30,
   },
+  forgotPasswordText: {
+    fontSize: 14,
+    fontWeight: "normal",
+    textDecorationLine: "none",
+    color: "#FFFFFF",
+  },
   socialContainer: {
     marginBottom: 30,
     gap: 16,
@@ -203,7 +209,14 @@ const localStyles = StyleSheet.create({
   signupText: {
     textAlign: "center",
   },
-  signinButtonContainer: {
+  errorContainer: {
+    position: "absolute",
+    bottom: 140,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  actionButtonContainer: {
     position: "absolute",
     bottom: 60,
     left: 0,

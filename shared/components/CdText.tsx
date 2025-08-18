@@ -48,11 +48,11 @@ const localStyles = StyleSheet.create({
     opacity: 0.8,
   },
   errorText: {
-    color: "#FE4437",
+    color: "#FF6B5D",
     textTransform: "uppercase",
   },
   messageText: {
-    color: "#4A90E2",
+    color: "#6646EC",
     textTransform: "uppercase",
   },
   linkText: {

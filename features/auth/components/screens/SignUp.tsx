@@ -1,22 +1,21 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   View,
   TouchableOpacity,
-  ActivityIndicator,
-  ScrollView,
   StyleSheet,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useSignUp } from "@clerk/clerk-expo";
 import SageIcon from "@/shared/components/icons/SageIcon";
-import { Star5 } from "@/shared/components/icons/SageIcon";
-import { CustomCheckbox } from "@/shared/components/ui/CustomCheckBox";
-import CdTextInput from "../../../../shared/components/CdTextInput";
 import PasswordRequirement from "../shared/PasswordRequirement";
-import CdButton from "../../../../shared/components/CdButton";
-import CdText from "../../../../shared/components/CdText";
+import CdTextInput from "@/shared/components/CdTextInput";
+import CdButton from "@/shared/components/CdButton";
+import CdText from "@/shared/components/CdText";
+import { validatePassword } from "../../utils";
+import SignUpSuccess from "../shared/SignUpSuccess";
+import EmailVerification from "../shared/EmailVerification";
+import TermsAndPrivacy from "../shared/TermsAndPrivacy";
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
@@ -35,40 +34,10 @@ const SignUpScreen = () => {
   const onSignUpPress = async () => {
     if (!isLoaded) return;
 
-    // Validate passwords match
-    if (password !== repeatPassword) {
-      setPasswordError("Passwords do not match");
-      return;
-    }
-
-    // Validate password requirements
-    if (password.length < 10) {
-      setPasswordError("Password must be at least 10 characters");
-      return;
-    }
-
-    if (!/[a-z]/.test(password)) {
-      setPasswordError("Password must contain at least one lowercase letter");
-      return;
-    }
-
-    if (!/[A-Z]/.test(password)) {
-      setPasswordError("Password must contain at least one uppercase letter");
-      return;
-    }
-
-    if (!/[0-9]/.test(password)) {
-      setPasswordError("Password must contain at least one digit");
-      return;
-    }
-
-    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/.test(password)) {
-      setPasswordError("Password must contain at least one special character");
-      return;
-    }
-
-    if (!agreeToTerms) {
-      setPasswordError("You must agree to the terms and conditions");
+    // Validate password using utility function
+    const validation = validatePassword(password, repeatPassword, agreeToTerms);
+    if (!validation.isValid) {
+      setPasswordError(validation.error);
       return;
     }
 
@@ -108,19 +77,14 @@ const SignUpScreen = () => {
     setIsSubmitting(true);
 
     try {
-      // Use the code the user provided to attempt verification
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
-        code,
+        code: code,
       });
 
-      // If verification was completed, set the session to active
-      // and redirect the user
       if (signUpAttempt.status === "complete") {
         await setActive({ session: signUpAttempt.createdSessionId });
         setIsSuccess(true);
       } else {
-        // If the status is not complete, check why. User may need to
-        // complete further steps.
         console.error(JSON.stringify(signUpAttempt, null, 2));
         setPasswordError("Verification failed. Please try again.");
       }
@@ -140,87 +104,20 @@ const SignUpScreen = () => {
       end={{ x: 1, y: 1 }}
       style={{ flex: 1, width: "100%", height: "100%" }}
     >
-      <ScrollView 
-        contentContainerStyle={styles.form}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <View 
+        style={styles.form}
       >
         {isSubmitting ? (
           <View style={styles.centerContent}>
             <SageIcon status="pulsating" size={200} />
           </View>
         ) : pendingVerification ? (
-          <View style={styles.centerContent}>
-            <CdText variant="title" size="large" style={styles.title}>Verify your email</CdText>
-            <CdTextInput
-              value={code}
-              onChangeText={(code) => setCode(code)}
-              keyboardType="number-pad"
-              placeholder="Enter your verification code"
-            />
-            <CdButton
-              title="Verify"
-              onPress={onVerifyPress}
-              variant="outline"
-              size="medium"
-              disabled={isSubmitting}
-              style={styles.verifyButton}
-            />
-            
-            <TouchableOpacity onPress={() => router.replace("/")}>
-              <CdText variant="body" size="small" style={{ marginTop: 20, color: "#666" }}>← Back</CdText>
-            </TouchableOpacity>
-          </View>
+          <EmailVerification code={code} setCode={setCode} />
         ) : isSuccess ? (
-          <View style={styles.centerContent}>
-            <CdText
-              variant="title"
-              size="large"
-              style={{
-                fontSize: 20,
-                marginBottom: 16,
-              }}
-            >
-              Welcome
-            </CdText>
-            <CdText
-              variant="body"
-              size="medium"
-              style={{
-                marginBottom: 32,
-                width: "70%",
-              }}
-            >
-              Check your inbox for verification email.
-            </CdText>
-            <Star5 width={100} height={100} />
-            <View style={{ height: 20 }} />
-            <CdText
-              variant="title"
-              size="medium"
-              style={{
-                fontSize: 18,
-                marginBottom: 8,
-              }}
-            >
-              Cadence is in beta.
-            </CdText>
-            <CdText
-              variant="body"
-              size="medium"
-              style={{
-                width: "76%",
-              }}
-            >
-              We are working on improving the app. Your feedback would be
-              greatly appreciated. You can find the link to feedback page under
-              the Profile.
-            </CdText>
-          </View>
+          <SignUpSuccess />
         ) : (
           <View style={styles.formContainer}>
             <CdText variant="title" size="large" style={styles.title}>Sign up</CdText>
-
             <CdTextInput
               placeholder="Name"
               value={full_name}
@@ -240,7 +137,6 @@ const SignUpScreen = () => {
               textContentType="emailAddress"
               autoComplete="email"
             />
-
             {/* Password Field */}
             <CdTextInput
               placeholder="Password"
@@ -275,38 +171,42 @@ const SignUpScreen = () => {
             {passwordError &&
               password.length > 0 &&
               repeatPassword.length > 0 && (
-                <CdText variant="error" size="small" style={styles.passwordMismatchText}>{passwordError}</CdText>
+                <CdText variant="error" size="medium" style={styles.passwordMismatchText}>{passwordError}</CdText>
               )}
 
             {/* Password Requirements */}
-                <PasswordRequirement 
+              <PasswordRequirement 
                 password={password}
                 repeatPassword={repeatPassword}
                 />
 
-
-            {/* Sign Up Button */}
-            <CdButton
-              title="Sign Up"
-              onPress={onSignUpPress}
-              variant="outline"
-              size="medium"
-              disabled={isSubmitting}
-              style={styles.signupButton}
-            />
+            <TermsAndPrivacy />
 
             {/* Redirect to sign in */}
-            <CdText variant="body" size="small" style={styles.signInText}>
-              Already have an account?{" "}
+            <View style={styles.signInTextContainer}> 
+              <CdText variant="body" size="small" style={styles.signInText}>
+                Already have an account?{" "}
+              </CdText>
               <TouchableOpacity onPress={() => router.push("/(auth)/sign-in") }>
-                <CdText variant="link" size="medium">
-                  Sign in now.
-                </CdText>
+                  <CdText variant="link" size="medium">
+                    Sign in now.
+                  </CdText>
               </TouchableOpacity>
-            </CdText>
+            </View>
+         {/* Sign Up Button */}
+         
           </View>
         )}
-      </ScrollView>
+        <View style={styles.actionButtonContainer}>
+          <CdButton
+            title="Sign up"
+            onPress={onSignUpPress}
+            variant="text"
+            size="large"
+          />
+        </View>
+
+      </View>
     </LinearGradient>
   );
 };
@@ -314,8 +214,8 @@ const SignUpScreen = () => {
 const styles = StyleSheet.create({
   form: {
     width: "100%",
-    paddingVertical: 40,
-    paddingHorizontal: 16,
+    paddingVertical: 100,
+    paddingHorizontal:40,
     alignItems: "center",
     minHeight: "100%",
   },
@@ -324,7 +224,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
+    fontWeight: "normal",
     marginBottom: 30,
     marginTop: 20,
     color: "#fff",
@@ -376,17 +277,27 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     color: "#fff",
   },
+  signInTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: "100%",
+    marginTop: 20,
+  },
   signInText: {
     color: "#B9B9B9",
-    width: "100%",
+    // width: "100%",
     fontSize: 14,
     marginTop: 20,
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: "left",
   },
-  signupButton: {
+  actionButtonContainer: {
+    position: "absolute",
+    bottom: 60,
     width: "100%",
     marginTop: 10,
+    alignItems: "center",
   },
   verifyButton: {
     width: "100%",

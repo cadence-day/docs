@@ -64,14 +64,6 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
       >
         Passwords should match.
       </Text>
-      
-      <View style={{ height: 20 }} />
-      
-      <Text style={styles.termsText}>
-        By signing up, you agree to our{" "}
-        <Text style={styles.link}>Terms and Conditions</Text> and{" "}
-        <Text style={styles.link}>Privacy Policy</Text>.
-      </Text>
     </View>
   );
 };
@@ -83,13 +75,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   requirementText: {
-    color: "#ff6b6b",
-    fontSize: 12,
-    marginTop: 4,
-    marginBottom: 4,
+    color: "#FE4437",
+    fontSize: 14,
+    marginTop: 2,
+    marginBottom: 2,
   },
   requirementMet: {
-    color: "#4CAF50",
+    color: "#758A61",
   },
   termsText: {
     color: "#B9B9B9",
