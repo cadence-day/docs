@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { View, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import CdButton from "../../../../shared/components/CdButton";
-import CdText from "../../../../shared/components/CdText";
-import CdTextInput from "../../../../shared/components/CdTextInput";
+import CdButton from "@/shared/components/CdButton";
+import CdText from "@/shared/components/CdText";
+import CdTextInput from "@/shared/components/CdTextInput";
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from 'expo-auth-session'
 import { useSSO } from '@clerk/clerk-expo'
@@ -27,17 +27,13 @@ export const useWarmUpBrowser = () => {
 const SignInScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [showSignup, setShowSignup] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const { startSSOFlow } = useSSO()
   useWarmUpBrowser()
 
   // Handle any pending authentication sessions
-WebBrowser.maybeCompleteAuthSession()
-
+  WebBrowser.maybeCompleteAuthSession()
 
   // Handlers
   const handleLogin = async () => {
@@ -61,12 +57,12 @@ WebBrowser.maybeCompleteAuthSession()
   };
 
   const handleForgotPassword = () => {
-    setShowForgotPassword(true);
+    // TODO: Implement forgot password functionality
+    console.log("Forgot password clicked");
   };
 
   const onPress = useCallback(async (strategy: string) => {
     try {
-      
       const { createdSessionId, setActive, signIn, signUp } = await startSSOFlow({
         strategy: strategy as OAuthStrategy,
         redirectUrl: AuthSession.makeRedirectUri(),
@@ -88,62 +84,73 @@ WebBrowser.maybeCompleteAuthSession()
       end={{ x: 1, y: 1 }}
       style={localStyles.container}
     >
-      <CdText variant="title" size="large" style={localStyles.title}>
-        Cadence
-      </CdText>
-      {error && <CdText variant="error" size="small" style={localStyles.error}>{error}</CdText>}
-      {message && <CdText variant="message" size="small" style={localStyles.message}>{message}</CdText>}
-      <CdTextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        textContentType="emailAddress"
-        autoComplete="email"
+      <View style={localStyles.content}>
+        <CdText variant="title" size="large" style={localStyles.title}>
+          Welcome back
+        </CdText>
         
-      />
-      <CdTextInput
-        value={password}
-        onChangeText={setPassword}
-        isPassword={true}
-        textContentType="password"
-        autoComplete="password"
-        placeholder="Password"
-      />
-      <TouchableOpacity onPress={handleForgotPassword}>
-        <CdText variant="link" size="medium" style={localStyles.forgotPassword}>Forgot Password?</CdText>
-      </TouchableOpacity>
-      <View style={localStyles.buttonContainer}>
-        <CdButton
-          title="Sign Up"
-          onPress={handleSignup}
-          variant="outline"
-          size="medium"
-          style={localStyles.button}
+        {error && <CdText variant="error" size="small" style={localStyles.error}>{error}</CdText>}
+        {message && <CdText variant="message" size="small" style={localStyles.message}>{message}</CdText>}
+        
+        <CdTextInput
+          placeholder="E-mail"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          textContentType="emailAddress"
+          autoComplete="email"
         />
-        <CdButton
-          title="Sign in"
-          onPress={handleLogin}
-          variant="outline"
-          size="medium"
-          style={localStyles.button}
+        
+        <CdTextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          isPassword={true}
+          textContentType="password"
+          autoComplete="password"
         />
-      </View>
-      <View style={localStyles.socialContainer}>
-        <CdButton
-            title="Sign in with Google"
+        
+        <TouchableOpacity onPress={handleForgotPassword} style={localStyles.forgotPasswordContainer}>
+          <CdText variant="link" size="small">Forgot password?</CdText>
+        </TouchableOpacity>
+        
+        <View style={localStyles.socialContainer}>
+          <CdButton
+            title="Log in with Google"
             onPress={() => onPress("oauth_google")}
             variant="outline"
             size="medium"
             style={localStyles.socialButton}
           />
           <CdButton
-            title="Sign in with Apple"
+            title="Log in with Apple"
             onPress={() => onPress("oauth_apple")}
             variant="outline"
             size="medium"
             style={localStyles.socialButton}
           />
+        </View>
+        
+        <View style={localStyles.signupContainer}>
+          <CdText variant="body" size="medium" style={localStyles.signupText}>
+            Don't have an account?{" "}
+          </CdText>
+          <TouchableOpacity onPress={handleSignup}>
+              <CdText variant="link" size="medium">
+                Sign up now.
+              </CdText>
+            </TouchableOpacity>
+        </View>
+        
+        <View style={localStyles.signinButtonContainer}>
+          <CdButton
+            title="Sign in"
+            onPress={handleLogin}
+            variant="text"
+            size="large"
+            style={localStyles.signinButton}
+          />
+        </View>
       </View>
     </LinearGradient>
   );
@@ -152,56 +159,60 @@ WebBrowser.maybeCompleteAuthSession()
 const localStyles = StyleSheet.create({
   container: {
     flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  content: {
+    flex: 1,
     justifyContent: "center",
-    padding: 16,
+    paddingHorizontal: 40,
+    paddingVertical: 40,
   },
   title: {
-    marginBottom: 30,
+    marginBottom: 40,
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "normal",
+    color: "#FFFFFF",
   },
   error: {
-    marginBottom: 12,
+    marginBottom: 20,
     textAlign: "center",
-  },
-  input: {
-    borderBottomWidth: 1,
-    borderColor: "#FFFFFF",
-    color: "#FFFFFF",
-    fontSize: 14,
-    height: 40,
-    marginBottom: 12,
   },
   message: {
-    marginBottom: 12,
+    marginBottom: 20,
     textAlign: "center",
   },
-  forgotPassword: {
-    marginBottom: 12,
-    marginTop: 10,
-  },
-  passwordInput: {
-    flex: 1,
-    color: "#FFFFFF",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 24,
-    gap: 10,
+  forgotPasswordContainer: {
+    alignSelf: "flex-start",
+    marginBottom: 30,
   },
   socialContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-    gap: 20,
+    marginBottom: 30,
+    gap: 16,
   },
   socialButton: {
     width: "100%",
   },
-  button: {
-    width: "48%",
+  signupContainer: {
+    marginBottom: 30,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
-
+  signupText: {
+    textAlign: "center",
+  },
+  signinButtonContainer: {
+    position: "absolute",
+    bottom: 60,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  signinButton: {
+    width: "100%",
+  },
 });
 
 export default SignInScreen;

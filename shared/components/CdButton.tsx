@@ -4,7 +4,7 @@ import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from "react-
 interface CdButtonProps {
   title: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "text";
   size?: "small" | "medium" | "large";
   disabled?: boolean;
   style?: ViewStyle;
@@ -73,6 +73,11 @@ const localStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#FFFFFF",
   },
+  textButton: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    padding: 0,
+  },
   
   // Size styles
   smallButton: {
@@ -117,6 +122,10 @@ const localStyles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: "#FFFFFF",
+  },
+  textButtonText: {
+    color: "#FFFFFF",
+    textDecorationLine: "underline",
   },
   
   // Size text styles
