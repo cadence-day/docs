@@ -2,7 +2,7 @@ import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { Link } from "expo-router";
 import { Text, View, StyleSheet } from "react-native";
 import { SignOutButton } from "@/shared/components/SignOutButton";
-import SignIn from "@/features/auth/components/screens/Sign-in";
+import SignIn from "@/features/auth/components/screens/SignIn";
 
 export default function Page() {
   const { user } = useUser();
@@ -17,26 +17,7 @@ export default function Page() {
           <SignOutButton />
         </View>
       </SignedIn>
-
       <SignedOut>
-        {/* <View style={styles.authSection}>
-          <Text style={styles.authTitle}>Get Started</Text>
-          <Text style={styles.authSubtitle}>Sign in to your account or create a new one</Text>
-          
-          <View style={styles.buttonContainer}>
-            <Link href="/(auth)/sign-in" asChild>
-              <View style={styles.primaryButton}>
-                <Text style={styles.primaryButtonText}>Sign In</Text>
-              </View>
-            </Link>
-            
-            <Link href="/(auth)/sign-up" asChild>
-              <View style={styles.secondaryButton}>
-                <Text style={styles.secondaryButtonText}>Sign Up</Text>
-              </View>
-            </Link>
-          </View>
-        </View> */}
         <SignIn/>
       </SignedOut>
     </View>

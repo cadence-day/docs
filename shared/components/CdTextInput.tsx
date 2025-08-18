@@ -10,7 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 interface CdTextInputProps extends TextInputProps {
-  label: string;
+  label?: string;
   error?: string | null;
   isPassword?: boolean;
   isRequired?: boolean;
@@ -36,9 +36,11 @@ const CdTextInput: React.FC<CdTextInputProps> = ({
   return (
     <View style={styles.container}>
 
-      <Text style={styles.label}>
-       {label}
-      </Text> 
+      {label && (
+        <Text style={styles.label}>
+         {label}
+        </Text> 
+      )}
     
       <View
         style={[
@@ -56,7 +58,8 @@ const CdTextInput: React.FC<CdTextInputProps> = ({
           secureTextEntry={isPassword && !showPassword}
           autoCapitalize="none"
           autoCorrect={false}
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="#A5A1A0"
+          placeholder={label}
           returnKeyType="next"
           {...textInputProps}
         />
@@ -106,25 +109,25 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderBottomColor: "#ffffff",
-    borderBottomWidth: 0.5,
-    minHeight: 36,
+    borderBottomColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    minHeight: 40,
     minWidth: "100%",
   },
   inputContainerFocused: {
-    borderBottomColor: "#6646EC",
+    borderBottomColor: "#FFFFFF",
   },
   inputContainerError: {
-    borderBottomColor: "#EF4444",
+    borderBottomColor: "#FE4437",
   },
   input: {
     flex: 1,
     fontSize: 14,
-    color: "#ffffff",
+    color: "#FFFFFF",
     paddingVertical: 6,
   },
   inputError: {
-    color: "#EF4444",
+    color: "#FE4437",
   },
   passwordToggle: {
     padding: 4,
@@ -137,7 +140,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 12,
-    color: "#EF4444",
+    color: "#FE4437",
     marginLeft: 4,
     flex: 1,
   },
