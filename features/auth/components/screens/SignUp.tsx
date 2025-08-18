@@ -138,7 +138,7 @@ const SignUpScreen = () => {
       locations={[0, 0.6]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ flex: 1, padding: 16, alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}
+      style={{ flex: 1, width: "100%", height: "100%" }}
     >
       <ScrollView 
         contentContainerStyle={styles.form}
@@ -313,8 +313,9 @@ const SignUpScreen = () => {
 
 const styles = StyleSheet.create({
   form: {
-    width: "90%",
+    width: "100%",
     paddingVertical: 40,
+    paddingHorizontal: 16,
     alignItems: "center",
     minHeight: "100%",
   },
@@ -403,6 +404,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     minHeight: 400,
+    paddingHorizontal: 16,
   },
   loadingText: {
     color: "#fff",
