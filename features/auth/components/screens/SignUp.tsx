@@ -298,7 +298,7 @@ const SignUpScreen = () => {
             {/* Redirect to sign in */}
             <CdText variant="body" size="small" style={styles.signInText}>
               Already have an account?{" "}
-              <TouchableOpacity onPress={() => router.push("/") }>
+              <TouchableOpacity onPress={() => router.push("/(auth)/sign-in") }>
                 <CdText variant="link" size="medium">
                   Sign in now.
                 </CdText>

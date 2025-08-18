@@ -2,7 +2,7 @@ import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { Link } from "expo-router";
 import { Text, View, StyleSheet } from "react-native";
 import { SignOutButton } from "@/shared/components/SignOutButton";
-import SignIn from "@/features/auth/components/screens/SignIn";
+import SignIn from "../(auth)/sign-in";
 
 export default function Page() {
   const { user } = useUser();
@@ -18,7 +18,7 @@ export default function Page() {
         </View>
       </SignedIn>
       <SignedOut>
-        <SignIn/>
+         <SignIn/>
       </SignedOut>
     </View>
   );
@@ -27,8 +27,6 @@ export default function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    padding: 20,
     width: "100%",
     height: "100%",
   },
