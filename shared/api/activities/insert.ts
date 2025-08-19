@@ -1,7 +1,5 @@
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import type { Activity } from "@/shared/types/models/activity";
-import { apiCall } from "@/shared/api/utils/apiHelpers";
-import { handleApiError } from "@/shared/api/utils/errorHandler";
 
 /**
  * Inserts a new activity into the database.
@@ -11,18 +9,18 @@ import { handleApiError } from "@/shared/api/utils/errorHandler";
 export async function insertActivity(
   activity: Omit<Activity, "id">,
 ): Promise<Activity | null> {
-  try {
-    return await apiCall(async () => {
-      const { data, error } = await supabaseClient
-        .from("activities")
-        .insert(activity)
-        .select()
-        .single();
-      return { data, error };
-    });
-  } catch (error) {
-    handleApiError("insertActivity", error);
+  const { data, error } = await supabaseClient
+    .from("activities")
+    .insert(activity)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error inserting activity:", error);
+    throw new Error(`Failed to insert activity: ${error.message}`);
   }
+
+  return data as Activity | null;
 }
 
 /**
@@ -30,69 +28,19 @@ export async function insertActivity(
  * @param activities - An array of activity objects to insert.
  * @returns A promise that resolves to an array of inserted activities.
  */
+
 export async function insertActivities(
   activities: Omit<Activity, "id">[],
 ): Promise<Activity[]> {
-  try {
-    return await apiCall(async () => {
-      const { data, error } = await supabaseClient
-        .from("activities")
-        .insert(activities)
-        .select();
-      return { data: data ?? [], error };
-    });
-  } catch (error) {
-    handleApiError("insertActivities", error);
-  }
-}
+  const { data, error } = await supabaseClient
+    .from("activities")
+    .insert(activities)
+    .select();
 
-/**
- * Upserts (inserts or updates) an activity in the database.
- * If an activity with the same primary key exists, it will be updated; otherwise, it will be inserted.
- *
- * Optional field: id
- *
- * @param activity - The activity object to upsert (id is optional).
- * @returns A promise that resolves to the upserted activity or null if operation fails.
- */
-export async function upsertActivity(
-  activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>,
-): Promise<Activity | null> {
-  try {
-    return await apiCall(async () => {
-      const { data, error } = await supabaseClient
-        .from("activities")
-        .upsert(activity, { onConflict: "id" })
-        .select()
-        .single();
-      return { data, error };
-    });
-  } catch (error) {
-    handleApiError("upsertActivity", error);
+  if (error) {
+    console.error("Error inserting activities:", error);
+    throw new Error(`Failed to insert activities: ${error.message}`);
   }
-}
 
-/**
- * Upserts (inserts or updates) multiple activities in the database.
- * If an activity with the same primary key exists, it will be updated; otherwise, it will be inserted.
- *
- * Optional field: id
- *
- * @param activities - An array of activity objects to upsert (id is optional).
- * @returns A promise that resolves to an array of upserted activities.
- */
-export async function upsertActivities(
-  activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[],
-): Promise<Activity[]> {
-  try {
-    return await apiCall(async () => {
-      const { data, error } = await supabaseClient
-        .from("activities")
-        .upsert(activities, { onConflict: "id" })
-        .select();
-      return { data: data ?? [], error };
-    });
-  } catch (error) {
-    handleApiError("upsertActivities", error);
-  }
+  return data as Activity[];
 }
