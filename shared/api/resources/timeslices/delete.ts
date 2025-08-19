@@ -1,7 +1,7 @@
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import type { Timeslice } from "@/shared/types/models/";
-import { apiCall } from "../utils/apiHelpers";
-import { handleApiError } from "../utils/errorHandler";
+import { apiCall } from "../../utils/apiHelpers";
+import { handleApiError } from "../../utils/errorHandler";
 
 /**
  * Deletes a timeslice by its ID.
