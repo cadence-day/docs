@@ -1,6 +1,7 @@
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import type { Activity } from "@/shared/types/models/activity";
-import { ActivityIndicator } from "react-native";
+import { apiCall } from "@/shared/api/utils/apiHelpers";
+import { handleApiError } from "@/shared/api/utils/errorHandler";
 
 /**
  * Updates an existing activity in the database.
@@ -13,17 +14,18 @@ export async function updateActivity(
   if (!activity?.id) {
     throw new Error("Activity ID is required for update.");
   }
-  const { data, error } = await supabaseClient
-    .from("activities")
-    .update(activity)
-    .eq("id", activity.id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating activity:", error);
-    throw new Error(`Failed to update activity: ${error.message}`);
+  try {
+    const id = activity.id!; // guaranteed by earlier check
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("activities")
+        .update(activity)
+        .eq("id", id)
+        .select()
+        .single();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("updateActivity", error);
   }
-
-  return data as Activity | null;
 }
