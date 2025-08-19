@@ -18,7 +18,7 @@ export default ({ config }) => ({
     scheme: "day.cadence",
     deepLinking: true,
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
+    newArchEnabled: false,
     description: "A mobile app for recording daily activities and reflections",
     privacy: "unlisted",
     ios: {
@@ -59,35 +59,8 @@ export default ({ config }) => ({
       "expo-web-browser",
       "expo-secure-store",
       [
-        "expo-calendar",
-        {
-          calendarPermission: "The app needs to access your calendar."
-        }
-      ],
-      [
-        "expo-local-authentication",
-        {
-          faceIDPermission: "Allow Cadence.day to use Face ID.",
-        },
-      ],
-      ["expo-audio",
-        {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
-        },
-      ],
-      [
         "expo-apple-authentication"
       ],
-      // DISABLED FOR NEXT BUILD - SENTRY INTEGRATION
-      // [
-      //   "@sentry/react-native/expo",
-      //   {
-      //     url: "https://sentry.io/",
-      //     project: "react-native",
-      //     organization: "cadenceday",
-      //     disableAutoUpload: true,
-      //   },
-      // ],
     ],
     experiments: {
       typedRoutes: true,
