@@ -88,7 +88,7 @@ const SignUpScreen = () => {
           <SignUpSuccess />
         ) : (
           <View style={styles.formContainer}>
-            <CdText variant="title" size="large" style={styles.titleLarge}>
+            <CdText variant="title" size="large" style={styles.title}>
               Sign up
             </CdText>
             
