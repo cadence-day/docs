@@ -38,7 +38,7 @@
     "phosphor-react-native": "^2.3.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-native": "0.79.5",
+    "react-native": "^0.79.6",
     "react-native-web": "^0.20.0",
     "react-test-renderer": "19.0.0",
     "reanimated-color-picker": "^4.1.0",
