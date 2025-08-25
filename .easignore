@@ -2,3 +2,4 @@ supabase/
 .prettierignore
 .prettierrc
 README.md
+docs/

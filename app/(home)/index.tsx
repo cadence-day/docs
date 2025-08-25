@@ -1,7 +1,6 @@
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
-import { Link } from "expo-router";
-import { Text, View, StyleSheet } from "react-native";
 import { SignOutButton } from "@/shared/components/SignOutButton";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { StyleSheet, Text, View } from "react-native";
 import SignIn from "../(auth)/sign-in";
 
 export default function Page() {
