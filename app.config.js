@@ -58,9 +58,7 @@ export default ({ config }) => ({
       "expo-router",
       "expo-web-browser",
       "expo-secure-store",
-      [
-        "expo-apple-authentication"
-      ],
+      ["expo-apple-authentication"],
     ],
     experiments: {
       typedRoutes: true,
@@ -74,7 +72,8 @@ export default ({ config }) => ({
       },
       EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
       EXPO_PUBLIC_SUPABASE_KEY: process.env.EXPO_PUBLIC_SUPABASE_KEY,
-      EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
+      EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY:
+        process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
       EXPO_PUBLIC_LANGGRAPH_API_URL: process.env.EXPO_PUBLIC_LANGGRAPH_API_URL,
       EXPO_PUBLIC_LANGGRAPH_ASSISTANT_ID:
         process.env.EXPO_PUBLIC_LANGGRAPH_ASSISTANT_ID,

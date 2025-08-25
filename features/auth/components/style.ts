@@ -114,7 +114,7 @@ export const styles = StyleSheet.create({
   forgotPasswordText: {
     fontSize: 14,
     fontWeight: "normal",
-    textDecorationLine: "none",
+    textDecorationLine: "underline",
     color: "#FFFFFF",
   },
 
@@ -248,6 +248,7 @@ export const styles = StyleSheet.create({
   },
   requirementMet: {
     color: "#A5A1A0",
+    textDecorationLine: "line-through",
   },
   termsText: {
     color: "#B9B9B9",

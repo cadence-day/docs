@@ -23,4 +23,3 @@ const DirectToSignUp = () => {
 };
 
 export default DirectToSignUp;
-

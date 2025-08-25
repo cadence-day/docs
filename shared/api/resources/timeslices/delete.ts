@@ -9,21 +9,21 @@ import { handleApiError } from "../../utils/errorHandler";
  * @returns A promise that resolves to the deleted timeslice or null if not found.
  */
 export async function deleteTimeslice(
-    timesliceId: string,
+  timesliceId: string
 ): Promise<Timeslice | null> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .delete()
-                .eq("id", timesliceId)
-                .select()
-                .single();
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("deleteTimeslice", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .delete()
+        .eq("id", timesliceId)
+        .select()
+        .single();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("deleteTimeslice", error);
+  }
 }
 
 /**
@@ -32,18 +32,18 @@ export async function deleteTimeslice(
  * @returns A promise that resolves to an array of deleted timeslices.
  */
 export async function deleteTimeslices(
-    timesliceIds: string[],
+  timesliceIds: string[]
 ): Promise<Timeslice[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .delete()
-                .in("id", timesliceIds)
-                .select();
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("deleteTimeslices", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .delete()
+        .in("id", timesliceIds)
+        .select();
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("deleteTimeslices", error);
+  }
 }

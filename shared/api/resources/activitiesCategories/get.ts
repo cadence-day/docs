@@ -8,14 +8,14 @@ import { handleApiError } from "@/shared/api/utils/errorHandler";
  * @returns A promise that resolves to an array of activity categories.
  */
 export async function getAllActivityCategories(): Promise<ActivityCategory[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("activity_categories")
-                .select("*");
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("getAllActivityCategories", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("activity_categories")
+        .select("*");
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("getAllActivityCategories", error);
+  }
 }

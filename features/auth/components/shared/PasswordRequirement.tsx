@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 import { styles } from "../style";
+import { PASSWORD_REQUIREMENTS } from "./constants";
 
 interface PasswordRequirementProps {
   password: string;
@@ -16,44 +17,70 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
       <Text
         style={[
           styles.requirementText,
-          password.length >= 10 && styles.requirementMet,
-        ]}
-      >
-        The password should be at least 10 characters.
-      </Text>
-      <Text
-        style={[
-          styles.requirementText,
-          /[a-z]/.test(password) && styles.requirementMet,
-        ]}
-      >
-        Contain one lowercase letter.
-      </Text>
-      <Text
-        style={[
-          styles.requirementText,
-          /[A-Z]/.test(password) && styles.requirementMet,
-        ]}
-      >
-        Contain one uppercase letter.
-      </Text>
-      <Text
-        style={[
-          styles.requirementText,
-          /[0-9]/.test(password) && styles.requirementMet,
-        ]}
-      >
-        Contain one digit.
-      </Text>
-      <Text
-        style={[
-          styles.requirementText,
-          /[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/.test(password) &&
+          password.length >= PASSWORD_REQUIREMENTS.MIN_LENGTH &&
             styles.requirementMet,
         ]}
       >
-        Contain one special character.
+        - The password should be at least {PASSWORD_REQUIREMENTS.MIN_LENGTH}{" "}
+        characters.
       </Text>
+
+      {PASSWORD_REQUIREMENTS.REQUIRE_LOWERCASE && (
+        <Text
+          style={[
+            styles.requirementText,
+            /[a-z]/.test(password) && styles.requirementMet,
+          ]}
+        >
+          - Contain one lowercase letter.
+        </Text>
+      )}
+
+      {PASSWORD_REQUIREMENTS.REQUIRE_UPPERCASE && (
+        <Text
+          style={[
+            styles.requirementText,
+            /[A-Z]/.test(password) && styles.requirementMet,
+          ]}
+        >
+          - Contain one uppercase letter.
+        </Text>
+      )}
+
+      {PASSWORD_REQUIREMENTS.REQUIRE_NUMBER && (
+        <Text
+          style={[
+            styles.requirementText,
+            /[0-9]/.test(password) && styles.requirementMet,
+          ]}
+        >
+          - Contain one digit.
+        </Text>
+      )}
+
+      {PASSWORD_REQUIREMENTS.REQUIRE_SPECIAL_CHAR && (
+        <Text
+          style={[
+            styles.requirementText,
+            /[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/.test(password) &&
+              styles.requirementMet,
+          ]}
+        >
+          - Contain one special character.
+        </Text>
+      )}
+
+      {PASSWORD_REQUIREMENTS.REQUIRE_SPECIAL_CHAR && (
+        <Text
+          style={[
+            styles.requirementText,
+            /[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/.test(password) &&
+              styles.requirementMet,
+          ]}
+        >
+          - Contain one special character.
+        </Text>
+      )}
 
       <Text
         style={[
@@ -63,7 +90,7 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
             styles.requirementMet,
         ]}
       >
-        Passwords should match.
+        - Passwords should match.
       </Text>
     </View>
   );

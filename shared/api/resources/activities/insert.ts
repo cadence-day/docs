@@ -15,7 +15,7 @@ import {
  * @returns A promise that resolves to the inserted activity or null if insertion fails.
  */
 export async function insertActivity(
-  activity: Omit<Activity, "id">,
+  activity: Omit<Activity, "id">
 ): Promise<Activity | null> {
   try {
     // Encrypt the activity name before insertion
@@ -47,7 +47,7 @@ export async function insertActivity(
  * @returns A promise that resolves to an array of inserted activities.
  */
 export async function insertActivities(
-  activities: Omit<Activity, "id">[],
+  activities: Omit<Activity, "id">[]
 ): Promise<Activity[]> {
   try {
     // Encrypt activity names before insertion
@@ -78,7 +78,7 @@ export async function insertActivities(
  * @returns A promise that resolves to the upserted activity or null if operation fails.
  */
 export async function upsertActivity(
-  activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>,
+  activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>
 ): Promise<Activity | null> {
   try {
     // Encrypt the activity name before upsert
@@ -114,12 +114,12 @@ export async function upsertActivity(
  * @returns A promise that resolves to an array of upserted activities.
  */
 export async function upsertActivities(
-  activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[],
+  activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[]
 ): Promise<Activity[]> {
   try {
     // Encrypt activity names before upsert
     const encryptedActivities = await Promise.all(
-      activities.map((activity) => encryptActivityName(activity as Activity)),
+      activities.map((activity) => encryptActivityName(activity as Activity))
     );
 
     const result = await apiCall(async () => {

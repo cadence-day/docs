@@ -1,25 +1,36 @@
-import { useState, useEffect, useCallback } from "react";
-import { View, TouchableOpacity } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import CdButton from "@/shared/components/CdButton";
 import CdText from "@/shared/components/CdText";
 import CdTextInput from "@/shared/components/CdTextInput";
-import * as WebBrowser from 'expo-web-browser';
-import * as AuthSession from 'expo-auth-session';
-import { useSSO } from '@clerk/clerk-expo';
-import { OAuthStrategy } from '@clerk/types';
-import { styles } from "../style";
+import Toast from "@/shared/components/Toast";
+import SageIcon from "@/shared/components/icons/SageIcon";
+import { useToast } from "@/shared/hooks";
+import { useSignIn, useSSO } from "@clerk/clerk-expo";
+import { OAuthStrategy } from "@clerk/types";
+import * as AuthSession from "expo-auth-session";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { TextInput, TouchableOpacity, View } from "react-native";
+import {
+  clearAllClerkErrors,
+  createClerkErrorClearer,
+  isValidEmail,
+  parseClerkErrors,
+  validateEmailField,
+  type ClerkErrorMapping,
+} from "../../utils";
 import DirectToSignUp from "../shared/DirectToSignUp";
-import ForgotPasswordDialog from "../dialogs/ForgotPassword/ForgotPasswordDialog";
+import { styles } from "../style";
+
+import { COLORS } from "@/shared/constants/COLORS";
 
 export const useWarmUpBrowser = () => {
-  const { startSSOFlow } = useSSO();
-  
   useEffect(() => {
     // Preloads the browser for Android devices to reduce authentication load time
     // See: https://docs.expo.dev/guides/authentication/#improving-user-experience
     void WebBrowser.warmUpAsync();
-    
+
     return () => {
       // Cleanup: closes browser when component unmounts
       void WebBrowser.coolDownAsync();
@@ -30,95 +41,227 @@ export const useWarmUpBrowser = () => {
 const SignInScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [isForgotPasswordDialogVisible, setIsForgotPasswordDialogVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Form validation states
+  const [errors, setErrors] = useState({
+    email: null as string | null,
+    password: null as string | null,
+  });
+
+  const [fieldTouched, setFieldTouched] = useState({
+    email: false,
+    password: false,
+  });
+
+  // Clerk server errors state
+  const [clerkErrors, setClerkErrors] = useState<ClerkErrorMapping>({
+    email: null,
+    firstName: null,
+    lastName: null,
+    password: null,
+    general: null,
+  });
+
+  const { isLoaded, signIn, setActive } = useSignIn();
   const { startSSOFlow } = useSSO();
+  const { toast, showError, showSuccess, hideToast } = useToast();
+
   useWarmUpBrowser();
+
+  // Input refs for keyboard navigation
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+
+  // Clear Clerk errors when user starts typing
+  const clearClerkError = createClerkErrorClearer(setClerkErrors);
+
+  // Validation functions for SignIn
+  const validatePasswordSignIn = (password: string): string | null => {
+    if (password.length === 0) return "Password is required";
+    return null;
+  };
+
+  // Check if form is valid
+  const isFormValid = () => {
+    return isValidEmail(email) && password.length > 0;
+  };
+
+  // Handle field validation on blur
+  const handleFieldBlur = (field: keyof typeof fieldTouched) => {
+    setFieldTouched((prev) => ({ ...prev, [field]: true }));
+
+    let error: string | null = null;
+    switch (field) {
+      case "email":
+        error = validateEmailField(email);
+        break;
+      case "password":
+        error = validatePasswordSignIn(password);
+        break;
+    }
+
+    setErrors((prev) => ({ ...prev, [field]: error }));
+  };
+
+  // Real-time validation for touched fields
+  useEffect(() => {
+    if (fieldTouched.email) {
+      setErrors((prev) => ({ ...prev, email: validateEmailField(email) }));
+    }
+  }, [email, fieldTouched.email]);
+
+  useEffect(() => {
+    if (fieldTouched.password) {
+      setErrors((prev) => ({
+        ...prev,
+        password: validatePasswordSignIn(password),
+      }));
+    }
+  }, [password, fieldTouched.password]);
 
   // Handle any pending authentication sessions
   WebBrowser.maybeCompleteAuthSession();
 
-  // Handlers
-  const handleLogin = async () => {
-    setError(null);
-    setMessage(null);
-    
-    // TODO: Add your login logic here (API call, validation, etc.)
-    if (!email || !password) {
-      setError("Please enter both email and password");
-      return;
-    }
-    
-    // Simulate login
-    setMessage("Logging in...");
-    setTimeout(() => {
-      setMessage(null);
-      setError("Invalid credentials"); // Simulate error
-    }, 1000);
-  };
+  // Handle submission of sign-in form
+  const handleSubmit = async () => {
+    if (!isLoaded || !isFormValid()) return;
 
+    setIsSubmitting(true);
+    // Clear all Clerk errors before attempting signin
+    clearAllClerkErrors(setClerkErrors);
 
-
-  const handleForgotPassword = () => {
-    setIsForgotPasswordDialogVisible(true);
-  };
-
-  const onPress = useCallback(async (strategy: string) => {
     try {
-      const { createdSessionId, setActive, signIn, signUp } = await startSSOFlow({
-        strategy: strategy as OAuthStrategy,
-        redirectUrl: AuthSession.makeRedirectUri(),
+      const signInAttempt = await signIn.create({
+        identifier: email,
+        password,
       });
 
-      if (createdSessionId) {
-        setActive!({ session: createdSessionId });
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
+        showSuccess("Welcome back! Signed in successfully.");
+      } else {
+        // Handle cases where additional verification might be needed
+        console.error("Sign in incomplete:", signInAttempt);
+        showError("Sign in incomplete. Please try again.");
       }
     } catch (err) {
-      console.error(JSON.stringify(err, null, 2));
+      console.error("Clerk signin error:", err);
+
+      // Parse Clerk errors using utility function
+      const parsedError = parseClerkErrors(err);
+      setClerkErrors(parsedError.fieldErrors);
+
+      // Show toast notification for the error
+      if (parsedError.toastMessage) {
+        showError(parsedError.toastMessage);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [startSSOFlow]);
+  };
+
+  const handleForgotPassword = () => {
+    router.push("/forgot-password");
+  };
+
+  const onPress = useCallback(
+    async (strategy: string) => {
+      try {
+        const { createdSessionId, setActive, signIn, signUp } =
+          await startSSOFlow({
+            strategy: strategy as OAuthStrategy,
+            redirectUrl: AuthSession.makeRedirectUri(),
+          });
+
+        if (createdSessionId) {
+          setActive!({ session: createdSessionId });
+          showSuccess("Signed in successfully!");
+        }
+      } catch (err) {
+        console.error("SSO Error:", err);
+
+        // Parse Clerk errors for SSO
+        const parsedError = parseClerkErrors(err);
+        if (parsedError.toastMessage) {
+          showError(parsedError.toastMessage);
+        } else {
+          showError(
+            "Failed to sign in with social provider. Please try again."
+          );
+        }
+      }
+    },
+    [startSSOFlow, showError, showSuccess]
+  );
 
   return (
     <LinearGradient
-      colors={["#2B2B2B", "#151414"]}
+      colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
       locations={[0, 0.6]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      <ForgotPasswordDialog
-        visible={isForgotPasswordDialogVisible}
-        onClose={() => setIsForgotPasswordDialogVisible(false)}
-      />
       <View style={styles.content}>
         <CdText variant="title" size="large" style={styles.title}>
           Welcome back
         </CdText>
 
         <CdTextInput
-          placeholder="E-mail"
+          ref={emailRef}
+          placeholder="Email"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(text) => {
+            setEmail(text);
+            clearClerkError("email");
+          }}
+          onBlur={() => handleFieldBlur("email")}
+          error={
+            clerkErrors.email ||
+            (fieldTouched.email && email.length >= 0 ? errors.email : null)
+          }
           keyboardType="email-address"
           textContentType="emailAddress"
           autoComplete="email"
+          autoCapitalize="none"
+          returnKeyType="next"
+          onSubmitEditing={() => passwordRef.current?.focus()}
         />
 
         <CdTextInput
+          ref={passwordRef}
           placeholder="Password"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(text) => {
+            setPassword(text);
+            clearClerkError("password");
+          }}
+          onBlur={() => handleFieldBlur("password")}
+          error={
+            clerkErrors.password ||
+            (fieldTouched.password && password.length >= 0
+              ? errors.password
+              : null)
+          }
           isPassword={true}
           textContentType="password"
           autoComplete="password"
+          autoCapitalize="none"
+          returnKeyType="done"
+          importantForAutofill="yes"
+          onSubmitEditing={handleSubmit}
         />
 
-        <TouchableOpacity 
-          onPress={handleForgotPassword} 
+        <TouchableOpacity
+          onPress={handleForgotPassword}
           style={styles.forgotPasswordContainer}
         >
-          <CdText variant="link" size="medium" style={styles.forgotPasswordText}>
+          <CdText
+            variant="link"
+            size="medium"
+            style={styles.forgotPasswordText}
+          >
             Forgot password?
           </CdText>
         </TouchableOpacity>
@@ -142,29 +285,31 @@ const SignInScreen = () => {
 
         <DirectToSignUp />
 
-        <View style={styles.errorContainer}>
-          {error && (
-            <CdText variant="error" size="medium" style={styles.error}>
-              {error}
-            </CdText>
-          )}
-          {message && (
-            <CdText variant="message" size="medium" style={styles.message}>
-              {message}
-            </CdText>
-          )}
-        </View>
-
         <View style={styles.actionButtonContainer}>
-          <CdButton
-            title="Sign in"
-            onPress={handleLogin}
-            variant="text"
-            size="large"
-            style={styles.signinButton}
-          />
+          {isSubmitting ? (
+            <View style={styles.centerContent}>
+              <SageIcon status="pulsating" size={100} />
+            </View>
+          ) : (
+            <CdButton
+              title="Sign in"
+              onPress={handleSubmit}
+              variant="text"
+              size="large"
+              disabled={!isFormValid() || isSubmitting}
+              style={styles.signinButton}
+            />
+          )}
         </View>
       </View>
+
+      {/* Toast Notification */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onHide={hideToast}
+      />
     </LinearGradient>
   );
 };

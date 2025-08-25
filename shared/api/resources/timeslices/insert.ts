@@ -9,20 +9,20 @@ import { handleApiError } from "@/shared/api/utils/errorHandler";
  * @returns A promise that resolves to the inserted timeslice or null if insertion fails.
  */
 export async function insertTimeslice(
-    timeslice: Omit<Timeslice, "id">,
+  timeslice: Omit<Timeslice, "id">
 ): Promise<Timeslice | null> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .insert(timeslice)
-                .select()
-                .single();
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("insertTimeslice", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .insert(timeslice)
+        .select()
+        .single();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("insertTimeslice", error);
+  }
 }
 
 /**
@@ -31,19 +31,19 @@ export async function insertTimeslice(
  * @returns A promise that resolves to an array of inserted timeslices.
  */
 export async function insertTimeslices(
-    timeslices: Omit<Timeslice, "id">[],
+  timeslices: Omit<Timeslice, "id">[]
 ): Promise<Timeslice[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .insert(timeslices)
-                .select();
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("insertTimeslices", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .insert(timeslices)
+        .select();
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("insertTimeslices", error);
+  }
 }
 
 /**
@@ -56,22 +56,21 @@ export async function insertTimeslices(
  * @returns A promise that resolves to the upserted timeslice or null if operation fails.
  */
 export async function upsertTimeslice(
-    timeslice:
-        & Omit<Timeslice, "id">
-        & Partial<Pick<Timeslice, "state_id" | "note_ids">>,
+  timeslice: Omit<Timeslice, "id"> &
+    Partial<Pick<Timeslice, "state_id" | "note_ids">>
 ): Promise<Timeslice | null> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .upsert(timeslice, { onConflict: "id" })
-                .select()
-                .single();
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("upsertTimeslice", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .upsert(timeslice, { onConflict: "id" })
+        .select()
+        .single();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("upsertTimeslice", error);
+  }
 }
 
 /**
@@ -84,20 +83,18 @@ export async function upsertTimeslice(
  * @returns A promise that resolves to an array of upserted timeslices.
  */
 export async function upsertTimeslices(
-    timeslices: (
-        & Omit<Timeslice, "id">
-        & Partial<Pick<Timeslice, "state_id" | "note_ids">>
-    )[],
+  timeslices: (Omit<Timeslice, "id"> &
+    Partial<Pick<Timeslice, "state_id" | "note_ids">>)[]
 ): Promise<Timeslice[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .upsert(timeslices, { onConflict: "id" })
-                .select();
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("upsertTimeslices", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .upsert(timeslices, { onConflict: "id" })
+        .select();
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("upsertTimeslices", error);
+  }
 }

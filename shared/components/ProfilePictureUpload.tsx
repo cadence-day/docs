@@ -263,7 +263,8 @@ export default function ProfilePictureUpload({
       <TouchableOpacity
         onPress={showImageOptions}
         style={styles.avatarContainer}
-        disabled={isUploading || !isImagePickerAvailable}>
+        disabled={isUploading || !isImagePickerAvailable}
+      >
         <View style={styles.avatarBorder}>
           {imageUri ? (
             <Image source={{ uri: imageUri }} style={styles.avatar} />

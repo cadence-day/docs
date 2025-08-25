@@ -70,7 +70,8 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
             <TouchableOpacity
               onPress={onBackAction}
               style={styles.backButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
               <Ionicons name="arrow-back" size={20} color="#fff" />
             </TouchableOpacity>
           )}
@@ -82,7 +83,8 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
                     styles.title,
                     titleStyle,
                     { fontSize: titleFontSize },
-                  ]}>
+                  ]}
+                >
                   {title}
                 </Text>
               </View>
@@ -98,14 +100,16 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
           style={styles.center}
           activeOpacity={0.7}
           onPress={onHeaderPress}
-          disabled={!headerAsButton}></TouchableOpacity>
+          disabled={!headerAsButton}
+        ></TouchableOpacity>
         <View style={styles.right}>
           {rightActionElement &&
             isRightActionButton &&
             (typeof rightActionElement === "string" ? (
               <TouchableOpacity
                 onPress={onRightAction}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
                 <Text
                   style={[
                     styles.rightActionText,
@@ -113,7 +117,8 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
                       fontSize: rightActionFontSize,
                       textDecorationLine: "underline",
                     },
-                  ]}>
+                  ]}
+                >
                   {rightActionElement}
                 </Text>
               </TouchableOpacity>
@@ -121,7 +126,8 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
               <TouchableOpacity
                 onPress={onRightAction}
                 disabled={!onRightAction}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
                 {rightActionElement}
               </TouchableOpacity>
             ))}
@@ -133,7 +139,8 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
                   {
                     fontSize: rightActionFontSize,
                   },
-                ]}>
+                ]}
+              >
                 {rightActionElement}
               </Text>
             </View>

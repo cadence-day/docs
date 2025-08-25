@@ -34,7 +34,7 @@ const localStyles = StyleSheet.create({
   text: {
     color: "#FFFFFF",
   },
-  
+
   // Variant styles
   titleText: {
     textAlign: "center",
@@ -59,7 +59,7 @@ const localStyles = StyleSheet.create({
     color: "#FFFFFF",
     textDecorationLine: "underline",
   },
-  
+
   // Size styles
   smallText: {
     fontSize: 12,

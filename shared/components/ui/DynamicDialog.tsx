@@ -1,15 +1,16 @@
-import { LinearGradient } from "expo-linear-gradient";
+import { COLORS } from "@/shared/constants/COLORS";
 import * as Haptics from "expo-haptics";
-import React, { useState, useRef, useCallback } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useCallback, useRef, useState } from "react";
 import {
+  Animated,
+  Dimensions,
+  PanResponder,
   StyleSheet,
   View,
-  Animated,
-  PanResponder,
-  Dimensions,
 } from "react-native";
-import DialogHeader, { type DialogHeaderProps } from "./DialogHeader";
 import { NAV_BAR_SIZE } from "../../constants/VIEWPORT";
+import DialogHeader, { type DialogHeaderProps } from "./DialogHeader";
 
 interface DynamicDialogProps {
   visible: boolean;
@@ -177,7 +178,8 @@ const DynamicDialog: React.FC<DynamicDialogProps> = ({
             extrapolate: "clamp",
           }),
         },
-      ]}>
+      ]}
+    >
       {/* Pull indicator - positioned above the modal */}
       {enableDragging && (
         <View
@@ -187,7 +189,8 @@ const DynamicDialog: React.FC<DynamicDialogProps> = ({
               opacity: isDragging ? 1.0 : 0.8,
             },
           ]}
-          {...panResponder.panHandlers}>
+          {...panResponder.panHandlers}
+        >
           <View
             style={[
               styles.pullHandle,
@@ -202,7 +205,7 @@ const DynamicDialog: React.FC<DynamicDialogProps> = ({
       )}
 
       <LinearGradient
-        colors={["#151414", "#4A4747"]}
+        colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={{
@@ -212,7 +215,8 @@ const DynamicDialog: React.FC<DynamicDialogProps> = ({
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
           marginTop: enableDragging ? 10 : 0, // Only add space for pull handle when dragging is enabled
-        }}>
+        }}
+      >
         {/* Make the entire top area draggable when header is not present */}
         {!headerProps && enableDragging && (
           <View style={styles.topDragArea} {...panResponder.panHandlers} />

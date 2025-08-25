@@ -4,81 +4,138 @@ This directory contains the authentication system for the Cadence app, built wit
 
 ## 🏗️ Architecture
 
-The authentication system follows a modular architecture with clear separation of concerns:
-
 ```
 features/auth/
-├── components/          # UI components
-│   ├── screens/        # Main authentication screens
-│   ├── shared/         # Reusable components
-│   └── dialogs/        # Modal dialogs
-├── hooks/              # Custom React hooks
-├── services/           # API and external service integrations
-├── utils/              # Utility functions and validation
-└── style.ts            # Shared styles for all auth components
+├── components/
+│   ├── screens/        # SignIn, SignUp, ForgotPassword
+│   └── shared/         # Reusable auth components
+└── utils/              # Validation & error handling
 ```
 
-## 🎯 Components
+## 🎯 Core Features
 
-### Screens
+### Authentication Screens
 
-#### SignInScreen (`components/screens/SignIn.tsx`)
-The main sign-in interface that provides:
-- Email and password authentication
-- Social login options (Google, Apple)
-- Forgot password functionality
-- Navigation to sign-up
+- **SignIn**: Email/password auth with social login (Google, Apple) and form validation
+- **SignUp**: Registration with real-time password validation and email verification
+- **ForgotPassword**: Password reset flow with email verification
 
-**Features:**
-- Form validation
-- OAuth integration with Clerk
-- Responsive design with edge-to-edge layout
-- Error handling and user feedback
+### Form Validation System
 
-#### SignUpScreen (`components/screens/SignUp.tsx`)
-Complete sign-up flow including:
-- User registration form
-- Password validation with requirements
-- Email verification
-- Terms and conditions acceptance
+- Real-time field validation with visual feedback
+- Password strength requirements (10+ chars, uppercase, lowercase, digit, special char)
+- Email format validation
+- Disabled submit buttons until form is valid
 
-**Features:**
-- Multi-step registration process
-- Real-time password validation
-- Email verification flow
-- Success state handling
+### Error Handling
 
-### Shared Components
+- **Centralized Clerk Errors**: `utils/errorHandler.ts` parses and maps Clerk errors to form fields
+- **Toast Notifications**: Success/error messages via `shared/components/Toast.tsx` and `shared/hooks/useToast.ts`
+- **Field-Level Errors**: Individual input validation with `CdTextInput` error prop
 
-#### DirectToSignUp (`components/shared/DirectToSignUp.tsx`)
-Reusable component for navigation between auth screens.
+## 🔧 Key Utilities
 
-#### DirectToSignIn (`components/shared/DirectToSignIn.tsx`)
-Reusable component for navigation back to sign-in.
+### Password Validation (`utils/PasswordValidation.tsx`)
 
-#### PasswordRequirement (`components/shared/PasswordRequirement.tsx`)
-Displays password validation requirements with visual feedback.
+```typescript
+validatePassword(password: string, repeatPassword: string, agreeToTerms: boolean): PasswordValidationResult
+```
 
-#### TermsAndPrivacy (`components/shared/TermsAndPrivacy.tsx`)
-Terms and conditions acceptance component.
+Returns validation state for all password requirements with boolean flags.
 
-#### EmailVerification (`components/shared/EmailVerification.tsx`)
-Email verification code input component.
+### Error Handler (`utils/errorHandler.ts`)
 
-#### SignUpSuccess (`components/shared/SignUpSuccess.tsx`)
-Success state display after successful registration.
+```typescript
+parseClerkErrors(clerkError: any): Record<string, string>
+createClerkErrorClearer(): (field: string) => void
+```
 
-### Dialogs
+Centralizes Clerk error parsing and provides field-specific error clearing.
 
-#### ForgotPasswordDialog (`components/dialogs/ForgotPassword/`)
-Modal dialog for password recovery functionality.
+## 🎨 UI Components
 
-#### SignupDialog (`components/dialogs/SignupDialog/`)
-Modal dialog for quick sign-up actions.
+### Custom Inputs
+
+- **CdTextInput**: Enhanced text input with error states, icons, and validation
+- **CdButton**: Primary/outline button variants with loading states
+- **Toast**: Animated notifications with success/error/warning/info types
+
+### Validation Feedback
+
+- **PasswordRequirement**: Visual password requirement indicators
+- **Real-time Validation**: Instant feedback as user types
+- **Error States**: Red borders and error text for invalid fields
+
+## 🔐 Authentication Flow
+
+### Sign-In Process
+
+1. Form validation (email format, required fields)
+2. Clerk authentication with error handling
+3. Success: Navigate to main app
+4. Error: Display toast notification with specific message
+
+### Sign-Up Process
+
+1. Real-time password validation with visual requirements
+2. Email verification step via Clerk
+3. Account creation with comprehensive error handling
+4. Success state with navigation options
+
+### Password Reset
+
+1. Email validation and submission
+2. Clerk password reset email
+3. Success confirmation with navigation back to sign-in
+
+## 🚀 Usage
+
+```typescript
+// Navigation setup
+<Stack.Screen name="sign-in" component={SignInScreen} />
+<Stack.Screen name="sign-up" component={SignUpScreen} />
+<Stack.Screen name="forgot-password" component={ForgotPasswordScreen} />
+
+// Error handling
+const { showError, showSuccess } = useToast();
+const errors = parseClerkErrors(clerkError);
+```
+
+## 🔒 Security Features
+
+- **Password Complexity**: Enforced 10+ character requirements
+- **Email Verification**: Required for account activation
+- **OAuth Integration**: Secure Google/Apple authentication
+- **Input Validation**: Client-side validation with server-side verification
+- **Error Sanitization**: Safe error message display without sensitive data
+
+## 📱 Mobile-First Design
+
+- **Edge-to-Edge Layout**: Full screen gradient backgrounds
+- **Touch-Friendly**: 48dp minimum touch targets
+- **Responsive**: Adapts to various screen sizes
+- **Accessibility**: Proper labels and contrast ratios
+- **Loading States**: Visual feedback during authentication
+
+## 🔄 Dependencies
+
+- **Clerk**: Authentication service and user management
+- **Expo Router**: File-based navigation
+- **React Native**: Core mobile framework
+- **TypeScript**: Type safety throughout
+
+## 📚 Best Practices
+
+1. **Centralized Error Handling**: All Clerk errors processed through `errorHandler.ts`
+2. **Toast Notifications**: User-friendly error/success messages
+3. **Real-time Validation**: Immediate feedback improves UX
+4. **Type Safety**: Full TypeScript coverage for auth flows
+5. **Component Reusability**: Shared validation and error components
 
 ## 🎨 Styling
 
 ### Shared Style System (`style.ts`)
+
 All authentication components use a centralized styling system:
 
 - **Consistent Design Language**: Unified colors, spacing, and typography
@@ -87,6 +144,7 @@ All authentication components use a centralized styling system:
 - **Accessibility**: Proper contrast ratios and touch targets
 
 **Key Style Categories:**
+
 - Container and layout styles
 - Form input styling
 - Button variants (primary, outline, text)
@@ -96,6 +154,7 @@ All authentication components use a centralized styling system:
 ## 🔧 Utilities
 
 ### Password Validation (`utils/PasswordValidation.tsx`)
+
 Centralized password validation logic:
 
 ```typescript
@@ -107,6 +166,7 @@ export const validatePassword = (
 ```
 
 **Validation Rules:**
+
 - Minimum 10 characters
 - At least one lowercase letter
 - At least one uppercase letter
@@ -118,6 +178,7 @@ export const validatePassword = (
 ## 🔐 Authentication Flow
 
 ### Sign-In Process
+
 1. User enters email and password
 2. Form validation occurs
 3. Authentication request sent to Clerk
@@ -125,6 +186,7 @@ export const validatePassword = (
 5. Failure: Error message displayed
 
 ### Sign-Up Process
+
 1. User fills registration form
 2. Password validation with real-time feedback
 3. Account creation via Clerk
@@ -133,6 +195,7 @@ export const validatePassword = (
 6. Account activation and success state
 
 ### Social Authentication
+
 - Google OAuth integration
 - Apple Sign-In support
 - Seamless browser handling for mobile

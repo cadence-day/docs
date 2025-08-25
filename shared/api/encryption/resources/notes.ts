@@ -7,21 +7,21 @@ import type { Note } from "@/shared/types/models";
  * @returns Promise<Note> - The note with encrypted message
  */
 export async function encryptNoteMessage(note: Note): Promise<Note> {
-    if (!note.message) {
-        return note;
-    }
+  if (!note.message) {
+    return note;
+  }
 
-    try {
-        const encryptedMessage = await encryptString(note.message);
-        return {
-            ...note,
-            message: encryptedMessage,
-        };
-    } catch (error) {
-        // If encryption fails, return original note
-        console.error("Failed to encrypt note message:", error);
-        return note;
-    }
+  try {
+    const encryptedMessage = await encryptString(note.message);
+    return {
+      ...note,
+      message: encryptedMessage,
+    };
+  } catch (error) {
+    // If encryption fails, return original note
+    console.error("Failed to encrypt note message:", error);
+    return note;
+  }
 }
 
 /**
@@ -30,21 +30,21 @@ export async function encryptNoteMessage(note: Note): Promise<Note> {
  * @returns Promise<Note> - The note with decrypted message
  */
 export async function decryptNoteMessage(note: Note): Promise<Note> {
-    if (!note.message) {
-        return note;
-    }
+  if (!note.message) {
+    return note;
+  }
 
-    try {
-        const decryptedMessage = await decryptString(note.message);
-        return {
-            ...note,
-            message: decryptedMessage,
-        };
-    } catch (error) {
-        // If decryption fails, return original note
-        console.error("Failed to decrypt note message:", error);
-        return note;
-    }
+  try {
+    const decryptedMessage = await decryptString(note.message);
+    return {
+      ...note,
+      message: decryptedMessage,
+    };
+  } catch (error) {
+    // If decryption fails, return original note
+    console.error("Failed to decrypt note message:", error);
+    return note;
+  }
 }
 
 /**
@@ -53,7 +53,7 @@ export async function decryptNoteMessage(note: Note): Promise<Note> {
  * @returns Promise<Note[]> - Array of notes with encrypted messages
  */
 export async function encryptNotesMessages(notes: Note[]): Promise<Note[]> {
-    return Promise.all(notes.map(encryptNoteMessage));
+  return Promise.all(notes.map(encryptNoteMessage));
 }
 
 /**
@@ -62,7 +62,7 @@ export async function encryptNotesMessages(notes: Note[]): Promise<Note[]> {
  * @returns Promise<Note[]> - Array of notes with decrypted messages
  */
 export async function decryptNotesMessages(notes: Note[]): Promise<Note[]> {
-    return Promise.all(notes.map(decryptNoteMessage));
+  return Promise.all(notes.map(decryptNoteMessage));
 }
 
 /**
@@ -71,22 +71,22 @@ export async function decryptNotesMessages(notes: Note[]): Promise<Note[]> {
  * @returns Promise<Omit<Note, "id">> - The note ready for insertion with encrypted message
  */
 export async function encryptNoteForInsertion(
-    note: Omit<Note, "id">,
+  note: Omit<Note, "id">
 ): Promise<Omit<Note, "id">> {
-    if (!note.message) {
-        return note;
-    }
+  if (!note.message) {
+    return note;
+  }
 
-    try {
-        const encryptedMessage = await encryptString(note.message);
-        return {
-            ...note,
-            message: encryptedMessage,
-        };
-    } catch (error) {
-        console.error("Failed to encrypt note message for insertion:", error);
-        return note;
-    }
+  try {
+    const encryptedMessage = await encryptString(note.message);
+    return {
+      ...note,
+      message: encryptedMessage,
+    };
+  } catch (error) {
+    console.error("Failed to encrypt note message for insertion:", error);
+    return note;
+  }
 }
 
 /**
@@ -95,7 +95,7 @@ export async function encryptNoteForInsertion(
  * @returns Promise<Omit<Note, "id">[]> - Array of notes ready for insertion with encrypted messages
  */
 export async function encryptNotesForInsertion(
-    notes: Omit<Note, "id">[],
+  notes: Omit<Note, "id">[]
 ): Promise<Omit<Note, "id">[]> {
-    return Promise.all(notes.map(encryptNoteForInsertion));
+  return Promise.all(notes.map(encryptNoteForInsertion));
 }

@@ -9,16 +9,17 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
-
       <SignedIn>
         <View style={styles.signedInSection}>
           <Text style={styles.welcomeText}>Welcome back!</Text>
-          <Text style={styles.userEmail}>{user?.emailAddresses[0].emailAddress}</Text>
+          <Text style={styles.userEmail}>
+            {user?.emailAddresses[0].emailAddress}
+          </Text>
           <SignOutButton />
         </View>
       </SignedIn>
       <SignedOut>
-         <SignIn/>
+        <SignIn />
       </SignedOut>
     </View>
   );

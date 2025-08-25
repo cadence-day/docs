@@ -1,5 +1,11 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+} from "react-native";
 
 interface CdButtonProps {
   title: string;
@@ -55,9 +61,8 @@ const localStyles = StyleSheet.create({
   button: {
     alignItems: "center",
     justifyContent: "center",
-
   },
-  
+
   // Variant styles
   outlineButton: {
     borderWidth: 1,
@@ -78,7 +83,7 @@ const localStyles = StyleSheet.create({
     borderWidth: 0,
     padding: 0,
   },
-  
+
   // Size styles
   smallButton: {
     paddingVertical: 8,
@@ -95,24 +100,24 @@ const localStyles = StyleSheet.create({
     paddingHorizontal: 24,
     minWidth: 160,
   },
-  
+
   // Width styles
   fullWidth: {
     width: "100%",
   },
-  
+
   // Disabled styles
   disabledButton: {
     opacity: 0.5,
   },
-  
+
   // Text styles
   buttonText: {
     textAlign: "center",
     fontSize: 16,
     fontWeight: "500",
   },
-  
+
   // Variant text styles
   outlineButtonText: {
     color: "#FFFFFF",
@@ -127,7 +132,7 @@ const localStyles = StyleSheet.create({
     color: "#FFFFFF",
     textDecorationLine: "underline",
   },
-  
+
   // Size text styles
   smallButtonText: {
     fontSize: 14,
@@ -138,7 +143,7 @@ const localStyles = StyleSheet.create({
   largeButtonText: {
     fontSize: 18,
   },
-  
+
   // Disabled text styles
   disabledButtonText: {
     opacity: 0.7,

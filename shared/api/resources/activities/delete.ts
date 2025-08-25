@@ -9,21 +9,21 @@ import { handleApiError } from "@/shared/api/utils/errorHandler";
  * @returns A promise that resolves to the updated activity or null if not found.
  */
 export async function softDeleteActivity(
-    activityId: string,
+  activityId: string
 ): Promise<Activity | null> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("activities")
-                .update({ status: "DELETED" })
-                .eq("id", activityId)
-                .select()
-                .single();
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("softDeleteActivity", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("activities")
+        .update({ status: "DELETED" })
+        .eq("id", activityId)
+        .select()
+        .single();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("softDeleteActivity", error);
+  }
 }
 
 /**
@@ -32,20 +32,20 @@ export async function softDeleteActivity(
  * @returns A promise that resolves to an array of updated activities.
  */
 export async function softDeleteActivities(
-    activityIds: string[],
+  activityIds: string[]
 ): Promise<Activity[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("activities")
-                .update({ status: "DELETED" })
-                .in("id", activityIds)
-                .select();
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("softDeleteActivities", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("activities")
+        .update({ status: "DELETED" })
+        .in("id", activityIds)
+        .select();
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("softDeleteActivities", error);
+  }
 }
 
 /**
@@ -54,21 +54,21 @@ export async function softDeleteActivities(
  * @returns A promise that resolves to the updated activity or null if not found.
  */
 export async function disableActivity(
-    activityId: string,
+  activityId: string
 ): Promise<Activity | null> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("activities")
-                .update({ status: "DISABLED" })
-                .eq("id", activityId)
-                .select()
-                .single();
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("disableActivity", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("activities")
+        .update({ status: "DISABLED" })
+        .eq("id", activityId)
+        .select()
+        .single();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("disableActivity", error);
+  }
 }
 
 /**
@@ -77,18 +77,18 @@ export async function disableActivity(
  * @returns A promise that resolves to an array of updated activities.
  */
 export async function disableActivities(
-    activityIds: string[],
+  activityIds: string[]
 ): Promise<Activity[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("activities")
-                .update({ status: "DISABLED" })
-                .in("id", activityIds)
-                .select();
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("disableActivities", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("activities")
+        .update({ status: "DISABLED" })
+        .in("id", activityIds)
+        .select();
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("disableActivities", error);
+  }
 }

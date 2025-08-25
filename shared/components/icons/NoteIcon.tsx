@@ -23,7 +23,8 @@ const NoteIcon = ({ color = "black", size = "normal" }: NoteIconProps) => {
       width={dimensions.width}
       height={dimensions.height}
       viewBox="0 0 14 17"
-      fill="none">
+      fill="none"
+    >
       <Rect x="0.5" y="0.5" width="13.0076" height="16" stroke={color} />
       <Line
         x1="2.35742"

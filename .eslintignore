@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Generated files
+dist/
+build/
+.expo/
+.expo-shared/
+
+# Generated types
+**/database.types.ts
+
+# iOS
+ios/Pods/
+ios/build/
+ios/*.xcworkspace
+ios/*.xcuserdata
+
+# Android
+android/.gradle
+android/app/build/
+android/build/
+android/gradle
+android/gradlew
+android/gradlew.bat
+
+# Web
+web-build/
+
+# Native
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# Logs
+*.log
+
+# Configuration files
+babel.config.js
+metro.config.js
+jest.config.js
+
+# Test coverage
+coverage/

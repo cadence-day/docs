@@ -37,18 +37,21 @@ api/
 ## Key Components
 
 ### 1. Supabase Client (`client/supabaseClient.ts`)
+
 Provides an authenticated Supabase client that automatically includes user auth tokens from Clerk sessions.
 
 ### 2. Centralized API handling functions in `utils/`
+
 - Includes core utilities such as the `apiCall()` wrapper function with built-in caching, retry logic, and automatic date conversion between UTC and local timezones.
 - Includes standardized error handling and logging mechanisms.
 
 ## Resource Organization
 
 Each resource module in `resources/` follows a consistent structure:
+
 - `get.ts` - Read operations and queries
 - `insert.ts` - Create operations
-- `update.ts` - Update operations  
+- `update.ts` - Update operations
 - `delete.ts` - Delete operations (typically soft deletes)
 - `index.ts` - Exports all operations for the resource
 
@@ -66,12 +69,14 @@ The API layer provides a clean interface for all database operations:
 ## Development Guidelines
 
 ### Adding New Resources
+
 1. Create a new folder in `resources/` named after your database table
 2. Implement the standard CRUD operations (get, insert, update, delete)
 3. Export all operations from the resource's `index.ts`
 4. Add exports to the main `api/index.ts`
 
 ### Best Practices
+
 - Always use the `apiCall()` wrapper for Supabase operations
 - Implement proper error handling with try-catch blocks
 - Use caching for frequently accessed, relatively static data
@@ -83,5 +88,6 @@ The API layer provides a clean interface for all database operations:
 ## Integration & Dependencies
 
 The API layer integrates with:
+
 - **Supabase**: Database operations
 - **Clerk**: Authentication and session management
