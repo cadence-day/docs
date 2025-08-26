@@ -171,10 +171,10 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         returnKeyType="done"
         onSubmitEditing={onVerifyPress}
         maxLength={6}
+        letterSpacing={2}
         style={{
           textAlign: "center",
           fontSize: 18,
-          letterSpacing: 2,
           color: COLORS.white,
         }}
       />

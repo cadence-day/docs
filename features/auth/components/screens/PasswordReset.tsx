@@ -298,10 +298,10 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                   returnKeyType="done"
                   onSubmitEditing={onVerifyCodePress}
                   maxLength={6}
+                  letterSpacing={2}
                   style={{
                     textAlign: "center",
                     fontSize: 18,
-                    letterSpacing: 2,
                     color: COLORS.white,
                   }}
                 />

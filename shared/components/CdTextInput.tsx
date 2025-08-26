@@ -15,6 +15,7 @@ interface CdTextInputProps extends TextInputProps {
   error?: string | null;
   isPassword?: boolean;
   isRequired?: boolean;
+  letterSpacing?: number;
   onChangeText: (text: string) => void;
   value: string;
 }
@@ -26,6 +27,7 @@ const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
       error,
       isPassword = false,
       isRequired = false,
+      letterSpacing,
       onChangeText,
       value,
       ...textInputProps
@@ -55,7 +57,11 @@ const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
         >
           <TextInput
             ref={ref}
-            style={[styles.input, hasError && styles.inputError]}
+            style={[
+              styles.input,
+              hasError && styles.inputError,
+              letterSpacing !== undefined && { letterSpacing },
+            ]}
             value={value}
             onChangeText={onChangeText}
             onFocus={() => setIsFocused(true)}
