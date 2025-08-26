@@ -39,8 +39,8 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "normal",
-    marginBottom: 40,
-    marginTop: 20,
+    marginBottom: 20,
+    marginTop: 0,
     textAlign: "center",
     color: "#FFFFFF",
   },
@@ -153,7 +153,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     width: "100%",
-    marginTop: 20,
+    marginTop: 8,
+    marginBottom: 12,
   },
   signInText: {
     color: "#B9B9B9",
