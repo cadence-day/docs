@@ -59,8 +59,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: "#B9B9B9",
     color: "#fff",
     fontSize: 16,
-    marginBottom: 24,
-    paddingVertical: 12,
+    paddingVertical: 8,
     paddingHorizontal: 4,
   },
   passwordContainer: {

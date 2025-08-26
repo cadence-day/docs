@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity } from "react-native";
-import { styles } from "../../../features/auth/components/style";
+import { styles } from "../../auth/components/style";
 
 interface CheckboxProps {
   value: boolean;

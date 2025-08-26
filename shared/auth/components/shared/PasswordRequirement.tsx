@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
+import { PASSWORD_REQUIREMENTS } from "../../utils/constants";
 import { styles } from "../style";
-import { PASSWORD_REQUIREMENTS } from "./constants";
 
 interface PasswordRequirementProps {
   password: string;

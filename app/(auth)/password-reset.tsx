@@ -1,4 +1,4 @@
-import PasswordResetScreen from "@/features/auth/components/screens/PasswordReset";
+import PasswordResetScreen from "@/shared/auth/components/screens/PasswordReset";
 import { useLocalSearchParams } from "expo-router";
 
 export default function PasswordResetPage() {
