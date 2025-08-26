@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomColor: COLORS.white,
     borderBottomWidth: 1,
-    minHeight: 40,
+    minHeight: 20,
     minWidth: "100%",
   },
   inputContainerFocused: {
