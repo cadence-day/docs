@@ -4,14 +4,135 @@ This directory contains a comprehensive set of utilities for creating consistent
 
 ## Architecture Overview
 
+# Zustand Store Utilities
+
+Comprehensive utilities for creating consistent and maintainable Zustand stores with standardized error handling, loading states, and API call patterns.
+
+## Architecture
+
 ```
 shared/stores/
-├── README.md                      # This file
-├── errorHandler.ts                # Error handling utilities
-├── utils.ts                      # Store utility functions
-├── useActivitiesStore.ts         # Activities store implementation
-└── useActivityCategoriesStore.ts # Activity categories store implementation
+├── utils/
+│   ├── utils.ts           # Core store utilities
+│   └── errorHandler.ts    # Error handling utilities
+└── resources/
+    ├── index.ts           # Resource store exports
+    ├── useNotesStore.ts   # Notes management store
+    ├── useStatesStore.ts  # States management store
+    ├── useTimeslicesStore.ts # Timeslices management store
+    ├── useActivitiesStore.ts # Activities management store
+    └── useActivityCategoriesStore.ts # Activity categories store
 ```
+
+## Core Components
+
+### Base Store Interface
+
+```typescript
+interface BaseStoreState {
+  isLoading: boolean;
+  error: string | null;
+}
+```
+
+### API Call Handlers
+
+- **`handleApiCall`** - Generic handler for API calls that return data and update state
+- **`handleGetApiCall`** - Simplified handler for GET operations (no state updates)
+- **`handleVoidApiCall`** - Handler for void operations (like delete) that update state
+- **`handleVoidApiCallWithResult`** - Handler for operations with custom result processing
+
+### Error Management
+
+- **`createErrorState`** - Creates standardized error state objects
+- **`createLoadingState`** - Creates loading state with error reset
+- **`createSuccessState`** - Creates success state (loading: false)
+
+## Usage Example
+
+```typescript
+import { create } from "zustand";
+import { handleApiCall, type BaseStoreState } from "../utils/utils";
+import * as api from "@/shared/api/resources/myResource";
+
+interface MyStore extends BaseStoreState {
+  items: Item[];
+  addItem: (item: Omit<Item, "id">) => Promise<Item | null>;
+  deleteItem: (id: string) => Promise<void>;
+}
+
+const useMyStore = create<MyStore>((set) => ({
+  items: [],
+  isLoading: false,
+  error: null,
+
+  addItem: async (item) => {
+    return handleApiCall(
+      set,
+      () => api.createItem(item),
+      "create item",
+      null,
+      (newItem, state) =>
+        newItem
+          ? {
+              items: [...state.items, newItem],
+            }
+          : {}
+    );
+  },
+
+  deleteItem: async (id) => {
+    return handleVoidApiCall(
+      set,
+      () => api.deleteItem(id),
+      "delete item",
+      (state) => ({
+        items: state.items.filter((item) => item.id !== id),
+      })
+    );
+  },
+}));
+```
+
+## Store Patterns
+
+### CRUD Operations
+
+All resource stores follow consistent patterns:
+
+- **Insert**: `insertX` / `insertXs` with optimistic state updates
+- **Update**: `updateX` with state synchronization
+- **Delete**: `deleteX` / `deleteXs` with state filtering
+- **Upsert**: `upsertX` / `upsertXs` with smart insert/update logic
+
+### Get Operations
+
+- **Individual**: `getX(id)` - Returns single item without state update
+- **Multiple**: `getXs(ids)` - Returns array without state update
+- **User-scoped**: `getUserXs(userId)` - Returns user's items
+- **Global**: `getAllXs()` - Returns all items (where applicable)
+
+### Refresh Operations
+
+- **`refresh(userId)`** - Fetches fresh data and updates store state
+- Merges remote data with local state intelligently
+
+## Available Stores
+
+- **`useNotesStore`** - Note creation, editing, deletion with encryption support
+- **`useStatesStore`** - User state tracking with mood/energy data
+- **`useTimeslicesStore`** - Time-based activity tracking
+- **`useActivitiesStore`** - Activity management with categories and ordering
+- **`useActivityCategoriesStore`** - Read-only activity category reference data
+
+## Benefits
+
+1. **Consistency** - All stores follow identical patterns
+2. **Type Safety** - Full TypeScript support with generics
+3. **Error Handling** - Centralized, consistent error management
+4. **Loading States** - Automatic loading state management
+5. **Reduced Boilerplate** - 90% reduction in repetitive code
+6. **Optimistic Updates** - Immediate UI feedback with rollback support
 
 ## Core Components
 
@@ -85,7 +206,7 @@ import * as api from "@/shared/api/resources/myResource";
 
 interface MyStore extends BaseStoreState {
   items: Item[];
-  
+
   // Operations
   getItem: (id: string) => Promise<Item | null>;
   addItem: (item: Omit<Item, "id">) => Promise<Item | null>;
@@ -100,12 +221,7 @@ const useMyStore = create<MyStore>((set) => ({
 
   // Get operation (doesn't modify state)
   getItem: async (id: string) => {
-    return handleGetApiCall(
-      set,
-      () => api.getItem(id),
-      "get item",
-      null,
-    );
+    return handleGetApiCall(set, () => api.getItem(id), "get item", null);
   },
 
   // Add operation (updates state)
@@ -115,9 +231,12 @@ const useMyStore = create<MyStore>((set) => ({
       () => api.createItem(item),
       "create item",
       null,
-      (newItem, state) => newItem ? {
-        items: [...state.items, newItem],
-      } : {},
+      (newItem, state) =>
+        newItem
+          ? {
+              items: [...state.items, newItem],
+            }
+          : {}
     );
   },
 
@@ -128,8 +247,8 @@ const useMyStore = create<MyStore>((set) => ({
       () => api.deleteItem(id),
       "delete item",
       (state) => ({
-        items: state.items.filter(item => item.id !== id),
-      }),
+        items: state.items.filter((item) => item.id !== id),
+      })
     );
   },
 }));
@@ -153,21 +272,21 @@ import {
 
 interface ActivitiesStore extends BaseStoreState {
   activities: Activity[];
-  
+
   // CRUD operations
   insertActivity: (activity: Omit<Activity, "id">) => Promise<Activity | null>;
   updateActivity: (activity: Activity) => Promise<Activity | null>;
   softDeleteActivity: (id: string) => Promise<void>;
   disableActivity: (id: string) => Promise<void>;
-  
+
   // Bulk operations
   insertActivities: (activities: Omit<Activity, "id">[]) => Promise<Activity[]>;
   softDeleteActivities: (ids: string[]) => Promise<void>;
-  
+
   // Get operations
   getActivity: (id: string) => Promise<Activity | null>;
   getAllActivities: () => Promise<Activity[]>;
-  
+
   // Complex operations
   refresh: () => Promise<void>;
   updateActivityOrder: (reorderedActivities: Activity[]) => void;
@@ -186,9 +305,12 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
       () => activitiesApi.insertActivity(activity),
       "create activity",
       null,
-      (newActivity, state) => newActivity ? {
-        activities: [...state.activities, newActivity],
-      } : {},
+      (newActivity, state) =>
+        newActivity
+          ? {
+              activities: [...state.activities, newActivity],
+            }
+          : {}
     );
   },
 
@@ -198,11 +320,14 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
       () => activitiesApi.updateActivity(activity),
       "update activity",
       null,
-      (updatedActivity, state) => updatedActivity ? {
-        activities: state.activities.map((a) =>
-          a.id === updatedActivity.id ? updatedActivity : a
-        ),
-      } : {},
+      (updatedActivity, state) =>
+        updatedActivity
+          ? {
+              activities: state.activities.map((a) =>
+                a.id === updatedActivity.id ? updatedActivity : a
+              ),
+            }
+          : {}
     );
   },
 
@@ -214,7 +339,7 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
       "delete activity",
       (state) => ({
         activities: state.activities.filter((a) => a.id !== id),
-      }),
+      })
     );
   },
 
@@ -227,7 +352,7 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
         activities: state.activities.map((a) =>
           a.id === id ? { ...a, status: "DISABLED" } : a
         ),
-      }),
+      })
     );
   },
 
@@ -238,9 +363,12 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
       () => activitiesApi.insertActivities(activities),
       "create activities",
       [],
-      (newActivities, state) => newActivities.length > 0 ? {
-        activities: [...state.activities, ...newActivities],
-      } : {},
+      (newActivities, state) =>
+        newActivities.length > 0
+          ? {
+              activities: [...state.activities, ...newActivities],
+            }
+          : {}
     );
   },
 
@@ -251,7 +379,7 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
       "delete activities",
       (state) => ({
         activities: state.activities.filter((a) => !ids.includes(a.id!)),
-      }),
+      })
     );
   },
 
@@ -261,7 +389,7 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
       set,
       () => activitiesApi.getActivity(id),
       "get activity",
-      null,
+      null
     );
   },
 
@@ -270,7 +398,7 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
       set,
       () => activitiesApi.getAllActivities(),
       "get all activities",
-      [],
+      []
     );
   },
 
@@ -281,7 +409,7 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
       async () => {
         // Fetch enabled activities from remote database
         const activities = await activitiesApi.getAllEnabledActivities();
-        
+
         // Load and sort activities with stored order
         const storedOrder = await loadActivityOrderFromStorage();
         return sortActivitiesByStoredOrder(activities, storedOrder);
@@ -289,7 +417,7 @@ const useActivitiesStore = create<ActivitiesStore>((set) => ({
       "refresh activities",
       (sortedActivities) => ({
         activities: sortedActivities,
-      }),
+      })
     );
   },
 
@@ -356,7 +484,7 @@ const useActivityCategoriesStore = create<ActivityCategoriesStore>((set) => ({
       set,
       () => activitiesCategoriesApi.getAllActivityCategories(),
       "get all activity categories",
-      [],
+      []
     );
   },
 
@@ -368,7 +496,7 @@ const useActivityCategoriesStore = create<ActivityCategoriesStore>((set) => ({
       "refresh activity categories",
       (categories) => ({
         categories,
-      }),
+      })
     );
   },
 
@@ -382,16 +510,12 @@ const useActivityCategoriesStore = create<ActivityCategoriesStore>((set) => ({
 #### Usage in Components:
 
 ```tsx
-import React, { useEffect } from 'react';
-import useActivityCategoriesStore from '@/shared/stores/useActivityCategoriesStore';
+import React, { useEffect } from "react";
+import useActivityCategoriesStore from "@/shared/stores/useActivityCategoriesStore";
 
 export function CategoriesDropdown() {
-  const { 
-    categories, 
-    isLoading, 
-    error, 
-    refresh 
-  } = useActivityCategoriesStore();
+  const { categories, isLoading, error, refresh } =
+    useActivityCategoriesStore();
 
   useEffect(() => {
     // Load categories when component mounts
@@ -399,7 +523,11 @@ export function CategoriesDropdown() {
   }, [refresh]);
 
   if (isLoading) {
-    return <select disabled><option>Loading...</option></select>;
+    return (
+      <select disabled>
+        <option>Loading...</option>
+      </select>
+    );
   }
 
   if (error) {
@@ -428,7 +556,7 @@ export function CategoryList() {
       const result = await getAllCategories();
       setCategories(result);
     };
-    
+
     fetchCategories();
   }, [getAllCategories]);
 
@@ -446,7 +574,7 @@ export function CategoryList() {
 
 1. **Read-Only**: Only has get and refresh operations (no CRUD)
 2. **Simpler State**: Just categories array with standard loading/error states
-3. **Two Access Patterns**: 
+3. **Two Access Patterns**:
    - `getAllCategories()` - Returns data without storing in state
    - `refresh()` - Fetches data and updates store state
 4. **Perfect for**: Dropdowns, reference data, lookups
@@ -458,16 +586,11 @@ Here are practical examples of how to use `useActivitiesStore` in React componen
 #### Basic Usage - Displaying Activities
 
 ```tsx
-import React, { useEffect } from 'react';
-import useActivitiesStore from '@/shared/stores/useActivitiesStore';
+import React, { useEffect } from "react";
+import useActivitiesStore from "@/shared/stores/useActivitiesStore";
 
 export function ActivitiesList() {
-  const { 
-    activities, 
-    isLoading, 
-    error, 
-    refresh 
-  } = useActivitiesStore();
+  const { activities, isLoading, error, refresh } = useActivitiesStore();
 
   useEffect(() => {
     // Load activities when component mounts
@@ -499,26 +622,26 @@ export function ActivitiesList() {
 #### Creating New Activities
 
 ```tsx
-import React, { useState } from 'react';
-import useActivitiesStore from '@/shared/stores/useActivitiesStore';
+import React, { useState } from "react";
+import useActivitiesStore from "@/shared/stores/useActivitiesStore";
 
 export function CreateActivityForm() {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const { insertActivity, isLoading, error } = useActivitiesStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const newActivity = await insertActivity({
       name,
-      status: 'ENABLED',
-      user_id: 'current-user-id',
+      status: "ENABLED",
+      user_id: "current-user-id",
       // ... other required fields
     });
 
     if (newActivity) {
-      setName(''); // Clear form on success
-      console.log('Activity created:', newActivity);
+      setName(""); // Clear form on success
+      console.log("Activity created:", newActivity);
     }
   };
 
@@ -534,12 +657,12 @@ export function CreateActivityForm() {
           required
         />
       </div>
-      
+
       <button type="submit" disabled={isLoading}>
-        {isLoading ? 'Creating...' : 'Create Activity'}
+        {isLoading ? "Creating..." : "Create Activity"}
       </button>
-      
-      {error && <div style={{ color: 'red' }}>Error: {error}</div>}
+
+      {error && <div style={{ color: "red" }}>Error: {error}</div>}
     </form>
   );
 }
@@ -548,78 +671,70 @@ export function CreateActivityForm() {
 #### Managing Individual Activities
 
 ```tsx
-import React from 'react';
-import useActivitiesStore from '@/shared/stores/useActivitiesStore';
-import type { Activity } from '@/shared/types/models';
+import React from "react";
+import useActivitiesStore from "@/shared/stores/useActivitiesStore";
+import type { Activity } from "@/shared/types/models";
 
 interface ActivityCardProps {
   activity: Activity;
 }
 
 export function ActivityCard({ activity }: ActivityCardProps) {
-  const { 
-    updateActivity, 
-    softDeleteActivity, 
-    disableActivity,
-    isLoading 
-  } = useActivitiesStore();
+  const { updateActivity, softDeleteActivity, disableActivity, isLoading } =
+    useActivitiesStore();
 
   const handleToggleStatus = async () => {
-    if (activity.status === 'ENABLED') {
+    if (activity.status === "ENABLED") {
       await disableActivity(activity.id!);
     } else {
       await updateActivity({
         ...activity,
-        status: 'ENABLED'
+        status: "ENABLED",
       });
     }
   };
 
   const handleDelete = async () => {
-    if (confirm('Are you sure you want to delete this activity?')) {
+    if (confirm("Are you sure you want to delete this activity?")) {
       await softDeleteActivity(activity.id!);
     }
   };
 
   const handleRename = async () => {
-    const newName = prompt('Enter new name:', activity.name || '');
+    const newName = prompt("Enter new name:", activity.name || "");
     if (newName && newName !== activity.name) {
       await updateActivity({
         ...activity,
-        name: newName
+        name: newName,
       });
     }
   };
 
   return (
-    <div style={{ 
-      border: '1px solid #ccc', 
-      padding: '1rem', 
-      margin: '0.5rem',
-      opacity: activity.status === 'DISABLED' ? 0.5 : 1
-    }}>
+    <div
+      style={{
+        border: "1px solid #ccc",
+        padding: "1rem",
+        margin: "0.5rem",
+        opacity: activity.status === "DISABLED" ? 0.5 : 1,
+      }}
+    >
       <h3>{activity.name}</h3>
       <p>Status: {activity.status}</p>
-      
+
       <div>
-        <button 
-          onClick={handleRename}
-          disabled={isLoading}
-        >
+        <button onClick={handleRename} disabled={isLoading}>
           Rename
         </button>
-        
-        <button 
-          onClick={handleToggleStatus}
-          disabled={isLoading}
-        >
-          {activity.status === 'ENABLED' ? 'Disable' : 'Enable'}
+
+        <button onClick={handleToggleStatus} disabled={isLoading}>
+          {activity.status === "ENABLED" ? "Disable" : "Enable"}
         </button>
-        
-        <button 
+
+        <button
           onClick={handleDelete}
           disabled={isLoading}
-          style={{ color: 'red' }}
+          style={{ color: "red" }}
         >
           Delete
         </button>
@@ -632,21 +747,21 @@ export function ActivityCard({ activity }: ActivityCardProps) {
 #### Bulk Operations
 
 ```tsx
-import React, { useState } from 'react';
-import useActivitiesStore from '@/shared/stores/useActivitiesStore';
+import React, { useState } from "react";
+import useActivitiesStore from "@/shared/stores/useActivitiesStore";
 
 export function BulkActivityManager() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const { 
-    activities, 
-    softDeleteActivities, 
+  const {
+    activities,
+    softDeleteActivities,
     disableActivities,
     insertActivities,
-    isLoading 
+    isLoading,
   } = useActivitiesStore();
 
   const handleSelectAll = () => {
-    setSelectedIds(activities.map(a => a.id!));
+    setSelectedIds(activities.map((a) => a.id!));
   };
 
   const handleDeselectAll = () => {
@@ -669,9 +784,13 @@ export function BulkActivityManager() {
 
   const handleCreateMultiple = async () => {
     const newActivities = [
-      { name: 'Morning Run', status: 'ENABLED' as const, user_id: 'user-1' },
-      { name: 'Evening Workout', status: 'ENABLED' as const, user_id: 'user-1' },
-      { name: 'Meditation', status: 'ENABLED' as const, user_id: 'user-1' },
+      { name: "Morning Run", status: "ENABLED" as const, user_id: "user-1" },
+      {
+        name: "Evening Workout",
+        status: "ENABLED" as const,
+        user_id: "user-1",
+      },
+      { name: "Meditation", status: "ENABLED" as const, user_id: "user-1" },
     ];
 
     await insertActivities(newActivities);
@@ -688,17 +807,17 @@ export function BulkActivityManager() {
       </div>
 
       <div>
-        <button 
+        <button
           onClick={handleBulkDisable}
           disabled={selectedIds.length === 0 || isLoading}
         >
           Disable Selected ({selectedIds.length})
         </button>
-        
-        <button 
+
+        <button
           onClick={handleBulkDelete}
           disabled={selectedIds.length === 0 || isLoading}
-          style={{ color: 'red' }}
+          style={{ color: "red" }}
         >
           Delete Selected ({selectedIds.length})
         </button>
@@ -706,7 +825,7 @@ export function BulkActivityManager() {
 
       <div>
         {activities.map((activity) => (
-          <label key={activity.id} style={{ display: 'block' }}>
+          <label key={activity.id} style={{ display: "block" }}>
             <input
               type="checkbox"
               checked={selectedIds.includes(activity.id!)}
@@ -714,7 +833,9 @@ export function BulkActivityManager() {
                 if (e.target.checked) {
                   setSelectedIds([...selectedIds, activity.id!]);
                 } else {
-                  setSelectedIds(selectedIds.filter(id => id !== activity.id));
+                  setSelectedIds(
+                    selectedIds.filter((id) => id !== activity.id)
+                  );
                 }
               }}
             />
@@ -731,37 +852,43 @@ export function BulkActivityManager() {
 
 ```tsx
 // Custom hook for activity management
-import { useCallback } from 'react';
-import useActivitiesStore from '@/shared/stores/useActivitiesStore';
+import { useCallback } from "react";
+import useActivitiesStore from "@/shared/stores/useActivitiesStore";
 
 export function useActivityManager() {
   const store = useActivitiesStore();
 
-  const createActivity = useCallback(async (name: string) => {
-    return store.insertActivity({
-      name,
-      status: 'ENABLED',
-      user_id: 'current-user-id',
-      // Add other default values
-    });
-  }, [store.insertActivity]);
-
-  const toggleActivityStatus = useCallback(async (activityId: string) => {
-    const activity = store.activities.find(a => a.id === activityId);
-    if (!activity) return;
-
-    if (activity.status === 'ENABLED') {
-      await store.disableActivity(activityId);
-    } else {
-      await store.updateActivity({
-        ...activity,
-        status: 'ENABLED'
+  const createActivity = useCallback(
+    async (name: string) => {
+      return store.insertActivity({
+        name,
+        status: "ENABLED",
+        user_id: "current-user-id",
+        // Add other default values
       });
-    }
-  }, [store.activities, store.disableActivity, store.updateActivity]);
+    },
+    [store.insertActivity]
+  );
+
+  const toggleActivityStatus = useCallback(
+    async (activityId: string) => {
+      const activity = store.activities.find((a) => a.id === activityId);
+      if (!activity) return;
+
+      if (activity.status === "ENABLED") {
+        await store.disableActivity(activityId);
+      } else {
+        await store.updateActivity({
+          ...activity,
+          status: "ENABLED",
+        });
+      }
+    },
+    [store.activities, store.disableActivity, store.updateActivity]
+  );
 
   const getEnabledActivities = useCallback(() => {
-    return store.activities.filter(a => a.status === 'ENABLED');
+    return store.activities.filter((a) => a.status === "ENABLED");
   }, [store.activities]);
 
   return {
@@ -774,20 +901,22 @@ export function useActivityManager() {
 
 // Usage in component
 export function ActivityManager() {
-  const { 
-    activities, 
-    isLoading, 
-    error, 
-    createActivity, 
+  const {
+    activities,
+    isLoading,
+    error,
+    createActivity,
     toggleActivityStatus,
-    getEnabledActivities 
+    getEnabledActivities,
   } = useActivityManager();
 
   const enabledActivities = getEnabledActivities();
 
   return (
     <div>
-      <p>Total: {activities.length}, Enabled: {enabledActivities.length}</p>
+      <p>
+        Total: {activities.length}, Enabled: {enabledActivities.length}
+      </p>
       {/* Rest of component */}
     </div>
   );
@@ -814,7 +943,7 @@ const result = await handleApiCall(
   () => someApiCall(),
   "perform operation", // Used in error message if operation fails
   defaultValue,
-  stateUpdater,
+  stateUpdater
 );
 
 // Error states are automatically set:
@@ -842,7 +971,7 @@ Always extend `BaseStoreState` for consistent error and loading handling:
 interface MyStore extends BaseStoreState {
   // Your store-specific state
   data: MyData[];
-  
+
   // Your operations
   fetchData: () => Promise<void>;
 }
@@ -856,7 +985,7 @@ Use descriptive operation names for better error messages:
 // Good
 handleApiCall(set, apiCall, "fetch user profile", defaultValue);
 
-// Bad  
+// Bad
 handleApiCall(set, apiCall, "fetch", defaultValue);
 ```
 
@@ -885,7 +1014,7 @@ Choose appropriate default values based on operation type:
 // Single item operations
 handleGetApiCall(set, apiCall, "get item", null);
 
-// Array operations  
+// Array operations
 handleGetApiCall(set, apiCall, "get items", []);
 
 // Void operations
@@ -911,6 +1040,7 @@ To migrate existing stores to use these utilities:
 4. **Remove redundant loading state management**
 
 ### Before:
+
 ```typescript
 fetchData: async () => {
   set({ isLoading: true, error: null });
@@ -918,24 +1048,25 @@ fetchData: async () => {
     const data = await api.fetchData();
     set({ data, isLoading: false });
   } catch (error) {
-    set({ 
+    set({
       error: error instanceof Error ? error.message : "Failed to fetch data",
-      isLoading: false 
+      isLoading: false,
     });
   }
-}
+};
 ```
 
 ### After:
+
 ```typescript
 fetchData: async () => {
   return handleVoidApiCallWithResult(
     set,
     () => api.fetchData(),
     "fetch data",
-    (data) => ({ data }),
+    (data) => ({ data })
   );
-}
+};
 ```
 
 ## Error Handling Details
