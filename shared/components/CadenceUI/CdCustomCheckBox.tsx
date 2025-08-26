@@ -1,13 +1,13 @@
 import { Text, TouchableOpacity } from "react-native";
 import { styles } from "../../auth/components/style";
 
-interface CheckboxProps {
+interface CdCheckboxProps {
   value: boolean;
   onValueChange: (value: boolean) => void;
   disabled?: boolean;
 }
 
-export const CustomCheckbox: React.FC<CheckboxProps> = ({
+export const CdCustomCheckbox: React.FC<CdCheckboxProps> = ({
   value,
   onValueChange,
   disabled,

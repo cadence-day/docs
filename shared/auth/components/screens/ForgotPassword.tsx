@@ -1,6 +1,4 @@
-import CdButton from "@/shared/components/CdButton";
-import CdText from "@/shared/components/CdText";
-import CdTextInput from "@/shared/components/CdTextInput";
+import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import Toast from "@/shared/components/Toast";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { COLORS } from "@/shared/constants/COLORS";
@@ -11,6 +9,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import {
+  handleAuthError,
   isValidEmail,
   parseClerkErrors,
   validateEmailField,
@@ -60,8 +59,11 @@ const ForgotPasswordScreen = () => {
           params: { email: email },
         });
       }, 2000);
-    } catch (err: any) {
-      console.error("Password reset error:", err);
+    } catch (err) {
+      handleAuthError(err, "FORGOT_PASSWORD", {
+        email: email,
+        step: "initiate_reset",
+      });
 
       // Parse Clerk errors - ensure err is not null/undefined
       if (err) {

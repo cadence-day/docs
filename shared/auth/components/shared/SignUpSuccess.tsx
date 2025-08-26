@@ -1,6 +1,6 @@
-import { View } from "react-native";
-import CdText from "@/shared/components/CdText";
+import { CdText } from "@/shared/components/CadenceUI";
 import { Star5 } from "@/shared/components/icons/SageIcon";
+import { View } from "react-native";
 import { styles } from "../style";
 
 const SignUpSuccess = () => {

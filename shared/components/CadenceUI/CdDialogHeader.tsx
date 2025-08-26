@@ -1,16 +1,16 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
   StyleSheet,
-  ViewStyle,
+  Text,
   TextStyle,
+  TouchableOpacity,
   TouchableWithoutFeedback,
+  View,
+  ViewStyle,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
-interface DialogHeaderProps {
+export interface CdDialogHeaderProps {
   title: string | React.ReactNode;
   backAction?: boolean;
   onBackAction?: () => void;
@@ -28,7 +28,7 @@ interface DialogHeaderProps {
   onTitleDoubleTap?: () => void; // New prop for double tap on title
 }
 
-const DialogHeader: React.FC<DialogHeaderProps> = ({
+export const CdDialogHeader: React.FC<CdDialogHeaderProps> = ({
   title,
   backAction = false,
   onBackAction,
@@ -212,6 +212,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 });
-
-export type { DialogHeaderProps };
-export default DialogHeader;

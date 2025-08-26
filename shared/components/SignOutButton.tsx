@@ -2,6 +2,7 @@ import { useClerk } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { COLORS } from "../constants/COLORS";
+import { GlobalErrorHandler } from "../utils/errorHandler";
 
 export const SignOutButton = () => {
   // Use `useClerk()` to access the `signOut()` function
@@ -16,7 +17,10 @@ export const SignOutButton = () => {
     } catch (err) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
-      console.error(JSON.stringify(err, null, 2));
+      GlobalErrorHandler.logError(err, "SIGN_OUT", {
+        component: "SignOutButton",
+        operation: "clerk_sign_out",
+      });
     }
   };
 

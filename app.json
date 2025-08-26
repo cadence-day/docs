@@ -44,10 +44,7 @@
             "host": "app.cadence.day",
             "pathPrefix": "/"
           },
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
     },

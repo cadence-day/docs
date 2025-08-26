@@ -1,10 +1,10 @@
 import React from "react";
 import {
-  TouchableOpacity,
-  Text,
   StyleSheet,
-  ViewStyle,
+  Text,
   TextStyle,
+  TouchableOpacity,
+  ViewStyle,
 } from "react-native";
 
 interface CdButtonProps {
@@ -18,7 +18,7 @@ interface CdButtonProps {
   fullWidth?: boolean;
 }
 
-const CdButton: React.FC<CdButtonProps> = ({
+export const CdButton: React.FC<CdButtonProps> = ({
   title,
   onPress,
   variant = "outline",
@@ -149,5 +149,3 @@ const localStyles = StyleSheet.create({
     opacity: 0.7,
   },
 });
-
-export default CdButton;

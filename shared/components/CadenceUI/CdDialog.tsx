@@ -1,4 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useRef, useState } from "react";
@@ -10,16 +11,16 @@ import {
   View,
 } from "react-native";
 import { NAV_BAR_SIZE } from "../../constants/VIEWPORT";
-import DialogHeader, { type DialogHeaderProps } from "./DialogHeader";
+import { CdDialogHeader, CdDialogHeaderProps } from "./CdDialogHeader";
 
-interface DynamicDialogProps {
+interface CdDialogProps {
   visible: boolean;
   onClose: () => void;
   children?: React.ReactNode;
   height?: number; // Height as percentage (0-100), defaults to 50
   maxHeight?: number; // Maximum height as percentage (0-100), defaults to 90
   showCloseButton?: boolean;
-  headerProps?: DialogHeaderProps;
+  headerProps?: CdDialogHeaderProps;
   enableCloseOnBackgroundPress?: boolean;
   onHeightChange?: (height: number) => void;
   enableDragging?: boolean; // Whether dragging is enabled, defaults to true
@@ -31,7 +32,7 @@ interface DynamicDialogProps {
   isGlobal?: boolean; // Whether this dialog can appear in any view
 }
 
-const DynamicDialog: React.FC<DynamicDialogProps> = ({
+export const CdDialog: React.FC<CdDialogProps> = ({
   visible = false,
   onClose,
   children,
@@ -151,7 +152,11 @@ const DynamicDialog: React.FC<DynamicDialogProps> = ({
       const newHeight = dragStartHeight.current + heightChangePercent;
       // Set a maximum height of 90%
       updateHeight(newHeight);
-      console.log("Dialog height updated to:", newHeight);
+      GlobalErrorHandler.logDebug(
+        "Dialog height updated",
+        "DYNAMIC_DIALOG_RESIZE",
+        { newHeight, heightChangePercent }
+      );
     },
     onPanResponderTerminationRequest: () => false,
   });
@@ -223,7 +228,7 @@ const DynamicDialog: React.FC<DynamicDialogProps> = ({
         )}
 
         {headerProps && (
-          <DialogHeader
+          <CdDialogHeader
             {...headerProps}
             onTitleDoubleTap={enableDragging ? handleDoubleTap : undefined}
           />
@@ -298,5 +303,3 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
-
-export default DynamicDialog;

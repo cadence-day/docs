@@ -1,4 +1,5 @@
-import CdText from "@/shared/components/CdText";
+import { CdText } from "@/shared/components/CadenceUI";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useEffect } from "react";
@@ -12,7 +13,10 @@ export default function ClerkRedirect() {
         // Completes any pending auth session started by expo-auth-session / WebBrowser
         await WebBrowser.maybeCompleteAuthSession();
       } catch (err) {
-        console.error("Error completing auth session:", err);
+        GlobalErrorHandler.logError(err, "CLERK_AUTH_SESSION_COMPLETION", {
+          component: "ClerkRedirect",
+          operation: "complete_auth_session",
+        });
       } finally {
         if (mounted) {
           // Navigate to home; the auth layout will redirect signed-in users appropriately

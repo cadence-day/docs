@@ -1,5 +1,6 @@
-import { decryptString, encryptString } from "../core";
 import type { Note } from "@/shared/types/models";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { decryptString, encryptString } from "../core";
 
 /**
  * Encrypts the message field of a note
@@ -19,7 +20,11 @@ export async function encryptNoteMessage(note: Note): Promise<Note> {
     };
   } catch (error) {
     // If encryption fails, return original note
-    console.error("Failed to encrypt note message:", error);
+    GlobalErrorHandler.logError(error, "ENCRYPTION_NOTE_MESSAGE", {
+      noteId: note.id,
+      operation: "encrypt",
+      fallbackBehavior: "return_original",
+    });
     return note;
   }
 }
@@ -42,7 +47,11 @@ export async function decryptNoteMessage(note: Note): Promise<Note> {
     };
   } catch (error) {
     // If decryption fails, return original note
-    console.error("Failed to decrypt note message:", error);
+    GlobalErrorHandler.logError(error, "DECRYPTION_NOTE_MESSAGE", {
+      noteId: note.id,
+      operation: "decrypt",
+      fallbackBehavior: "return_original",
+    });
     return note;
   }
 }
@@ -84,7 +93,10 @@ export async function encryptNoteForInsertion(
       message: encryptedMessage,
     };
   } catch (error) {
-    console.error("Failed to encrypt note message for insertion:", error);
+    GlobalErrorHandler.logError(error, "ENCRYPTION_NOTE_INSERTION", {
+      operation: "encrypt_for_insertion",
+      fallbackBehavior: "return_original",
+    });
     return note;
   }
 }

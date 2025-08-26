@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { COLORS } from "../constants/COLORS";
+import { COLORS } from "../../constants/COLORS";
 
 interface CdTextInputProps extends TextInputProps {
   label?: string;
@@ -20,7 +20,7 @@ interface CdTextInputProps extends TextInputProps {
   value: string;
 }
 
-const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
+export const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
   (
     {
       label,
@@ -100,8 +100,6 @@ const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
   }
 );
 
-CdTextInput.displayName = "CdTextInput";
-
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
@@ -162,5 +160,3 @@ const styles = StyleSheet.create({
     opacity: 0,
   },
 });
-
-export default CdTextInput;

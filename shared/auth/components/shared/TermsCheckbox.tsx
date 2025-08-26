@@ -1,4 +1,4 @@
-import CdText from "@/shared/components/CdText";
+import { CdText } from "@/shared/components/CadenceUI";
 import { COLORS } from "@/shared/constants/COLORS";
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";

@@ -5,7 +5,7 @@
 // - children: React.ReactNode
 
 import React from "react";
-import { View, Text, StyleSheet, ViewStyle } from "react-native";
+import { StyleSheet, Text, View, ViewStyle } from "react-native";
 
 interface CdContainerWithTitleProps {
   title: string;
@@ -14,7 +14,7 @@ interface CdContainerWithTitleProps {
   containerStyle?: ViewStyle;
 }
 
-const CdContainerWithTitle: React.FC<CdContainerWithTitleProps> = ({
+export const CdContainerWithTitle: React.FC<CdContainerWithTitleProps> = ({
   title,
   children,
   style,
@@ -46,5 +46,3 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
-
-export default CdContainerWithTitle;

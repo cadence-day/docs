@@ -1,1 +1,1 @@
-// Entry point for shared state stores
+export * from "./resources";
