@@ -1,10 +1,10 @@
 import {
   isValidEmail,
-  validateName,
   validateEmailField,
+  validateName,
+  validatePassword,
   validatePasswordField,
   validateRepeatPasswordField,
-  validatePassword,
 } from "@/shared/auth/utils/validation";
 
 describe("auth validation utilities", () => {
@@ -17,26 +17,27 @@ describe("auth validation utilities", () => {
     it("rejects invalid emails", () => {
       expect(isValidEmail("")).toBe(false);
       expect(isValidEmail("not-an-email")).toBe(false);
-      expect(isValidEmail("no-domain@")) .toBe(false);
-    });
-  });
-
-  describe("validateName", () => {
-    it("requires a name", () => {
-      expect(validateName("")).toBe("Name is required");
+      expect(isValidEmail("no-domain@")).toBe(false);
     });
 
-    it("requires at least 2 characters", () => {
-      expect(validateName("A")).toBe("Name must be at least 2 characters");
-    });
+    describe("validateName", () => {
+      it("requires a name", () => {
+        expect(validateName("")).toBe("Name is required");
+      });
 
-    it("requires first and last name", () => {
-      expect(validateName("SingleName")).toBe("Please enter both first and last name");
-    });
+      it("requires at least 2 characters", () => {
+        expect(validateName("A")).toBe("Name must be at least 2 characters");
+      });
 
-    it("accepts proper full names", () => {
+      it("requires first and last name", () => {
+        expect(validateName("SingleName")).toBe(
+          "Please enter both first and last name"
+        );
+      });
+
+      expect(validateName("First Last")).toBeNull();
       expect(validateName("Test User")).toBeNull();
-      expect(validateName("First Last")) .toBeNull();
+      expect(validateName("First Last")).toBeNull();
     });
   });
 
@@ -56,16 +57,16 @@ describe("auth validation utilities", () => {
       expect(validatePasswordField("short1A!")).toBe(
         "Password must be at least 10 characters"
       );
-      expect(validatePasswordField("NOLOWERCASE1!")) .toBe(
+      expect(validatePasswordField("NOLOWERCASE1!")).toBe(
         "Password must contain at least one lowercase letter"
       );
-      expect(validatePasswordField("nouppercase1!")) .toBe(
+      expect(validatePasswordField("nouppercase1!")).toBe(
         "Password must contain at least one uppercase letter"
       );
-      expect(validatePasswordField("NoNumber!!")) .toBe(
+      expect(validatePasswordField("NoNumber!!")).toBe(
         "Password must contain at least one digit"
       );
-      expect(validatePasswordField("NoSpecial1A")) .toBe(
+      expect(validatePasswordField("NoSpecial1A")).toBe(
         "Password must contain at least one special character"
       );
 
@@ -99,9 +100,9 @@ describe("auth validation utilities", () => {
       expect(validatePassword("short1A!", "short1A!", true).isValid).toBe(
         false
       );
-      expect(validatePassword("NOLOWERCASE1!", "NOLOWERCASE1!", true).isValid).toBe(
-        false
-      );
+      expect(
+        validatePassword("NOLOWERCASE1!", "NOLOWERCASE1!", true).isValid
+      ).toBe(false);
       expect(validatePassword(strong, strong, false).isValid).toBe(false);
       expect(validatePassword(strong, strong, false).error).toBe(
         "You must agree to the terms and conditions"
