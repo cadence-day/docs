@@ -5,15 +5,12 @@ import SignIn from "../(auth)/sign-in";
 
 export default function Page() {
   const { user } = useUser();
-
+  const firstName = user?.firstName || "User";
   return (
     <View style={styles.container}>
       <SignedIn>
         <View style={styles.signedInSection}>
-          <Text style={styles.welcomeText}>Welcome back!</Text>
-          <Text style={styles.userEmail}>
-            {user?.emailAddresses[0].emailAddress}
-          </Text>
+          <Text style={styles.welcomeText}>Welcome back, {firstName}!</Text>
           <SignOutButton />
         </View>
       </SignedIn>
@@ -29,6 +26,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
+    alignContent: "center",
+    justifyContent: "center",
   },
   header: {
     alignItems: "center",
@@ -54,60 +53,4 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 10,
   },
-  userEmail: {
-    fontSize: 18,
-    color: "#555",
-    marginBottom: 20,
-  },
-  // authSection: {
-  //   backgroundColor: "#fff",
-  //   padding: 20,
-  //   borderRadius: 10,
-  //   shadowColor: "#000",
-  //   shadowOffset: { width: 0, height: 2 },
-  //   shadowOpacity: 0.1,
-  //   shadowRadius: 4,
-  //   elevation: 3,
-  // },
-  // authTitle: {
-  //   fontSize: 24,
-  //   fontWeight: "bold",
-  //   color: "#333",
-  //   marginBottom: 10,
-  // },
-  // authSubtitle: {
-  //   fontSize: 16,
-  //   color: "#666",
-  //   marginBottom: 20,
-  // },
-  // buttonContainer: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-around",
-  // },
-  // primaryButton: {
-  //   backgroundColor: "#007bff",
-  //   paddingVertical: 12,
-  //   paddingHorizontal: 25,
-  //   borderRadius: 8,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  // },
-  // primaryButtonText: {
-  //   color: "#fff",
-  //   fontSize: 18,
-  //   fontWeight: "bold",
-  // },
-  // secondaryButton: {
-  //   backgroundColor: "#6c757d",
-  //   paddingVertical: 12,
-  //   paddingHorizontal: 25,
-  //   borderRadius: 8,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  // },
-  // secondaryButtonText: {
-  //   color: "#fff",
-  //   fontSize: 18,
-  //   fontWeight: "bold",
-  // },
 });

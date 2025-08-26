@@ -173,7 +173,7 @@ const SignInScreen = () => {
             strategy: strategy as OAuthStrategy,
             redirectUrl: AuthSession.makeRedirectUri({
               scheme: "day.cadence",
-              path: "clerk",
+              path: "/(home)",
             }),
           });
 
