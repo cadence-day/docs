@@ -84,11 +84,11 @@ const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
           )}
         </View>
 
-        {hasError && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        )}
+        <View style={styles.errorContainer}>
+          <Text style={[styles.errorText, !hasError && styles.errorTextHidden]}>
+            {error || " "}
+          </Text>
+        </View>
       </View>
     );
   }
@@ -151,6 +151,9 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     flex: 1,
     textTransform: "uppercase",
+  },
+  errorTextHidden: {
+    opacity: 0,
   },
 });
 

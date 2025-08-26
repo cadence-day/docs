@@ -4,11 +4,12 @@ import CdTextInput from "@/shared/components/CdTextInput";
 import Toast from "@/shared/components/Toast";
 import { useToast } from "@/shared/hooks";
 import { useSignUp } from "@clerk/clerk-expo";
-import { router } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
+import { COLORS } from "../../../../shared/constants/COLORS";
 import { parseClerkErrors } from "../../utils";
 import { styles } from "../style";
+import DirectToSignIn from "./DirectToSignIn";
 
 interface EmailVerificationProps {
   code: string;
@@ -29,7 +30,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [verificationError, setVerificationError] = useState<string | null>(
-    null,
+    null
   );
   const [resendCooldown, setResendCooldown] = useState(0);
   const { toast, showError, showSuccess, hideToast } = useToast();
@@ -89,7 +90,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
       } else {
         console.error(
           "Verification incomplete:",
-          JSON.stringify(signUpAttempt, null, 2),
+          JSON.stringify(signUpAttempt, null, 2)
         );
         setVerificationError("Verification incomplete. Please try again.");
         showError("Verification incomplete. Please try again.");
@@ -170,7 +171,12 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         returnKeyType="done"
         onSubmitEditing={onVerifyPress}
         maxLength={6}
-        style={{ textAlign: "center", fontSize: 18, letterSpacing: 2 }}
+        style={{
+          textAlign: "center",
+          fontSize: 18,
+          letterSpacing: 2,
+          color: COLORS.white,
+        }}
       />
 
       <CdButton
@@ -186,7 +192,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         <CdText
           variant="body"
           size="small"
-          style={{ color: "#666", marginBottom: 10 }}
+          style={{ color: COLORS.placeholderText, marginBottom: 10 }}
         >
           Didn't receive the code?
         </CdText>
@@ -199,7 +205,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
           <CdText
             variant="body"
             size="medium"
-            style={{ color: "#007AFF", fontWeight: "600" }}
+            style={{ color: COLORS.primary, fontWeight: "600" }}
           >
             {isResending
               ? "Sending..."
@@ -210,14 +216,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        onPress={onBackToSignUp || (() => router.replace("/"))}
-        style={{ marginTop: 30 }}
-      >
-        <CdText variant="body" size="small" style={{ color: "#666" }}>
-          ← Back to Sign Up
-        </CdText>
-      </TouchableOpacity>
+      <DirectToSignIn />
 
       {/* Toast Notification */}
       <Toast

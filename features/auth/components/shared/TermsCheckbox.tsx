@@ -27,7 +27,7 @@ const TermsCheckbox: React.FC<TermsCheckboxProps> = ({
   onToggle,
 }) => {
   return (
-    <View style={{ width: "100%", gap: 12, marginVertical: 16 }}>
+    <View style={{ width: "100%", gap: 12, marginVertical: 8 }}>
       <TouchableOpacity
         style={{
           flexDirection: "row",
