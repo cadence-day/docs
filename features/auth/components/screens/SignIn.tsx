@@ -171,9 +171,11 @@ const SignInScreen = () => {
         const { createdSessionId, setActive, signIn, signUp } =
           await startSSOFlow({
             strategy: strategy as OAuthStrategy,
+            // Use the app's custom scheme and the `/clerk` callback route we added
+            // TODO: This is not working yet.
             redirectUrl: AuthSession.makeRedirectUri({
               scheme: "day.cadence",
-              path: "/(home)",
+              path: "clerk",
             }),
           });
 
