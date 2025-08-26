@@ -7,6 +7,15 @@ const tintColorLight = "#B7B7B7";
 const tintColorDark = "#B7B7B7";
 
 export const COLORS = {
+  linearGradient: {
+    start: "#2B2B2B",
+    end: "#151414",
+  },
+  placeholderText: "#9CA3AF",
+  bodyText: "#A1A1A1",
+  textIcons: "#6B7280",
+  error: "#EF4444",
+  white: "#FFFFFF",
   primary: "#6646EC", // Steel blue
   secondary: "#FFFFFF", // Light yellow
   tertiary: "#FF6B5C", // Coral red

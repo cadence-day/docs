@@ -9,20 +9,20 @@ import { handleApiError } from "@/shared/api/utils/errorHandler";
  * @returns A promise that resolves to the inserted state or null if insertion fails.
  */
 export async function insertState(
-    state: Omit<State, "id">,
+  state: Omit<State, "id">
 ): Promise<State | null> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("states")
-                .insert(state)
-                .select()
-                .single();
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("insertState", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("states")
+        .insert(state)
+        .select()
+        .single();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("insertState", error);
+  }
 }
 
 /**
@@ -31,19 +31,19 @@ export async function insertState(
  * @returns A promise that resolves to an array of inserted states.
  */
 export async function insertStates(
-    states: Omit<State, "id">[],
+  states: Omit<State, "id">[]
 ): Promise<State[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("states")
-                .insert(states)
-                .select();
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("insertStates", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("states")
+        .insert(states)
+        .select();
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("insertStates", error);
+  }
 }
 
 /**
@@ -56,25 +56,25 @@ export async function insertStates(
  * @returns A promise that resolves to the upserted state or null if operation fails.
  */
 export async function upsertState(
-    state: Omit<State, "id"> & Partial<Pick<State, "id">>,
+  state: Omit<State, "id"> & Partial<Pick<State, "id">>
 ): Promise<State | null> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("states")
-                .upsert(state, { onConflict: "id" })
-                .select()
-                .single();
-            if (data == null) {
-                throw new Error(
-                    "Failed to upsert state: no data returned from database.",
-                );
-            }
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("upsertState", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("states")
+        .upsert(state, { onConflict: "id" })
+        .select()
+        .single();
+      if (data == null) {
+        throw new Error(
+          "Failed to upsert state: no data returned from database."
+        );
+      }
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("upsertState", error);
+  }
 }
 
 /**
@@ -87,22 +87,22 @@ export async function upsertState(
  * @returns A promise that resolves to an array of upserted states.
  */
 export async function upsertStates(
-    states: (Omit<State, "id"> & Partial<Pick<State, "id">>)[],
+  states: (Omit<State, "id"> & Partial<Pick<State, "id">>)[]
 ): Promise<State[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("states")
-                .upsert(states, { onConflict: "id" })
-                .select();
-            if (data == null) {
-                throw new Error(
-                    "Failed to upsert states: no data returned from database.",
-                );
-            }
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("upsertStates", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("states")
+        .upsert(states, { onConflict: "id" })
+        .select();
+      if (data == null) {
+        throw new Error(
+          "Failed to upsert states: no data returned from database."
+        );
+      }
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("upsertStates", error);
+  }
 }

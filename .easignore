@@ -1,6 +1,5 @@
 supabase/
-.env
 .prettierignore
 .prettierrc
-invitation.html
 README.md
+docs/

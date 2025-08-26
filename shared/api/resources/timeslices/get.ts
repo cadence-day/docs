@@ -9,20 +9,20 @@ import { handleApiError } from "@/shared/api/utils/errorHandler";
  * @returns A promise that resolves to the timeslice or null if not found.
  */
 export async function getTimeslice(
-    timesliceId: string,
+  timesliceId: string
 ): Promise<Timeslice | null> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .select("*")
-                .eq("id", timesliceId)
-                .single();
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("getTimeslice", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .select("*")
+        .eq("id", timesliceId)
+        .single();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("getTimeslice", error);
+  }
 }
 
 /**
@@ -31,19 +31,19 @@ export async function getTimeslice(
  * @returns A promise that resolves to an array of timeslices.
  */
 export async function getTimeslices(
-    timesliceIds: string[],
+  timesliceIds: string[]
 ): Promise<Timeslice[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .select("*")
-                .in("id", timesliceIds);
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("getTimeslices", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .select("*")
+        .in("id", timesliceIds);
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("getTimeslices", error);
+  }
 }
 
 /**
@@ -51,20 +51,18 @@ export async function getTimeslices(
  * @param userId - The ID of the user whose timeslices to fetch.
  * @returns A promise that resolves to an array of timeslices.
  */
-export async function getUserTimeslices(
-    userId: string,
-): Promise<Timeslice[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .select("*")
-                .eq("user_id", userId);
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("getUserTimeslices", error);
-    }
+export async function getUserTimeslices(userId: string): Promise<Timeslice[]> {
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .select("*")
+        .eq("user_id", userId);
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("getUserTimeslices", error);
+  }
 }
 
 /**
@@ -72,14 +70,14 @@ export async function getUserTimeslices(
  * @returns A promise that resolves to an array of all timeslices.
  */
 export async function getAllTimeslices(): Promise<Timeslice[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .select("*");
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("getAllTimeslices", error);
-    }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .select("*");
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("getAllTimeslices", error);
+  }
 }
