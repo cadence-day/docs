@@ -1,18 +1,18 @@
-import { create } from "zustand";
-import type { Activity } from "@/shared/types/models";
 import * as activitiesApi from "@/shared/api/resources/activities";
+import type { Activity } from "@/shared/types/models";
 import {
   loadActivityOrderFromStorage,
   saveActivityOrderToStorage,
   sortActivitiesByStoredOrder,
 } from "@/shared/utils/activityOrderStorage";
+import { create } from "zustand";
 import {
   type BaseStoreState,
   handleApiCall,
   handleGetApiCall,
   handleVoidApiCall,
   handleVoidApiCallWithResult,
-} from "./utils";
+} from "../utils/utils";
 
 interface ActivitiesStore extends BaseStoreState {
   // State
@@ -37,10 +37,10 @@ interface ActivitiesStore extends BaseStoreState {
 
   // Upsert operations
   upsertActivity: (
-    activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>,
+    activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>
   ) => Promise<Activity | null>;
   upsertActivities: (
-    activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[],
+    activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[]
   ) => Promise<Activity[]>;
   refresh: () => Promise<void>;
 
@@ -53,7 +53,7 @@ interface ActivitiesStore extends BaseStoreState {
   getAllDeletedActivities: () => Promise<Activity[]>;
   getEnabledActivitiesByCategory: (categoryId: string) => Promise<Activity[]>;
 
-  // Local state management for ordering
+  // Local state management for ordering (not in the API - Implementation in the DB later)
   updateActivityOrder: (reorderedActivities: Activity[]) => void;
 
   // Utility functions
@@ -78,9 +78,9 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (newActivity, state) =>
         newActivity
           ? {
-            activities: [...state.activities, newActivity],
-          }
-          : {},
+              activities: [...state.activities, newActivity],
+            }
+          : {}
     );
   },
 
@@ -93,9 +93,9 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (newActivities, state) =>
         newActivities.length > 0
           ? {
-            activities: [...state.activities, ...newActivities],
-          }
-          : {},
+              activities: [...state.activities, ...newActivities],
+            }
+          : {}
     );
   },
 
@@ -108,11 +108,11 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (updatedActivity, state) =>
         updatedActivity
           ? {
-            activities: state.activities.map((a) =>
-              a.id === updatedActivity.id ? updatedActivity : a
-            ),
-          }
-          : {},
+              activities: state.activities.map((a) =>
+                a.id === updatedActivity.id ? updatedActivity : a
+              ),
+            }
+          : {}
     );
   },
 
@@ -125,12 +125,12 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (updatedActivities, state) =>
         updatedActivities && updatedActivities.length > 0
           ? {
-            activities: state.activities.map((a) => {
-              const updated = updatedActivities.find((ua) => ua.id === a.id);
-              return updated || a;
-            }),
-          }
-          : {},
+              activities: state.activities.map((a) => {
+                const updated = updatedActivities.find((ua) => ua.id === a.id);
+                return updated || a;
+              }),
+            }
+          : {}
     );
   },
 
@@ -143,7 +143,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         activities: state.activities.map((a) =>
           a.id === id ? { ...a, status: "DISABLED" } : a
         ),
-      }),
+      })
     );
   },
 
@@ -156,7 +156,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         activities: state.activities.map((a) =>
           ids.includes(a.id!) ? { ...a, status: "DISABLED" } : a
         ),
-      }),
+      })
     );
   },
 
@@ -167,7 +167,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       "delete activity",
       (state) => ({
         activities: state.activities.filter((a) => a.id !== id),
-      }),
+      })
     );
   },
 
@@ -178,12 +178,12 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       "delete activities",
       (state) => ({
         activities: state.activities.filter((a) => !ids.includes(a.id!)),
-      }),
+      })
     );
   },
 
   upsertActivity: async (
-    activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>,
+    activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>
   ) => {
     return handleApiCall(
       set,
@@ -193,8 +193,8 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (upsertedActivity, state) => {
         if (!upsertedActivity) return {};
 
-        const existingIndex = state.activities.findIndex((a) =>
-          a.id === upsertedActivity.id
+        const existingIndex = state.activities.findIndex(
+          (a) => a.id === upsertedActivity.id
         );
 
         if (existingIndex >= 0) {
@@ -206,12 +206,12 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
           // Add new activity
           return { activities: [...state.activities, upsertedActivity] };
         }
-      },
+      }
     );
   },
 
   upsertActivities: async (
-    activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[],
+    activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[]
   ) => {
     return handleApiCall(
       set,
@@ -224,8 +224,8 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         const updatedActivities = [...state.activities];
 
         upsertedActivities.forEach((upserted) => {
-          const existingIndex = updatedActivities.findIndex((a) =>
-            a.id === upserted.id
+          const existingIndex = updatedActivities.findIndex(
+            (a) => a.id === upserted.id
           );
           if (existingIndex >= 0) {
             // Update existing activity
@@ -237,7 +237,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         });
 
         return { activities: updatedActivities };
-      },
+      }
     );
   },
 
@@ -255,7 +255,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       "refresh activities",
       (sortedActivities) => ({
         activities: sortedActivities,
-      }),
+      })
     );
   },
 
@@ -265,7 +265,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getActivity(id),
       "get activity",
-      null,
+      null
     );
   },
 
@@ -274,7 +274,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getActivities(ids),
       "get activities",
-      [],
+      []
     );
   },
 
@@ -283,7 +283,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getEnabledUserActivities(userId),
       "get user activities",
-      [],
+      []
     );
   },
 
@@ -292,7 +292,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getAllActivities(),
       "get all activities",
-      [],
+      []
     );
   },
 
@@ -301,7 +301,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getAllDisabledActivities(),
       "get disabled activities",
-      [],
+      []
     );
   },
 
@@ -310,7 +310,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getAllDeletedActivities(),
       "get deleted activities",
-      [],
+      []
     );
   },
 
@@ -319,7 +319,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getEnabledActivitiesByCategory(categoryId),
       "get activities by category",
-      [],
+      []
     );
   },
 

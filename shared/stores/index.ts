@@ -1,2 +1,1 @@
-export * from "./useActivitiesStore";
-export * from "./useActivityCategoriesStore";
+export * from "./resources";
