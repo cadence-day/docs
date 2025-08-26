@@ -171,7 +171,10 @@ const SignInScreen = () => {
         const { createdSessionId, setActive, signIn, signUp } =
           await startSSOFlow({
             strategy: strategy as OAuthStrategy,
-            redirectUrl: AuthSession.makeRedirectUri(),
+            redirectUrl: AuthSession.makeRedirectUri({
+              scheme: "day.cadence",
+              path: "clerk",
+            }),
           });
 
         if (createdSessionId) {
@@ -287,6 +290,7 @@ const SignInScreen = () => {
 
         <View style={styles.actionButtonContainer}>
           {isSubmitting ? (
+            // TODO: Change this because it appears on the buttons with no overlay...
             <View style={styles.centerContent}>
               <SageIcon status="pulsating" size={100} />
             </View>
