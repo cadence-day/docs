@@ -6,7 +6,7 @@ import { useToast } from "@/shared/hooks";
 import { useSignUp } from "@clerk/clerk-expo";
 import React, { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { COLORS } from "../../../../shared/constants/COLORS";
+import { COLORS } from "../../../constants/COLORS";
 import { parseClerkErrors } from "../../utils";
 import { styles } from "../style";
 import DirectToSignIn from "./DirectToSignIn";

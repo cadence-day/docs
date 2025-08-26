@@ -1,8 +1,8 @@
 import CdButton from "@/shared/components/CdButton";
 import CdText from "@/shared/components/CdText";
 import CdTextInput from "@/shared/components/CdTextInput";
-import Toast from "@/shared/components/Toast";
 import SageIcon from "@/shared/components/icons/SageIcon";
+import Toast from "@/shared/components/Toast";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useToast } from "@/shared/hooks";
 import { useSignIn } from "@clerk/clerk-expo";
@@ -11,8 +11,8 @@ import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { parseClerkErrors } from "../../utils";
+import { PASSWORD_REQUIREMENTS } from "../../utils/constants";
 import PasswordRequirement from "../shared/PasswordRequirement";
-import { PASSWORD_REQUIREMENTS } from "../shared/constants";
 import { styles } from "../style";
 
 interface PasswordResetScreenProps {
