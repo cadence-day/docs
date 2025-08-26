@@ -70,18 +70,6 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
         </Text>
       )}
 
-      {PASSWORD_REQUIREMENTS.REQUIRE_SPECIAL_CHAR && (
-        <Text
-          style={[
-            styles.requirementText,
-            /[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/.test(password) &&
-              styles.requirementMet,
-          ]}
-        >
-          - Contain one special character.
-        </Text>
-      )}
-
       <Text
         style={[
           styles.requirementText,

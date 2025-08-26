@@ -52,10 +52,13 @@ const ForgotPasswordScreen = () => {
         identifier: email,
       });
 
-      showSuccess("If this email is registered, a reset link has been sent.");
-      // Navigate back after short delay to let user see success message
+      showSuccess("If this email is registered, a reset code has been sent.");
+      // Navigate to password reset screen after short delay
       setTimeout(() => {
-        router.back();
+        router.push({
+          pathname: "/(auth)/password-reset",
+          params: { email: email },
+        });
       }, 2000);
     } catch (err: any) {
       console.error("Password reset error:", err);
