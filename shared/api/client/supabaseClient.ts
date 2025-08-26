@@ -14,15 +14,15 @@ const supabaseAnonKey = SECRETS.EXPO_PUBLIC_SUPABASE_KEY!;
 import { getClerkInstance } from "@clerk/clerk-expo";
 
 export const supabaseClient = createClient<Database>(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-        // Session accessed from Clerk SDK, either as Clerk.session (vanilla
-        // JavaScript) or useSession (React)
-        accessToken: async () => {
-            const clerk = getClerkInstance();
-            const token = await clerk.session?.getToken();
-            return token ?? null;
-        },
+  supabaseUrl,
+  supabaseAnonKey,
+  {
+    // Session accessed from Clerk SDK, either as Clerk.session (vanilla
+    // JavaScript) or useSession (React)
+    accessToken: async () => {
+      const clerk = getClerkInstance();
+      const token = await clerk.session?.getToken();
+      return token ?? null;
     },
+  }
 );

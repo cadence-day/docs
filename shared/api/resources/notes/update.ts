@@ -3,8 +3,8 @@ import { handleApiError } from "@/shared/api/utils/errorHandler";
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import type { Note } from "@/shared/types/models/";
 import {
-    decryptNoteMessage,
-    encryptNoteMessage,
+  decryptNoteMessage,
+  encryptNoteMessage,
 } from "@/shared/api/encryption/resources/notes";
 
 /* Update an existing note.
@@ -12,58 +12,58 @@ import {
  * @returns A promise that resolves to the updated note.
  */
 export async function updateNote(note: Note): Promise<Note> {
-    if (!note?.id) {
-        throw new Error("Note ID is required for update.");
-    }
-    try {
-        const id = note.id!;
+  if (!note?.id) {
+    throw new Error("Note ID is required for update.");
+  }
+  try {
+    const id = note.id!;
 
-        // Encrypt the note message before update
-        const encryptedNote = await encryptNoteMessage(note);
+    // Encrypt the note message before update
+    const encryptedNote = await encryptNoteMessage(note);
 
-        const result = await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("notes")
-                .update(encryptedNote)
-                .eq("id", id)
-                .select()
-                .single();
-            if (data == null) {
-                throw new Error(
-                    "Failed to update note: no data returned from database.",
-                );
-            }
-            return { data, error };
-        });
+    const result = await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("notes")
+        .update(encryptedNote)
+        .eq("id", id)
+        .select()
+        .single();
+      if (data == null) {
+        throw new Error(
+          "Failed to update note: no data returned from database."
+        );
+      }
+      return { data, error };
+    });
 
-        // Decrypt the note message for return
-        return await decryptNoteMessage(result);
-    } catch (error) {
-        handleApiError("updateNote", error);
-    }
+    // Decrypt the note message for return
+    return await decryptNoteMessage(result);
+  } catch (error) {
+    handleApiError("updateNote", error);
+  }
 }
 
 /* Update multiple notes.
  * @param notes - The list of notes to update.
  * @returns A promise that resolves to the updated notes.
-*/
+ */
 export async function updateNotes(notes: Note[]): Promise<Note[]> {
-    if (!Array.isArray(notes) || notes.length === 0) {
-        throw new Error("A list of notes is required for update.");
+  if (!Array.isArray(notes) || notes.length === 0) {
+    throw new Error("A list of notes is required for update.");
+  }
+
+  try {
+    const updatedNotes: Note[] = [];
+
+    for (const note of notes) {
+      const updatedNote = await updateNote(note);
+      if (updatedNote) {
+        updatedNotes.push(updatedNote);
+      }
     }
 
-    try {
-        const updatedNotes: Note[] = [];
-
-        for (const note of notes) {
-            const updatedNote = await updateNote(note);
-            if (updatedNote) {
-                updatedNotes.push(updatedNote);
-            }
-        }
-
-        return updatedNotes;
-    } catch (error) {
-        handleApiError("updateNotes", error);
-    }
+    return updatedNotes;
+  } catch (error) {
+    handleApiError("updateNotes", error);
+  }
 }

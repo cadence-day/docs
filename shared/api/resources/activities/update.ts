@@ -13,7 +13,7 @@ import {
  * @returns A promise that resolves to the updated activity or null if update fails.
  */
 export async function updateActivity(
-  activity: Activity,
+  activity: Activity
 ): Promise<Activity | null> {
   if (!activity?.id) {
     throw new Error("Activity ID is required for update.");
@@ -51,7 +51,7 @@ export async function updateActivity(
  * @returns A promise that resolves to the updated activities or an error.
  */
 export async function updateActivities(
-  activities: Activity[],
+  activities: Activity[]
 ): Promise<Activity[] | null> {
   if (!Array.isArray(activities) || activities.length === 0) {
     throw new Error("A list of activities is required for update.");

@@ -46,7 +46,8 @@ const CdLevelIndicator: React.FC<CdLevelIndicatorProps> = ({
                   onPress={() => onChange(i + 1)}
                   onLongPress={() => onChange(0)} // Reset to 0 on long press
                   activeOpacity={0.7}
-                  style={styles.circleTouchable}>
+                  style={styles.circleTouchable}
+                >
                   <View
                     style={[
                       styles.circle,

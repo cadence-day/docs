@@ -2,7 +2,6 @@
 
 ![Cadence Logo](assets/images/splash-icon.png)
 
-
 [![Auto Format on PR](https://github.com/cadence-day/cadence-mobile-app/actions/workflows/formating.yml/badge.svg)](https://github.com/cadence-day/cadence-mobile-app/actions/workflows/formating.yml)
 [![EAS Staging Build](https://github.com/cadence-day/cadence-mobile-app/actions/workflows/preview.yml/badge.svg)](https://github.com/cadence-day/cadence-mobile-app/actions/workflows/preview.yml)
 
@@ -94,6 +93,7 @@ Note: Doppler is injecting environment variables on the start script. If you hav
 ```bash
 npm run eas:update
 ```
+
 > ℹ️ This command will update the Expo Go with the latest changes and pass the secrets to the app from Doppler.
 
 ---
@@ -113,13 +113,13 @@ supabase login
 ```
 
 3. Make sure Docker is running on your machine, as Supabase CLI uses Docker to run the local instance.
-To download the Docker Daemon on macOS, you can use Homebrew:
+   To download the Docker Daemon on macOS, you can use Homebrew:
 
 ```bash
 brew install --cask docker
 ```
-> If you do not want to user Docker, you can use colima running the following command: `brew install colima && colima start`
-4. Start the local Supabase instance:
+
+> If you do not want to user Docker, you can use colima running the following command: `brew install colima && colima start` 4. Start the local Supabase instance:
 
 ```bash
 supabase start
@@ -146,7 +146,7 @@ supabase db reset
 
 Wuuhuu! 🎉 Your local Supabase instance is now running, and you can start developing with it.
 
-**One more thing**, if you want to update the database types: 
+**One more thing**, if you want to update the database types:
 
 ```bash
 npm run dev:types:update
@@ -156,7 +156,8 @@ npm run dev:types:update
 
 You can add data using SQL in the file `supabase/seed.sql`.
 
-> 🚧 If Supabase results in unhealthy conditions: run the following command: 
+> 🚧 If Supabase results in unhealthy conditions: run the following command:
+
 ```bash
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)
@@ -164,7 +165,7 @@ docker rmi $(docker images -q)
 supabase start
 ```
 
-> 🚧 If there is a 99_role.sql issue, change the `supabase/.temp/postgres-version`to 15.8.1.093. There are known and unresolved issues with the 94 patched version. 
+> 🚧 If there is a 99_role.sql issue, change the `supabase/.temp/postgres-version`to 15.8.1.093. There are known and unresolved issues with the 94 patched version.
 
 ---
 
@@ -235,9 +236,9 @@ export default ({ config }) => ({
 
 ```ts
 export const SECRETS = {
-   // ... other secrets
-   MY_SECRET: Constants.expoConfig?.extra?.MY_SECRET ?? "",
-   };
+  // ... other secrets
+  MY_SECRET: Constants.expoConfig?.extra?.MY_SECRET ?? "",
+};
 ```
 
 6. **Access the variable in your code**
@@ -253,6 +254,7 @@ TADAAMM! 🎉 You've added a new secret to your project!
 ### Issues with Doppler on `npm start`
 
 1. **Download the secrets**
+
 ```bash
 doppler secrets download --no-file --format env > .env
 ```
@@ -276,6 +278,7 @@ This project uses GitHub Actions for continuous integration:
 We enforce a specific branch naming convention: `username/ticket-description`
 
 Examples of valid branch names:
+
 - `bruadam/af-641-fix-package-module-peer-deps`
 - `johndoe/cd-123-add-login-feature`
 
@@ -286,10 +289,12 @@ The GitHub Action will fail if your branch name doesn't follow this convention.
 All code must conform to our Prettier formatting standards defined in `.prettierrc`. This ensures consistent code style across the project.
 
 The GitHub Action will:
+
 - Check if your code is properly formatted
 - Fail the workflow if formatting issues are found
 
 To check and fix formatting locally:
+
 ```bash
 # Check formatting without modifying files
 npm format:check
@@ -330,26 +335,31 @@ npm format
 4. See the results of the workflow runs
 
 ---
+
 ## Building the App
 
 ### Before Building
 
 - 1. Make sure all dependencies are installed and up-to-date.
+
 ```bash
 npx expo install --check
 ```
 
 ### Buidling for iOS
+
 ```bash
 eas build --platform ios --profile production
 ```
 
 ### Buidling for Android
+
 ```bash
 eas build --platform android --profile production
 ```
 
 ### Submitting to App Store and Play Store
+
 ```bash
 eas submit --platform ios
 eas submit --platform android
@@ -364,11 +374,13 @@ If you're facing issues or want to start fresh, follow these steps for a clean i
 ### 🧹 Cleanup Steps
 
 #### For **Unix/Linux/macOS**:
+
 ```bash
 rm -rf node_modules .expo dist package-lock.json
 ```
 
 #### For **Windows (PowerShell)**:
+
 ```powershell
 Remove-Item -Recurse -Force node_modules, .expo, dist, package-lock.json
 ```
@@ -380,6 +392,7 @@ npm install
 ```
 
 If you run into peer dependency errors:
+
 ```bash
 npm install --legacy-peer-deps
 ```
@@ -407,6 +420,7 @@ npm start
 ## Name Conventions
 
 ### Code
+
 - Use `camelCase` for variables and functions.
 - Use `PascalCase` for components and classes.
 - Use `UPPER_SNAKE_CASE` for constants and environment variables.
@@ -419,6 +433,7 @@ File names should be the same as what's inside the file.
 3. And if you have a file called `MY_CONSTANT.ts`, the constant inside should be named `MY_CONSTANT`.
 
 ### Git Branches and Commits
+
 - Use `lowercase` for branch names.
 - Use `lowercase` for commit messages.
 - Use `lowercase` for pull request titles.

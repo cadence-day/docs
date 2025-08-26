@@ -48,8 +48,9 @@ bin/
 credentials.json
 google-services.json
 
-.env.*
 .env.local
+.env.development
+.env.production
 
 
 ios/*

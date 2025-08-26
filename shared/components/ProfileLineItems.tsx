@@ -91,7 +91,8 @@ export const EditableLineItem: React.FC<EditableLineItemProps> = ({
       style={{
         ...baseContainerStyle,
         backgroundColor: isEditing ? "#F5F3FF" : "transparent",
-      }}>
+      }}
+    >
       <Text style={titleStyle}>{title}</Text>
       {isEditing ? (
         <TextInput
@@ -126,7 +127,8 @@ export const EditableLineItem: React.FC<EditableLineItemProps> = ({
               color: "#6646EC",
               fontWeight: "600",
               textDecorationLine: "underline",
-            }}>
+            }}
+          >
             {value}
           </Text>
         </TouchableOpacity>

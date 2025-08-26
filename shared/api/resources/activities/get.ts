@@ -13,7 +13,7 @@ import {
  * @returns A promise that resolves to the activity or null if not found.
  */
 export async function getActivity(
-  activityId: string,
+  activityId: string
 ): Promise<Activity | null> {
   try {
     const result = await apiCall(async () => {
@@ -42,7 +42,7 @@ export async function getActivity(
  * @returns A promise that resolves to an array of activities.
  */
 export async function getActivities(
-  activityIds: string[],
+  activityIds: string[]
 ): Promise<Activity[]> {
   try {
     const result = await apiCall(async () => {
@@ -67,7 +67,7 @@ export async function getActivities(
  * @returns A promise that resolves to an array of activities.
  */
 export async function getEnabledUserActivities(
-  userId: string,
+  userId: string
 ): Promise<Activity[]> {
   try {
     const result = await apiCall(async () => {
@@ -155,7 +155,7 @@ export async function getAllDeletedActivities(): Promise<Activity[]> {
  * @returns A promise that resolves to an array of enabled activities in the specified category.
  */
 export async function getEnabledActivitiesByCategory(
-  activityCategoryId: string,
+  activityCategoryId: string
 ): Promise<Activity[]> {
   try {
     const result = await apiCall(async () => {

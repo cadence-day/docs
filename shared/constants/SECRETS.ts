@@ -3,27 +3,28 @@
  * Populated by Doppler in production/staging or .env.development for local dev
  */
 export const SECRETS = {
-    // Supabase
-    EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
-    EXPO_PUBLIC_SUPABASE_KEY: process.env.EXPO_PUBLIC_SUPABASE_KEY,
+  // Supabase
+  EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
+  EXPO_PUBLIC_SUPABASE_KEY: process.env.EXPO_PUBLIC_SUPABASE_KEY,
 
-    // Clerk Authentication
-    EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  // Clerk Authentication
+  EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY:
+    process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
 } as const;
 
 // Type guard to ensure required secrets are present
 export const validateRequiredSecrets = () => {
-    const required = [
-        "EXPO_PUBLIC_SUPABASE_URL",
-        "EXPO_PUBLIC_SUPABASE_KEY",
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY",
-    ] as const;
+  const required = [
+    "EXPO_PUBLIC_SUPABASE_URL",
+    "EXPO_PUBLIC_SUPABASE_KEY",
+    "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY",
+  ] as const;
 
-    const missing = required.filter((key) => !SECRETS[key]);
+  const missing = required.filter((key) => !SECRETS[key]);
 
-    if (missing.length > 0) {
-        throw new Error(
-            `Missing required environment variables: ${missing.join(", ")}`,
-        );
-    }
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}`
+    );
+  }
 };

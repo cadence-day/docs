@@ -9,23 +9,23 @@ import type { Timeslice } from "@/shared/types/models/timeslice";
  * @returns A promise that resolves to the updated timeslice or null if update fails.
  */
 export async function updateTimeslice(
-    timeslice: Timeslice,
+  timeslice: Timeslice
 ): Promise<Timeslice | null> {
-    if (!timeslice?.id) {
-        throw new Error("Timeslice ID is required for update.");
-    }
-    try {
-        const id = timeslice.id!;
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("timeslices")
-                .update(timeslice)
-                .eq("id", id)
-                .select()
-                .single();
-            return { data, error };
-        });
-    } catch (error) {
-        handleApiError("updateTimeslice", error);
-    }
+  if (!timeslice?.id) {
+    throw new Error("Timeslice ID is required for update.");
+  }
+  try {
+    const id = timeslice.id!;
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .update(timeslice)
+        .eq("id", id)
+        .select()
+        .single();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("updateTimeslice", error);
+  }
 }
