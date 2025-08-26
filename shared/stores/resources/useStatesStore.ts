@@ -178,7 +178,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       () => statesApi.deleteStates(ids),
       "delete states",
       (currentState) => ({
-        states: currentState.states.filter((s) => !ids.includes(s.id!)),
+        states: currentState.states.filter((s) => s.id && !ids.includes(s.id)),
       })
     );
   },

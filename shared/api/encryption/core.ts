@@ -1,3 +1,4 @@
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import CryptoJS from "crypto-js";
 import * as SecureStore from "expo-secure-store";
 
@@ -220,10 +221,11 @@ export async function rotateEncryptionKeyAndReEncryptData(
     // Step 4: Re-encrypt all data using the update functions which handle encryption with the new key
     await Promise.all([updateActivities(activities), updateNotes(notes)]);
   } catch (error) {
-    console.error(
-      "Failed to rotate encryption key and re-encrypt data:",
-      error
-    );
+    GlobalErrorHandler.logError(error, "ENCRYPTION_KEY_ROTATION", {
+      userId,
+      operation: "rotate_key_and_reencrypt",
+      step: "re_encrypt_all_data",
+    });
     throw new EncryptionError(
       "Failed to rotate encryption key and re-encrypt data",
       error

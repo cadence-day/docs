@@ -5,6 +5,7 @@ import {
   saveActivityOrderToStorage,
   sortActivitiesByStoredOrder,
 } from "@/shared/utils/activityOrderStorage";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { create } from "zustand";
 import {
   type BaseStoreState,
@@ -154,7 +155,9 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       "disable activities",
       (state) => ({
         activities: state.activities.map((a) =>
-          ids.includes(a.id!) ? { ...a, status: "DISABLED" } : a
+          a.id !== undefined && a.id !== null && ids.includes(a.id)
+            ? { ...a, status: "DISABLED" }
+            : a
         ),
       })
     );
@@ -177,7 +180,10 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       () => activitiesApi.softDeleteActivities(ids),
       "delete activities",
       (state) => ({
-        activities: state.activities.filter((a) => !ids.includes(a.id!)),
+        activities: state.activities.filter(
+          (a) =>
+            a.id !== undefined && a.id !== null && !ids.includes(a.id as string)
+        ),
       })
     );
   },
@@ -329,7 +335,10 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       await saveActivityOrderToStorage(reorderedActivities);
       set({ activities: reorderedActivities });
     } catch (error) {
-      console.error("Failed to save activity order:", error);
+      GlobalErrorHandler.logError(error, "updateActivityOrder", {
+        activitiesCount: reorderedActivities.length,
+        operationType: "save_activity_order",
+      });
       // Still update the state even if storage fails
       set({ activities: reorderedActivities });
     }

@@ -1,5 +1,6 @@
-import { decryptString, encryptString } from "../core";
 import type { Activity } from "@/shared/types/models";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { decryptString, encryptString } from "../core";
 
 /**
  * Encrypts the name field of an activity
@@ -21,7 +22,11 @@ export async function encryptActivityName(
     };
   } catch (error) {
     // If encryption fails, return original activity
-    console.error("Failed to encrypt activity name:", error);
+    GlobalErrorHandler.logError(error, "ENCRYPTION_ACTIVITY_NAME", {
+      activityId: activity.id,
+      operation: "encrypt",
+      fallbackBehavior: "return_original",
+    });
     return activity;
   }
 }
@@ -46,7 +51,11 @@ export async function decryptActivityName(
     };
   } catch (error) {
     // If decryption fails, return original activity
-    console.error("Failed to decrypt activity name:", error);
+    GlobalErrorHandler.logError(error, "DECRYPTION_ACTIVITY_NAME", {
+      activityId: activity.id,
+      operation: "decrypt",
+      fallbackBehavior: "return_original",
+    });
     return activity;
   }
 }
@@ -92,7 +101,10 @@ export async function encryptActivityForInsertion(
       name: encryptedName,
     };
   } catch (error) {
-    console.error("Failed to encrypt activity name for insertion:", error);
+    GlobalErrorHandler.logError(error, "ENCRYPTION_ACTIVITY_INSERTION", {
+      operation: "encrypt_for_insertion",
+      fallbackBehavior: "return_original",
+    });
     return activity;
   }
 }

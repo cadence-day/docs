@@ -1,4 +1,5 @@
 // Centralized error handler for API functions
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
 export interface RetryOptions {
   maxRetries?: number;
@@ -86,21 +87,34 @@ export async function handleApiErrorWithRetry<T>(
         maxDelay
       );
 
-      console.warn(
-        `[API RETRY] [${context}] Attempt ${attempt + 1}/${
-          maxRetries + 1
-        } failed, retrying in ${delayMs}ms`,
-        error
+      GlobalErrorHandler.logWarning(
+        `Attempt ${attempt + 1}/${maxRetries + 1} failed, retrying in ${delayMs}ms`,
+        `API_RETRY_${context}`,
+        {
+          attempt: attempt + 1,
+          maxRetries: maxRetries + 1,
+          delayMs,
+          error: getErrorMessage(error),
+        }
       );
       await delay(delayMs);
     }
   }
 
-  throw new ApiError(
+  const apiError = new ApiError(
     context,
     lastError,
     isRetryableError(lastError, retryableErrors)
   );
+
+  GlobalErrorHandler.logError(apiError, "API_ERROR", {
+    context,
+    originalError: getErrorMessage(lastError),
+    isRetryable: apiError.isRetryable,
+    maxRetriesReached: true,
+  });
+
+  throw apiError;
 }
 
 /**
@@ -115,6 +129,13 @@ export async function handleApiErrorWithRetry<T>(
  * @returns {never} This function never returns.
  */
 export function handleApiError(context: string, error: any): never {
-  console.error(`[API ERROR] [${context}]`, error);
-  throw new ApiError(context, error);
+  const apiError = new ApiError(context, error);
+
+  GlobalErrorHandler.logError(apiError, "API_ERROR", {
+    context,
+    originalError: getErrorMessage(error),
+    errorType: error?.constructor?.name || "Unknown",
+  });
+
+  throw apiError;
 }

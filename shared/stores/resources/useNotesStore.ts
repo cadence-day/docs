@@ -129,7 +129,7 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       () => notesApi.deleteNotes(ids),
       "delete notes",
       (state) => ({
-        notes: state.notes.filter((n) => !ids.includes(n.id!)),
+        notes: state.notes.filter((n) => n.id && !ids.includes(n.id)),
       })
     );
   },

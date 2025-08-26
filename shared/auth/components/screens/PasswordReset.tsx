@@ -1,6 +1,4 @@
-import CdButton from "@/shared/components/CdButton";
-import CdText from "@/shared/components/CdText";
-import CdTextInput from "@/shared/components/CdTextInput";
+import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import Toast from "@/shared/components/Toast";
 import { COLORS } from "@/shared/constants/COLORS";
@@ -10,7 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { parseClerkErrors } from "../../utils";
+import { handleAuthError, parseClerkErrors } from "../../utils";
 import { PASSWORD_REQUIREMENTS } from "../../utils/constants";
 import PasswordRequirement from "../shared/PasswordRequirement";
 import { styles } from "../style";
@@ -102,12 +100,16 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
     try {
       await signIn.create({
         strategy: "reset_password_email_code",
-        emailAddressId: email,
+        // TODO: Verify if it is not emailAddressId?
+        identifier: email,
       });
       showSuccess("Verification code sent! Check your email.");
       setResendCooldown(60); // 60 second cooldown
     } catch (err) {
-      console.error("Resend error:", JSON.stringify(err, null, 2));
+      handleAuthError(err, "PASSWORD_RESET_RESEND", {
+        email: email,
+        operation: "resend_reset_code",
+      });
       const parsedError = parseClerkErrors(err);
       if (parsedError.toastMessage) {
         showError(parsedError.toastMessage);
@@ -134,15 +136,25 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
         setStep("password");
         showSuccess("Code verified! Please set your new password.");
       } else {
-        console.error(
-          "Unexpected status:",
-          JSON.stringify(signInAttempt, null, 2)
+        handleAuthError(
+          new Error("Unexpected verification status"),
+          "PASSWORD_RESET_CODE_VERIFICATION",
+          {
+            email: email,
+            code: code,
+            status: signInAttempt.status,
+            operation: "verify_reset_code",
+          }
         );
         setCodeError("Verification incomplete. Please try again.");
         showError("Verification incomplete. Please try again.");
       }
     } catch (err) {
-      console.error("Code verification error:", JSON.stringify(err, null, 2));
+      handleAuthError(err, "PASSWORD_RESET_CODE_ATTEMPT", {
+        email: email,
+        code: code,
+        operation: "attempt_reset_code_verification",
+      });
       const parsedError = parseClerkErrors(err);
 
       let errorMessage = "Invalid verification code. Please try again.";
@@ -189,15 +201,23 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
           router.replace("/(home)");
         }, 2000);
       } else {
-        console.error(
-          "Password reset incomplete:",
-          JSON.stringify(signInAttempt, null, 2)
+        handleAuthError(
+          new Error("Password reset incomplete"),
+          "PASSWORD_RESET_INCOMPLETE",
+          {
+            email: email,
+            status: signInAttempt.status,
+            operation: "complete_password_reset",
+          }
         );
         setPasswordError("Password reset incomplete. Please try again.");
         showError("Password reset incomplete. Please try again.");
       }
     } catch (err) {
-      console.error("Password reset error:", JSON.stringify(err, null, 2));
+      handleAuthError(err, "PASSWORD_RESET_ATTEMPT", {
+        email: email,
+        operation: "reset_password_with_new_password",
+      });
       const parsedError = parseClerkErrors(err);
 
       let errorMessage = "Failed to reset password. Please try again.";

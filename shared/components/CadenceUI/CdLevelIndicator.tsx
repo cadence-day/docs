@@ -1,9 +1,9 @@
 import React from "react";
 import {
-  View,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
+  View,
   ViewStyle,
 } from "react-native";
 
@@ -24,7 +24,7 @@ const ACTIVE_COLOR = "#7B61FF";
 const INACTIVE_COLOR = "#666";
 const LINE_COLOR = "#444";
 
-const CdLevelIndicator: React.FC<CdLevelIndicatorProps> = ({
+export const CdLevelIndicator: React.FC<CdLevelIndicatorProps> = ({
   label,
   value,
   count = CIRCLE_COUNT,
@@ -156,5 +156,3 @@ const styles = StyleSheet.create({
     flexShrink: 0, // Prevent text from shrinking
   },
 });
-
-export default CdLevelIndicator;

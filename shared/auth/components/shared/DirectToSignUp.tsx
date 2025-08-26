@@ -1,6 +1,6 @@
-import { TouchableOpacity, View } from "react-native";
+import { CdText } from "@/shared/components/CadenceUI";
 import { router } from "expo-router";
-import CdText from "@/shared/components/CdText";
+import { TouchableOpacity, View } from "react-native";
 import { styles } from "../style";
 
 const DirectToSignUp = () => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, TextStyle } from "react-native";
+import { StyleSheet, Text, TextStyle } from "react-native";
 
 interface CdTextProps {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface CdTextProps {
   numberOfLines?: number;
 }
 
-const CdText: React.FC<CdTextProps> = ({
+export const CdText: React.FC<CdTextProps> = ({
   children,
   variant = "body",
   size = "medium",
@@ -71,5 +71,3 @@ const localStyles = StyleSheet.create({
     fontSize: 20,
   },
 });
-
-export default CdText;

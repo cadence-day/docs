@@ -1,6 +1,4 @@
-import CdButton from "@/shared/components/CdButton";
-import CdText from "@/shared/components/CdText";
-import CdTextInput from "@/shared/components/CdTextInput";
+import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import Toast from "@/shared/components/Toast";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { useToast } from "@/shared/hooks";
@@ -11,6 +9,7 @@ import { TextInput, View } from "react-native";
 import {
   clearAllClerkErrors,
   createClerkErrorClearer,
+  handleAuthError,
   isValidEmail,
   parseClerkErrors,
   validateEmailField,
@@ -175,7 +174,11 @@ const SignUpScreen = () => {
       // Set 'pendingVerification' to true to display second form
       setPendingVerification(true);
     } catch (err) {
-      console.error("Clerk signup error:", err);
+      handleAuthError(err, "SIGNUP_ATTEMPT", {
+        email: email,
+        fullName: full_name,
+        hasPassword: !!password,
+      });
 
       // Parse Clerk errors using utility function
       const parsedError = parseClerkErrors(err);

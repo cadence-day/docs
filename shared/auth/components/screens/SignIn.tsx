@@ -1,6 +1,4 @@
-import CdButton from "@/shared/components/CdButton";
-import CdText from "@/shared/components/CdText";
-import CdTextInput from "@/shared/components/CdTextInput";
+import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import Toast from "@/shared/components/Toast";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { useToast } from "@/shared/hooks";
@@ -15,6 +13,8 @@ import { TextInput, TouchableOpacity, View } from "react-native";
 import {
   clearAllClerkErrors,
   createClerkErrorClearer,
+  handleAuthError,
+  handleAuthWarning,
   isValidEmail,
   parseClerkErrors,
   validateEmailField,
@@ -142,11 +142,18 @@ const SignInScreen = () => {
         showSuccess("Welcome back! Signed in successfully.");
       } else {
         // Handle cases where additional verification might be needed
-        console.error("Sign in incomplete:", signInAttempt);
+        handleAuthWarning(
+          "Sign in incomplete. Additional verification may be needed.",
+          "SIGNIN_INCOMPLETE",
+          { signInStatus: signInAttempt.status }
+        );
         showError("Sign in incomplete. Please try again.");
       }
     } catch (err) {
-      console.error("Clerk signin error:", err);
+      handleAuthError(err, "SIGNIN_ATTEMPT", {
+        email: email,
+        hasPassword: !!password,
+      });
 
       // Parse Clerk errors using utility function
       const parsedError = parseClerkErrors(err);
@@ -183,7 +190,10 @@ const SignInScreen = () => {
           showSuccess("Signed in successfully!");
         }
       } catch (err) {
-        console.error("SSO Error:", err);
+        handleAuthError(err, "SSO_SIGNIN", {
+          strategy: strategy,
+          redirectUrl: "day.cadence/clerk",
+        });
 
         // Parse Clerk errors for SSO
         const parsedError = parseClerkErrors(err);

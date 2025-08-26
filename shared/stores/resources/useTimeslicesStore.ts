@@ -186,7 +186,9 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       () => timeslicesApi.deleteTimeslices(ids),
       "delete timeslices",
       (currentState) => ({
-        timeslices: currentState.timeslices.filter((t) => !ids.includes(t.id!)),
+        timeslices: currentState.timeslices.filter(
+          (t) => t.id && !ids.includes(t.id)
+        ),
       })
     );
   },

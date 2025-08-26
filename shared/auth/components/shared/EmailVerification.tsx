@@ -1,13 +1,11 @@
-import CdButton from "@/shared/components/CdButton";
-import CdText from "@/shared/components/CdText";
-import CdTextInput from "@/shared/components/CdTextInput";
+import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import Toast from "@/shared/components/Toast";
 import { useToast } from "@/shared/hooks";
 import { useSignUp } from "@clerk/clerk-expo";
 import React, { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { COLORS } from "../../../constants/COLORS";
-import { parseClerkErrors } from "../../utils";
+import { handleAuthError, parseClerkErrors } from "../../utils";
 import { styles } from "../style";
 import DirectToSignIn from "./DirectToSignIn";
 
@@ -57,7 +55,10 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
       showSuccess("Verification code sent! Check your email.");
       setResendCooldown(60); // 60 second cooldown
     } catch (err) {
-      console.error("Resend error:", JSON.stringify(err, null, 2));
+      handleAuthError(err, "EMAIL_VERIFICATION_RESEND", {
+        userEmail: userEmail,
+        operation: "resend_verification_code",
+      });
       const parsedError = parseClerkErrors(err);
       if (parsedError.toastMessage) {
         showError(parsedError.toastMessage);
@@ -88,15 +89,24 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
           onVerificationSuccess();
         }
       } else {
-        console.error(
-          "Verification incomplete:",
-          JSON.stringify(signUpAttempt, null, 2)
+        handleAuthError(
+          new Error("Verification incomplete"),
+          "EMAIL_VERIFICATION_INCOMPLETE",
+          {
+            userEmail: userEmail,
+            signUpStatus: signUpAttempt.status,
+            operation: "verify_email_code",
+          }
         );
         setVerificationError("Verification incomplete. Please try again.");
         showError("Verification incomplete. Please try again.");
       }
     } catch (err) {
-      console.error("Verification error:", JSON.stringify(err, null, 2));
+      handleAuthError(err, "EMAIL_VERIFICATION_ATTEMPT", {
+        userEmail: userEmail,
+        code: code,
+        operation: "verify_email_code",
+      });
 
       // Parse Clerk errors using utility function
       const parsedError = parseClerkErrors(err);
