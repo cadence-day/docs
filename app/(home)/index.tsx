@@ -46,6 +46,14 @@ export default function Page() {
                 🔧 Test Sentry Integration
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.debugButton}
+              onPress={() => router.push('/(utils)/not-found' as any)}
+            >
+              <Text style={styles.debugButtonText}>
+                🚫 Test Not Found Page
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </SignedIn>

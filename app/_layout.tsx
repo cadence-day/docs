@@ -1,3 +1,4 @@
+import { NetworkProvider } from "@/shared/context";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import {
@@ -88,16 +89,16 @@ export default Sentry.wrap(function RootLayout() {
   }
 
   return (
-    <>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <NetworkProvider>
         <ClerkProvider
           publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
           tokenCache={tokenCache}
         >
           <Slot />
         </ClerkProvider>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </>
+      </NetworkProvider>
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 });
