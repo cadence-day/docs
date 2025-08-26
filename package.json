@@ -14,7 +14,9 @@
     "format:check": "prettier --check .",
     "eas:update": "eas update",
     "types:update": "supabase gen types typescript --schema public --project-id tfhgasudyjovhulcxzyu > shared/types/database.types.ts",
-    "dev:types:update": "supabase gen types typescript --local --schema public > shared/types/database.types.ts"
+    "dev:types:update": "supabase gen types typescript --local --schema public > shared/types/database.types.ts",
+    "typescript": "tsc --noEmit --exclude supabase/",
+    "sentry:validate": "npx @sentry/cli info"
   },
   "jest": {
     "preset": "jest-expo"
@@ -25,6 +27,7 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
+    "@sentry/react-native": "^6.20.0",
     "@supabase/supabase-js": "^2.55.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "crypto-js": "^4.2.0",
