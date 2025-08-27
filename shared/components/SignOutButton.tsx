@@ -1,3 +1,4 @@
+import { useI18n } from "@/shared/hooks/useI18n";
 import { useClerk } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
@@ -5,6 +6,7 @@ import { COLORS } from "../constants/COLORS";
 import { GlobalErrorHandler } from "../utils/errorHandler";
 
 export const SignOutButton = () => {
+  const { t } = useI18n();
   // Use `useClerk()` to access the `signOut()` function
   const { signOut } = useClerk();
   const router = useRouter();
@@ -26,7 +28,7 @@ export const SignOutButton = () => {
 
   return (
     <TouchableOpacity onPress={handleSignOut} style={styles.button}>
-      <Text style={styles.buttonText}>Sign out</Text>
+      <Text style={styles.buttonText}>{t("sign-out")}</Text>
     </TouchableOpacity>
   );
 };

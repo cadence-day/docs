@@ -1,4 +1,5 @@
 import { NetworkProvider } from "@/shared/context";
+import i18n from "@/shared/locales";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import {
@@ -9,6 +10,7 @@ import {
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { I18nextProvider } from "react-i18next";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -90,15 +92,17 @@ export default Sentry.wrap(function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <NetworkProvider>
-        <ClerkProvider
-          publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-          tokenCache={tokenCache}
-        >
-          <Slot />
-        </ClerkProvider>
-      </NetworkProvider>
-      <StatusBar style="auto" />
+      <I18nextProvider i18n={i18n}>
+        <NetworkProvider>
+          <ClerkProvider
+            publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+            tokenCache={tokenCache}
+          >
+            <Slot />
+          </ClerkProvider>
+        </NetworkProvider>
+        <StatusBar style="auto" />
+      </I18nextProvider>
     </ThemeProvider>
   );
 });

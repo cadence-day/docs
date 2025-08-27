@@ -2,6 +2,7 @@ import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import Toast from "@/shared/components/Toast";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { useToast } from "@/shared/hooks";
+import { useI18n } from "@/shared/hooks/useI18n";
 import { useSignUp } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef, useState } from "react";
@@ -26,6 +27,7 @@ import TermsCheckbox from "../shared/TermsCheckbox";
 import { styles } from "../style";
 
 const SignUpScreen = () => {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [full_name, setName] = useState("");
@@ -219,12 +221,12 @@ const SignUpScreen = () => {
         ) : (
           <View style={styles.formContainer}>
             <CdText variant="title" size="large" style={styles.title}>
-              Sign up
+              {t("sign-up.sign-up")}
             </CdText>
 
             <CdTextInput
               ref={nameRef}
-              placeholder="First and Last Name"
+              placeholder={t("sign-up.first-and-last-name")}
               value={full_name}
               onChangeText={(text) => {
                 setName(text);
@@ -249,7 +251,7 @@ const SignUpScreen = () => {
             {/* Email Field */}
             <CdTextInput
               ref={emailRef}
-              placeholder="Email"
+              placeholder={t("sign-up.email")}
               value={email}
               onChangeText={(text) => {
                 setEmail(text);
@@ -271,7 +273,7 @@ const SignUpScreen = () => {
             {/* Password Field */}
             <CdTextInput
               ref={passwordRef}
-              placeholder="Password"
+              placeholder={t("sign-up.password")}
               value={password}
               onChangeText={(text) => {
                 setPassword(text);
@@ -301,7 +303,7 @@ const SignUpScreen = () => {
             {password && (
               <CdTextInput
                 ref={repeatPasswordRef}
-                placeholder="Repeat Password"
+                placeholder={t("sign-up.repeat-password")}
                 value={repeatPassword}
                 onChangeText={setRepeatPassword}
                 onBlur={() => handleFieldBlur("repeatPassword")}
@@ -340,14 +342,18 @@ const SignUpScreen = () => {
         <View style={styles.actionButtonContainer}>
           {pendingVerification ? (
             <CdButton
-              title="Change Email"
+              title={t("sign-up.change-email")}
               onPress={handleBackToSignUp}
               variant="outline"
               size="large"
             />
           ) : isSuccess ? null : (
             <CdButton
-              title={isSubmitting ? "Creating Account..." : "Sign up"}
+              title={
+                isSubmitting
+                  ? t("sign-up.creating-account")
+                  : t("sign-up.sign-up")
+              }
               onPress={onSignUpPress}
               variant="text"
               size="large"
