@@ -62,7 +62,7 @@ export class GlobalErrorHandler {
     extra?: Record<string, any>
   ): void {
     const isDev = getIsDev();
-    const errorMessage = GlobalErrorHandler.formatError(error);
+    const errorMessage = this.formatError(error);
     const fullContext = context ? `[${context}] ${errorMessage}` : errorMessage;
 
     if (isDev) {
@@ -170,7 +170,7 @@ export class GlobalErrorHandler {
         if (error instanceof Error) {
           Sentry.captureException(error);
         } else {
-          Sentry.captureMessage(GlobalErrorHandler.formatError(error), "error");
+          Sentry.captureMessage(this.formatError(error), "error");
         }
       });
     } catch (sentryError) {
