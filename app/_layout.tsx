@@ -32,7 +32,7 @@ Sentry.init({
   sendDefaultPii: true,
 
   // Configure Session Replay
-  replaysSessionSampleRate: getIsDev() ? 0.1 : 0.1, // 10% in both dev and prod for testing
+  replaysSessionSampleRate: 0.1, // 10% in both dev and prod for testing
   replaysOnErrorSampleRate: 1.0, // 100% replay on errors
 
   integrations: [
