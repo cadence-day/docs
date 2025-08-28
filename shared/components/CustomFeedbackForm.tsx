@@ -13,6 +13,12 @@ import {
   View,
 } from "react-native";
 
+interface FeedbackData {
+  name?: string;
+  email?: string;
+  message: string;
+}
+
 interface CustomFeedbackFormProps {
   onClose?: () => void;
   onSubmit?: () => void;
@@ -51,7 +57,7 @@ export function CustomFeedbackForm({
       );
 
       // Submit feedback to Sentry
-      const feedbackData: any = {
+      const feedbackData: FeedbackData = {
         message: message.trim(),
       };
 

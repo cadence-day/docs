@@ -37,11 +37,11 @@ export default function SettingsPage() {
         "User enabled feedback button",
         "SettingsPage.showSentryFeedbackButton"
       );
-      Sentry.showFeedbackButton();
+      // Sentry React Native SDK does not expose showFeedbackButton(); emulate via local state.
       setFeedbackVisible(true);
       Alert.alert(
         "Feedback Button Enabled",
-        "A feedback button has been added to your screen. You can hide it from this settings page."
+        "A floating feedback button has been enabled in the app (local)."
       );
     } catch (error) {
       Alert.alert("Error", "Unable to show feedback button. Please try again.");
@@ -55,11 +55,11 @@ export default function SettingsPage() {
         "User disabled feedback button",
         "SettingsPage.hideSentryFeedbackButton"
       );
-      Sentry.hideFeedbackButton();
+      // Sentry React Native SDK does not expose hideFeedbackButton(); hide the local floating button instead.
       setFeedbackVisible(false);
       Alert.alert(
         "Feedback Button Hidden",
-        "The feedback button has been removed from your screen."
+        "The floating feedback button has been removed from your screen."
       );
     } catch (error) {
       Alert.alert("Error", "Unable to hide feedback button. Please try again.");
@@ -68,7 +68,7 @@ export default function SettingsPage() {
   };
 
   const navigateToCustomFeedback = () => {
-    router.push("./custom-feedback" as any);
+    router.push("./custom-feedback");
   };
 
   const toggleFeedbackWidget = () => {

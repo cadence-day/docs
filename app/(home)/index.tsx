@@ -10,11 +10,11 @@ export default function Page() {
   const firstName = user?.firstName || "User";
 
   const navigateToSentryTest = () => {
-    router.push("./sentry-test" as any);
+    router.push("./sentry-test");
   };
 
   const navigateToSettings = () => {
-    router.push("./settings" as any);
+    router.push("./settings");
   };
 
   return (
@@ -48,11 +48,9 @@ export default function Page() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.debugButton}
-              onPress={() => router.push('/(utils)/not-found' as any)}
+              onPress={() => router.push("/(utils)/not-found" as any)}
             >
-              <Text style={styles.debugButtonText}>
-                🚫 Test Not Found Page
-              </Text>
+              <Text style={styles.debugButtonText}>🚫 Test Not Found Page</Text>
             </TouchableOpacity>
           </View>
         </View>
