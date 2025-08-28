@@ -48,7 +48,7 @@ export default function Page() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.debugButton}
-              onPress={() => router.push("/(utils)/not-found" as any)}
+              onPress={() => router.push("/(utils)/not-found")}
             >
               <Text style={styles.debugButtonText}>🚫 Test Not Found Page</Text>
             </TouchableOpacity>
