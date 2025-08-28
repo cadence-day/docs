@@ -14,13 +14,17 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "NODE_ENV": "preview"
+        "NODE_ENV": "preview",
+        "SENTRY_ORG": "cadenceday",
+        "SENTRY_PROJECT": "cadence-app"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "SENTRY_ORG": "cadenceday",
+        "SENTRY_PROJECT": "cadence-app"
       }
     }
   },

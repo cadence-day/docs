@@ -142,7 +142,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       "disable activity",
       (state) => ({
         activities: state.activities.map((a) =>
-          a.id === id ? { ...a, status: "DISABLED" } : a
+          a.id === id ? ({ ...a, status: "DISABLED" } as Activity) : a
         ),
       })
     );
@@ -156,7 +156,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (state) => ({
         activities: state.activities.map((a) =>
           a.id !== undefined && a.id !== null && ids.includes(a.id)
-            ? { ...a, status: "DISABLED" }
+            ? ({ ...a, status: "DISABLED" } as Activity)
             : a
         ),
       })

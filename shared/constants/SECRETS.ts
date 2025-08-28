@@ -10,6 +10,9 @@ export const SECRETS = {
   // Clerk Authentication
   EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY:
     process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
+
+  // Sentry
+  EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN,
 } as const;
 
 // Type guard to ensure required secrets are present

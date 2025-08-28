@@ -1,10 +1,55 @@
 import { getIsDev } from "@/shared/hooks/useDev";
+import * as Sentry from "@sentry/react-native";
 
 /**
  * Global error handler that routes errors to Sentry in production
  * or console in development environment
  */
 export class GlobalErrorHandler {
+  /**
+   * Set user context for Sentry
+   * @param user - User information
+   */
+  static setUserContext(user: {
+    id?: string;
+    email?: string;
+    username?: string;
+  }): void {
+    const isDev = getIsDev();
+
+    if (!isDev) {
+      Sentry.setUser(user);
+    }
+  }
+
+  /**
+   * Add breadcrumb for debugging
+   * @param message - Breadcrumb message
+   * @param category - Category of the breadcrumb
+   * @param level - Level of the breadcrumb
+   * @param data - Additional data
+   */
+  static addBreadcrumb(
+    message: string,
+    category?: string,
+    level: "fatal" | "error" | "warning" | "info" | "debug" = "info",
+    data?: Record<string, any>
+  ): void {
+    const isDev = getIsDev();
+
+    if (!isDev) {
+      Sentry.addBreadcrumb({
+        message,
+        category,
+        level,
+        data,
+        timestamp: Date.now() / 1000,
+      });
+    } else {
+      console.log(`🍞 Breadcrumb [${category || "general"}]: ${message}`, data);
+    }
+  }
+
   /**
    * Log an error with context
    * @param error - The error to log
@@ -105,7 +150,6 @@ export class GlobalErrorHandler {
 
   /**
    * Send error to Sentry (production)
-   * TODO: Implement when Sentry is added to the project
    * @param error - The error to send
    * @param context - Additional context
    * @param extra - Extra data
@@ -115,36 +159,35 @@ export class GlobalErrorHandler {
     context?: string,
     extra?: Record<string, any>
   ): void {
-    // TODO: Implement Sentry error reporting
-    // Example implementation:
-    // try {
-    //   Sentry.withScope((scope) => {
-    //     if (context) {
-    //       scope.setTag("context", context);
-    //     }
-    //     if (extra) {
-    //       scope.setExtras(extra);
-    //     }
-    //     if (error instanceof Error) {
-    //       Sentry.captureException(error);
-    //     } else {
-    //       Sentry.captureMessage(this.formatError(error), "error");
-    //     }
-    //   });
-    // } catch (sentryError) {
-    //   console.error("Failed to send error to Sentry:", sentryError);
-    // }
-
-    // Fallback to console in production if Sentry fails
-    console.error(`[Production Error]${context ? ` ${context}:` : ""}`, error);
-    if (extra) {
-      console.error("Extra context:", extra);
+    try {
+      Sentry.withScope((scope) => {
+        if (context) {
+          scope.setTag("context", context);
+        }
+        if (extra) {
+          scope.setExtras(extra);
+        }
+        if (error instanceof Error) {
+          Sentry.captureException(error);
+        } else {
+          Sentry.captureMessage(this.formatError(error), "error");
+        }
+      });
+    } catch (sentryError) {
+      console.error("Failed to send error to Sentry:", sentryError);
+      // Fallback to console in production if Sentry fails
+      console.error(
+        `[Production Error]${context ? ` ${context}:` : ""}`,
+        error
+      );
+      if (extra) {
+        console.error("Extra context:", extra);
+      }
     }
   }
 
   /**
    * Send warning to Sentry (production)
-   * TODO: Implement when Sentry is added to the project
    * @param message - Warning message
    * @param context - Additional context
    * @param extra - Extra data
@@ -154,29 +197,26 @@ export class GlobalErrorHandler {
     context?: string,
     extra?: Record<string, any>
   ): void {
-    // TODO: Implement Sentry warning reporting
-    // Example implementation:
-    // try {
-    //   Sentry.withScope((scope) => {
-    //     if (context) {
-    //       scope.setTag("context", context);
-    //     }
-    //     if (extra) {
-    //       scope.setExtras(extra);
-    //     }
-    //     Sentry.captureMessage(message, "warning");
-    //   });
-    // } catch (sentryError) {
-    //   console.error("Failed to send warning to Sentry:", sentryError);
-    // }
-
-    // Fallback to console in production if Sentry fails
-    console.warn(
-      `[Production Warning]${context ? ` ${context}:` : ""}`,
-      message
-    );
-    if (extra) {
-      console.warn("Extra context:", extra);
+    try {
+      Sentry.withScope((scope) => {
+        if (context) {
+          scope.setTag("context", context);
+        }
+        if (extra) {
+          scope.setExtras(extra);
+        }
+        Sentry.captureMessage(message, "warning");
+      });
+    } catch (sentryError) {
+      console.error("Failed to send warning to Sentry:", sentryError);
+      // Fallback to console in production if Sentry fails
+      console.warn(
+        `[Production Warning]${context ? ` ${context}:` : ""}`,
+        message
+      );
+      if (extra) {
+        console.warn("Extra context:", extra);
+      }
     }
   }
 }
@@ -189,5 +229,7 @@ export const useErrorHandler = () => {
     logError: GlobalErrorHandler.logError,
     logWarning: GlobalErrorHandler.logWarning,
     logDebug: GlobalErrorHandler.logDebug,
+    setUserContext: GlobalErrorHandler.setUserContext,
+    addBreadcrumb: GlobalErrorHandler.addBreadcrumb,
   };
 };
