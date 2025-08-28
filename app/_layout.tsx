@@ -13,8 +13,8 @@ import { StatusBar } from "expo-status-bar";
 import { I18nextProvider } from "react-i18next";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { SECRETS } from "@/shared/constants/SECRETS";
+import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { getIsDev } from "@/shared/hooks/useDev";
 import * as Sentry from "@sentry/react-native";
 
