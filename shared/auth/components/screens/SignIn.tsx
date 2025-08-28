@@ -24,6 +24,7 @@ import DirectToSignUp from "../shared/DirectToSignUp";
 import { styles } from "../style";
 
 import { COLORS } from "@/shared/constants/COLORS";
+import { useI18n } from "@/shared/hooks/useI18n";
 
 export const useWarmUpBrowser = () => {
   useEffect(() => {
@@ -39,6 +40,7 @@ export const useWarmUpBrowser = () => {
 };
 
 const SignInScreen = () => {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -78,7 +80,7 @@ const SignInScreen = () => {
 
   // Validation functions for SignIn
   const validatePasswordSignIn = (password: string): string | null => {
-    if (password.length === 0) return "Password is required";
+    if (password.length === 0) return t("sign-in.password_required");
     return null;
   };
 
@@ -139,15 +141,15 @@ const SignInScreen = () => {
 
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        showSuccess("Welcome back! Signed in successfully.");
+        showSuccess(t("sign-in.welcome-back-signed-in-successfully"));
       } else {
         // Handle cases where additional verification might be needed
         handleAuthWarning(
-          "Sign in incomplete. Additional verification may be needed.",
+          t("sign-in.sign-in-incomplete-additional-verification-may-be-needed"),
           "SIGNIN_INCOMPLETE",
           { signInStatus: signInAttempt.status }
         );
-        showError("Sign in incomplete. Please try again.");
+        showError(t("sign-in.sign-in-incomplete-please-try-again"));
       }
     } catch (err) {
       handleAuthError(err, "SIGNIN_ATTEMPT", {
@@ -187,7 +189,7 @@ const SignInScreen = () => {
 
         if (createdSessionId) {
           setActive!({ session: createdSessionId });
-          showSuccess("Signed in successfully!");
+          showSuccess(t("sign-in.signed-in-successfully-0"));
         }
       } catch (err) {
         handleAuthError(err, "SSO_SIGNIN", {
@@ -201,7 +203,7 @@ const SignInScreen = () => {
           showError(parsedError.toastMessage);
         } else {
           showError(
-            "Failed to sign in with social provider. Please try again."
+            t("sign-in.failed-to-sign-in-with-social-provider-please-try-again")
           );
         }
       }
@@ -219,12 +221,12 @@ const SignInScreen = () => {
     >
       <View style={styles.content}>
         <CdText variant="title" size="large" style={styles.title}>
-          Welcome back
+          {t("sign-in.welcome-back")}
         </CdText>
 
         <CdTextInput
           ref={emailRef}
-          placeholder="Email"
+          placeholder={t("sign-in.email")}
           value={email}
           onChangeText={(text) => {
             setEmail(text);
@@ -245,7 +247,7 @@ const SignInScreen = () => {
 
         <CdTextInput
           ref={passwordRef}
-          placeholder="Password"
+          placeholder={t("sign-in.password")}
           value={password}
           onChangeText={(text) => {
             setPassword(text);
@@ -276,20 +278,20 @@ const SignInScreen = () => {
             size="medium"
             style={styles.forgotPasswordText}
           >
-            Forgot password?
+            {t("sign-in.forgot-password")}
           </CdText>
         </TouchableOpacity>
 
         <View style={styles.socialContainer}>
           <CdButton
-            title="Log in with Google"
+            title={t("sign-in.log-in-with-google")}
             onPress={() => onPress("oauth_google")}
             variant="outline"
             size="medium"
             style={styles.socialButton}
           />
           <CdButton
-            title="Log in with Apple"
+            title={t("sign-in.log-in-with-apple")}
             onPress={() => onPress("oauth_apple")}
             variant="outline"
             size="medium"
@@ -307,7 +309,7 @@ const SignInScreen = () => {
             </View>
           ) : (
             <CdButton
-              title="Sign in"
+              title={t("sign-in.title")}
               onPress={handleSubmit}
               variant="text"
               size="large"

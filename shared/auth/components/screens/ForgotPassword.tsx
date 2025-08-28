@@ -3,6 +3,7 @@ import Toast from "@/shared/components/Toast";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useToast } from "@/shared/hooks";
+import { useI18n } from "@/shared/hooks/useI18n";
 import { useSignIn } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -17,6 +18,7 @@ import {
 import { styles } from "../style";
 
 const ForgotPasswordScreen = () => {
+  const { t } = useI18n();
   const { isLoaded, signIn } = useSignIn();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,7 +53,11 @@ const ForgotPasswordScreen = () => {
         identifier: email,
       });
 
-      showSuccess("If this email is registered, a reset code has been sent.");
+      showSuccess(
+        t(
+          "forgot-password.if-this-email-is-registered-a-reset-code-has-been-sent"
+        )
+      );
       // Navigate to password reset screen after short delay
       setTimeout(() => {
         router.push({
@@ -76,10 +82,14 @@ const ForgotPasswordScreen = () => {
         if (parsedError.toastMessage) {
           showError(parsedError.toastMessage);
         } else {
-          showError("An unexpected error occurred. Please try again.");
+          showError(
+            t("forgot-password.an-unexpected-error-occurred-please-try-again")
+          );
         }
       } else {
-        showError("An unexpected error occurred. Please try again.");
+        showError(
+          t("forgot-password.an-unexpected-error-occurred-please-try-again")
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -106,7 +116,7 @@ const ForgotPasswordScreen = () => {
         ) : (
           <View style={styles.formContainer}>
             <CdText variant="title" size="large" style={styles.title}>
-              Reset Password
+              {t("forgot-password.reset-password")}
             </CdText>
 
             <CdText
@@ -114,11 +124,12 @@ const ForgotPasswordScreen = () => {
               size="medium"
               style={{ marginBottom: 24, textAlign: "center" }}
             >
-              Enter your email and we'll send you a link to reset your password.
+              {t(
+                "forgot-password.enter-your-email-and-well-send-you-a-link-to-reset-your-password"
+              )}
             </CdText>
-
             <CdTextInput
-              placeholder="Email"
+              placeholder={t("forgot-password.email")}
               value={email}
               onChangeText={(text) => {
                 setEmail(text);
@@ -146,7 +157,7 @@ const ForgotPasswordScreen = () => {
                 size="medium"
                 style={{ textAlign: "center" }}
               >
-                ← Back to Sign In
+                {t("forgot-password.back-to-sign-in")}
               </CdText>
             </TouchableOpacity>
           </View>
@@ -154,7 +165,7 @@ const ForgotPasswordScreen = () => {
 
         <View style={styles.actionButtonContainer}>
           <CdButton
-            title="Send Reset Link"
+            title={t("forgot-password.send-reset-link")}
             onPress={handleResetPassword}
             variant="text"
             size="large"

@@ -1,6 +1,7 @@
 import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import Toast from "@/shared/components/Toast";
 import { useToast } from "@/shared/hooks";
+import { useI18n } from "@/shared/hooks/useI18n";
 import { useSignUp } from "@clerk/clerk-expo";
 import React, { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
@@ -32,6 +33,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
   );
   const [resendCooldown, setResendCooldown] = useState(0);
   const { toast, showError, showSuccess, hideToast } = useToast();
+  const { t } = useI18n();
 
   // Cooldown timer for resend button
   useEffect(() => {
@@ -52,7 +54,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
 
     try {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-      showSuccess("Verification code sent! Check your email.");
+      showSuccess(t("verification-code-sent-check-your-email"));
       setResendCooldown(60); // 60 second cooldown
     } catch (err) {
       handleAuthError(err, "EMAIL_VERIFICATION_RESEND", {
@@ -82,7 +84,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
 
       if (signUpAttempt.status === "complete") {
         await setActive({ session: signUpAttempt.createdSessionId });
-        showSuccess("Account verified successfully! Welcome!");
+        showSuccess(t("account-verified-successfully-welcome"));
 
         // Call the success callback if provided
         if (onVerificationSuccess) {
@@ -90,7 +92,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         }
       } else {
         handleAuthError(
-          new Error("Verification incomplete"),
+          new Error(t("verification-incomplete")),
           "EMAIL_VERIFICATION_INCOMPLETE",
           {
             userEmail: userEmail,
@@ -98,8 +100,8 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
             operation: "verify_email_code",
           }
         );
-        setVerificationError("Verification incomplete. Please try again.");
-        showError("Verification incomplete. Please try again.");
+        setVerificationError(t("verification-incomplete-please-try-again"));
+        showError(t("verification-incomplete-please-try-again"));
       }
     } catch (err) {
       handleAuthError(err, "EMAIL_VERIFICATION_ATTEMPT", {
@@ -112,7 +114,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
       const parsedError = parseClerkErrors(err);
 
       // Set field error for the verification code input
-      let errorMessage = "Invalid verification code. Please try again.";
+      let errorMessage = t("invalid-verification-code-please-try-again");
 
       if (parsedError.fieldErrors.general) {
         errorMessage = parsedError.fieldErrors.general;
@@ -141,7 +143,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
   return (
     <View style={styles.centerContent}>
       <CdText variant="title" size="large" style={styles.title}>
-        Verify your email
+        {t("verify-your-email")}
       </CdText>
 
       <CdText
@@ -149,7 +151,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         size="medium"
         style={{ color: "#B9B9B9", marginBottom: 20, textAlign: "center" }}
       >
-        We've sent a verification code to{" "}
+        {t("weve-sent-a-verification-code-to")}{" "}
         {userEmail && (
           <CdText variant="body" size="medium" style={{ fontWeight: "600" }}>
             {userEmail}
@@ -177,7 +179,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         }}
         error={verificationError}
         keyboardType="number-pad"
-        placeholder="Enter 6-digit code"
+        placeholder={t("enter-6-digit-code")}
         returnKeyType="done"
         onSubmitEditing={onVerifyPress}
         maxLength={6}
@@ -190,7 +192,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
       />
 
       <CdButton
-        title={isSubmitting ? "Verifying..." : "Verify Email"}
+        title={isSubmitting ? "Verifying..." : t("verify-your-email")}
         onPress={onVerifyPress}
         variant="outline"
         size="medium"
@@ -204,7 +206,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
           size="small"
           style={{ color: COLORS.placeholderText, marginBottom: 10 }}
         >
-          Didn't receive the code?
+          {t("didnt-receive-the-code")}
         </CdText>
 
         <TouchableOpacity
@@ -218,10 +220,13 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
             style={{ color: COLORS.primary, fontWeight: "600" }}
           >
             {isResending
-              ? "Sending..."
+              ? t("sending")
               : resendCooldown > 0
-                ? `Resend in ${resendCooldown}s`
-                : "Resend Code"}
+                ? t("resend-in-resendcooldown-s").replace(
+                    "{0}",
+                    resendCooldown.toString()
+                  )
+                : t("resend-code")}
           </CdText>
         </TouchableOpacity>
       </View>

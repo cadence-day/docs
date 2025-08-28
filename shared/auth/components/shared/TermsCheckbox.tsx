@@ -1,5 +1,6 @@
 import { CdText } from "@/shared/components/CadenceUI";
 import { COLORS } from "@/shared/constants/COLORS";
+import { useI18n } from "@/shared/hooks/useI18n";
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import { TouchableOpacity, View } from "react-native";
@@ -26,6 +27,7 @@ const TermsCheckbox: React.FC<TermsCheckboxProps> = ({
   isChecked,
   onToggle,
 }) => {
+  const { t } = useI18n();
   return (
     <View style={{ width: "100%", gap: 12, marginVertical: 8 }}>
       <TouchableOpacity
@@ -63,11 +65,11 @@ const TermsCheckbox: React.FC<TermsCheckboxProps> = ({
             }}
           >
             <CdText variant="body" size="medium">
-              I agree to the{" "}
+              {t("i-agree-to-the")}{" "}
             </CdText>
             <TouchableOpacity onPress={handleOpenPrivacy}>
               <CdText variant="link" size="medium" style={styles.link}>
-                Privacy Policy
+                {t("privacy-policy")}
               </CdText>
             </TouchableOpacity>
             <CdText variant="body" size="medium">
@@ -76,7 +78,7 @@ const TermsCheckbox: React.FC<TermsCheckboxProps> = ({
             </CdText>
             <TouchableOpacity onPress={handleOpenTerms}>
               <CdText variant="link" size="medium" style={styles.link}>
-                Terms and Conditions
+                {t("terms-and-conditions")}
               </CdText>
             </TouchableOpacity>
           </View>

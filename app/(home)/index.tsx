@@ -1,13 +1,15 @@
 import { SignOutButton } from "@/shared/components/SignOutButton";
+import { useI18n } from "@/shared/hooks/useI18n";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SignIn from "../(auth)/sign-in";
 
 export default function Page() {
+  const { t } = useI18n();
   const { user } = useUser();
   const router = useRouter();
-  const firstName = user?.firstName || "User";
+  const firstName = user?.firstName || t("user");
 
   const navigateToSentryTest = () => {
     router.push("./sentry-test");
@@ -21,29 +23,31 @@ export default function Page() {
     <View style={styles.container}>
       <SignedIn>
         <View style={styles.signedInSection}>
-          <Text style={styles.welcomeText}>Welcome back, {firstName}!</Text>
+          <Text style={styles.welcomeText}>
+            {t("welcome-back")} {firstName}!
+          </Text>
           <SignOutButton />
 
           {/* App Navigation */}
           <View style={styles.navigationSection}>
-            <Text style={styles.navigationTitle}>App Features</Text>
+            <Text style={styles.navigationTitle}>{t("app-features")}</Text>
             <TouchableOpacity
               style={styles.navigationButton}
               onPress={navigateToSettings}
             >
-              <Text style={styles.navigationButtonText}>⚙️ Settings</Text>
+              <Text style={styles.navigationButtonText}>{t("settings")}</Text>
             </TouchableOpacity>
           </View>
 
           {/* Development/Debug Links */}
           <View style={styles.debugSection}>
-            <Text style={styles.debugTitle}>Development Tools</Text>
+            <Text style={styles.debugTitle}>{t("development-tools")}</Text>
             <TouchableOpacity
               style={styles.debugButton}
               onPress={navigateToSentryTest}
             >
               <Text style={styles.debugButtonText}>
-                🔧 Test Sentry Integration
+                {t("test-sentry-integration")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity

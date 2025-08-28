@@ -3,6 +3,7 @@ import SageIcon from "@/shared/components/icons/SageIcon";
 import Toast from "@/shared/components/Toast";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useToast } from "@/shared/hooks";
+import { useI18n } from "@/shared/hooks/useI18n";
 import { useSignIn } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -18,6 +19,7 @@ interface PasswordResetScreenProps {
 }
 
 const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
+  const { t } = useI18n();
   const { isLoaded, signIn, setActive } = useSignIn();
   const [step, setStep] = useState<"code" | "password">("code");
   const [code, setCode] = useState("");
@@ -48,22 +50,30 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
   // Password validation
   const validatePassword = (pwd: string): string | null => {
     if (pwd.length < PASSWORD_REQUIREMENTS.MIN_LENGTH) {
-      return `Password must be at least ${PASSWORD_REQUIREMENTS.MIN_LENGTH} characters`;
+      return t(
+        "password-reset.password-must-be-at-least-password_requirements-min_length-characters"
+      ).replace("{0}", PASSWORD_REQUIREMENTS.MIN_LENGTH.toString());
     }
     if (PASSWORD_REQUIREMENTS.REQUIRE_UPPERCASE && !/[A-Z]/.test(pwd)) {
-      return "Password must contain at least one uppercase letter";
+      return t(
+        "password-reset.password-must-contain-at-least-one-uppercase-letter"
+      );
     }
     if (PASSWORD_REQUIREMENTS.REQUIRE_LOWERCASE && !/[a-z]/.test(pwd)) {
-      return "Password must contain at least one lowercase letter";
+      return t(
+        "password-reset.password-must-contain-at-least-one-lowercase-letter"
+      );
     }
     if (PASSWORD_REQUIREMENTS.REQUIRE_NUMBER && !/[0-9]/.test(pwd)) {
-      return "Password must contain at least one number";
+      return t("password-reset.password-must-contain-at-least-one-number");
     }
     if (
       PASSWORD_REQUIREMENTS.REQUIRE_SPECIAL_CHAR &&
       !/[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/.test(pwd)
     ) {
-      return "Password must contain at least one special character";
+      return t(
+        "password-reset.password-must-contain-at-least-one-special-character"
+      );
     }
     return null;
   };
@@ -74,7 +84,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
     repeatPwd: string
   ): string | null => {
     if (pwd !== repeatPwd && repeatPwd.length > 0) {
-      return "Passwords do not match";
+      return t("password-reset.passwords-do-not-match");
     }
     return null;
   };
@@ -103,7 +113,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
         // TODO: Verify if it is not emailAddressId?
         identifier: email,
       });
-      showSuccess("Verification code sent! Check your email.");
+      showSuccess(t("password-reset.verification-code-sent-check-your-email"));
       setResendCooldown(60); // 60 second cooldown
     } catch (err) {
       handleAuthError(err, "PASSWORD_RESET_RESEND", {
@@ -134,10 +144,12 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
 
       if (signInAttempt.status === "needs_new_password") {
         setStep("password");
-        showSuccess("Code verified! Please set your new password.");
+        showSuccess(
+          t("password-reset.code-verified-please-set-your-new-password")
+        );
       } else {
         handleAuthError(
-          new Error("Unexpected verification status"),
+          new Error(t("password-reset.unexpected-verification-status")),
           "PASSWORD_RESET_CODE_VERIFICATION",
           {
             email: email,
@@ -146,8 +158,10 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
             operation: "verify_reset_code",
           }
         );
-        setCodeError("Verification incomplete. Please try again.");
-        showError("Verification incomplete. Please try again.");
+        setCodeError(
+          t("password-reset.verification-incomplete-please-try-again")
+        );
+        showError(t("password-reset.verification-incomplete-please-try-again"));
       }
     } catch (err) {
       handleAuthError(err, "PASSWORD_RESET_CODE_ATTEMPT", {
@@ -157,7 +171,9 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
       });
       const parsedError = parseClerkErrors(err);
 
-      let errorMessage = "Invalid verification code. Please try again.";
+      let errorMessage = t(
+        "password-reset.invalid-verification-code-please-try-again"
+      );
       if (parsedError.fieldErrors.general) {
         errorMessage = parsedError.fieldErrors.general;
       } else if (parsedError.generalError) {
@@ -195,14 +211,14 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
 
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        showSuccess("Password reset successfully!");
+        showSuccess(t("password-reset.password-reset-successfully"));
         // Navigate to main app or show success
         setTimeout(() => {
           router.replace("/(home)");
         }, 2000);
       } else {
         handleAuthError(
-          new Error("Password reset incomplete"),
+          new Error(t("password-reset.password-reset-incomplete")),
           "PASSWORD_RESET_INCOMPLETE",
           {
             email: email,
@@ -210,8 +226,12 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
             operation: "complete_password_reset",
           }
         );
-        setPasswordError("Password reset incomplete. Please try again.");
-        showError("Password reset incomplete. Please try again.");
+        setPasswordError(
+          t("password-reset.password-reset-incomplete-please-try-again")
+        );
+        showError(
+          t("password-reset.password-reset-incomplete-please-try-again")
+        );
       }
     } catch (err) {
       handleAuthError(err, "PASSWORD_RESET_ATTEMPT", {
@@ -220,7 +240,9 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
       });
       const parsedError = parseClerkErrors(err);
 
-      let errorMessage = "Failed to reset password. Please try again.";
+      let errorMessage = t(
+        "password-reset.failed-to-reset-password-please-try-again"
+      );
       if (parsedError.fieldErrors.password) {
         errorMessage = parsedError.fieldErrors.password;
       } else if (parsedError.generalError) {
@@ -272,7 +294,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
             {step === "code" ? (
               <>
                 <CdText variant="title" size="large" style={styles.title}>
-                  Enter Verification Code
+                  {t("password-reset.enter-verification-code")}
                 </CdText>
 
                 <CdText
@@ -284,7 +306,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                     color: "#B9B9B9",
                   }}
                 >
-                  We've sent a 6-digit verification code to{" "}
+                  {t("password-reset.weve-sent-a-6-digit-verification-code-to")}{" "}
                   {email && (
                     <CdText
                       variant="body"
@@ -314,7 +336,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                   }
                   error={fieldsTouched.code ? codeError : null}
                   keyboardType="number-pad"
-                  placeholder="Enter 6-digit code"
+                  placeholder={t("password-reset.enter-6-digit-code")}
                   returnKeyType="done"
                   onSubmitEditing={onVerifyCodePress}
                   maxLength={6}
@@ -332,7 +354,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                     size="small"
                     style={{ color: COLORS.placeholderText, marginBottom: 10 }}
                   >
-                    Didn't receive the code?
+                    {t("password-reset.didnt-receive-the-code")}
                   </CdText>
 
                   <TouchableOpacity
@@ -350,8 +372,10 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                       {isResending
                         ? "Sending..."
                         : resendCooldown > 0
-                          ? `Resend in ${resendCooldown}s`
-                          : "Resend Code"}
+                          ? t("password-reset.resend-in-resendcooldown-s", {
+                              seconds: resendCooldown,
+                            })
+                          : t("password-reset.resend-code")}
                     </CdText>
                   </TouchableOpacity>
                 </View>
@@ -359,7 +383,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
             ) : (
               <>
                 <CdText variant="title" size="large" style={styles.title}>
-                  Set New Password
+                  {t("password-reset.set-new-password")}
                 </CdText>
 
                 <CdText
@@ -371,11 +395,13 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                     color: "#B9B9B9",
                   }}
                 >
-                  Create a strong password for your account
+                  {t(
+                    "password-reset.create-a-strong-password-for-your-account"
+                  )}
                 </CdText>
 
                 <CdTextInput
-                  placeholder="New Password"
+                  placeholder={t("password-reset.new-password")}
                   value={password}
                   onChangeText={(text) => {
                     setPassword(text);
@@ -394,7 +420,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                 />
 
                 <CdTextInput
-                  placeholder="Repeat New Password"
+                  placeholder={t("password-reset.repeat-new-password")}
                   value={repeatPassword}
                   onChangeText={(text) => {
                     setRepeatPassword(text);
@@ -436,7 +462,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                 size="medium"
                 style={{ textAlign: "center" }}
               >
-                ← Back to Sign In
+                {t("password-reset.back-to-sign-in")}
               </CdText>
             </TouchableOpacity>
           </View>
@@ -445,7 +471,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
         <View style={styles.actionButtonContainer}>
           {step === "code" ? (
             <CdButton
-              title="Verify Code"
+              title={t("password-reset.verify-code")}
               onPress={onVerifyCodePress}
               variant="text"
               size="large"
@@ -453,7 +479,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
             />
           ) : (
             <CdButton
-              title="Reset Password"
+              title={t("password-reset.reset-password")}
               onPress={onResetPasswordPress}
               variant="text"
               size="large"

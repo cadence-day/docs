@@ -1,8 +1,10 @@
 import { CustomFeedbackForm } from "@/shared/components/CustomFeedbackForm";
+import { useI18n } from "@/shared/hooks/useI18n";
 import { Stack, useRouter } from "expo-router";
 
 export default function CustomFeedbackPage() {
   const router = useRouter();
+  const { t } = useI18n();
 
   const handleClose = () => {
     router.back();
@@ -16,10 +18,10 @@ export default function CustomFeedbackPage() {
     <>
       <Stack.Screen
         options={{
-          title: "Send Feedback",
+          title: t("send-feedback"),
           headerShown: true,
           presentation: "modal",
-          headerBackTitle: "Close",
+          headerBackTitle: t("close"),
         }}
       />
       <CustomFeedbackForm onClose={handleClose} onSubmit={handleSubmit} />

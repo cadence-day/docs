@@ -1,3 +1,4 @@
+import { useI18n } from "@/shared/hooks/useI18n";
 import React from "react";
 import { Text, View } from "react-native";
 import { PASSWORD_REQUIREMENTS } from "../../utils/constants";
@@ -12,6 +13,7 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
   password,
   repeatPassword,
 }) => {
+  const { t } = useI18n();
   return (
     <View style={styles.passwordRequirements}>
       <Text
@@ -21,8 +23,8 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
             styles.requirementMet,
         ]}
       >
-        - The password should be at least {PASSWORD_REQUIREMENTS.MIN_LENGTH}{" "}
-        characters.
+        {t("the-password-should-be-at-least")}{" "}
+        {PASSWORD_REQUIREMENTS.MIN_LENGTH} characters.
       </Text>
 
       {PASSWORD_REQUIREMENTS.REQUIRE_LOWERCASE && (
@@ -32,7 +34,7 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
             /[a-z]/.test(password) && styles.requirementMet,
           ]}
         >
-          - Contain one lowercase letter.
+          {t("contain-one-lowercase-letter")}
         </Text>
       )}
 
@@ -43,7 +45,7 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
             /[A-Z]/.test(password) && styles.requirementMet,
           ]}
         >
-          - Contain one uppercase letter.
+          {t("contain-one-uppercase-letter")}
         </Text>
       )}
 
@@ -54,7 +56,7 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
             /[0-9]/.test(password) && styles.requirementMet,
           ]}
         >
-          - Contain one digit.
+          {t("contain-one-digit")}
         </Text>
       )}
 
@@ -66,7 +68,7 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
               styles.requirementMet,
           ]}
         >
-          - Contain one special character.
+          t('contain-one-special-character')
         </Text>
       )}
 
@@ -78,7 +80,7 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({
             styles.requirementMet,
         ]}
       >
-        - Passwords should match.
+        {t("passwords-should-match")}
       </Text>
     </View>
   );
