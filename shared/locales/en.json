@@ -111,5 +111,6 @@
   "reflection": "Reflection",
   "reflection-empty": "Empty Reflection",
   "profile": "Profile",
-  "timeline.previousDay": "Do you want to update yesterday?"
+  "timeline.previousDay": "Do you want to update yesterday?",
+  "select-activity": "Please select an activity first!"
 }

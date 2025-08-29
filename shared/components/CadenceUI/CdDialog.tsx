@@ -8,11 +8,11 @@ import {
   Dimensions,
   PanResponder,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { NAV_BAR_SIZE } from "../../constants/VIEWPORT";
 import { CdDialogHeader, CdDialogHeaderProps } from "./CdDialogHeader";
-
 interface CdDialogProps {
   visible: boolean;
   onClose: () => void;
@@ -30,6 +30,8 @@ interface CdDialogProps {
   allowedViews?: string[]; // Views where this dialog can appear
   currentView?: string; // Current view ID
   isGlobal?: boolean; // Whether this dialog can appear in any view
+  id?: string;
+  zIndex?: number;
 }
 
 export const CdDialog: React.FC<CdDialogProps> = ({
@@ -47,6 +49,8 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   allowedViews = [],
   currentView = "",
   isGlobal = false,
+  id,
+  zIndex,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const animatedHeight = useRef(new Animated.Value(height)).current;
@@ -54,6 +58,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   const currentHeight = useRef(height);
   const originalHeight = useRef(height); // Store original height
   const lastTap = useRef<number | null>(null);
+  const { height: screenHeight } = useWindowDimensions();
 
   // Check if dialog should be visible in current view
   const shouldShowInView =
@@ -73,14 +78,13 @@ export const CdDialog: React.FC<CdDialogProps> = ({
 
   const clampHeight = useCallback(
     (newHeight: number) => {
-      const screenHeight = Dimensions.get("window").height;
       const headerHeight = 50; // Height of DialogHeader in pixels
       const pullIndicatorHeight = enableDragging ? 30 : 0; // Height of pull indicator
       const minHeightRequired = headerHeight + pullIndicatorHeight;
       const minHeightPercent = (minHeightRequired / screenHeight) * 100;
       return Math.max(minHeightPercent, Math.min(maxHeight, newHeight));
     },
-    [enableDragging]
+    [enableDragging, screenHeight, maxHeight]
   );
 
   const updateHeight = useCallback(
@@ -101,66 +105,6 @@ export const CdDialog: React.FC<CdDialogProps> = ({
     [clampHeight, onHeightChange, animatedHeight]
   );
 
-  // Create PanResponder for drag gestures
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: (evt) => {
-      if (!enableDragging) return false;
-
-      // Check for potential double tap
-      const now = Date.now();
-      const DOUBLE_PRESS_DELAY = 300;
-
-      if (lastTap.current && now - lastTap.current < DOUBLE_PRESS_DELAY) {
-        // This might be a double tap, let's handle it immediately
-        handleDoubleTap();
-        lastTap.current = null;
-        return false; // Don't start pan responder for double tap
-      } else {
-        // Record this tap for potential double tap detection
-        lastTap.current = now;
-        return true; // Start pan responder for potential drag
-      }
-    },
-    onMoveShouldSetPanResponder: (evt, gestureState) => {
-      return enableDragging && Math.abs(gestureState.dy) > 3;
-    },
-    onPanResponderGrant: (evt) => {
-      if (!enableDragging) return;
-
-      // Light haptic feedback when drag starts
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setIsDragging(true);
-      dragStartHeight.current = currentHeight.current;
-    },
-    onPanResponderMove: (evt, gestureState) => {
-      if (!enableDragging) return;
-      const screenHeight = Dimensions.get("window").height;
-      const heightChangePercent = (-gestureState.dy / screenHeight) * 100;
-      const newHeight = dragStartHeight.current + heightChangePercent;
-      const clampedHeight = clampHeight(newHeight);
-
-      // Update animated value directly for smooth dragging
-      animatedHeight.setValue(clampedHeight);
-    },
-    onPanResponderRelease: (evt, gestureState) => {
-      if (!enableDragging) return;
-      // Light haptic feedback when drag ends
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setIsDragging(false);
-      const screenHeight = Dimensions.get("window").height;
-      const heightChangePercent = (-gestureState.dy / screenHeight) * 100;
-      const newHeight = dragStartHeight.current + heightChangePercent;
-      // Set a maximum height of 90%
-      updateHeight(newHeight);
-      GlobalErrorHandler.logDebug(
-        "Dialog height updated",
-        "DYNAMIC_DIALOG_RESIZE",
-        { newHeight, heightChangePercent }
-      );
-    },
-    onPanResponderTerminationRequest: () => false,
-  });
-
   const handleDoubleTap = useCallback(() => {
     // Medium haptic feedback for double tap
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -169,6 +113,74 @@ export const CdDialog: React.FC<CdDialogProps> = ({
     updateHeight(originalHeight.current);
     onDoubleTapResize?.(originalHeight.current);
   }, [updateHeight, onDoubleTapResize]);
+
+  // Create PanResponder for drag gestures (memoized)
+  const pullLabel =
+    typeof headerProps?.title === "string"
+      ? headerProps.title
+      : "Dialog pull indicator";
+
+  const panResponder = React.useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: (evt) => {
+          if (!enableDragging) return false;
+
+          // Check for potential double tap
+          const now = Date.now();
+          const DOUBLE_PRESS_DELAY = 300;
+
+          if (lastTap.current && now - lastTap.current < DOUBLE_PRESS_DELAY) {
+            // This might be a double tap, let's handle it immediately
+            handleDoubleTap();
+            lastTap.current = null;
+            return false; // Don't start pan responder for double tap
+          } else {
+            // Record this tap for potential double tap detection
+            lastTap.current = now;
+            return true; // Start pan responder for potential drag
+          }
+        },
+        onMoveShouldSetPanResponder: (evt, gestureState) => {
+          return enableDragging && Math.abs(gestureState.dy) > 3;
+        },
+        onPanResponderGrant: (evt) => {
+          if (!enableDragging) return;
+
+          // Light haptic feedback when drag starts
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setIsDragging(true);
+          dragStartHeight.current = currentHeight.current;
+        },
+        onPanResponderMove: (evt, gestureState) => {
+          if (!enableDragging) return;
+          const heightChangePercent = (-gestureState.dy / screenHeight) * 100;
+          const newHeight = dragStartHeight.current + heightChangePercent;
+          const clampedHeight = clampHeight(newHeight);
+
+          // Update animated value directly for smooth dragging
+          animatedHeight.setValue(clampedHeight);
+        },
+        onPanResponderRelease: (evt, gestureState) => {
+          if (!enableDragging) return;
+          // Light haptic feedback when drag ends
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setIsDragging(false);
+          const screenHeight = Dimensions.get("window").height;
+          const heightChangePercent = (-gestureState.dy / screenHeight) * 100;
+          const newHeight = dragStartHeight.current + heightChangePercent;
+          // Set a maximum height of 90%
+          updateHeight(newHeight);
+          GlobalErrorHandler.logDebug(
+            "Dialog height updated",
+            "DYNAMIC_DIALOG_RESIZE",
+            { newHeight, heightChangePercent }
+          );
+        },
+        onPanResponderTerminationRequest: () => false,
+      }),
+    [enableDragging, clampHeight, screenHeight, handleDoubleTap]
+  );
 
   if (!shouldRender) return null;
 
@@ -182,12 +194,16 @@ export const CdDialog: React.FC<CdDialogProps> = ({
             outputRange: ["0%", "100%"],
             extrapolate: "clamp",
           }),
+          zIndex: zIndex ?? 1000,
         },
       ]}
     >
       {/* Pull indicator - positioned above the modal */}
       {enableDragging && (
         <View
+          accessible
+          accessibilityRole="adjustable"
+          accessibilityLabel={String(pullLabel)}
           style={[
             styles.pullIndicator,
             {
@@ -273,7 +289,6 @@ const styles = StyleSheet.create({
   pullHandle: {
     width: 40,
     height: 4,
-    backgroundColor: "#666",
     borderRadius: 2,
   },
   closeButton: {
@@ -290,7 +305,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 20,
     height: 2,
-    backgroundColor: "#666",
     borderRadius: 1,
   },
   closeButtonLineRotated: {

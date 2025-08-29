@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingTop: 0,
     paddingBottom: 0,
-    backgroundColor: "transparent",
+    backgroundColor: "#666",
     minHeight: 50,
     width: "90%",
     alignSelf: "center",

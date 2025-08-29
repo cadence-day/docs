@@ -1,8 +1,9 @@
+import Timeline from "@/features/timeline/Timeline";
 import { SignOutButton } from "@/shared/components/SignOutButton";
 import { useI18n } from "@/shared/hooks/useI18n";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import SignIn from "../(auth)/sign-in";
 
 export default function Page() {
@@ -28,35 +29,12 @@ export default function Page() {
           </Text>
           <SignOutButton />
 
-          {/* App Navigation */}
-          <View style={styles.navigationSection}>
-            <Text style={styles.navigationTitle}>{t("app-features")}</Text>
-            <TouchableOpacity
-              style={styles.navigationButton}
-              onPress={navigateToSettings}
-            >
-              <Text style={styles.navigationButtonText}>{t("settings")}</Text>
-            </TouchableOpacity>
+          {/* Timeline */}
+          <View style={styles.timelineContainer}>
+            <Timeline />
           </View>
 
-          {/* Development/Debug Links */}
-          <View style={styles.debugSection}>
-            <Text style={styles.debugTitle}>{t("development-tools")}</Text>
-            <TouchableOpacity
-              style={styles.debugButton}
-              onPress={navigateToSentryTest}
-            >
-              <Text style={styles.debugButtonText}>
-                {t("test-sentry-integration")}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.debugButton}
-              onPress={() => router.push("/(utils)/not-found")}
-            >
-              <Text style={styles.debugButtonText}>🚫 Test Not Found Page</Text>
-            </TouchableOpacity>
-          </View>
+          {/* Navigation and debug links moved to Profile view */}
         </View>
       </SignedIn>
       <SignedOut>
@@ -86,7 +64,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 18,
-    color: "#666",
   },
   signedInSection: {
     alignItems: "center",
@@ -157,5 +134,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
     fontWeight: "500",
+  },
+  timelineContainer: {
+    width: "100%",
+    height: 300,
+    marginTop: 20,
   },
 });

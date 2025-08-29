@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: "#666",
     lineHeight: 20,
     textAlign: "center",
   },

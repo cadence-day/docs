@@ -45,7 +45,7 @@ const TermsCheckbox: React.FC<TermsCheckboxProps> = ({
             height: 20,
             borderWidth: 2,
             borderColor: isChecked ? COLORS.primary : COLORS.white,
-            backgroundColor: isChecked ? COLORS.primary : "transparent",
+            backgroundColor: isChecked ? COLORS.primary : "#666",
             alignItems: "center",
             justifyContent: "center",
             marginTop: 2,

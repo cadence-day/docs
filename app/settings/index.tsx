@@ -299,7 +299,6 @@ const styles = StyleSheet.create({
   },
   sectionDescription: {
     fontSize: 14,
-    color: "#666",
     lineHeight: 20,
     marginBottom: 16,
   },
@@ -363,7 +362,6 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 14,
-    color: "#666",
     fontWeight: "500",
   },
   infoValue: {

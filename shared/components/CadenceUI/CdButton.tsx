@@ -67,7 +67,7 @@ const localStyles = StyleSheet.create({
   outlineButton: {
     borderWidth: 1,
     borderColor: "#FFFFFF",
-    backgroundColor: "transparent",
+    backgroundColor: "#666",
   },
   primaryButton: {
     backgroundColor: "#FFFFFF",
@@ -79,7 +79,7 @@ const localStyles = StyleSheet.create({
     borderColor: "#FFFFFF",
   },
   textButton: {
-    backgroundColor: "transparent",
+    backgroundColor: "#666",
     borderWidth: 0,
     padding: 0,
   },
