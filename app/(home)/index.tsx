@@ -12,11 +12,11 @@ export default function Page() {
   const firstName = user?.firstName || t("user");
 
   const navigateToSentryTest = () => {
-    router.push("./sentry-test");
+    router.push("/sentry-test");
   };
 
   const navigateToSettings = () => {
-    router.push("./settings");
+    router.push("/settings");
   };
 
   return (

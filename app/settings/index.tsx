@@ -1,3 +1,4 @@
+// Moved from app/(home)/settings/index.tsx
 import { useErrorHandler } from "@/shared/utils/errorHandler";
 import * as Sentry from "@sentry/react-native";
 import { FeedbackWidget } from "@sentry/react-native";
@@ -68,7 +69,7 @@ export default function SettingsPage() {
   };
 
   const navigateToCustomFeedback = () => {
-    router.push("./custom-feedback");
+    router.push("/custom-feedback");
   };
 
   const toggleFeedbackWidget = () => {
@@ -110,7 +111,15 @@ export default function SettingsPage() {
         options={{
           title: "Settings",
           headerShown: true,
-          headerBackTitle: "Home",
+          // Provide an explicit Home button so users can come back to the root screen
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.push("/")}
+              style={{ paddingHorizontal: 12 }}
+            >
+              <Text style={{ color: "#007bff", fontSize: 16 }}>Home</Text>
+            </TouchableOpacity>
+          ),
         }}
       />
 
