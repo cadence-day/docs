@@ -2,13 +2,6 @@ import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import CryptoJS from "crypto-js";
 import * as SecureStore from "expo-secure-store";
 
-import {
-  getAllActivities,
-  getUserNotes,
-  updateActivities,
-  updateNotes,
-} from "@/shared/api/resources";
-
 // Constants for encryption
 const ENCRYPTION_KEY_NAME = "cadence_app_encryption_key";
 const KEY_SIZE = 256; // AES-256
@@ -209,6 +202,14 @@ export async function rotateEncryptionKeyAndReEncryptData(
   userId: string
 ): Promise<void> {
   try {
+    // Dynamic import to avoid circular dependency at module load time.
+    // This file previously imported resource helpers at the top-level which
+    // caused a require cycle: encryption/core -> resources -> encryption -> core.
+    // Importing here delays the import until the function is called.
+    const resources = await import("@/shared/api/resources");
+    const { getAllActivities, getUserNotes, updateActivities, updateNotes } =
+      resources;
+
     // Step 1: Fetch all existing data that needs to be re-encrypted
     const activities = await getAllActivities();
     const notes = await getUserNotes(userId);

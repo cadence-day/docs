@@ -48,7 +48,10 @@ export const TimelineTimeslices: React.FC<TimelineTimeslicesProps> = ({
           >
             <TimeSlice
               timeslice={ts}
-              color={isEmpty ? "#666" : (activity?.color ?? "#d9d9d9")}
+              // Use an explicit RGBA transparent value instead of the string
+              // 'transparent' to avoid invalid color format warnings from any
+              // color parsing utilities that expect hex or rgba formats.
+              color={isEmpty ? "rgba(0,0,0,0)" : (activity?.color ?? "#d9d9d9")}
               iconType={iconType}
               onIconPress={isEmpty ? undefined : () => onIconPress(ts)}
             />

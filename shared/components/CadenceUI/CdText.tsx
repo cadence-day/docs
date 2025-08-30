@@ -52,7 +52,7 @@ const localStyles = StyleSheet.create({
     textTransform: "uppercase",
   },
   messageText: {
-    color: "#66646EC",
+    color: "#6646EC",
     textTransform: "uppercase",
   },
   linkText: {

@@ -144,8 +144,8 @@ const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
         <RefreshControl
           refreshing={refreshing || isTimelineLoading}
           onRefresh={onRefresh}
-          tintColor="#66646EC"
-          colors={["#66646EC"]}
+          tintColor="#6646EC"
+          colors={["#6646EC"]}
           progressBackgroundColor="#F0F0F0"
         />
       }

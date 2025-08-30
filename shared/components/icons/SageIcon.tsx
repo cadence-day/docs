@@ -25,7 +25,7 @@ export const Star5 = ({ width, height }: { width: number; height: number }) => (
         gradientTransform="translate(41.6327 40.7653) rotate(90) scale(19.0816)"
       >
         <Stop stopColor="#AB37FE" />
-        <Stop offset="0.99" stopColor="#66646EC" />
+        <Stop offset="0.99" stopColor="#6646EC" />
       </RadialGradient>
     </Defs>
   </Svg>
@@ -48,7 +48,7 @@ export const Star4 = ({ width, height }: { width: number; height: number }) => (
         gradientTransform="translate(43.102 42.2041) rotate(90) scale(19.7551)"
       >
         <Stop stopColor="#FE4437" />
-        <Stop offset="0.99" stopColor="#66646EC" />
+        <Stop offset="0.99" stopColor="#6646EC" />
       </RadialGradient>
     </Defs>
   </Svg>

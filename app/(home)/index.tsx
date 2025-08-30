@@ -1,19 +1,30 @@
+import Timeline from "@/features/timeline/Timeline";
+import { CdDialogHeader } from "@/shared/components/CadenceUI";
 import { SignedIn, SignedOut } from "@clerk/clerk-expo";
-import SignIn from "../(auth)/sign-in";
-import { Timeline } from "@/features/timeline";
 import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import SignIn from "../(auth)/sign-in";
 
 export default function Page() {
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <SignedIn>
-        <Timeline />
+        <CdDialogHeader title="Today" bottomBorder={true} />
+        <View
+          style={{
+            height: 300,
+            flex: 1,
+            alignContent: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Timeline />
+        </View>
       </SignedIn>
 
       <SignedOut>
         <SignIn />
       </SignedOut>
-    </View>
+    </SafeAreaView>
   );
 }
-

@@ -1,13 +1,12 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
   ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Rect } from "react-native-svg";
 
 interface NoInternetScreenProps {
@@ -45,7 +44,7 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
               width="12.7166"
               height="35.4174"
               rx="1.5"
-              stroke="#66646EC"
+              stroke="#6646EC"
               strokeWidth="2"
               fill="none"
             />
@@ -55,7 +54,7 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
               width="12.7166"
               height="45.6694"
               rx="1.5"
-              stroke="#66646EC"
+              stroke="#6646EC"
               strokeWidth="2"
               fill="none"
             />
@@ -65,7 +64,7 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
               width="12.9164"
               height="55.5667"
               rx="1.5"
-              stroke="#66646EC"
+              stroke="#6646EC"
               strokeWidth="2"
               fill="none"
             />
@@ -75,7 +74,7 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
               width="11.9843"
               height="23.7008"
               rx="1.5"
-              stroke="#66646EC"
+              stroke="#6646EC"
               strokeWidth="2"
               fill="none"
             />
@@ -85,7 +84,7 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
               width="11.9843"
               height="14.9134"
               rx="1.5"
-              stroke="#66646EC"
+              stroke="#6646EC"
               strokeWidth="2"
               fill="none"
             />
