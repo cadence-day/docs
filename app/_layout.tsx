@@ -1,4 +1,3 @@
-import DialogHost from "@/shared/components/DialogHost";
 import { NetworkProvider } from "@/shared/context";
 import i18n from "@/shared/locales";
 import { ClerkProvider } from "@clerk/clerk-expo";
@@ -100,7 +99,6 @@ export default Sentry.wrap(function RootLayout() {
             tokenCache={tokenCache}
           >
             <Slot />
-            <DialogHost />
           </ClerkProvider>
         </NetworkProvider>
         <StatusBar style="auto" />

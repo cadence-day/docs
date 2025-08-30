@@ -182,7 +182,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: "center",
-    backgroundColor: "#666",
+    backgroundColor: "transparent",
   },
   signupButtonText: {
     color: "#fff",
@@ -212,7 +212,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#181818",
   },
   checkboxBoxChecked: {
-    borderColor: "#66646EC",
+    borderColor: "#6646EC",
   },
   checkboxCheck: {
     color: "#fff",

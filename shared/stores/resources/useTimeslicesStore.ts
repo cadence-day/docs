@@ -44,7 +44,6 @@ interface TimeslicesStore extends BaseStoreState {
   getTimeslices: (ids: string[]) => Promise<Timeslice[]>;
   getUserTimeslices: (userId: string) => Promise<Timeslice[]>;
   getAllTimeslices: () => Promise<Timeslice[]>;
-  getTimeslicesFromTo: (start: Date, end: Date) => Promise<Timeslice[]>;
 
   // Utility functions
   setLoading: (loading: boolean) => void;
@@ -242,15 +241,6 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       set,
       () => timeslicesApi.getAllTimeslices(),
       "get all timeslices",
-      []
-    );
-  },
-
-  getTimeslicesFromTo: async (start: Date, end: Date) => {
-    return handleGetApiCall(
-      set,
-      () => timeslicesApi.getTimeslicesFromTo(start, end),
-      "get timeslices from to",
       []
     );
   },
