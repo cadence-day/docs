@@ -16,7 +16,7 @@ export const COLORS = {
   textIcons: "#6B7280",
   error: "#EF4444",
   white: "#FFFFFF",
-  primary: "#66646EC", // Steel blue
+  primary: "#6646EC", // Steel blue
   secondary: "#FFFFFF", // Light yellow
   tertiary: "#FF6B5C", // Coral red
   quaternary: "#1E3C7B", // Navy blue
