@@ -1,0 +1,142 @@
+import { Dimensions, StyleSheet } from "react-native";
+
+const { height: screenHeight } = Dimensions.get("window");
+// Calculate timeline height as 54% of screen height to match the parent container
+const timelineHeight = screenHeight * 0.75;
+
+export const styles = StyleSheet.create({
+  currentTimeLabel: {
+    fontWeight: "100",
+    fontFamily: "FoundersGrotesk-Medium",
+    fontSize: Dimensions.get("window").height < 700 ? 12 : 12,
+  },
+  emptyNoteButton: {
+    alignItems: "center",
+    top: 40,
+    height: 40,
+    justifyContent: "center",
+    position: "absolute",
+    width: 50,
+  },
+  emptyTimeslice: {
+    backgroundColor: "#666",
+  },
+  noteButton: {
+    alignItems: "center",
+    top: 40,
+    height: 40,
+    justifyContent: "center",
+    position: "absolute",
+    width: 50,
+  },
+  scrollViewContent: {
+    flexDirection: "row",
+    paddingBottom: 6,
+    paddingHorizontal: 2,
+    height: timelineHeight,
+  },
+  timeLabel: {
+    color: "black",
+    fontSize: 12,
+    fontWeight: "normal",
+    marginBottom: 4,
+    marginTop: 10,
+    textAlign: "center",
+    width: 40,
+    fontFamily: "FoundersGrotesk-Regular",
+    alignSelf: "center",
+  },
+  timeslice: {
+    alignItems: "center",
+    borderColor: "#66646EC",
+    borderWidth: 1,
+    borderRadius: 2,
+    height: "90%",
+    justifyContent: "space-between",
+    marginHorizontal: 3,
+    paddingVertical: 0,
+    width: 43,
+  },
+  timeSlotContainer: {
+    alignItems: "flex-start",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+  },
+  // TimeSlice component styles
+  timeSliceContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: 42.5,
+    marginHorizontal: 2,
+  },
+  timeSliceText: {
+    color: "#222",
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  timeSliceBox: {
+    flex: 1,
+    width: "100%",
+    borderRadius: 3,
+    borderWidth: 1,
+    borderColor: "#66646EC",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: 4,
+  },
+  timeSliceIconContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    position: "absolute",
+    top: 15,
+    left: 0,
+    right: 0,
+  },
+  // DaySeparator component styles
+  daySeparatorTouchable: {
+    width: 70,
+    marginHorizontal: 2,
+    alignSelf: "stretch",
+    backgroundColor: "#666",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 0.4,
+    borderColor: "rgba(102, 102, 102, 0.2)",
+  },
+  daySeparatorText: {
+    fontSize: 12,
+    fontWeight: "600",
+    textAlign: "left",
+    letterSpacing: 0.3,
+    textDecorationLine: "underline",
+    includeFontPadding: false,
+    textAlignVertical: "center",
+    width: 300,
+    transform: [{ rotate: "-90deg" }],
+  },
+  // PreviousDayButton component styles
+  previousDayButtonTouchable: {
+    width: 70,
+    marginHorizontal: 2,
+    alignSelf: "stretch",
+    backgroundColor: "#666",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 0.4,
+    borderColor: "rgba(102, 102, 102, 0.2)",
+  },
+  previousDayButtonText: {
+    fontSize: 12,
+    fontWeight: "600",
+    textAlign: "center",
+    letterSpacing: 0.3,
+    textDecorationLine: "underline",
+    includeFontPadding: false,
+    width: 300,
+    textAlignVertical: "center",
+    writingDirection: "ltr",
+    transform: [{ rotate: "-90deg" }],
+  },
+});
