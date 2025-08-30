@@ -1,5 +1,5 @@
 import type { Activity, Timeslice } from "@/shared/types/models";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import useActivitiesStore from "../resources/useActivitiesStore";
 import useTimeslicesStore from "../resources/useTimeslicesStore";
 import useSelectionStore from "./useSelectionStore";
@@ -26,6 +26,38 @@ export function useCurrentlySelectedActivity(): Activity | null {
 
 export function useDateTimeslices(date: Date): Timeslice[] {
   const timeslices = useTimeslicesStore((s) => s.timeslices);
+  const getTimeslicesFromTo = useTimeslicesStore((s) => s.getTimeslicesFromTo);
+  const upsertTimeslices = useTimeslicesStore((s) => s.upsertTimeslices);
+
+  // When the requested date changes, fetch remote timeslices for that day
+  // and upsert them into the central store so the selector can return them.
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchForDate = async () => {
+      try {
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const nextDay = new Date(startOfDay);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        const fetched = await getTimeslicesFromTo(startOfDay, nextDay);
+        if (!cancelled && fetched && fetched.length > 0) {
+          // upsert into store so components reflect the latest data
+          await upsertTimeslices(fetched as any);
+        }
+      } catch (err) {
+        // swallow errors here; resource store will handle logging
+      }
+    };
+
+    fetchForDate();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [date, getTimeslicesFromTo, upsertTimeslices]);
 
   return useMemo(() => {
     const startOfDay = new Date(date);

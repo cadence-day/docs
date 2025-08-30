@@ -1,7 +1,7 @@
-import { Timeslice } from "@/shared/types/models";
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import { apiCall } from "@/shared/api/utils/apiHelpers";
 import { handleApiError } from "@/shared/api/utils/errorHandler";
+import { Timeslice } from "@/shared/types/models";
 
 /**
  * Fetches a timeslice by its ID.
@@ -79,5 +79,29 @@ export async function getAllTimeslices(): Promise<Timeslice[]> {
     });
   } catch (error) {
     handleApiError("getAllTimeslices", error);
+  }
+}
+
+/**
+ * Fetches timeslices in a specific date range.
+ * @param startFrom - The start date of the range.
+ * @param endTo - The end date of the range.
+ * @returns A promise that resolves to an array of timeslices.
+ */
+export async function getTimeslicesFromTo(
+  startFrom: Date,
+  endTo: Date
+): Promise<Timeslice[]> {
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .select("*")
+        .gte("start_date", startFrom.toDateString())
+        .lte("end_date", endTo.toDateString());
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("getTimeslicesFromTo", error);
   }
 }
