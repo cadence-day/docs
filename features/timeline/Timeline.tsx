@@ -1,4 +1,5 @@
 import { useDialogStore, useSelectionStore } from "@/shared/stores/";
+import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import * as Haptics from "expo-haptics";
 import React, {
   forwardRef,
@@ -10,8 +11,6 @@ import { RefreshControl, ScrollView, View } from "react-native";
 
 // Components
 import { TimelineTimeslices } from "./components/TimelineTimeslices";
-import { DaySeparator } from "./components/ui/DaySeparator";
-import { PreviousDayButton } from "./components/ui/PreviousDayButton";
 
 // Types
 import { Timeslice } from "@/shared/types/models";
@@ -31,7 +30,11 @@ import { useTimelineScrolling } from "./hooks/useTimelineScrolling";
  * Timeline component displays a horizontal scrollable timeline of timeslices,
  * 48 half-hour slots in a day + 48 timeslices for yesterday
  */
-const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
+type TimelineProps = {
+  date?: Date;
+};
+
+const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
   // State to track if yesterday's timeslices are visible and loaded
   const [showYesterday, setShowYesterday] = useState(false);
   const [yesterdayLoaded, setYesterdayLoaded] = useState(false);
@@ -40,8 +43,11 @@ const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
   const openDialog = useDialogStore((s) => s.openDialog);
 
   // Custom hooks for data management and actions
-  // Provide a stable 'today' Date to the data hook so it doesn't compute its own
-  const today = React.useMemo(() => new Date(), []);
+  // Use provided date if available, otherwise default to now
+  const today = React.useMemo(
+    () => (date ? new Date(date) : new Date()),
+    [date]
+  );
 
   // Also derive yesterday's date (used for the optional previous day view)
   const yesterdayDate = React.useMemo(() => {
@@ -74,6 +80,35 @@ const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
     return todayTimeslices;
   }, [yesterdayLoaded, yesterdayTimeslices, todayTimeslices]);
 
+  // If there are no timeslices for today (rare), generate empty placeholders
+  // so the timeline still shows the empty timeslice containers (48 slots)
+  const generatePlaceholders = React.useCallback((date: Date) => {
+    const slots: Timeslice[] = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const localStartTime = new Date(date);
+        localStartTime.setHours(hour, minute, 0, 0);
+        const localEndTime = new Date(localStartTime);
+        localEndTime.setMinutes(localEndTime.getMinutes() + 30);
+        slots.push({
+          id: null,
+          start_time: localStartTime.toISOString(),
+          end_time: localEndTime.toISOString(),
+          activity_id: null,
+          state_id: null,
+          user_id: null,
+          note_ids: null,
+        } as Timeslice);
+      }
+    }
+    return slots;
+  }, []);
+
+  const displayTodayTimeslices =
+    todayTimeslices && todayTimeslices.length > 0
+      ? todayTimeslices
+      : generatePlaceholders(dateForDisplay ?? today);
+
   // Scrolling behavior hook (must be called after timesliceComponents is
   // defined so its memo length is stable for the hook's dependencies)
   const {
@@ -82,7 +117,6 @@ const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
     scrollToCurrentTime,
     forceScrollToCurrentTime,
     handleScroll,
-    handlePreviousDayPress,
   } = useTimelineScrolling({
     timesliceComponents,
     yesterdayLoaded,
@@ -104,6 +138,37 @@ const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
   useEffect(() => {
     scrollToCurrentTime();
   }, [scrollToCurrentTime]);
+
+  // When the provided date prop changes, fetch timeslices for that day
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchForDate = async () => {
+      try {
+        const startOfDay = new Date(today);
+        startOfDay.setHours(0, 0, 0, 0);
+        const startOfNextDay = new Date(startOfDay);
+        startOfNextDay.setDate(startOfNextDay.getDate() + 1);
+
+        const fetched = await useTimeslicesStore
+          .getState()
+          .getTimeslicesFromTo(startOfDay, startOfNextDay);
+
+        if (mounted && fetched && fetched.length > 0) {
+          // Upsert results into the store so the data hook sees them
+          await useTimeslicesStore.getState().upsertTimeslices(fetched);
+        }
+      } catch (err) {
+        console.error("Error fetching timeslices for date", err);
+      }
+    };
+
+    fetchForDate();
+
+    return () => {
+      mounted = false;
+    };
+  }, [today]);
 
   // Handle note dialog - this will close activities dialog automatically
   const handleIconPress = (timeslice: Timeslice) => {
@@ -139,7 +204,8 @@ const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
       style={{ flex: 1 }}
       contentContainerStyle={{ flex: 1 }}
       showsVerticalScrollIndicator={false}
-      scrollEnabled={false}
+      // Allow vertical scrolling so RefreshControl (pull-to-refresh) can be used
+      scrollEnabled={true}
       refreshControl={
         <RefreshControl
           refreshing={refreshing || isTimelineLoading}
@@ -160,6 +226,8 @@ const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
         <ScrollView
           ref={scrollViewRef}
           horizontal
+          // allow inner horizontal ScrollView to participate in nested scrolling
+          nestedScrollEnabled={true}
           showsHorizontalScrollIndicator={false}
           onScroll={handleScroll}
           scrollEventThrottle={16}
@@ -168,31 +236,6 @@ const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
             paddingVertical: 6,
           }}
         >
-          {/* Previous Day Button - shown as first item when at left edge */}
-          <PreviousDayButton
-            visible={showPreviousDayButton && !yesterdayLoaded}
-            onPress={handlePreviousDayPress}
-          />
-
-          {/* Yesterday's timeslices - only rendered when loaded */}
-          {yesterdayLoaded && (
-            <TimelineTimeslices
-              timeslices={yesterdayTimeslices}
-              activities={activities}
-              onTimeslicePress={handleTimeslicePress}
-              onTimesliceLongPress={handleTimesliceLongPress}
-              onIconPress={handleIconPress}
-              keyPrefix="yesterday"
-            />
-          )}
-
-          {/* Day Separator - only shown when yesterday is loaded */}
-          <DaySeparator
-            visible={yesterdayLoaded}
-            showYesterday={showYesterday}
-            onPress={handleHidePreviousDay}
-          />
-
           {/* Today's timeslices */}
           <TimelineTimeslices
             timeslices={todayTimeslices}
@@ -201,6 +244,7 @@ const Timeline = forwardRef<TimelineRef, {}>((props, ref) => {
             onTimesliceLongPress={handleTimesliceLongPress}
             onIconPress={handleIconPress}
             keyPrefix="today"
+            dateForDisplay={dateForDisplay}
           />
         </ScrollView>
       </View>

@@ -26,6 +26,7 @@ export interface CdDialogHeaderProps {
   rightActionFontSize?: number;
   isRightActionButton?: boolean;
   onTitleDoubleTap?: () => void; // New prop for double tap on title
+  onTitlePress?: () => void; // Single tap on title
 }
 
 export const CdDialogHeader: React.FC<CdDialogHeaderProps> = ({
@@ -44,24 +45,34 @@ export const CdDialogHeader: React.FC<CdDialogHeaderProps> = ({
   titleFontSize = 18,
   rightActionFontSize = 16,
   onTitleDoubleTap,
+  onTitlePress,
 }) => {
   const lastTap = React.useRef<number | null>(null);
+  const tapTimeout = React.useRef<number | null>(null);
 
   const handleTitlePress = React.useCallback(() => {
-    if (!onTitleDoubleTap) return;
-
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
 
     if (lastTap.current && now - lastTap.current < DOUBLE_PRESS_DELAY) {
       // Double tap detected
-      onTitleDoubleTap();
+      if (tapTimeout.current) {
+        clearTimeout(tapTimeout.current as any);
+        tapTimeout.current = null;
+      }
+      onTitleDoubleTap?.();
       lastTap.current = null;
     } else {
-      // Single tap
+      // Potential single tap. Wait to see if another tap follows.
       lastTap.current = now;
+      if (tapTimeout.current) clearTimeout(tapTimeout.current as any);
+      tapTimeout.current = window.setTimeout(() => {
+        onTitlePress?.();
+        lastTap.current = null;
+        tapTimeout.current = null;
+      }, DOUBLE_PRESS_DELAY);
     }
-  }, [onTitleDoubleTap]);
+  }, [onTitleDoubleTap, onTitlePress]);
   return (
     <>
       <View style={[styles.container, style]}>

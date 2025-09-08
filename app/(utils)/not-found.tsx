@@ -7,7 +7,7 @@ export default function NotFoundPage() {
   const router = useRouter();
 
   const handleGoHome = () => {
-    router.replace("/");
+    router.replace("/(home)");
   };
 
   return (

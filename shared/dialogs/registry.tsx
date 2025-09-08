@@ -1,27 +1,9 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-
-export const ActivityLegend: React.FC<{ activityId?: string }> = ({
-  activityId,
-}) => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Activity Legend</Text>
-      <Text style={styles.subtitle}>
-        {activityId ? `Activity: ${activityId}` : "No activity selected"}
-      </Text>
-    </View>
-  );
-};
+import ActivityDialog from "@/features/activities/ActivityDialog";
+import CalendarDialog from "@/features/calendar/CalendarDialog";
 
 export const DialogRegistry: Record<string, React.ComponentType<any>> = {
-  "activity-legend": ActivityLegend,
+  "activity-legend": ActivityDialog,
+  calendar: CalendarDialog,
 };
-
-const styles = StyleSheet.create({
-  container: { padding: 16 },
-  title: { fontSize: 16, fontWeight: "600", marginBottom: 8 },
-  subtitle: { fontSize: 13 },
-});
 
 export default DialogRegistry;

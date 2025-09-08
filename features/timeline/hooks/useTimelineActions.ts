@@ -23,7 +23,8 @@ export const useTimelineActions = () => {
   const updateTimesliceInStore = useTimeslicesStore((s) => s.updateTimeslice);
   const deleteTimesliceInStore = useTimeslicesStore((s) => s.deleteTimeslice);
   const openDialog = useDialogStore((s) => s.openDialog);
-
+  const { t } = useI18n();
+  const { showWarning } = useToast();
   const handleTimeslicePress = useCallback(
     async (timeslice: Timeslice) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -36,8 +37,7 @@ export const useTimelineActions = () => {
           props: { activityId: null },
           position: "dock",
         });
-        const { t } = useI18n();
-        const { showWarning } = useToast();
+        // useI18n and useToast are called at hook top-level (see above)
         showWarning(t("select-activity"));
         return;
       }
@@ -97,6 +97,8 @@ export const useTimelineActions = () => {
       insertTimesliceInStore,
       updateTimesliceInStore,
       openDialog,
+      t,
+      showWarning,
     ]
   );
 

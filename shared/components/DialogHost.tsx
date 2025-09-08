@@ -1,5 +1,4 @@
 import { CdDialog } from "@/shared/components/CadenceUI/CdDialog";
-import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
 import { DialogRegistry } from "@/shared/dialogs/registry";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import React from "react";
@@ -11,21 +10,49 @@ export const DialogHost: React.FC = () => {
   const ordered = Object.values(dialogs).sort(
     (a, b) => (a.zIndex || 0) - (b.zIndex || 0)
   );
-
   return (
     <View pointerEvents="box-none" style={styles.host}>
       {ordered.map((d) => {
         const Component = DialogRegistry[d.type];
+        const headerProps = d.props?.headerProps ?? { title: d.type };
+        // If dialog is collapsed, render a minimal header-only height (about 12%)
+        const height = d.collapsed
+          ? (d.props?.height ?? 10)
+          : (d.props?.height ?? 50);
+        // Allow activity legend to use full 100% max height (still clamped by safe area)
+        const maxHeight =
+          d.type === "activity-legend" ? 100 : (d.props?.maxHeight ?? 100);
+
         return (
           <CdDialog
             key={d.id}
             visible={true}
+            collapsed={d.collapsed}
             onClose={() => useDialogStore.getState().closeDialog(d.id)}
-            headerProps={{ title: d.type }}
-            height={50}
-            enableDragging
+            headerProps={{
+              ...headerProps,
+              rightActionElement: headerProps.rightActionElement ?? "Done",
+              onRightAction: () => {
+                try {
+                  const props =
+                    useDialogStore.getState().getDialog(d.id)?.props ?? {};
+                  if (typeof props.onConfirm === "function") props.onConfirm();
+                } catch (e) {
+                  // ignore
+                }
+                useDialogStore.getState().closeDialog(d.id);
+              },
+            }}
+            height={height}
+            maxHeight={maxHeight}
+            // Allow dialogs to opt-out of dragging via props, but default to
+            // enabling dragging even when a dialog is initially collapsed so
+            // the user can pull it up (useful for activity-legend on Today).
+            enableDragging={d.props?.enableDragging ?? true}
           >
-            {Component ? <Component {...(d.props ?? {})} /> : null}
+            {Component ? (
+              <Component {...(d.props ?? {})} _dialogId={d.id} />
+            ) : null}
           </CdDialog>
         );
       })}
@@ -39,7 +66,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: NAV_BAR_SIZE,
+    bottom: 0,
     zIndex: 2000,
     pointerEvents: "box-none",
   },

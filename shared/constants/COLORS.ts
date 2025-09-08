@@ -17,13 +17,14 @@ export const COLORS = {
   error: "#EF4444",
   white: "#FFFFFF",
   primary: "#6646EC", // Steel blue
-  secondary: "#FFFFFF", // Light yellow
+  secondary: "#B7B7B7", // Light gray
   tertiary: "#FF6B5C", // Coral red
   quaternary: "#1E3C7B", // Navy blue
   quinary: "#8FAD8E", // Sage green
   light: {
     text: "#11181C",
-    background: "#B7B7B7",
+    background: "#D9D9D9",
+    border: "#ffffff",
     tint: tintColorLight,
     icon: "#687076",
     tabIconDefault: "#687076",
@@ -55,8 +56,8 @@ export const ACTIVITY_COLORS = [
 ];
 export const backgroundLinearColors = {
   primary: {
-    start: "#FFFFFF",
-    end: "#FFFFFF",
+    start: "#D9D9D9",
+    end: "#D9D9D9",
   },
   secondary: {
     start: "#2B2B2B",

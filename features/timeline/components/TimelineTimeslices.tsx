@@ -11,6 +11,8 @@ interface TimelineTimeslicesProps {
   onTimesliceLongPress: (timeslice: Timeslice) => void;
   onIconPress: (timeslice: Timeslice) => void;
   keyPrefix: string;
+  // Optional date that these timeslices represent (local date).
+  dateForDisplay?: Date;
 }
 
 /**
@@ -23,10 +25,33 @@ export const TimelineTimeslices: React.FC<TimelineTimeslicesProps> = ({
   onTimesliceLongPress,
   onIconPress,
   keyPrefix,
+  dateForDisplay,
 }) => {
+  // compute start of the provided display date (or today) in local timezone
+  const displayDate = dateForDisplay ? new Date(dateForDisplay) : new Date();
+  const startOfDisplayDay = new Date(displayDate);
+  startOfDisplayDay.setHours(0, 0, 0, 0);
+  const isTodayDisplay =
+    startOfDisplayDay.toDateString() === new Date().toDateString();
+
+  const visibleTimeslices = timeslices.filter((ts) => {
+    // keep timeslices that don't have a start_time (defensive)
+    if (!ts.start_time) return true;
+
+    const parsed =
+      typeof ts.start_time === "number"
+        ? ts.start_time
+        : Date.parse(String(ts.start_time));
+
+    // if we can't parse the time, keep the timeslice to avoid hiding data
+    if (Number.isNaN(parsed)) return true;
+
+    return Number(parsed) >= startOfDisplayDay.getTime();
+  });
+
   return (
     <>
-      {timeslices.map((ts, index) => {
+      {visibleTimeslices.map((ts, index) => {
         const activity = activities.find(
           (a: Activity) => a.id === ts.activity_id
         );
@@ -48,11 +73,12 @@ export const TimelineTimeslices: React.FC<TimelineTimeslicesProps> = ({
           >
             <TimeSlice
               timeslice={ts}
-              // Use an explicit RGBA transparent value instead of the string
-              // 'transparent' to avoid invalid color format warnings from any
-              // color parsing utilities that expect hex or rgba formats.
-              color={isEmpty ? "rgba(0,0,0,0)" : (activity?.color ?? "#d9d9d9")}
+              // don't pass a color for empty timeslices — let TimeSlice
+              // fallback to its default background color and avoid invalid
+              // color parsing in contrast utilities
+              color={isEmpty ? undefined : (activity?.color ?? "#d9d9d9")}
               iconType={iconType}
+              isToday={isTodayDisplay}
               onIconPress={isEmpty ? undefined : () => onIconPress(ts)}
             />
           </TouchableOpacity>

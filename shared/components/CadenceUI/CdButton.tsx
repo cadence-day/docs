@@ -79,7 +79,6 @@ const localStyles = StyleSheet.create({
     borderColor: "#FFFFFF",
   },
   textButton: {
-    backgroundColor: "#666",
     borderWidth: 0,
     padding: 0,
   },

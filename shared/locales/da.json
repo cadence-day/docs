@@ -91,5 +91,20 @@
   "i-agree-to-the": "Jeg accepterer",
   "privacy-policy": "Fortrolighedspolitik",
   "terms-and-conditions": "Vilkår og betingelser",
-  "sign-out": "Log ud"
+  "sign-out": "Log ud",
+  "home.title": "Daglig Kadencen",
+  "reflection": "REFLEKTION",
+  "reflection-empty": "TOM REFLEKTION",
+  "profile": "PROFIL",
+  "today": "I DAG",
+  "yesterday": "I GÅR",
+  "2-days": "2 DAGE SIDEN",
+  "activity-legend": "Aktiviteter",
+  "mo": "Ma",
+  "tu": "Ti",
+  "we": "On",
+  "th": "To",
+  "fr": "Fr",
+  "sa": "Lø",
+  "su": "Sø"
 }

@@ -1,4 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
+import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -11,7 +12,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { NAV_BAR_SIZE } from "../../constants/VIEWPORT";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CdDialogHeader, CdDialogHeaderProps } from "./CdDialogHeader";
 interface CdDialogProps {
   visible: boolean;
@@ -32,6 +33,7 @@ interface CdDialogProps {
   isGlobal?: boolean; // Whether this dialog can appear in any view
   id?: string;
   zIndex?: number;
+  collapsed?: boolean;
 }
 
 export const CdDialog: React.FC<CdDialogProps> = ({
@@ -46,6 +48,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   onHeightChange,
   enableDragging = true,
   onDoubleTapResize,
+  collapsed = false,
   allowedViews = [],
   currentView = "",
   isGlobal = false,
@@ -59,6 +62,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   const originalHeight = useRef(height); // Store original height
   const lastTap = useRef<number | null>(null);
   const { height: screenHeight } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   // Check if dialog should be visible in current view
   const shouldShowInView =
@@ -78,11 +82,21 @@ export const CdDialog: React.FC<CdDialogProps> = ({
 
   const clampHeight = useCallback(
     (newHeight: number) => {
-      const headerHeight = 50; // Height of DialogHeader in pixels
+      const headerHeight = 35; // Height of DialogHeader in pixels
       const pullIndicatorHeight = enableDragging ? 30 : 0; // Height of pull indicator
       const minHeightRequired = headerHeight + pullIndicatorHeight;
       const minHeightPercent = (minHeightRequired / screenHeight) * 100;
-      return Math.max(minHeightPercent, Math.min(maxHeight, newHeight));
+      // Compute maximum available percent while respecting safe area and nav bar.
+      const maxAvailablePixels = Math.max(
+        0,
+        screenHeight - insets.top - NAV_BAR_SIZE
+      );
+      const maxAvailablePercent = (maxAvailablePixels / screenHeight) * 100;
+      const effectiveMax = Math.max(
+        0,
+        Math.min(maxHeight, maxAvailablePercent)
+      );
+      return Math.max(minHeightPercent, Math.min(effectiveMax, newHeight));
     },
     [enableDragging, screenHeight, maxHeight]
   );
@@ -189,6 +203,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       style={[
         styles.container,
         {
+          bottom: NAV_BAR_SIZE,
           height: animatedHeight.interpolate({
             inputRange: [0, 100],
             outputRange: ["0%", "100%"],
@@ -247,6 +262,28 @@ export const CdDialog: React.FC<CdDialogProps> = ({
           <CdDialogHeader
             {...headerProps}
             onTitleDoubleTap={enableDragging ? handleDoubleTap : undefined}
+            onTitlePress={() => {
+              // Cycle between collapsed -> default -> full-screen
+              // collapsed: small header-only height (12%),
+              // default: originalHeight.current
+              // full: 100% minus safe area (we treat as 100)
+              const collapsedHeight = 0;
+              const defaultHeight = originalHeight.current || height;
+              // Full-screen state should be a maximum of 80% height per spec
+              const fullHeight = 100;
+
+              const current = currentHeight.current;
+              if (Math.abs(current - collapsedHeight) < 1) {
+                // collapsed -> default
+                updateHeight(defaultHeight);
+              } else if (Math.abs(current - defaultHeight) < 1) {
+                // default -> full
+                updateHeight(fullHeight);
+              } else {
+                // full -> collapsed
+                updateHeight(collapsedHeight);
+              }
+            }}
           />
         )}
         <View style={[styles.content, { marginTop: enableDragging ? 10 : 0 }]}>
@@ -260,7 +297,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: NAV_BAR_SIZE,
+    bottom: 0,
     left: 0,
     right: 0,
     overflow: "hidden",

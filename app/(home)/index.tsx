@@ -1,17 +1,19 @@
-import { SignedIn } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
 import Timeline from "@/features/timeline/Timeline";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
-import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
-import { ActivityLegend } from "@/shared/dialogs/registry";
+import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useDateTimePreferences } from "@/shared/hooks/useDateTimePreferences";
-import { Activity, Timeslice } from "@/shared/types/models";
-import { formatDateWithWeekday } from "@/shared/utils/datetime";
+import {
+  formatDateWithWeekday,
+  formatTimeForDisplay,
+} from "@/shared/utils/datetime";
+import SignIn from "../(auth)/sign-in";
 // activityLegend hook isn't present in this path in the repo; use a simple local
 // fallback. If you have a specific hook, we can wire it later.
 const useActivityLegend = () => ({ isVisible: false, hide: () => {} });
@@ -22,11 +24,11 @@ const ErrorBoundary: React.FC<{ children?: React.ReactNode }> = ({
 const LoadingScreen: React.FC = () => <></>;
 
 // Stores
-import { useActivitiesStore, useTimeslicesStore } from "@/shared/stores";
 
+import { useToast } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 import useActivityCategoriesStore from "@/shared/stores/resources/useActivityCategoriesStore";
-import { useToast } from "@/shared/hooks";
+import useDialogStore from "@/shared/stores/useDialogStore";
 
 export default function Today() {
   const { t } = useI18n();
@@ -42,6 +44,8 @@ export default function Today() {
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const segments = useSegments();
 
   useEffect(() => {
     setCurrentTime(new Date());
@@ -50,16 +54,16 @@ export default function Today() {
   }, []);
 
   return (
-    <SignedIn>
-      <LinearGradient
-        colors={[
-          backgroundLinearColors.primary.end,
-          backgroundLinearColors.primary.end,
-        ]}
-        style={{ flex: 1 }}
-      >
-        <SafeAreaView style={{ flex: 1, paddingBottom: NAV_BAR_SIZE + 10 }}>
-          <View
+    <View style={{ flex: 1 }}>
+      <SignedIn>
+        <LinearGradient
+          colors={[
+            backgroundLinearColors.primary.end,
+            backgroundLinearColors.primary.end,
+          ]}
+          style={{ flex: 1 }}
+        >
+          <SafeAreaView
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -67,7 +71,7 @@ export default function Today() {
               paddingHorizontal: 12,
               paddingTop: 10,
               paddingBottom: 10,
-              backgroundColor: "transparent",
+              margin: 12,
             }}
           >
             <View style={{ flex: 1 }}>
@@ -83,18 +87,113 @@ export default function Today() {
                   marginTop: 2,
                 }}
               >
-                <Text style={{ fontSize: 14, color: "#444" }}>
-                  {formatDateWithWeekday(
-                    currentTime.toISOString(),
-                    dateTimePreferences,
-                    {
-                      weekdayFormat: "long",
-                      weekdayPosition: "before",
-                      includeTime: true,
-                      dateTimeSeparator: " at ",
+                {/* Tappable date: opens calendar modal */}
+                <TouchableOpacity
+                  onPress={() => {
+                    // Open the central dialog for the calendar. We create a holder
+                    // so the onSelect callback can close the dialog once a date
+                    // is picked.
+                    const idHolder: { id?: string } = {};
+                    const id = useDialogStore.getState().openDialog({
+                      type: "calendar",
+                      props: {
+                        selectedDate,
+                        height: 60, // In percents of screen height
+                        enableDragging: false,
+                        headerProps: { title: t("pick-a-date") },
+                        // onSelect will update the selected date live
+                        onSelect: (d: Date) => setSelectedDate(d),
+                        // onConfirm will be called when DialogHost's Done is pressed
+                        onConfirm: () => {
+                          // ensure final selection is applied (already via onSelect), then close
+                          if (idHolder.id)
+                            useDialogStore.getState().closeDialog(idHolder.id);
+                        },
+                      },
+                    });
+                    idHolder.id = id;
+                  }}
+                >
+                  {(() => {
+                    const includeTime =
+                      selectedDate.toDateString() === new Date().toDateString();
+
+                    // Format the date (without time) using locale and user prefs
+                    const datePart = formatDateWithWeekday(
+                      (selectedDate.toDateString() === new Date().toDateString()
+                        ? currentTime
+                        : selectedDate
+                      ).toISOString(),
+                      dateTimePreferences,
+                      {
+                        weekdayFormat: "long",
+                        weekdayPosition: "before",
+                        includeTime: false,
+                        dateTimeSeparator: " at ",
+                      }
+                    );
+
+                    // Format time separately so we can shrink AM/PM if present
+                    let timePart = "";
+                    if (includeTime) {
+                      timePart = formatTimeForDisplay(
+                        (selectedDate.toDateString() ===
+                        new Date().toDateString()
+                          ? currentTime
+                          : selectedDate
+                        ).toISOString(),
+                        dateTimePreferences
+                      );
                     }
-                  )}
-                </Text>
+
+                    // Split meridiem/suffix from timePart when present (e.g., "9:30 AM", "9:30 a.m.")
+                    let mainTime = timePart;
+                    let meridiem = "";
+                    if (timePart) {
+                      const m = timePart.match(/^(.*?)(\s+[^0-9:.,\s].*)$/u);
+                      if (m) {
+                        mainTime = m[1];
+                        meridiem = m[2].trim();
+                      }
+                    }
+
+                    return (
+                      <Text style={{ fontSize: 14, color: "#444" }}>
+                        {datePart}
+                        {includeTime && (
+                          <Text>
+                            {" "}
+                            <Text>{mainTime}</Text>
+                            {meridiem ? (
+                              <Text style={{ fontSize: 11 }}> {meridiem}</Text>
+                            ) : null}
+                          </Text>
+                        )}
+                      </Text>
+                    );
+                  })()}
+                </TouchableOpacity>
+                {/* Back to Today button when a non-today date is selected */}
+                {selectedDate.toDateString() !== new Date().toDateString() && (
+                  <TouchableOpacity
+                    onPress={() => setSelectedDate(new Date())}
+                    style={{ marginLeft: 12 }}
+                  >
+                    <Text
+                      style={{
+                        textDecorationLine: "underline",
+                        textTransform: "uppercase",
+                        color: "#444",
+                        fontSize: 12,
+                        letterSpacing: 0.5,
+                      }}
+                    >
+                      Back to today
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                {/* Calendar is opened via the central dialog store; DialogHost will render the
+          registered 'calendar' dialog (see shared/dialogs/registry.tsx). */}
               </View>
             </View>
 
@@ -107,15 +206,22 @@ export default function Today() {
                 <SageIcon size={40} status={"pulsating"} auto={false} />
               </TouchableOpacity>
             </View>
-          </View>
+          </SafeAreaView>
 
           <ErrorBoundary>
-            <Timeline />
+            {/* Pass selected date into the timeline so it renders the chosen day */}
+            <Timeline date={selectedDate} />
           </ErrorBoundary>
 
+          {/* Spacer to ensure there's room below the timeline (e.g., above nav) */}
+          <View style={{ height: DIALOG_HEIGHT_PLACEHOLDER }} />
+
           {/* Share modal could be added here when available */}
-        </SafeAreaView>
-      </LinearGradient>
-    </SignedIn>
+        </LinearGradient>
+      </SignedIn>
+      <SignedOut>
+        <SignIn />
+      </SignedOut>
+    </View>
   );
 }
