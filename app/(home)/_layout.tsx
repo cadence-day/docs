@@ -74,8 +74,7 @@ export default function TabLayout() {
               justifyContent: "center",
               alignItems: "center",
               alignSelf: "stretch",
-              paddingVertical: 0,
-              paddingHorizontal: 0,
+              alignContent: "center",
             },
           }}
         >

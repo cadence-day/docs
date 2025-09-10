@@ -12,6 +12,13 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 4,
   },
+  // Slightly smaller variants for 12-hour time strings so AM/PM fits on one line
+  currentTimeLabel12: {
+    fontWeight: "800",
+    fontFamily: "FoundersGrotesk-Medium",
+    fontSize: 9,
+    marginBottom: 4,
+  },
   emptyTimeslice: {
     backgroundColor: "transparent",
   },
@@ -28,6 +35,12 @@ export const styles = StyleSheet.create({
     color: "#222",
     fontFamily: "FoundersGrotesk-Medium",
     fontSize: 12,
+    marginBottom: 4,
+  },
+  timeSliceText12: {
+    color: "#222",
+    fontFamily: "FoundersGrotesk-Medium",
+    fontSize: 9,
     marginBottom: 4,
   },
   timeSliceBox: {

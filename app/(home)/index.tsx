@@ -1,6 +1,5 @@
 import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter, useSegments } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
@@ -9,45 +8,34 @@ import { CdButton } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
-import { useDateTimePreferences } from "@/shared/hooks/useDateTimePreferences";
-import {
-  formatDateWithWeekday,
-  formatTimeForDisplay,
-} from "@/shared/utils/datetime";
+import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import SignIn from "../(auth)/sign-in";
-// activityLegend hook isn't present in this path in the repo; use a simple local
-// fallback. If you have a specific hook, we can wire it later.
-const useActivityLegend = () => ({ isVisible: false, hide: () => {} });
+
 // Provide tiny fallbacks if these shared components don't exist in the repo.
 const ErrorBoundary: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => <>{children}</>;
-const LoadingScreen: React.FC = () => <></>;
 
 // Stores
 
 import { useToast } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
-import useActivityCategoriesStore from "@/shared/stores/resources/useActivityCategoriesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
 
 export default function Today() {
   const { t } = useI18n();
-  const router = useRouter();
-  const dateTimePreferences = useDateTimePreferences();
-  const activityLegend = useActivityLegend();
-
-  const activityCategories = useActivityCategoriesStore(
-    (state) => state.categories
-  );
-
+  const {
+    prefs,
+    formatDate,
+    formatTime,
+    getDateTimeSeparator,
+    displayDateTime,
+  } = useDeviceDateTime();
   const { showInfo } = useToast();
 
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [shareModalVisible, setShareModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
-  const segments = useSegments();
 
   useEffect(() => {
     setCurrentTime(new Date());
@@ -145,7 +133,9 @@ export default function Today() {
                         selectedDate,
                         height: 60, // In percents of screen height
                         enableDragging: false,
-                        headerProps: { title: t("pick-a-date") },
+                        headerProps: {
+                          title: t("calendarDialog.pick-a-date"),
+                        },
                         // onSelect will update the selected date live
                         onSelect: (d: Date) => setSelectedDate(d),
                         // onConfirm will be called when DialogHost's Done is pressed
@@ -163,57 +153,26 @@ export default function Today() {
                     const includeTime =
                       selectedDate.toDateString() === new Date().toDateString();
 
-                    // Format the date (without time) using locale and user prefs
-                    const datePart = formatDateWithWeekday(
+                    // Use displayDateTime to get a single formatted string. If
+                    // includeTime is false it returns just the date; otherwise it
+                    // returns "<date> <preposition> <time>".
+                    const displayed = displayDateTime(
                       (selectedDate.toDateString() === new Date().toDateString()
                         ? currentTime
                         : selectedDate
                       ).toISOString(),
-                      dateTimePreferences,
                       {
                         weekdayFormat: "long",
                         weekdayPosition: "before",
-                        includeTime: false,
-                        dateTimeSeparator: " at ",
+                        monthFormat: "long",
+                        dateTimeSeparator: getDateTimeSeparator(),
+                        includeTime,
                       }
                     );
 
-                    // Format time separately so we can shrink AM/PM if present
-                    let timePart = "";
-                    if (includeTime) {
-                      timePart = formatTimeForDisplay(
-                        (selectedDate.toDateString() ===
-                        new Date().toDateString()
-                          ? currentTime
-                          : selectedDate
-                        ).toISOString(),
-                        dateTimePreferences
-                      );
-                    }
-
-                    // Split meridiem/suffix from timePart when present (e.g., "9:30 AM", "9:30 a.m.")
-                    let mainTime = timePart;
-                    let meridiem = "";
-                    if (timePart) {
-                      const m = timePart.match(/^(.*?)(\s+[^0-9:.,\s].*)$/u);
-                      if (m) {
-                        mainTime = m[1];
-                        meridiem = m[2].trim();
-                      }
-                    }
-
                     return (
                       <Text style={{ fontSize: 14, color: "#444" }}>
-                        {datePart}
-                        {includeTime && (
-                          <Text>
-                            {" "}
-                            <Text>{mainTime}</Text>
-                            {meridiem ? (
-                              <Text style={{ fontSize: 11 }}> {meridiem}</Text>
-                            ) : null}
-                          </Text>
-                        )}
+                        {displayed}
                       </Text>
                     );
                   })()}

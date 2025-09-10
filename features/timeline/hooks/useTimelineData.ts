@@ -1,5 +1,4 @@
 // useTimelineData.ts
-import { useDateTimePreferences } from "@/shared/hooks/useDateTimePreferences";
 import { useActivitiesStore, useTimeslicesStore } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
@@ -49,7 +48,6 @@ export const useTimelineData = (
   }, [options, enabledActivitiesFromStore, disabledActivitiesFromStore]);
 
   const timeslices = useTimeslicesStore((state) => state.timeslices ?? []);
-  const preferences = useDateTimePreferences();
 
   // Ensure date is a valid Date object
   const validDate = useMemo(() => {

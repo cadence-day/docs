@@ -1,8 +1,8 @@
 import NoteIcon from "@/shared/components/icons/NoteIcon";
 import { COLORS } from "@/shared/constants/COLORS";
-import { useDateTimePreferences } from "@/shared/hooks/useDateTimePreferences";
+import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
+import { locale } from "@/shared/locales";
 import { Timeslice } from "@/shared/types/models";
-import { formatTimeForDisplay } from "@/shared/utils/datetime";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
@@ -61,8 +61,20 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
   metadata,
   iconType,
 }) => {
-  // Get user preferences if requested
-  const userPreferences = usePreferences ? useDateTimePreferences() : undefined;
+  const { prefs, formatTime } = useDeviceDateTime();
+  // Determine hour format (12h vs 24h) using device prefs if available, otherwise Intl probe
+  const inferredHourFormat =
+    prefs && prefs.timeFormat
+      ? prefs.timeFormat.toString().startsWith("12")
+        ? "12"
+        : "24"
+      : new Intl.DateTimeFormat(locale, { hour: "numeric" })
+            .formatToParts(new Date(2023, 0, 1, 13))
+            .find((part) => part.type === "dayPeriod")
+        ? "12"
+        : "24";
+
+  const finalHourFormat = inferredHourFormat;
   // Calculate contrast color for icons based on background color
   // If no color is provided (empty timeslice), don't apply a background color.
   const backgroundColor = color;
@@ -76,11 +88,6 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
     return { ...acc, ...(MODE_STYLES[m] || {}) };
   }, {});
 
-  // compute text style once to avoid repeated branching in render
-  const textStyle = modes.includes(Mode.Current)
-    ? styles.currentTimeLabel
-    : styles.timeSliceText;
-
   // Use explicit props when provided; otherwise fall back to metadata-derived values.
   const displayNoteCount =
     typeof metadata?.note?.noteCount === "number"
@@ -91,6 +98,15 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
     typeof metadata?.state?.energy !== "undefined"
       ? metadata.state.energy
       : (metadata?.state?.energy ?? null);
+
+  // compute text style once to avoid repeated branching in render
+  const textStyle = modes.includes(Mode.Current)
+    ? finalHourFormat === "12"
+      ? styles.currentTimeLabel12
+      : styles.currentTimeLabel
+    : finalHourFormat === "12"
+      ? styles.timeSliceText12
+      : styles.timeSliceText;
 
   return (
     <View
@@ -104,10 +120,8 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
         {(() => {
           if (!timeslice.start_time) return "--:--";
           try {
-            // Prefer the shared formatter if available, fall back to locale time
-            return formatTimeForDisplay
-              ? formatTimeForDisplay(timeslice.start_time, userPreferences)
-              : new Date(timeslice.start_time).toLocaleTimeString();
+            // Use hook-based formatter
+            return formatTime(timeslice.start_time);
           } catch (err) {
             // Keep UI resilient; route warnings through the GlobalErrorHandler
             GlobalErrorHandler.logWarning(
