@@ -133,16 +133,20 @@ export const formatDateWithWeekday = (
   prefs?: DateTimePreferences | null,
   options: {
     weekdayFormat?: "short" | "long" | "narrow";
+    monthFormat?: "short" | "long" | "narrow";
     includeTime?: boolean;
     weekdayPosition?: "before" | "after";
     dateTimeSeparator?: string;
+    includeYear?: boolean;
   } = {}
 ): string => {
   const {
     weekdayFormat = "short",
+    monthFormat = "short",
     includeTime = false,
     weekdayPosition = "before",
     dateTimeSeparator = " ",
+    includeYear = true,
   } = options;
   try {
     const date = typeof utcDate === "string" ? new Date(utcDate) : utcDate;
@@ -155,8 +159,8 @@ export const formatDateWithWeekday = (
       weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
 
     const dateString = new Intl.DateTimeFormat(preferredLocale as any, {
-      year: "numeric",
-      month: "short",
+      year: includeYear ? "numeric" : undefined,
+      month: monthFormat,
       day: "numeric",
       timeZone,
     }).format(date);

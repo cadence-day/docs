@@ -1,10 +1,12 @@
 import { CdDialog } from "@/shared/components/CadenceUI/CdDialog";
 import { DialogRegistry } from "@/shared/dialogs/registry";
+import useTranslation from "@/shared/hooks/useI18n";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
 export const DialogHost: React.FC = () => {
+  const { t } = useTranslation();
   const dialogs = useDialogStore((s) => s.dialogs);
 
   const ordered = Object.values(dialogs).sort(
@@ -19,10 +21,7 @@ export const DialogHost: React.FC = () => {
         const height = d.collapsed
           ? (d.props?.height ?? 10)
           : (d.props?.height ?? 40);
-        // Allow activity dialog to use full 100% max height (still clamped by safe area)
-        const maxHeight =
-          d.type === "activity" ? 100 : (d.props?.maxHeight ?? 100);
-
+        const maxHeight = d.props?.maxHeight ?? 100;
         return (
           <CdDialog
             key={d.id}
@@ -31,7 +30,8 @@ export const DialogHost: React.FC = () => {
             onClose={() => useDialogStore.getState().closeDialog(d.id)}
             headerProps={{
               ...headerProps,
-              rightActionElement: headerProps.rightActionElement ?? "Done",
+              rightActionElement:
+                headerProps.rightActionElement ?? t("common.done"),
               onRightAction:
                 headerProps.onRightAction ||
                 (() => {

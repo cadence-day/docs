@@ -1,5 +1,6 @@
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
+import { locale } from "@/shared/locales";
 import { Ionicons } from "@expo/vector-icons";
 import React, { forwardRef, useImperativeHandle } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -123,8 +124,11 @@ export const CalendarDialog = forwardRef<
 
         <Text style={styles.title} accessibilityRole="header">
           {new Date(currentMonth.year, currentMonth.month).toLocaleString(
-            undefined,
-            { month: "long", year: "numeric" }
+            locale,
+            {
+              month: "long",
+              year: "numeric",
+            }
           )}
         </Text>
 
@@ -186,7 +190,7 @@ export const CalendarDialog = forwardRef<
             pickDate(y);
           }}
         >
-          <Text style={styles.link}>{t("2-days")}</Text>
+          <Text style={styles.link}>{t("calendarDialog.2-days")}</Text>
         </Pressable>
       </View>
 
