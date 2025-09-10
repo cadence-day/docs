@@ -5,13 +5,13 @@ import {
   type BaseStoreState,
   handleApiCall,
   handleGetApiCall,
-  handleVoidApiCall,
   handleVoidApiCallWithResult,
 } from "../utils/utils";
 
 interface TimeslicesStore extends BaseStoreState {
   // State
   timeslices: Timeslice[];
+  isRefreshing: boolean;
 
   // Core operations
   // Insert operations
@@ -22,20 +22,23 @@ interface TimeslicesStore extends BaseStoreState {
     timeslices: Omit<Timeslice, "id">[]
   ) => Promise<Timeslice[]>;
   upsertTimeslice: (
-    timeslice: Omit<Timeslice, "id"> &
-      Partial<Pick<Timeslice, "state_id" | "note_ids">>
+    timeslice:
+      | Timeslice
+      | (Omit<Timeslice, "id"> & Partial<Pick<Timeslice, "id">>)
   ) => Promise<Timeslice | null>;
   upsertTimeslices: (
-    timeslices: (Omit<Timeslice, "id"> &
-      Partial<Pick<Timeslice, "state_id" | "note_ids">>)[]
+    timeslices: (
+      | Timeslice
+      | (Omit<Timeslice, "id"> & Partial<Pick<Timeslice, "id">>)
+    )[]
   ) => Promise<Timeslice[]>;
 
   // Update operations
   updateTimeslice: (timeslice: Timeslice) => Promise<Timeslice | null>;
 
   // Delete operations
-  deleteTimeslice: (id: string) => Promise<void>;
-  deleteTimeslices: (ids: string[]) => Promise<void>;
+  deleteTimeslice: (id: string) => Promise<Timeslice | null>;
+  deleteTimeslices: (ids: string[]) => Promise<Timeslice[]>;
 
   refresh: (userId: string) => Promise<void>;
 
@@ -48,6 +51,7 @@ interface TimeslicesStore extends BaseStoreState {
 
   // Utility functions
   setLoading: (loading: boolean) => void;
+  setRefreshing: (refreshing: boolean) => void;
   setError: (error: string | null) => void;
   reset: () => void;
 }
@@ -56,6 +60,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
   // Initial state
   timeslices: [],
   isLoading: false,
+  isRefreshing: false,
   error: null,
 
   // Core operations
@@ -171,22 +176,24 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
   },
 
   deleteTimeslice: async (id: string) => {
-    return handleVoidApiCall(
+    return handleApiCall(
       set,
       () => timeslicesApi.deleteTimeslice(id),
       "delete timeslice",
-      (currentState) => ({
+      null,
+      (deletedTimeslice, currentState) => ({
         timeslices: currentState.timeslices.filter((t) => t.id !== id),
       })
     );
   },
 
   deleteTimeslices: async (ids: string[]) => {
-    return handleVoidApiCall(
+    return handleApiCall(
       set,
       () => timeslicesApi.deleteTimeslices(ids),
       "delete timeslices",
-      (currentState) => ({
+      [],
+      (deletedTimeslices, currentState) => ({
         timeslices: currentState.timeslices.filter(
           (t) => t.id && !ids.includes(t.id)
         ),
@@ -198,9 +205,16 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
     return handleVoidApiCallWithResult(
       set,
       async () => {
-        // Fetch timeslices for the user from remote database
-        const fetchedTimeslices = await timeslicesApi.getUserTimeslices(userId);
-        return fetchedTimeslices;
+        // Set refreshing state specifically for refresh operations
+        set({ isRefreshing: true });
+        try {
+          // Fetch timeslices for the user from remote database
+          const fetchedTimeslices =
+            await timeslicesApi.getUserTimeslices(userId);
+          return fetchedTimeslices;
+        } finally {
+          set({ isRefreshing: false });
+        }
       },
       "refresh timeslices",
       (fetchedTimeslices, currentState) => ({
@@ -257,8 +271,10 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
 
   // Utility functions
   setLoading: (isLoading: boolean) => set({ isLoading }),
+  setRefreshing: (isRefreshing: boolean) => set({ isRefreshing }),
   setError: (error: string | null) => set({ error }),
-  reset: () => set({ timeslices: [], isLoading: false, error: null }),
+  reset: () =>
+    set({ timeslices: [], isLoading: false, isRefreshing: false, error: null }),
 }));
 
 export default useTimeslicesStore;
