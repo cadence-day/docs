@@ -1,11 +1,11 @@
-import type { Activity } from "@/shared/types/models";
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
-import { apiCall } from "@/shared/api/utils/apiHelpers";
-import { handleApiError } from "@/shared/api/utils/errorHandler";
 import {
   decryptActivitiesNames,
   decryptActivityName,
 } from "@/shared/api/encryption/resources/activities";
+import { apiCall } from "@/shared/api/utils/apiHelpers";
+import { handleApiError } from "@/shared/api/utils/errorHandler";
+import type { Activity } from "@/shared/types/models";
 
 /**
  * Fetches an activity by its ID.
@@ -183,6 +183,7 @@ export async function getAllActivities(): Promise<Activity[]> {
       const { data, error } = await supabaseClient
         .from("activities")
         .select("*");
+      console.log("Fetched all activities:", data);
       return { data: data ?? [], error };
     });
 

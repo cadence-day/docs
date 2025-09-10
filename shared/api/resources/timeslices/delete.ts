@@ -12,16 +12,34 @@ export async function deleteTimeslice(
   timesliceId: string
 ): Promise<Timeslice | null> {
   try {
-    return await apiCall(async () => {
-      const { data, error } = await supabaseClient
-        .from("timeslices")
-        .delete()
-        .eq("id", timesliceId)
-        .select()
-        .single();
-      return { data, error };
-    });
+    console.log(`[deleteTimeslice] Starting deletion for ID: ${timesliceId}`);
+
+    const result = await apiCall(
+      async () => {
+        const { data, error } = await supabaseClient
+          .from("timeslices")
+          .delete()
+          .eq("id", timesliceId)
+          .select()
+          .single();
+
+        console.log(`[deleteTimeslice] Database response:`, { data, error });
+        return { data, error };
+      },
+      {
+        maxRetries: 2,
+        baseDelay: 1000,
+        maxDelay: 5000,
+      }
+    );
+
+    console.log(`[deleteTimeslice] Completed for ID: ${timesliceId}`, result);
+    return result;
   } catch (error) {
+    console.error(
+      `[deleteTimeslice] Error deleting timeslice ${timesliceId}:`,
+      error
+    );
     handleApiError("deleteTimeslice", error);
   }
 }
@@ -35,15 +53,30 @@ export async function deleteTimeslices(
   timesliceIds: string[]
 ): Promise<Timeslice[]> {
   try {
-    return await apiCall(async () => {
-      const { data, error } = await supabaseClient
-        .from("timeslices")
-        .delete()
-        .in("id", timesliceIds)
-        .select();
-      return { data: data ?? [], error };
-    });
+    console.log(`[deleteTimeslices] Starting deletion for IDs:`, timesliceIds);
+
+    const result = await apiCall(
+      async () => {
+        const { data, error } = await supabaseClient
+          .from("timeslices")
+          .delete()
+          .in("id", timesliceIds)
+          .select();
+
+        console.log(`[deleteTimeslices] Database response:`, { data, error });
+        return { data: data ?? [], error };
+      },
+      {
+        maxRetries: 2,
+        baseDelay: 1000,
+        maxDelay: 5000,
+      }
+    );
+
+    console.log(`[deleteTimeslices] Completed for IDs:`, timesliceIds, result);
+    return result;
   } catch (error) {
+    console.error(`[deleteTimeslices] Error deleting timeslices:`, error);
     handleApiError("deleteTimeslices", error);
   }
 }
