@@ -18,10 +18,10 @@ export const DialogHost: React.FC = () => {
         // If dialog is collapsed, render a minimal header-only height (about 12%)
         const height = d.collapsed
           ? (d.props?.height ?? 10)
-          : (d.props?.height ?? 50);
-        // Allow activity legend to use full 100% max height (still clamped by safe area)
+          : (d.props?.height ?? 40);
+        // Allow activity dialog to use full 100% max height (still clamped by safe area)
         const maxHeight =
-          d.type === "activity-legend" ? 100 : (d.props?.maxHeight ?? 100);
+          d.type === "activity" ? 100 : (d.props?.maxHeight ?? 100);
 
         return (
           <CdDialog
@@ -32,22 +32,28 @@ export const DialogHost: React.FC = () => {
             headerProps={{
               ...headerProps,
               rightActionElement: headerProps.rightActionElement ?? "Done",
-              onRightAction: () => {
-                try {
-                  const props =
-                    useDialogStore.getState().getDialog(d.id)?.props ?? {};
-                  if (typeof props.onConfirm === "function") props.onConfirm();
-                } catch (e) {
-                  // ignore
-                }
-                useDialogStore.getState().closeDialog(d.id);
-              },
+              onRightAction:
+                headerProps.onRightAction ||
+                (() => {
+                  try {
+                    const props =
+                      useDialogStore.getState().getDialog(d.id)?.props ?? {};
+                    if (typeof props.onConfirm === "function")
+                      props.onConfirm();
+                  } catch (e) {
+                    // ignore
+                  }
+                  useDialogStore.getState().closeDialog(d.id);
+                }),
+              // Support for back action
+              backAction: !!headerProps.onLeftAction,
+              onBackAction: headerProps.onLeftAction,
             }}
             height={height}
             maxHeight={maxHeight}
             // Allow dialogs to opt-out of dragging via props, but default to
             // enabling dragging even when a dialog is initially collapsed so
-            // the user can pull it up (useful for activity-legend on Today).
+            // the user can pull it up (useful for activity dialog on Today).
             enableDragging={d.props?.enableDragging ?? true}
           >
             {Component ? (
