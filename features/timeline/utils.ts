@@ -17,9 +17,16 @@ export const getContrastColor = (backgroundColor: string): string => {
 
   // Validate hex format
   if (hex.length !== 6 || !/^[0-9A-Fa-f]{6}$/.test(hex)) {
-    console.warn(
-      `Invalid color format: ${backgroundColor}. Using default contrast.`,
-    );
+    // Use the global error handler to report invalid color formats
+    // Importing directly would create a cycle; gracefully return default.
+    try {
+      const { GlobalErrorHandler } = require("@/shared/utils/errorHandler");
+      GlobalErrorHandler.logWarning(
+        `Invalid color format: ${backgroundColor}. Using default contrast.`,
+        "Timeline:getContrastColor",
+        { value: backgroundColor }
+      );
+    } catch {}
     return "#000000";
   }
 

@@ -2,17 +2,67 @@
 import { useDateTimePreferences } from "@/shared/hooks/useDateTimePreferences";
 import { useActivitiesStore, useTimeslicesStore } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import { useMemo } from "react";
+
+// Optional external listeners can be passed in via a small options bag.
+export interface UseTimelineDataOptions {
+  // A lightweight activity provider to avoid importing the full activities store
+  getActivities?: () => any[];
+}
 
 /**
  * Custom hook to manage timeline data including today's and yesterday's timeslices
  */
-export const useTimelineData = (date: Date) => {
+export const useTimelineData = (
+  date: Date,
+  options?: UseTimelineDataOptions
+) => {
   const user_id = useUser().user?.id ?? null;
-  const activities = useActivitiesStore((state) => state.activities);
-  const timeslices = useTimeslicesStore((state) => state.timeslices);
+  // Prefer injected activities getter, otherwise fall back to empty array
+  // Grab enabled/disabled activities from the activities store so disabled
+  // activities' colors/metadata are available to timeline rendering.
+  const enabledActivitiesFromStore = useActivitiesStore((s) => s.activities);
+  const disabledActivitiesFromStore = useActivitiesStore(
+    (s) => s.disabledActivities
+  );
+
+  const activities = useMemo(() => {
+    try {
+      // Allow an injected getter to override (used in tests or special callers)
+      if (options?.getActivities) return options.getActivities();
+
+      // Combine enabled and disabled activities so the UI can access colors
+      return [
+        ...(enabledActivitiesFromStore || []),
+        ...(disabledActivitiesFromStore || []),
+      ];
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error as Error,
+        "useTimelineData:getActivities",
+        {}
+      );
+      return [];
+    }
+  }, [options, enabledActivitiesFromStore, disabledActivitiesFromStore]);
+
+  const timeslices = useTimeslicesStore((state) => state.timeslices ?? []);
   const preferences = useDateTimePreferences();
+
+  // Ensure date is a valid Date object
+  const validDate = useMemo(() => {
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+      GlobalErrorHandler.logWarning(
+        "useTimelineData received invalid date",
+        "useTimelineData:date",
+        { date }
+      );
+      return new Date();
+    }
+    return date;
+  }, [date]);
 
   // Generate all 30-minute time slots for a given date (empty timeslices)
   const generateTimeSlots = useMemo(() => {
@@ -90,8 +140,8 @@ export const useTimelineData = (date: Date) => {
     };
   }, [timeslices]);
 
-  // Use the provided date as 'today'
-  const dateForDisplay = useMemo(() => new Date(date), [date]);
+  // Use the validated date as 'today'
+  const dateForDisplay = useMemo(() => new Date(validDate), [validDate]);
 
   // Generate time slot placeholders
   const TimeslicePlaceholders = useMemo(

@@ -1,84 +1,39 @@
-import { Dimensions, StyleSheet } from "react-native";
-
-const { height: screenHeight } = Dimensions.get("window");
-// Calculate timeline height as 54% of screen height to match the parent container
-const timelineHeight = screenHeight * 0.75;
+import { StyleSheet } from "react-native";
+import {
+  TIMESLICE_BORDER_RADIUS,
+  TIMESLICE_MARGIN_HORIZONTAL,
+  TIMESLICE_WIDTH,
+} from "./constants/dimensions";
 
 export const styles = StyleSheet.create({
   currentTimeLabel: {
-    fontWeight: "100",
+    fontWeight: "800",
     fontFamily: "FoundersGrotesk-Medium",
-    fontSize: Dimensions.get("window").height < 700 ? 12 : 12,
-  },
-  emptyNoteButton: {
-    alignItems: "center",
-    top: 40,
-    height: 40,
-    justifyContent: "center",
-    position: "absolute",
-    width: 50,
+    fontSize: 12,
+    marginBottom: 4,
   },
   emptyTimeslice: {
     backgroundColor: "transparent",
   },
-  noteButton: {
-    alignItems: "center",
-    top: 40,
-    height: 40,
-    justifyContent: "center",
-    position: "absolute",
-    width: 50,
-  },
-  scrollViewContent: {
-    flexDirection: "row",
-    paddingBottom: 6,
-    paddingHorizontal: 2,
-    height: timelineHeight,
-  },
-  timeLabel: {
-    color: "black",
-    fontSize: 12,
-    fontWeight: "normal",
-    marginBottom: 4,
-    marginTop: 10,
-    textAlign: "center",
-    width: 40,
-    fontFamily: "FoundersGrotesk-Regular",
-    alignSelf: "center",
-  },
-  timeslice: {
-    alignItems: "center",
-    borderColor: "#888888",
-    borderWidth: 1.5,
-    borderRadius: 6,
-    height: "90%",
-    justifyContent: "space-between",
-    marginHorizontal: 8,
-    paddingVertical: 0,
-    width: 43,
-  },
-  timeSlotContainer: {
-    alignItems: "flex-start",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-  },
+
   // TimeSlice component styles
   timeSliceContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-    width: 42.5,
-    marginHorizontal: 3,
+    width: TIMESLICE_WIDTH,
+    marginHorizontal: TIMESLICE_MARGIN_HORIZONTAL,
   },
   timeSliceText: {
     color: "#222",
+    fontFamily: "FoundersGrotesk-Medium",
     fontSize: 12,
     marginBottom: 4,
   },
   timeSliceBox: {
     flex: 1,
     width: "100%",
-    borderRadius: 6,
+    borderRadius: TIMESLICE_BORDER_RADIUS,
     justifyContent: "flex-end",
     alignItems: "center",
     paddingBottom: 4,
@@ -92,49 +47,53 @@ export const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-  // DaySeparator component styles
-  daySeparatorTouchable: {
-    width: 70,
-    marginHorizontal: 2,
-    alignSelf: "stretch",
-    backgroundColor: "transparent",
-    justifyContent: "center",
+  // Timeline container wrappers
+  scrollWrapper: {
+    flex: 1,
+  },
+  scrollWrapperContent: {
+    flex: 1,
+  },
+  horizontalContainer: {
+    flex: 1,
+    overflow: "hidden",
+    position: "relative",
+  },
+  horizontalContent: {
+    alignItems: "stretch",
+    paddingVertical: 6,
+  },
+  // TimeSlice overlay used for metadata vertical placement
+  timeSliceOverlay: {
+    position: "absolute",
+    top: 32,
+    left: 0,
+    right: 0,
     alignItems: "center",
-    borderWidth: 0.4,
-    borderColor: "rgba(102, 102, 102, 0.2)",
+    justifyContent: "flex-start",
+    pointerEvents: "none",
   },
-  daySeparatorText: {
-    fontSize: 12,
-    fontWeight: "600",
-    textAlign: "left",
-    letterSpacing: 0.3,
-    textDecorationLine: "underline",
-    includeFontPadding: false,
-    textAlignVertical: "center",
-    width: 300,
-    transform: [{ rotate: "-90deg" }],
-  },
-  // PreviousDayButton component styles
-  previousDayButtonTouchable: {
-    width: 70,
-    marginHorizontal: 2,
-    alignSelf: "stretch",
-    backgroundColor: "transparent",
-    justifyContent: "center",
+  // MetadataVertical styles
+  metadataContainer: {
     alignItems: "center",
-    borderWidth: 0.4,
-    borderColor: "rgba(102, 102, 102, 0.2)",
+    justifyContent: "flex-start",
+    pointerEvents: "none",
+    marginTop: 20,
+    gap: 12,
   },
-  previousDayButtonText: {
-    fontSize: 12,
-    fontWeight: "600",
-    textAlign: "center",
-    letterSpacing: 0.3,
-    textDecorationLine: "underline",
-    includeFontPadding: false,
-    width: 300,
-    textAlignVertical: "center",
-    writingDirection: "ltr",
-    transform: [{ rotate: "-90deg" }],
+  metadataRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  metadataCountText: {
+    marginLeft: 6,
+    fontSize: 10,
+    fontWeight: "700",
+  },
+  metadataEnergyText: {
+    marginLeft: 4,
+    fontSize: 10,
+    fontWeight: "700",
   },
 });

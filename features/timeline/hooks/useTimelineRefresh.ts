@@ -1,7 +1,8 @@
 // useTimelineRefresh.ts
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 /**
  * Custom hook to handle timeline refresh functionality
@@ -10,8 +11,9 @@ import { useCallback, useState } from "react";
  * into the timeslices store so the UI updates from the central store.
  */
 export const useTimelineRefresh = () => {
-  const [refreshing, setRefreshing] = useState(false);
-  const isTimelineLoading = useTimeslicesStore((s) => s.isLoading);
+  const isRefreshing = useTimeslicesStore((s) => s.isRefreshing);
+  const setRefreshing = useTimeslicesStore((s) => s.setRefreshing);
+  const setError = useTimeslicesStore((s) => s.setError);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -28,27 +30,62 @@ export const useTimelineRefresh = () => {
       startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
 
       // Fetch fresh timeslices for yesterday and today
-      const fetched = await useTimeslicesStore
-        .getState()
-        .getTimeslicesFromTo(startOfYesterday, startOfTomorrow);
+      const storeState = useTimeslicesStore.getState();
+      const fetchFn = storeState.getTimeslicesFromTo;
+      const fetched =
+        typeof fetchFn === "function"
+          ? await fetchFn(startOfYesterday, startOfTomorrow)
+          : [];
 
-      // Upsert into store so components relying on the store update
+      // Update the store directly with fresh data
       if (fetched && fetched.length > 0) {
-        await useTimeslicesStore.getState().upsertTimeslices(fetched);
+        // Replace timeslices in the date range with fresh data
+        try {
+          useTimeslicesStore.setState((state) => {
+            // Remove existing timeslices in the date range
+            const filteredTimeslices = state.timeslices.filter((ts) => {
+              if (!ts.start_time) return true;
+              const tsDate = new Date(ts.start_time);
+              return tsDate < startOfYesterday || tsDate >= startOfTomorrow;
+            });
+
+            // Add fresh timeslices
+            return {
+              timeslices: [...filteredTimeslices, ...fetched],
+            };
+          });
+        } catch (err) {
+          GlobalErrorHandler.logError(
+            err as Error,
+            "TIMELINE_REFRESH:SET_STATE",
+            { fetchedCount: fetched.length }
+          );
+        }
       }
 
       // Haptic feedback
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } catch (error) {
-      console.error("useTimelineRefresh:onRefresh failed", error);
+      GlobalErrorHandler.logError(error as Error, "TIMELINE_REFRESH", {});
+      // Set error state if available
+      try {
+        setError(
+          error instanceof Error ? error.message : "Failed to refresh timeline"
+        );
+      } catch (err) {
+        GlobalErrorHandler.logWarning(
+          "Failed to set refresh error",
+          "TIMELINE_REFRESH",
+          { error: err }
+        );
+      }
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [setRefreshing, setError]);
 
   return {
-    refreshing,
-    isTimelineLoading,
+    isRefreshing,
     onRefresh,
   };
 };

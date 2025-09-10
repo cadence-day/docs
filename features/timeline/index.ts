@@ -2,9 +2,8 @@
 export { default as Timeline, TimelineRef } from "./Timeline";
 
 // Export hooks
-export { useTimelineData } from "./hooks/useTimelineData";
 export { useTimelineActions } from "./hooks/useTimelineActions";
-export { useTimelineScrolling } from "./hooks/useTimelineScrolling";
+export { useTimelineData } from "./hooks/useTimelineData";
 export { useTimelineRefresh } from "./hooks/useTimelineRefresh";
 
 // Export utilities and helpers
