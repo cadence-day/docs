@@ -118,7 +118,10 @@
   "today": "TODAY",
   "yesterday": "YESTERDAY",
   "activity-legend": "Activities",
-  "2-days": "2 DAYS",
+  "calendarDialog": {
+    "pick-a-date": "Pick a date",
+    "2-days": "2 DAYS AGO"
+  },
   "mo": "Mo",
   "tu": "Tu",
   "we": "We",
@@ -126,7 +129,9 @@
   "fr": "Fr",
   "sa": "Sa",
   "su": "Su",
-  "pick-a-date": "Pick a date",
+  "dateTime": {
+    "preposition": "at"
+  },
   "activity-created-successfully": "Activity created successfully!",
   "activity-updated-successfully": "Activity updated successfully!",
   "timeslice-created-successfully": "Timeslice created successfully!",
@@ -202,5 +207,6 @@
   "saving-order": "Saving order...",
   "tap-x-to-disable-an-activity": "Tap \"-\" to temporarily disable an activity.",
   "active-activities": "Activte Activities",
-  "no-active-activities": "There are sadly no active activities"
+  "no-active-activities": "There are sadly no active activities",
+  "back-to-today": "Back to today"
 }
