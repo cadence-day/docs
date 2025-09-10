@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
 import Timeline from "@/features/timeline/Timeline";
+import { CdButton } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
@@ -45,6 +46,7 @@ export default function Today() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [shareModalVisible, setShareModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
   const segments = useSegments();
 
   useEffect(() => {
@@ -52,6 +54,49 @@ export default function Today() {
     const interval = setInterval(() => setCurrentTime(new Date()), 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Open activity dialog by default as persistent
+  useEffect(() => {
+    const openActivityLegend = () => {
+      const id = useDialogStore.getState().openDialog({
+        type: "activity",
+        props: {
+          mode: "legend",
+          preventClose: true, // Make it persistent
+        },
+        position: "dock",
+      });
+      setIsActivityDialogOpen(true);
+    };
+
+    // Small delay to ensure stores are ready
+    const timer = setTimeout(openActivityLegend, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Listen to dialog store changes to track activity dialog state
+  useEffect(() => {
+    const unsubscribe = useDialogStore.subscribe((state) => {
+      const hasActivityDialog = Object.values(state.dialogs).some(
+        (dialog) => dialog.type === "activity"
+      );
+      setIsActivityDialogOpen(hasActivityDialog);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  // Function to reopen activity dialog
+  const reopenActivityDialog = () => {
+    useDialogStore.getState().openDialog({
+      type: "activity",
+      props: {
+        mode: "legend",
+        preventClose: true,
+      },
+      position: "dock",
+    });
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -214,7 +259,30 @@ export default function Today() {
           </ErrorBoundary>
 
           {/* Spacer to ensure there's room below the timeline (e.g., above nav) */}
-          <View style={{ height: DIALOG_HEIGHT_PLACEHOLDER }} />
+          <View
+            style={{
+              height: DIALOG_HEIGHT_PLACEHOLDER,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {/* Reopen Activity Dialog Button - shown when dialog is closed */}
+            {!isActivityDialogOpen && (
+              <CdButton
+                title={t("activity.legend.reopen")}
+                onPress={reopenActivityDialog}
+                variant="outline"
+                size="medium"
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  borderColor: "rgba(255, 255, 255, 0.3)",
+                }}
+                textStyle={{
+                  color: "#333",
+                }}
+              />
+            )}
+          </View>
 
           {/* Share modal could be added here when available */}
         </LinearGradient>
