@@ -171,7 +171,13 @@ export default function Today() {
                     );
 
                     return (
-                      <Text style={{ fontSize: 14, color: "#444" }}>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "#444",
+                          textDecorationLine: "underline",
+                        }}
+                      >
                         {displayed}
                       </Text>
                     );
@@ -192,7 +198,7 @@ export default function Today() {
                         letterSpacing: 0.5,
                       }}
                     >
-                      Back to today
+                      {t("back-to-today")}
                     </Text>
                   </TouchableOpacity>
                 )}
