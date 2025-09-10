@@ -3,7 +3,6 @@ import { useToast } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 import {
   useDialogStore,
-  usePendingTimeslicesStore,
   useSelectionStore,
   useTimeslicesStore,
 } from "@/shared/stores";
@@ -11,6 +10,7 @@ import { Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
+import usePendingTimeslicesStore from "./usePendingTimeslicesStore";
 /**
  * Custom hook to handle timeline actions (create, update, delete timeslices)
  */

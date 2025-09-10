@@ -1,12 +1,9 @@
 import { useToast } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
-import {
-  usePendingTimeslicesStore,
-  useSelectionStore,
-  useTimeslicesStore,
-} from "@/shared/stores";
+import { useSelectionStore, useTimeslicesStore } from "@/shared/stores";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useEffect } from "react";
+import usePendingTimeslicesStore from "./usePendingTimeslicesStore";
 
 /**
  * Hook that automatically creates timeslices when an activity is selected
