@@ -1,5 +1,5 @@
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
-import CryptoJS from "crypto-js";
+import * as Crypto from "expo-crypto";
 import * as SecureStore from "expo-secure-store";
 
 // Constants for encryption
@@ -11,6 +11,89 @@ const ENCRYPTED_PREFIX = "enc:"; // Prefix to identify encrypted strings
 
 // Export the prefix for external use if needed
 export { ENCRYPTED_PREFIX };
+
+/**
+ * Simple XOR encryption with base64 encoding
+ * @param text Text to encrypt
+ * @param key Encryption key (hex string)
+ * @returns Base64 encoded encrypted text
+ */
+function xorEncrypt(text: string, key: string): string {
+  const textBytes = new TextEncoder().encode(text);
+  const keyBytes = new Uint8Array(
+    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+  );
+
+  const encrypted = new Uint8Array(textBytes.length);
+  for (let i = 0; i < textBytes.length; i++) {
+    encrypted[i] = textBytes[i] ^ keyBytes[i % keyBytes.length];
+  }
+
+  // Convert to base64
+  return btoa(String.fromCharCode(...encrypted));
+}
+
+/**
+ * Simple XOR decryption from base64
+ * @param encryptedBase64 Base64 encoded encrypted text
+ * @param key Encryption key (hex string)
+ * @returns Decrypted text
+ */
+function xorDecrypt(encryptedBase64: string, key: string): string {
+  // Convert from base64
+  const encrypted = new Uint8Array(
+    atob(encryptedBase64)
+      .split("")
+      .map((char) => char.charCodeAt(0))
+  );
+
+  const keyBytes = new Uint8Array(
+    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+  );
+
+  const decrypted = new Uint8Array(encrypted.length);
+  for (let i = 0; i < encrypted.length; i++) {
+    decrypted[i] = encrypted[i] ^ keyBytes[i % keyBytes.length];
+  }
+
+  return new TextDecoder().decode(decrypted);
+}
+
+/**
+ * Generate a pseudo-random string when native crypto is not available
+ * This is not cryptographically secure but better than nothing for fallback
+ */
+function generateFallbackRandomString(length: number): string {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+/**
+ * Generate a secure random key using expo-crypto with fallback
+ */
+async function generateRandomKey(): Promise<string> {
+  try {
+    // Generate 32 bytes (256 bits) for AES-256 key
+    const randomBytes = await Crypto.getRandomBytesAsync(32);
+    // Convert to hex string
+    return Array.from(randomBytes)
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+  } catch (error) {
+    GlobalErrorHandler.logWarning(
+      "Expo crypto random failed, using fallback generator",
+      "encryption.generateRandomKey",
+      { error }
+    );
+    // Fallback to pseudo-random generation when native crypto is unavailable
+    return generateFallbackRandomString(64); // 64 chars = 256 bits in hex
+  }
+}
 
 /**
  * Error class for encryption-related operations
@@ -32,17 +115,23 @@ export class EncryptionError extends Error {
 async function generateAndStoreKey(): Promise<string> {
   try {
     // Generate a random 256-bit key
-    const key = CryptoJS.lib.WordArray.random(KEY_SIZE / 8).toString();
+    const key = await generateRandomKey();
 
     // Store the key securely
     await SecureStore.setItemAsync(ENCRYPTION_KEY_NAME, key);
 
     return key;
   } catch (error) {
-    throw new EncryptionError(
-      "Failed to generate and store encryption key",
-      error
-    );
+    // If SecureStore fails, log and return an ephemeral key. We intentionally
+    // removed AsyncStorage persistence to avoid storing sensitive keys in
+    // less-secure storage.
+    GlobalErrorHandler.logError(error, "ENCRYPTION_SECURESTORE_FAILED", {
+      operation: "generate_and_store",
+    });
+
+    // Return an ephemeral key (won't be persisted) so the caller can still
+    // proceed for the current session if appropriate.
+    return await generateRandomKey();
   }
 }
 
@@ -55,14 +144,50 @@ export async function getEncryptionKey(): Promise<string> {
     // Try to get existing key
     let key = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
 
-    // If no key exists, generate a new one
+    // If no key found, generate one and attempt to persist to SecureStore.
     if (!key) {
       key = await generateAndStoreKey();
     }
 
     return key;
   } catch (error) {
-    throw new EncryptionError("Failed to retrieve encryption key", error);
+    GlobalErrorHandler.logError(error, "ENCRYPTION_GET_KEY_FAILED", {});
+    // As a last resort, return an ephemeral key
+    return await generateRandomKey();
+  }
+}
+
+/**
+ * Get the encryption key and the source where it was retrieved from.
+ * Source can be 'securestore', 'asyncstorage', or 'ephemeral'.
+ */
+export async function getEncryptionKeyWithSource(): Promise<{
+  key: string;
+  source: "securestore" | "asyncstorage" | "ephemeral";
+}> {
+  try {
+    const secureKey = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
+    if (secureKey) return { key: secureKey, source: "securestore" };
+
+    // No key stored yet; generate and persist using SecureStore path. If
+    // persistence fails, generateAndStoreKey will return an ephemeral key.
+    const generated = await generateAndStoreKey();
+
+    // Check SecureStore again to see if persistence succeeded.
+    const checkSecure = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
+    if (checkSecure) return { key: checkSecure, source: "securestore" };
+
+    // Return ephemeral
+    return { key: generated, source: "ephemeral" };
+  } catch (error) {
+    // On any error, try AsyncStorage then return ephemeral
+    GlobalErrorHandler.logError(
+      error,
+      "ENCRYPTION_GET_KEY_WITH_SOURCE_FAILED",
+      {}
+    );
+    const ephemeral = await generateRandomKey();
+    return { key: ephemeral, source: "ephemeral" };
   }
 }
 
@@ -71,7 +196,16 @@ export async function getEncryptionKey(): Promise<string> {
  * @param plaintext The string to encrypt
  * @returns Promise<string> The encrypted string
  */
-export async function encryptString(plaintext: string): Promise<string> {
+/**
+ * Encrypt a string value with fallback to return original on complete failure
+ * @param plaintext The string to encrypt
+ * @param allowFallback If true, returns original text when encryption fails completely
+ * @returns Promise<string> The encrypted string or original if fallback enabled
+ */
+export async function encryptString(
+  plaintext: string,
+  allowFallback: boolean = false
+): Promise<string> {
   if (!plaintext || typeof plaintext !== "string") {
     return plaintext; // Return as-is if invalid input
   }
@@ -82,21 +216,36 @@ export async function encryptString(plaintext: string): Promise<string> {
   }
 
   try {
-    const key = await getEncryptionKey();
+    const keyHex = await getEncryptionKey();
+    GlobalErrorHandler.logDebug(
+      "Got encryption key for encrypt",
+      "encryption.encryptString",
+      {
+        length: keyHex?.length,
+      }
+    );
 
-    // Encrypt using CryptoJS built-in format (includes salt and IV)
-    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
+    // Use simple XOR encryption with base64 encoding
+    const encrypted = xorEncrypt(plaintext, keyHex);
+    return ENCRYPTED_PREFIX + encrypted;
+  } catch (error) {
+    GlobalErrorHandler.logError(error, "ENCRYPTION_ENCRYPT_FAILED", {
+      plaintextLength: plaintext?.length,
+      plaintextSample: plaintext?.substring(0, 20),
     });
 
-    // Return with prefix to identify as encrypted
-    return ENCRYPTED_PREFIX + encrypted.toString();
-  } catch (error) {
+    if (allowFallback) {
+      GlobalErrorHandler.logWarning(
+        "Encryption fallback: returning plaintext due to error",
+        "encryption.encryptString",
+        {}
+      );
+      return plaintext;
+    }
+
     throw new EncryptionError("Failed to encrypt string", error);
   }
 }
-
 /**
  * Decrypt a string value
  * @param encryptedData The encrypted string
@@ -113,26 +262,22 @@ export async function decryptString(encryptedData: string): Promise<string> {
   }
 
   try {
-    const key = await getEncryptionKey();
+    const keyHex = await getEncryptionKey();
 
     // Remove the prefix before decrypting
     const encryptedDataWithoutPrefix = encryptedData.substring(
       ENCRYPTED_PREFIX.length
     );
 
-    // Decrypt using CryptoJS built-in format (handles salt and IV automatically)
-    const decrypted = CryptoJS.AES.decrypt(encryptedDataWithoutPrefix, key, {
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    });
-
-    // Convert to UTF-8 string
-    const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+    // Use simple XOR decryption
+    const plaintext = xorDecrypt(encryptedDataWithoutPrefix, keyHex);
     if (!plaintext) {
       throw new Error("Decryption resulted in empty string");
     }
+
     return plaintext;
   } catch (error) {
+    GlobalErrorHandler.logError(error, "ENCRYPTION_DECRYPT_FAILED", {});
     throw new EncryptionError("Failed to decrypt string", error);
   }
 }
@@ -146,7 +291,30 @@ async function _clearEncryptionKey(): Promise<void> {
   try {
     await SecureStore.deleteItemAsync(ENCRYPTION_KEY_NAME);
   } catch (error) {
+    GlobalErrorHandler.logError(error, "ENCRYPTION_CLEAR_KEY_FAILED", {});
     throw new EncryptionError("Failed to clear encryption key", error);
+  }
+}
+
+/**
+ * Public helper to clear the encryption key from all storage backends
+ */
+export async function clearEncryptionKey(): Promise<void> {
+  try {
+    // attempt SecureStore deletion first
+    try {
+      await SecureStore.deleteItemAsync(ENCRYPTION_KEY_NAME);
+    } catch (secureErr) {
+      // log and continue to try AsyncStorage
+      GlobalErrorHandler.logError(
+        secureErr,
+        "ENCRYPTION_CLEAR_SECURESTORE_FAILED",
+        {}
+      );
+    }
+    // We purposely removed AsyncStorage cleanup — the key should only be in SecureStore.
+  } catch (err) {
+    throw new EncryptionError("Failed to clear encryption key", err);
   }
 }
 

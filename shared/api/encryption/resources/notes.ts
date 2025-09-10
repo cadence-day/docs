@@ -1,3 +1,4 @@
+import { isDev } from "@/shared/constants/isDev";
 import type { Note } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { decryptString, encryptString } from "../core";
@@ -13,7 +14,7 @@ export async function encryptNoteMessage(note: Note): Promise<Note> {
   }
 
   try {
-    const encryptedMessage = await encryptString(note.message);
+    const encryptedMessage = await encryptString(note.message, isDev); // Enable fallback
     return {
       ...note,
       message: encryptedMessage,
@@ -87,7 +88,7 @@ export async function encryptNoteForInsertion(
   }
 
   try {
-    const encryptedMessage = await encryptString(note.message);
+    const encryptedMessage = await encryptString(note.message, isDev); // Enable fallback
     return {
       ...note,
       message: encryptedMessage,
