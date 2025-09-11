@@ -189,17 +189,35 @@ export default function Today() {
                     onPress={() => setSelectedDate(new Date())}
                     style={{ marginLeft: 12 }}
                   >
-                    <Text
+                    <View
                       style={{
-                        textDecorationLine: "underline",
-                        textTransform: "uppercase",
-                        color: "#444",
-                        fontSize: 12,
-                        letterSpacing: 0.5,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 4,
                       }}
                     >
-                      {t("back-to-today")}
-                    </Text>
+                      <Text
+                        style={{
+                          textTransform: "uppercase",
+                          color: "#444",
+                          fontSize: 12,
+                          letterSpacing: 0.5,
+                        }}
+                      >
+                        {" < "}
+                      </Text>
+                      <Text
+                        style={{
+                          textDecorationLine: "underline",
+                          textTransform: "uppercase",
+                          color: "#444",
+                          fontSize: 12,
+                          letterSpacing: 0.5,
+                        }}
+                      >
+                        {t("back-to-today")}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 )}
                 {/* Calendar is opened via the central dialog store; DialogHost will render the
