@@ -2,10 +2,11 @@ import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
 import { useI18n } from "@/shared/hooks/useI18n";
+import useDialogStore from "@/shared/stores/useDialogStore";
 import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, View } from "react-native";
 
 // Custom TabLabel component to have more control over the appearance
@@ -48,6 +49,13 @@ function TabLabel({
 export default function TabLayout() {
   const { t } = useI18n();
   const segments = useSegments();
+  const setCurrentView = useDialogStore((state) => state.setCurrentView);
+
+  // Track current view based on segments
+  useEffect(() => {
+    const currentView = segments[segments.length - 1] || 'index';
+    setCurrentView(currentView);
+  }, [segments, setCurrentView]);
 
   return (
     <>

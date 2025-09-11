@@ -1,11 +1,11 @@
-import React, { useMemo, useCallback } from "react";
-import { View } from "react-native";
 import { styles } from "@/features/activity/styles";
 import type { ActivitiesProps } from "@/features/activity/types";
+import React, { useMemo } from "react";
+import { View } from "react-native";
 import { EditActivitiesView } from "./components";
-import { ActivityGridView, LoadingState, ErrorState } from "./components/ui";
-import { useActivitiesActions, useActivitiesData, useGridCalculations } from "./hooks";
+import { ActivityGridView, ErrorState, LoadingState } from "./components/ui";
 import { createDefaultGridConfig } from "./components/utils/gridUtils";
+import { useActivitiesActions, useActivitiesData } from "./hooks";
 
 export interface ActivitiesRef {
   refresh: () => Promise<void>;
@@ -24,7 +24,8 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
     },
     ref
   ) => {
-    const { activities, disabledActivities, isLoading, error } = useActivitiesData();
+    const { activities, disabledActivities, isLoading, error } =
+      useActivitiesData();
     const { handleActivityPress, handleActivityLongPress, refresh } =
       useActivitiesActions({
         onActivityPress,
@@ -44,12 +45,20 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
       [activities, disabledActivities]
     );
 
-    React.useImperativeHandle(ref, () => ({
-      refresh,
-    }), [refresh]);
+    React.useImperativeHandle(
+      ref,
+      () => ({
+        refresh,
+      }),
+      [refresh]
+    );
 
     // Show loading state for initial load
-    if (isLoading && activities.length === 0 && disabledActivities.length === 0) {
+    if (
+      isLoading &&
+      activities.length === 0 &&
+      disabledActivities.length === 0
+    ) {
       return (
         <View style={styles.container}>
           <LoadingState message="Loading activities..." />
@@ -70,7 +79,6 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
     if (mode === "edit") {
       return (
         <EditActivitiesView
-          activities={combinedActivities}
           onActivityPress={handleActivityPress}
           gridConfig={effectiveGridConfig}
           onAddActivity={onAddActivity}
@@ -83,7 +91,6 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
     return (
       <View style={styles.container}>
         <ActivityGridView
-          activities={activities}
           onActivityPress={handleActivityPress}
           onActivityLongPress={handleActivityLongPress}
           gridConfig={effectiveGridConfig}

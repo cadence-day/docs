@@ -68,6 +68,9 @@ export const ActivityDialog = forwardRef<
     );
     const insertActivity = useActivitiesStore((state) => state.insertActivity);
     const updateActivity = useActivitiesStore((state) => state.updateActivity);
+    const loadStoredOrder = useActivitiesStore(
+      (state) => state.loadStoredOrder
+    );
 
     // Local state for managing modes and form data
     const [currentMode, setCurrentMode] = useState<ActivityDialogMode>(mode);
@@ -80,10 +83,11 @@ export const ActivityDialog = forwardRef<
     const formRef = useRef<{ submit: () => void }>(null);
     React.useEffect(() => {
       useActivitiesStore.getState().getAllActivities();
+      loadStoredOrder(); // Load stored activity order
       console.log("Fetching activities for dialog");
       const activities = useActivitiesStore.getState().activities;
       console.log("Activities fetched:", activities);
-    }, []);
+    }, [loadStoredOrder]);
 
     // Update form values when activity prop changes
     React.useEffect(() => {

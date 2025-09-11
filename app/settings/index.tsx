@@ -1,7 +1,8 @@
-// Moved from app/(home)/settings/index.tsx
+import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { useErrorHandler } from "@/shared/utils/errorHandler";
-import * as Sentry from "@sentry/react-native";
-import { FeedbackWidget } from "@sentry/react-native";
+import { useUser } from "@clerk/clerk-expo";
+import Constants from 'expo-constants';
+import * as Linking from 'expo-linking';
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -15,94 +16,41 @@ import {
 
 export default function SettingsPage() {
   const { logDebug } = useErrorHandler();
-  const [feedbackVisible, setFeedbackVisible] = useState(false);
-  const [showFeedbackWidget, setShowFeedbackWidget] = useState(false);
+  const { user } = useUser();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [healthDataAccess, setHealthDataAccess] = useState(false);
   const router = useRouter();
 
-  const showSentryFeedbackWidget = () => {
-    try {
-      logDebug(
-        "User requested feedback widget",
-        "SettingsPage.showSentryFeedbackWidget"
-      );
-      Sentry.showFeedbackWidget();
-    } catch (error) {
-      Alert.alert("Error", "Unable to show feedback widget. Please try again.");
-      console.error("Error showing feedback widget:", error);
-    }
-  };
-
-  const showSentryFeedbackButton = () => {
-    try {
-      logDebug(
-        "User enabled feedback button",
-        "SettingsPage.showSentryFeedbackButton"
-      );
-      // Sentry React Native SDK does not expose showFeedbackButton(); emulate via local state.
-      setFeedbackVisible(true);
-      Alert.alert(
-        "Feedback Button Enabled",
-        "A floating feedback button has been enabled in the app (local)."
-      );
-    } catch (error) {
-      Alert.alert("Error", "Unable to show feedback button. Please try again.");
-      console.error("Error showing feedback button:", error);
-    }
-  };
-
-  const hideSentryFeedbackButton = () => {
-    try {
-      logDebug(
-        "User disabled feedback button",
-        "SettingsPage.hideSentryFeedbackButton"
-      );
-      // Sentry React Native SDK does not expose hideFeedbackButton(); hide the local floating button instead.
-      setFeedbackVisible(false);
-      Alert.alert(
-        "Feedback Button Hidden",
-        "The floating feedback button has been removed from your screen."
-      );
-    } catch (error) {
-      Alert.alert("Error", "Unable to hide feedback button. Please try again.");
-      console.error("Error hiding feedback button:", error);
-    }
-  };
-
-  const navigateToCustomFeedback = () => {
-    router.push("/custom-feedback");
-  };
-
-  const toggleFeedbackWidget = () => {
-    setShowFeedbackWidget(!showFeedbackWidget);
-    logDebug(
-      `Feedback widget ${showFeedbackWidget ? "hidden" : "shown"}`,
-      "SettingsPage.toggleFeedbackWidget"
+  const toggleNotifications = () => {
+    setNotificationsEnabled(!notificationsEnabled);
+    Alert.alert(
+      "Notifications",
+      `Notifications ${!notificationsEnabled ? "enabled" : "disabled"}`
     );
   };
 
-  const testCustomFeedback = () => {
-    try {
-      logDebug(
-        "User submitted custom feedback",
-        "SettingsPage.testCustomFeedback"
-      );
+  const toggleHealthData = () => {
+    setHealthDataAccess(!healthDataAccess);
+    Alert.alert(
+      "Health Data",
+      `Health data access ${!healthDataAccess ? "enabled" : "disabled"}`
+    );
+  };
 
-      // Example of custom feedback submission
-      const userFeedback = {
-        name: "Test User",
-        email: "test@example.com",
-        message: "This is a test feedback submission from the settings page!",
-      };
+  const contactSupport = () => {
+    const email = 'support@cadenceapp.com';
+    const subject = 'Support Request';
+    const body = `User ID: ${user?.id}\nApp Version: ${Constants.expoConfig?.version}\n\nDescribe your issue here...`;
+    
+    Linking.openURL(`mailto:${email}?subject=${subject}&body=${encodeURIComponent(body)}`);
+  };
 
-      Sentry.captureFeedback(userFeedback);
-      Alert.alert(
-        "Feedback Sent",
-        "Your test feedback has been sent to Sentry successfully!"
-      );
-    } catch (error) {
-      Alert.alert("Error", "Unable to send custom feedback. Please try again.");
-      console.error("Error sending custom feedback:", error);
-    }
+  const openAppInformation = () => {
+    Alert.alert(
+      "App Information",
+      `Version: ${Constants.expoConfig?.version || 'Unknown'}\nBuild: ${Constants.expoConfig?.extra?.buildNumber || 'Unknown'}\nPlatform: ${Constants.platform?.ios ? 'iOS' : 'Android'}`,
+      [{ text: "OK" }]
+    );
   };
 
   return (
@@ -111,160 +59,116 @@ export default function SettingsPage() {
         options={{
           title: "Settings",
           headerShown: true,
-          // Provide an explicit Home button so users can come back to the root screen
           headerLeft: () => (
             <TouchableOpacity
-              onPress={() => router.push("/")}
+              onPress={() => router.back()}
               style={{ paddingHorizontal: 12 }}
             >
-              <Text style={{ color: "#007bff", fontSize: 16 }}>Home</Text>
+              <Text style={{ color: "#007bff", fontSize: 16 }}>Back</Text>
             </TouchableOpacity>
           ),
         }}
       />
 
       <ScrollView style={styles.container}>
+        {/* Notifications Settings */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>📱 App Settings</Text>
-          <Text style={styles.sectionDescription}>
-            Configure your app preferences and feedback options.
-          </Text>
+          <Text style={styles.sectionTitle}>Notifications</Text>
+          
+          <CdTextInputOneLine
+            label="Push Notifications"
+            value={notificationsEnabled ? "Enabled" : "Disabled"}
+            isButton={true}
+            onPress={toggleNotifications}
+            buttonIcon={notificationsEnabled ? "notifications" : "notifications-off"}
+          />
+          
+          <CdTextInputOneLine
+            label="Email Notifications"
+            value="Configure email preferences"
+            isButton={true}
+            onPress={() => Alert.alert("Coming Soon", "Email notification settings will be available soon")}
+            buttonIcon="mail"
+          />
         </View>
 
+        {/* Health & Data Settings */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>💬 User Feedback</Text>
-          <Text style={styles.sectionDescription}>
-            Help us improve the app by providing feedback through Sentry's
-            feedback system.
-          </Text>
-
-          <TouchableOpacity
-            style={[styles.button, styles.primaryButton]}
-            onPress={showSentryFeedbackWidget}
-          >
-            <Text style={styles.primaryButtonText}>
-              📝 Send Feedback (Native)
-            </Text>
-            <Text style={styles.buttonDescription}>
-              Open Sentry's built-in feedback form
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.primaryButton]}
-            onPress={navigateToCustomFeedback}
-          >
-            <Text style={styles.primaryButtonText}>
-              📝 Send Feedback (Custom)
-            </Text>
-            <Text style={styles.buttonDescription}>
-              Open custom feedback form
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
-            onPress={toggleFeedbackWidget}
-          >
-            <Text style={styles.secondaryButtonText}>
-              {showFeedbackWidget
-                ? "🚫 Hide Widget Component"
-                : "📋 Show Widget Component"}
-            </Text>
-            <Text style={styles.buttonDescription}>
-              {showFeedbackWidget
-                ? "Hide embedded feedback widget"
-                : "Show embedded feedback widget below"}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
-            onPress={
-              feedbackVisible
-                ? hideSentryFeedbackButton
-                : showSentryFeedbackButton
-            }
-          >
-            <Text style={styles.secondaryButtonText}>
-              {feedbackVisible
-                ? "🚫 Hide Floating Button"
-                : "🔘 Show Floating Button"}
-            </Text>
-            <Text style={styles.buttonDescription}>
-              {feedbackVisible
-                ? "Remove floating feedback button"
-                : "Add floating feedback button to screen"}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.tertiaryButton]}
-            onPress={testCustomFeedback}
-          >
-            <Text style={styles.tertiaryButtonText}>
-              🧪 Test Custom Feedback
-            </Text>
-            <Text style={styles.buttonDescription}>
-              Send sample feedback via API
-            </Text>
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Health & Data</Text>
+          
+          <CdTextInputOneLine
+            label="Health Data Access"
+            value={healthDataAccess ? "Enabled" : "Disabled"}
+            isButton={true}
+            onPress={toggleHealthData}
+            buttonIcon={healthDataAccess ? "fitness" : "fitness-outline"}
+          />
+          
+          <CdTextInputOneLine
+            label="Data Export"
+            value="Export your data"
+            isButton={true}
+            onPress={() => Alert.alert("Coming Soon", "Data export feature will be available soon")}
+            buttonIcon="download"
+          />
+          
+          <CdTextInputOneLine
+            label="Privacy Settings"
+            value="Manage data privacy"
+            isButton={true}
+            onPress={() => Alert.alert("Coming Soon", "Privacy settings will be available soon")}
+            buttonIcon="shield-checkmark"
+          />
         </View>
 
-        {/* Embedded Feedback Widget */}
-        {showFeedbackWidget && (
+        {/* Support & Information */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Support & Information</Text>
+          
+          <CdTextInputOneLine
+            label="Contact Support"
+            value="Get help and support"
+            isButton={true}
+            onPress={contactSupport}
+            buttonIcon="help-circle"
+          />
+          
+          <CdTextInputOneLine
+            label="App Information"
+            value="Version and build details"
+            isButton={true}
+            onPress={openAppInformation}
+            buttonIcon="information-circle"
+          />
+          
+          <CdTextInputOneLine
+            label="User ID"
+            value={user?.id || "Not available"}
+            editable={false}
+          />
+          
+          <CdTextInputOneLine
+            label="App Version"
+            value={Constants.expoConfig?.version || "Unknown"}
+            editable={false}
+          />
+        </View>
+
+        {/* Development Tools (if in dev mode) */}
+        {__DEV__ && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📋 Embedded Feedback Widget</Text>
-            <Text style={styles.sectionDescription}>
-              This is Sentry's FeedbackWidget component embedded directly in the
-              page.
-            </Text>
-            <View style={styles.widgetContainer}>
-              <FeedbackWidget />
-            </View>
+            <Text style={styles.sectionTitle}>Development Tools</Text>
+            
+            <CdTextInputOneLine
+              label="Test Error Reporting"
+              value="Test Sentry integration"
+              isButton={true}
+              onPress={() => router.push("/sentry-test")}
+              buttonIcon="bug"
+            />
           </View>
         )}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🔧 Development Tools</Text>
-          <Text style={styles.sectionDescription}>
-            Tools for testing and debugging the application.
-          </Text>
-
-          <TouchableOpacity
-            style={[styles.button, styles.debugButton]}
-            onPress={() => {
-              // Navigate to Sentry test page - you could use router.push here
-              Alert.alert(
-                "Debug Tools",
-                "Sentry test page can be accessed from the home screen."
-              );
-            }}
-          >
-            <Text style={styles.debugButtonText}>
-              🔧 Sentry Integration Test
-            </Text>
-            <Text style={styles.buttonDescription}>
-              Test error logging and monitoring
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>ℹ️ About</Text>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoLabel}>Version:</Text>
-            <Text style={styles.infoValue}>2.0.0</Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoLabel}>Environment:</Text>
-            <Text style={styles.infoValue}>
-              {__DEV__ ? "Development" : "Production"}
-            </Text>
-          </View>
-        </View>
-
-        {/* Add some bottom padding */}
         <View style={styles.bottomPadding} />
       </ScrollView>
     </>
@@ -278,104 +182,18 @@ const styles = StyleSheet.create({
   },
   section: {
     backgroundColor: "#fff",
-    marginHorizontal: 16,
-    marginVertical: 8,
-    padding: 20,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "600",
     color: "#333",
-    marginBottom: 8,
-  },
-  sectionDescription: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 16,
-  },
-  button: {
-    padding: 16,
-    borderRadius: 10,
-    marginVertical: 6,
-  },
-  primaryButton: {
-    backgroundColor: "#007bff",
-  },
-  primaryButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 4,
-  },
-  secondaryButton: {
-    backgroundColor: "#6c757d",
-  },
-  secondaryButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 4,
-  },
-  tertiaryButton: {
-    backgroundColor: "#17a2b8",
-  },
-  tertiaryButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 4,
-  },
-  debugButton: {
-    backgroundColor: "#ffc107",
-  },
-  debugButtonText: {
-    color: "#333",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 4,
-  },
-  buttonDescription: {
-    fontSize: 12,
-    textAlign: "center",
-    opacity: 0.8,
-  },
-  infoContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 8,
+    padding: 20,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
   },
-  infoLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  infoValue: {
-    fontSize: 14,
-    color: "#333",
-    fontWeight: "600",
-  },
   bottomPadding: {
     height: 40,
-  },
-  widgetContainer: {
-    backgroundColor: "#f8f9fa",
-    borderRadius: 8,
-    padding: 10,
-    marginTop: 10,
   },
 });

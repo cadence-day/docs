@@ -25,14 +25,12 @@ export interface ActivitiesProps {
 
 // Component props for individual UI components
 export interface ActivityGridViewProps {
-  activities: Activity[];
   onActivityPress: ActivityHandler;
   onActivityLongPress: ActivityHandler;
   gridConfig?: Partial<GridConfig>;
 }
 
 export interface EditActivitiesViewProps {
-  activities: Activity[];
   onActivityPress: ActivityHandler;
   onDragStateChange?: (isDragging: boolean) => void;
   gridConfig?: Partial<GridConfig>;
@@ -73,7 +71,11 @@ export interface DraggableActivityItemProps {
 }
 
 // Dialog types
-export type DialogMode = "legend" | "edit-management" | "create-form" | "edit-form";
+export type DialogMode =
+  | "legend"
+  | "edit-management"
+  | "create-form"
+  | "edit-form";
 export type ActivityCreatedHandler = (activity: Activity) => void;
 export type ActivityUpdatedHandler = (activity: Activity) => void;
 export type ActivitySelectedHandler = (activity: Activity) => void;
@@ -142,7 +144,7 @@ export interface AnimationConfig {
 }
 
 // Loading states
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
+export type LoadingState = "idle" | "loading" | "success" | "error";
 
 // Common component props
 export interface BaseComponentProps {

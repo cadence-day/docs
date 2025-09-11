@@ -1,10 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
-import type { Activity } from '@/shared/types/models/activity';
-import * as Haptics from 'expo-haptics';
+import type { Activity } from "@/shared/types/models/activity";
+import * as Haptics from "expo-haptics";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseDragOperationsProps {
   activities: Activity[];
-  onOrderChange?: (newOrder: Activity[]) => void;
+  onOrderChange?: (newOrder: Activity[]) => Promise<void>;
   onDragStateChange?: (isDragging: boolean) => void;
 }
 
@@ -26,42 +26,70 @@ export const useDragOperations = ({
   onDragStateChange,
 }: UseDragOperationsProps): UseDragOperationsReturn => {
   const [activityOrder, setActivityOrder] = useState<Activity[]>(activities);
-  const [draggedActivityId, setDraggedActivityId] = useState<string | null>(null);
-  const [dragPlaceholderIndex, setDragPlaceholderIndex] = useState<number | null>(null);
+  const [draggedActivityId, setDraggedActivityId] = useState<string | null>(
+    null
+  );
+  const [dragPlaceholderIndex, setDragPlaceholderIndex] = useState<
+    number | null
+  >(null);
   const [isShakeMode, setIsShakeMode] = useState(false);
 
-  // Update activity order when activities prop changes
+  // Update local order when activities prop changes (only if not dragging)
   useEffect(() => {
-    setActivityOrder(activities);
-  }, [activities]);
+    if (!draggedActivityId) {
+      setActivityOrder(activities);
+    }
+  }, [activities, draggedActivityId]);
 
-  const handleDragStart = useCallback((activityId: string) => {
-    setDraggedActivityId(activityId);
-    onDragStateChange?.(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-  }, [onDragStateChange]);
+  const handleDragStart = useCallback(
+    (activityId: string) => {
+      setDraggedActivityId(activityId);
+      setIsShakeMode(true);
+      onDragStateChange?.(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    },
+    [onDragStateChange]
+  );
 
   const handleDragEnd = useCallback(() => {
     setDraggedActivityId(null);
     setDragPlaceholderIndex(null);
+    setIsShakeMode(false);
     onDragStateChange?.(false);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   }, [onDragStateChange]);
 
-  const handleReorder = useCallback((fromIndex: number, toIndex: number) => {
-    setActivityOrder(currentOrder => {
-      const newOrder = [...currentOrder];
-      const [draggedItem] = newOrder.splice(fromIndex, 1);
-      newOrder.splice(toIndex, 0, draggedItem);
-      
-      // Trigger haptic feedback for successful reorder
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      
-      // Call the external handler
-      onOrderChange?.(newOrder);
-      
-      return newOrder;
-    });
-  }, [onOrderChange]);
+  const handleReorder = useCallback(
+    async (fromIndex: number, toIndex: number) => {
+      if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) {
+        return;
+      }
+
+      try {
+        // Create new order optimistically
+        const newOrder = [...activityOrder];
+        const [draggedItem] = newOrder.splice(fromIndex, 1);
+        newOrder.splice(toIndex, 0, draggedItem);
+
+        // Update local state immediately
+        setActivityOrder(newOrder);
+
+        // Trigger haptic feedback
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+        // Persist the change
+        if (onOrderChange) {
+          await onOrderChange(newOrder);
+        }
+      } catch (error) {
+        console.error("Failed to reorder activities:", error);
+        // Revert on error
+        setActivityOrder(activities);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+    },
+    [activityOrder, onOrderChange, activities]
+  );
 
   const handlePlaceholderChange = useCallback((index: number | null) => {
     setDragPlaceholderIndex(index);

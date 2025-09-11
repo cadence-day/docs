@@ -208,5 +208,7 @@
   "tap-x-to-disable-an-activity": "Tap \"-\" to temporarily disable an activity.",
   "active-activities": "Activte Activities",
   "no-active-activities": "There are sadly no active activities",
-  "back-to-today": "Back to today"
+  "back-to-today": "Back to today",
+  "common.saving": "Saving",
+  "done": "Done"
 }

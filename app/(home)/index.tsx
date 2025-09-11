@@ -43,7 +43,7 @@ export default function Today() {
     return () => clearInterval(interval);
   }, []);
 
-  // Open activity dialog by default as persistent
+  // Open activity dialog by default as persistent and view-specific
   useEffect(() => {
     const openActivityLegend = () => {
       const id = useDialogStore.getState().openDialog({
@@ -53,20 +53,33 @@ export default function Today() {
           preventClose: true, // Make it persistent
         },
         position: "dock",
+        viewSpecific: "index", // Specific to today view (index route)
       });
       setIsActivityDialogOpen(true);
     };
 
-    // Small delay to ensure stores are ready
-    const timer = setTimeout(openActivityLegend, 100);
-    return () => clearTimeout(timer);
+    // Restore any existing view-specific dialogs for today view
+    useDialogStore.getState().restoreViewSpecificDialogs("index");
+    
+    // Check if activity dialog already exists
+    const existingActivityDialog = Object.values(
+      useDialogStore.getState().dialogs
+    ).find((dialog) => dialog.type === "activity" && dialog.viewSpecific === "index");
+
+    if (!existingActivityDialog) {
+      // Small delay to ensure stores are ready
+      const timer = setTimeout(openActivityLegend, 100);
+      return () => clearTimeout(timer);
+    } else {
+      setIsActivityDialogOpen(true);
+    }
   }, []);
 
   // Listen to dialog store changes to track activity dialog state
   useEffect(() => {
     const unsubscribe = useDialogStore.subscribe((state) => {
       const hasActivityDialog = Object.values(state.dialogs).some(
-        (dialog) => dialog.type === "activity"
+        (dialog) => dialog.type === "activity" && dialog.viewSpecific === "index"
       );
       setIsActivityDialogOpen(hasActivityDialog);
     });
@@ -83,6 +96,7 @@ export default function Today() {
         preventClose: true,
       },
       position: "dock",
+      viewSpecific: "index", // Specific to today view
     });
   };
 

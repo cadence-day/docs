@@ -1,9 +1,10 @@
-import React, { useMemo, useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import { useActivitiesStore } from "@/shared/stores";
 import type { Activity } from "@/shared/types/models/activity";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { StyleSheet, View } from "react-native";
 import { useActivityDisplayGrid } from "../../hooks";
-import { ActivityBox } from "./ActivityBox";
 import type { ActivityGridViewProps } from "../../types";
+import { ActivityBox } from "./ActivityBox";
 
 // Memoized activity item component for better performance
 const ActivityGridItem = React.memo<{
@@ -15,7 +16,10 @@ const ActivityGridItem = React.memo<{
   onLongPress: (activity: Activity) => void;
 }>(({ activity, itemWidth, itemHeight, gridGap, onPress, onLongPress }) => {
   const handlePress = useCallback(() => onPress(activity), [activity, onPress]);
-  const handleLongPress = useCallback(() => onLongPress(activity), [activity, onLongPress]);
+  const handleLongPress = useCallback(
+    () => onLongPress(activity),
+    [activity, onLongPress]
+  );
 
   return (
     <View
@@ -38,48 +42,56 @@ const ActivityGridItem = React.memo<{
   );
 });
 
-ActivityGridItem.displayName = 'ActivityGridItem';
+ActivityGridItem.displayName = "ActivityGridItem";
 
-export const ActivityGridView = React.memo<ActivityGridViewProps>(({
-  activities,
-  onActivityPress,
-  onActivityLongPress,
-  gridConfig,
-}) => {
-  // Use optimized hook for grid calculations
-  const { gridProperties, enabledActivities } = useActivityDisplayGrid(
-    activities,
-    gridConfig
-  );
+export const ActivityGridView = React.memo<ActivityGridViewProps>(
+  ({ onActivityPress, onActivityLongPress, gridConfig }) => {
+    // Get ordered activities directly from store (single source of truth)
+    const storeActivities = useActivitiesStore((state) => state.activities);
+    const loadStoredOrder = useActivitiesStore(
+      (state) => state.loadStoredOrder
+    );
 
-  const { minHeight, itemWidth, itemHeight, gridGap } = gridProperties;
+    // Load stored order on mount to ensure we have the correct order
+    useEffect(() => {
+      loadStoredOrder();
+    }, [loadStoredOrder]);
 
-  // Memoize container style
-  const containerStyle = useMemo(
-    () => [styles.container, { minHeight }],
-    [minHeight]
-  );
+    // Use optimized hook for grid calculations with store activities
+    const { gridProperties, enabledActivities } = useActivityDisplayGrid(
+      storeActivities,
+      gridConfig
+    );
 
-  return (
-    <View style={containerStyle}>
-      <View style={styles.grid}>
-        {enabledActivities.map((activity) => (
-          <ActivityGridItem
-            key={activity.id}
-            activity={activity}
-            itemWidth={itemWidth}
-            itemHeight={itemHeight}
-            gridGap={gridGap}
-            onPress={onActivityPress}
-            onLongPress={onActivityLongPress}
-          />
-        ))}
+    const { minHeight, itemWidth, itemHeight, gridGap } = gridProperties;
+
+    // Memoize container style
+    const containerStyle = useMemo(
+      () => [styles.container, { minHeight }],
+      [minHeight]
+    );
+
+    return (
+      <View style={containerStyle}>
+        <View style={styles.grid}>
+          {enabledActivities.map((activity) => (
+            <ActivityGridItem
+              key={activity.id}
+              activity={activity}
+              itemWidth={itemWidth}
+              itemHeight={itemHeight}
+              gridGap={gridGap}
+              onPress={onActivityPress}
+              onLongPress={onActivityLongPress}
+            />
+          ))}
+        </View>
       </View>
-    </View>
-  );
-});
+    );
+  }
+);
 
-ActivityGridView.displayName = 'ActivityGridView';
+ActivityGridView.displayName = "ActivityGridView";
 
 const styles = StyleSheet.create({
   container: {
@@ -94,6 +106,6 @@ const styles = StyleSheet.create({
   gridItem: {
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 4,
+    paddingHorizontal: 8,
   },
 });
