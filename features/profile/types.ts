@@ -14,11 +14,11 @@ export interface ProfileSettings {
     eveningReminders: boolean;
     weeklyStreaks: boolean;
   };
-  subscriptionPlan: 'free' | 'deep_cadence';
+  subscriptionPlan: "free" | "deep_cadence";
 }
 
 export interface UserPersona {
-  type: 'early_bird' | 'night_owl' | 'balanced' | 'flexible';
+  type: "early_bird" | "night_owl" | "balanced" | "flexible";
   suggestedActivities: string[];
   locale: string;
 }
@@ -33,7 +33,7 @@ export interface RestActivity {
 }
 
 export interface TimePickerProps {
-  mode: 'wake' | 'sleep';
+  mode: "wake" | "sleep";
   currentTime: string;
   onTimeChange: (time: string) => void;
 }

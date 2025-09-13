@@ -23,7 +23,7 @@ export const useActivitiesData = (): UseActivitiesDataReturn => {
     () => sortActivities(enabledActivities),
     [enabledActivities]
   );
-  
+
   const disabledActivities = useMemo(
     () => sortActivities(disabledActivitiesFromStore),
     [disabledActivitiesFromStore]
@@ -46,16 +46,21 @@ export const useActivitiesData = (): UseActivitiesDataReturn => {
     if (
       enabledActivities.length === 0 &&
       disabledActivitiesFromStore.length === 0 &&
-      loadingState === 'idle'
+      loadingState === "idle"
     ) {
       refresh();
     }
-  }, [enabledActivities.length, disabledActivitiesFromStore.length, loadingState, refresh]);
+  }, [
+    enabledActivities.length,
+    disabledActivitiesFromStore.length,
+    loadingState,
+    refresh,
+  ]);
 
   return {
     activities,
     disabledActivities,
-    isLoading: loadingState === 'loading',
+    isLoading: loadingState === "loading",
     error,
     refresh,
   };

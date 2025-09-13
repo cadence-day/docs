@@ -31,17 +31,20 @@ const ManageActivitiesDialog: React.FC<Props> = ({ _dialogId }) => {
     });
   }, [t]);
 
-  const openEdit = useCallback((activity: any) => {
-    useDialogStore.getState().openDialog({
-      type: "activity-edit",
-      position: "center",
-      props: {
-        activity,
-        headerProps: { title: t("activity.legend.editActivity") },
-        height: 85,
-      },
-    });
-  }, [t]);
+  const openEdit = useCallback(
+    (activity: any) => {
+      useDialogStore.getState().openDialog({
+        type: "activity-edit",
+        position: "center",
+        props: {
+          activity,
+          headerProps: { title: t("activity.legend.editActivity") },
+          height: 85,
+        },
+      });
+    },
+    [t]
+  );
 
   return (
     <Activities
@@ -54,4 +57,3 @@ const ManageActivitiesDialog: React.FC<Props> = ({ _dialogId }) => {
 };
 
 export default ManageActivitiesDialog;
-

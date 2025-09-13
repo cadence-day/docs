@@ -1,7 +1,7 @@
 import type { Activity } from "@/shared/types/models/activity";
 import { useCallback } from "react";
-import * as Haptics from 'expo-haptics';
-import { useActivitiesData } from './useActivitiesData';
+import * as Haptics from "expo-haptics";
+import { useActivitiesData } from "./useActivitiesData";
 
 interface UseActivitiesActionsProps {
   onActivityPress?: (activity: Activity) => void;

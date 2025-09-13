@@ -8,7 +8,10 @@ type Props = {
   isPickingMode?: boolean;
 };
 
-const ActivityLegendDialog: React.FC<Props> = ({ _dialogId, isPickingMode }) => {
+const ActivityLegendDialog: React.FC<Props> = ({
+  _dialogId,
+  isPickingMode,
+}) => {
   const { t } = useI18n();
 
   useEffect(() => {
@@ -37,13 +40,7 @@ const ActivityLegendDialog: React.FC<Props> = ({ _dialogId, isPickingMode }) => 
     });
   }, [_dialogId, isPickingMode, t]);
 
-  return (
-    <Activities
-      mode="view"
-      gridConfig={{ columns: 4 }}
-    />
-  );
+  return <Activities mode="view" gridConfig={{ columns: 4 }} />;
 };
 
 export default ActivityLegendDialog;
-

@@ -153,6 +153,7 @@ If this plan looks good, I will proceed with implementation in the order A → C
 ```
 
 ```
+
 # Activities Feature – Optimization and Enhancements Plan
 
 Goal: Improve efficiency of the Activities feature, implement missing update and soft-delete flows in the UI, and decouple dialog logic into one dialog per mode for clearer responsibilities and easier maintenance.
@@ -205,11 +206,11 @@ We adopt Option B with a clear separation of responsibilities between Manage and
 - Edit view (single-activity form):
   - Add a Delete (soft) action in `EditActivityDialog` header.
   - When tapped, run safe-guards and reassignment flow:
-    1) If the activity has a parent (`activity.parent_activity_id` is not null), block deletion and show: "This activity is a child of another. Change its parent first before deleting." Abort.
-    2) If any activities exist where `parent_activity_id === activity.id` (children), block deletion and show: "This activity has sub-activities. Reassign or remove their parent before deleting." Abort.
-    3) Fetch count of timeslices referencing this activity. If zero, proceed to soft delete immediately.
-    4) If there are N timeslices, prompt to reassign them to another enabled activity via a simple picker (default filter by same category; allow override).
-    5) On confirm, bulk-update those timeslices to the selected replacement activity, then soft delete the original activity.
+    1. If the activity has a parent (`activity.parent_activity_id` is not null), block deletion and show: "This activity is a child of another. Change its parent first before deleting." Abort.
+    2. If any activities exist where `parent_activity_id === activity.id` (children), block deletion and show: "This activity has sub-activities. Reassign or remove their parent before deleting." Abort.
+    3. Fetch count of timeslices referencing this activity. If zero, proceed to soft delete immediately.
+    4. If there are N timeslices, prompt to reassign them to another enabled activity via a simple picker (default filter by same category; allow override).
+    5. On confirm, bulk-update those timeslices to the selected replacement activity, then soft delete the original activity.
 
 - Wiring:
   - Soft delete: `useActivitiesStore.softDeleteActivity(id)`.

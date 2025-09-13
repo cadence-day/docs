@@ -1,5 +1,12 @@
 import React from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
@@ -12,9 +19,10 @@ import { profileStyles } from "../styles";
 
 export const ProfileScreen: React.FC = () => {
   const { user } = useUser();
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const openDialog = useDialogStore((s) => s.openDialog);
-  const { profileData, settings, updateProfileData, updateSettings } = useProfileStore();
+  const { profileData, settings, updateProfileData, updateSettings } =
+    useProfileStore();
 
   const appVersion = Constants.expoConfig?.version || "Unknown";
   const buildNumber =
@@ -40,20 +48,23 @@ export const ProfileScreen: React.FC = () => {
     });
   };
 
-  const handleTimePress = (type: 'wake' | 'sleep') => {
+  const handleTimePress = (type: "wake" | "sleep") => {
     openDialog({
       type: "time-picker",
       props: {
         mode: type,
-        currentTime: type === 'wake' ? settings.wakeTime : settings.sleepTime,
+        currentTime: type === "wake" ? settings.wakeTime : settings.sleepTime,
         onTimeChange: (time: string) => {
           updateSettings({
-            [type === 'wake' ? 'wakeTime' : 'sleepTime']: time
+            [type === "wake" ? "wakeTime" : "sleepTime"]: time,
           });
         },
         height: 70,
-        headerProps: { 
-          title: type === 'wake' ? t("profile.set-wake-time") : t("profile.set-sleep-time") 
+        headerProps: {
+          title:
+            type === "wake"
+              ? t("profile.set-wake-time")
+              : t("profile.set-sleep-time"),
         },
       },
       position: "dock",
@@ -63,7 +74,7 @@ export const ProfileScreen: React.FC = () => {
 
   const handleNotificationsPress = () => {
     // TODO: Navigate to notifications screen in future iteration
-    console.log('Notifications pressed - to be implemented');
+    console.log("Notifications pressed - to be implemented");
   };
 
   const handleSubscriptionPress = () => {
@@ -84,7 +95,7 @@ export const ProfileScreen: React.FC = () => {
 
   const handleSecurityPress = () => {
     // TODO: Navigate to security screen in future iteration
-    console.log('Security pressed - to be implemented');
+    console.log("Security pressed - to be implemented");
   };
 
   const handleSupportPress = () => {
@@ -107,32 +118,33 @@ export const ProfileScreen: React.FC = () => {
     <ScrollView style={profileStyles.container}>
       {/* Profile Header */}
       <View style={profileStyles.profileHeader}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={profileStyles.profileImageContainer}
           onPress={onEditPhoto}
           activeOpacity={0.8}
         >
-          {(user?.imageUrl || profileData.avatarUrl) ? (
-            <Image 
-              source={{ uri: user?.imageUrl || profileData.avatarUrl }} 
+          {user?.imageUrl || profileData.avatarUrl ? (
+            <Image
+              source={{ uri: user?.imageUrl || profileData.avatarUrl }}
               style={profileStyles.profileImage}
             />
           ) : (
-            <View style={[profileStyles.profileImage, { 
-              backgroundColor: '#F0F0F0',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }]}>
-              <Ionicons 
-                name="person" 
-                size={40} 
-                color={COLORS.textIcons} 
-              />
+            <View
+              style={[
+                profileStyles.profileImage,
+                {
+                  backgroundColor: "#F0F0F0",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
+            >
+              <Ionicons name="person" size={40} color={COLORS.textIcons} />
             </View>
           )}
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={profileStyles.editPhotoButton}
           onPress={onEditPhoto}
         >
@@ -150,21 +162,23 @@ export const ProfileScreen: React.FC = () => {
             {user?.fullName || profileData.name || "Your Name"}
           </Text>
         </View>
-        
+
         <View style={profileStyles.fieldRow}>
           <Text style={profileStyles.fieldLabel}>{t("profile.username")}</Text>
           <Text style={profileStyles.fieldValue}>
             @{user?.username || profileData.username || "username"}
           </Text>
         </View>
-        
+
         <View style={profileStyles.fieldRow}>
           <Text style={profileStyles.fieldLabel}>{t("profile.email")}</Text>
           <Text style={profileStyles.fieldValue}>
-            {user?.emailAddresses[0]?.emailAddress || profileData.email || "email@example.com"}
+            {user?.emailAddresses[0]?.emailAddress ||
+              profileData.email ||
+              "email@example.com"}
           </Text>
         </View>
-        
+
         {(user?.phoneNumbers?.[0]?.phoneNumber || profileData.phoneNumber) && (
           <View style={profileStyles.fieldRow}>
             <Text style={profileStyles.fieldLabel}>{t("profile.phone")}</Text>
@@ -177,7 +191,7 @@ export const ProfileScreen: React.FC = () => {
 
       {/* Settings Section */}
       <View style={profileStyles.settingsSection}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={profileStyles.settingRow}
           onPress={handleNotificationsPress}
         >
@@ -185,13 +199,17 @@ export const ProfileScreen: React.FC = () => {
             {t("profile.notifications")}
           </Text>
           <View style={profileStyles.settingValue}>
-            <Ionicons name="chevron-forward" size={16} style={profileStyles.chevronIcon} />
+            <Ionicons
+              name="chevron-forward"
+              size={16}
+              style={profileStyles.chevronIcon}
+            />
           </View>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={profileStyles.settingRow}
-          onPress={() => handleTimePress('wake')}
+          onPress={() => handleTimePress("wake")}
         >
           <Text style={profileStyles.settingLabel}>
             {t("profile.wake-time")}
@@ -200,13 +218,17 @@ export const ProfileScreen: React.FC = () => {
             <Text style={profileStyles.settingValueText}>
               {settings.wakeTime}
             </Text>
-            <Ionicons name="chevron-forward" size={16} style={profileStyles.chevronIcon} />
+            <Ionicons
+              name="chevron-forward"
+              size={16}
+              style={profileStyles.chevronIcon}
+            />
           </View>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={profileStyles.settingRow}
-          onPress={() => handleTimePress('sleep')}
+          onPress={() => handleTimePress("sleep")}
         >
           <Text style={profileStyles.settingLabel}>
             {t("profile.sleep-time")}
@@ -215,11 +237,15 @@ export const ProfileScreen: React.FC = () => {
             <Text style={profileStyles.settingValueText}>
               {settings.sleepTime}
             </Text>
-            <Ionicons name="chevron-forward" size={16} style={profileStyles.chevronIcon} />
+            <Ionicons
+              name="chevron-forward"
+              size={16}
+              style={profileStyles.chevronIcon}
+            />
           </View>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={profileStyles.settingRow}
           onPress={handleSubscriptionPress}
         >
@@ -228,20 +254,24 @@ export const ProfileScreen: React.FC = () => {
           </Text>
           <View style={profileStyles.settingValue}>
             <Text style={profileStyles.settingValueText}>
-              {settings.subscriptionPlan === 'free' ? t("profile.free") : t("profile.deep-cadence")}
+              {settings.subscriptionPlan === "free"
+                ? t("profile.free")
+                : t("profile.deep-cadence")}
             </Text>
-            <Ionicons name="chevron-forward" size={16} style={profileStyles.chevronIcon} />
+            <Ionicons
+              name="chevron-forward"
+              size={16}
+              style={profileStyles.chevronIcon}
+            />
           </View>
         </TouchableOpacity>
       </View>
 
       {/* Security Section */}
       <View style={profileStyles.settingsSection}>
-        <Text style={profileStyles.sectionTitle}>
-          {t("profile.security")}
-        </Text>
-        
-        <TouchableOpacity 
+        <Text style={profileStyles.sectionTitle}>{t("profile.security")}</Text>
+
+        <TouchableOpacity
           style={profileStyles.settingRow}
           onPress={handleSecurityPress}
         >
@@ -249,18 +279,20 @@ export const ProfileScreen: React.FC = () => {
             {t("profile.security-settings")}
           </Text>
           <View style={profileStyles.settingValue}>
-            <Ionicons name="chevron-forward" size={16} style={profileStyles.chevronIcon} />
+            <Ionicons
+              name="chevron-forward"
+              size={16}
+              style={profileStyles.chevronIcon}
+            />
           </View>
         </TouchableOpacity>
       </View>
 
       {/* Support Section */}
       <View style={profileStyles.settingsSection}>
-        <Text style={profileStyles.sectionTitle}>
-          {t("profile.support")}
-        </Text>
-        
-        <TouchableOpacity 
+        <Text style={profileStyles.sectionTitle}>{t("profile.support")}</Text>
+
+        <TouchableOpacity
           style={profileStyles.settingRow}
           onPress={handleSupportPress}
         >
@@ -268,17 +300,19 @@ export const ProfileScreen: React.FC = () => {
             {t("profile.customer-support")}
           </Text>
           <View style={profileStyles.settingValue}>
-            <Ionicons name="chevron-forward" size={16} style={profileStyles.chevronIcon} />
+            <Ionicons
+              name="chevron-forward"
+              size={16}
+              style={profileStyles.chevronIcon}
+            />
           </View>
         </TouchableOpacity>
       </View>
 
       {/* App Information */}
       <View style={profileStyles.appInfoSection}>
-        <Text style={profileStyles.sectionTitle}>
-          {t("profile.app-info")}
-        </Text>
-        
+        <Text style={profileStyles.sectionTitle}>{t("profile.app-info")}</Text>
+
         <View style={profileStyles.appInfoRow}>
           <Text style={profileStyles.appInfoLabel}>
             {t("profile.app-version")}
@@ -287,13 +321,11 @@ export const ProfileScreen: React.FC = () => {
             {appVersion} ({buildNumber})
           </Text>
         </View>
-        
+
         <View style={profileStyles.appInfoRow}>
-          <Text style={profileStyles.appInfoLabel}>
-            {t("profile.user-id")}
-          </Text>
+          <Text style={profileStyles.appInfoLabel}>{t("profile.user-id")}</Text>
           <Text style={profileStyles.appInfoValue}>
-            {user?.id?.slice(-8) || 'Unknown'}
+            {user?.id?.slice(-8) || "Unknown"}
           </Text>
         </View>
       </View>
@@ -302,4 +334,3 @@ export const ProfileScreen: React.FC = () => {
 };
 
 export default ProfileScreen;
-

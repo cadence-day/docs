@@ -1,11 +1,6 @@
-import React from 'react';
-import {
-  View,
-  TextInput,
-  Text,
-  StyleSheet,
-} from 'react-native';
-import { ACTIVITY_THEME } from '../../../constants';
+import React from "react";
+import { View, TextInput, Text, StyleSheet } from "react-native";
+import { ACTIVITY_THEME } from "../../../constants";
 
 interface FormInputProps {
   label: string;
@@ -17,49 +12,49 @@ interface FormInputProps {
   showError?: boolean;
   disabled?: boolean;
   required?: boolean;
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-  returnKeyType?: 'done' | 'next' | 'search' | 'send' | 'go' | 'default';
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  returnKeyType?: "done" | "next" | "search" | "send" | "go" | "default";
 }
 
-export const FormInput = React.memo<FormInputProps>(({
-  label,
-  value,
-  onChangeText,
-  onBlur,
-  placeholder,
-  error,
-  showError = false,
-  disabled = false,
-  required = false,
-  autoCapitalize = 'sentences',
-  returnKeyType = 'done',
-}) => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.label}>
-        {label} {required && <Text style={styles.required}>*</Text>}
-      </Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          value={value}
-          onChangeText={onChangeText}
-          onBlur={onBlur}
-          placeholder={placeholder}
-          placeholderTextColor={ACTIVITY_THEME.GRAY_LIGHT}
-          autoCapitalize={autoCapitalize}
-          returnKeyType={returnKeyType}
-          editable={!disabled}
-        />
+export const FormInput = React.memo<FormInputProps>(
+  ({
+    label,
+    value,
+    onChangeText,
+    onBlur,
+    placeholder,
+    error,
+    showError = false,
+    disabled = false,
+    required = false,
+    autoCapitalize = "sentences",
+    returnKeyType = "done",
+  }) => {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.label}>
+          {label} {required && <Text style={styles.required}>*</Text>}
+        </Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.textInput}
+            value={value}
+            onChangeText={onChangeText}
+            onBlur={onBlur}
+            placeholder={placeholder}
+            placeholderTextColor={ACTIVITY_THEME.GRAY_LIGHT}
+            autoCapitalize={autoCapitalize}
+            returnKeyType={returnKeyType}
+            editable={!disabled}
+          />
+        </View>
+        {showError && error && <Text style={styles.errorText}>{error}</Text>}
       </View>
-      {showError && error && (
-        <Text style={styles.errorText}>{error}</Text>
-      )}
-    </View>
-  );
-});
+    );
+  }
+);
 
-FormInput.displayName = 'FormInput';
+FormInput.displayName = "FormInput";
 
 const styles = StyleSheet.create({
   container: {

@@ -1,8 +1,8 @@
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { useErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
-import Constants from 'expo-constants';
-import * as Linking from 'expo-linking';
+import Constants from "expo-constants";
+import * as Linking from "expo-linking";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -40,17 +40,19 @@ export default function SettingsPage() {
   };
 
   const contactSupport = () => {
-    const email = 'support@cadenceapp.com';
-    const subject = 'Support Request';
+    const email = "support@cadenceapp.com";
+    const subject = "Support Request";
     const body = `User ID: ${user?.id}\nApp Version: ${Constants.expoConfig?.version}\n\nDescribe your issue here...`;
-    
-    Linking.openURL(`mailto:${email}?subject=${subject}&body=${encodeURIComponent(body)}`);
+
+    Linking.openURL(
+      `mailto:${email}?subject=${subject}&body=${encodeURIComponent(body)}`
+    );
   };
 
   const openAppInformation = () => {
     Alert.alert(
       "App Information",
-      `Version: ${Constants.expoConfig?.version || 'Unknown'}\nBuild: ${Constants.expoConfig?.extra?.buildNumber || 'Unknown'}\nPlatform: ${Constants.platform?.ios ? 'iOS' : 'Android'}`,
+      `Version: ${Constants.expoConfig?.version || "Unknown"}\nBuild: ${Constants.expoConfig?.extra?.buildNumber || "Unknown"}\nPlatform: ${Constants.platform?.ios ? "iOS" : "Android"}`,
       [{ text: "OK" }]
     );
   };
@@ -76,20 +78,27 @@ export default function SettingsPage() {
         {/* Notifications Settings */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Notifications</Text>
-          
+
           <CdTextInputOneLine
             label="Push Notifications"
             value={notificationsEnabled ? "Enabled" : "Disabled"}
             isButton={true}
             onPress={toggleNotifications}
-            buttonIcon={notificationsEnabled ? "notifications" : "notifications-off"}
+            buttonIcon={
+              notificationsEnabled ? "notifications" : "notifications-off"
+            }
           />
-          
+
           <CdTextInputOneLine
             label="Email Notifications"
             value="Configure email preferences"
             isButton={true}
-            onPress={() => Alert.alert("Coming Soon", "Email notification settings will be available soon")}
+            onPress={() =>
+              Alert.alert(
+                "Coming Soon",
+                "Email notification settings will be available soon"
+              )
+            }
             buttonIcon="mail"
           />
         </View>
@@ -97,7 +106,7 @@ export default function SettingsPage() {
         {/* Health & Data Settings */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Health & Data</Text>
-          
+
           <CdTextInputOneLine
             label="Health Data Access"
             value={healthDataAccess ? "Enabled" : "Disabled"}
@@ -105,20 +114,30 @@ export default function SettingsPage() {
             onPress={toggleHealthData}
             buttonIcon={healthDataAccess ? "fitness" : "fitness-outline"}
           />
-          
+
           <CdTextInputOneLine
             label="Data Export"
             value="Export your data"
             isButton={true}
-            onPress={() => Alert.alert("Coming Soon", "Data export feature will be available soon")}
+            onPress={() =>
+              Alert.alert(
+                "Coming Soon",
+                "Data export feature will be available soon"
+              )
+            }
             buttonIcon="download"
           />
-          
+
           <CdTextInputOneLine
             label="Privacy Settings"
             value="Manage data privacy"
             isButton={true}
-            onPress={() => Alert.alert("Coming Soon", "Privacy settings will be available soon")}
+            onPress={() =>
+              Alert.alert(
+                "Coming Soon",
+                "Privacy settings will be available soon"
+              )
+            }
             buttonIcon="shield-checkmark"
           />
         </View>
@@ -143,7 +162,9 @@ export default function SettingsPage() {
                 viewSpecific: "index",
               });
               // Navigate to Today so the dialog host can render it immediately
-              try { router.replace("/(home)/index"); } catch {}
+              try {
+                router.replace("/(home)/index");
+              } catch {}
             }}
             buttonIcon="key"
           />
@@ -152,7 +173,7 @@ export default function SettingsPage() {
         {/* Support & Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Support & Information</Text>
-          
+
           <CdTextInputOneLine
             label="Contact Support"
             value="Get help and support"
@@ -160,7 +181,7 @@ export default function SettingsPage() {
             onPress={contactSupport}
             buttonIcon="help-circle"
           />
-          
+
           <CdTextInputOneLine
             label="App Information"
             value="Version and build details"
@@ -168,13 +189,13 @@ export default function SettingsPage() {
             onPress={openAppInformation}
             buttonIcon="information-circle"
           />
-          
+
           <CdTextInputOneLine
             label="User ID"
             value={user?.id || "Not available"}
             editable={false}
           />
-          
+
           <CdTextInputOneLine
             label="App Version"
             value={Constants.expoConfig?.version || "Unknown"}
@@ -186,7 +207,7 @@ export default function SettingsPage() {
         {__DEV__ && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Development Tools</Text>
-            
+
             <CdTextInputOneLine
               label="Test Error Reporting"
               value="Test Sentry integration"

@@ -59,11 +59,14 @@ export default function Today() {
 
     // Restore any existing view-specific dialogs for today view
     useDialogStore.getState().restoreViewSpecificDialogs("index");
-    
+
     // Check if activity dialog already exists
     const existingActivityDialog = Object.values(
       useDialogStore.getState().dialogs
-    ).find((dialog) => dialog.type === "activity-legend" && dialog.viewSpecific === "index");
+    ).find(
+      (dialog) =>
+        dialog.type === "activity-legend" && dialog.viewSpecific === "index"
+    );
 
     if (!existingActivityDialog) {
       // Small delay to ensure stores are ready
@@ -78,7 +81,8 @@ export default function Today() {
   useEffect(() => {
     const unsubscribe = useDialogStore.subscribe((state) => {
       const hasActivityDialog = Object.values(state.dialogs).some(
-        (dialog) => dialog.type === "activity-legend" && dialog.viewSpecific === "index"
+        (dialog) =>
+          dialog.type === "activity-legend" && dialog.viewSpecific === "index"
       );
       setIsActivityDialogOpen(hasActivityDialog);
     });

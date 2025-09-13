@@ -10,14 +10,20 @@ type Props = {
   onImageSelected?: (url: string) => void;
 };
 
-const ProfileImagePickerDialog: React.FC<Props> = ({ _dialogId, currentImageUrl, onImageSelected }) => {
+const ProfileImagePickerDialog: React.FC<Props> = ({
+  _dialogId,
+  currentImageUrl,
+  onImageSelected,
+}) => {
   const close = () => {
     if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
   };
 
   return (
     <View style={{ gap: 10 }}>
-      <CdText variant="body" size="medium">Select a new profile photo</CdText>
+      <CdText variant="body" size="medium">
+        Select a new profile photo
+      </CdText>
       <ProfileImagePicker
         currentImageUrl={currentImageUrl || undefined}
         onPick={(url) => {
@@ -30,4 +36,3 @@ const ProfileImagePickerDialog: React.FC<Props> = ({ _dialogId, currentImageUrl,
 };
 
 export default ProfileImagePickerDialog;
-

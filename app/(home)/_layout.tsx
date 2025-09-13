@@ -57,7 +57,7 @@ export default function TabLayout() {
 
   // Track current view based on segments
   useEffect(() => {
-    const currentView = segments[segments.length - 1] || 'index';
+    const currentView = segments[segments.length - 1] || "index";
     setCurrentView(currentView);
   }, [segments, setCurrentView]);
 
@@ -65,8 +65,8 @@ export default function TabLayout() {
   useEffect(() => {
     if (didCheckEncryption) return;
     // Only probe on the Today tab (index)
-    const currentView = segments[segments.length - 1] || 'index';
-    if (currentView !== 'index') return;
+    const currentView = segments[segments.length - 1] || "index";
+    if (currentView !== "index") return;
     const userId = user?.id ?? null;
     (async () => {
       await checkAndPromptEncryptionLinking(userId);

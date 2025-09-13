@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { ACTIVITY_THEME } from '../../constants';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { ACTIVITY_THEME } from "../../constants";
 
 interface ErrorStateProps {
   message: string;
@@ -10,39 +10,36 @@ interface ErrorStateProps {
   showIcon?: boolean;
 }
 
-export const ErrorState = React.memo<ErrorStateProps>(({
-  message,
-  onRetry,
-  retryLabel = 'Retry',
-  showIcon = true,
-}) => {
-  return (
-    <View style={styles.container}>
-      {showIcon && (
-        <Ionicons 
-          name="warning-outline" 
-          size={48} 
-          color={ACTIVITY_THEME.ERROR_COLOR}
-          style={styles.icon}
-        />
-      )}
-      <Text style={styles.message}>{message}</Text>
-      {onRetry && (
-        <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
-          <Text style={styles.retryText}>{retryLabel}</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
-});
+export const ErrorState = React.memo<ErrorStateProps>(
+  ({ message, onRetry, retryLabel = "Retry", showIcon = true }) => {
+    return (
+      <View style={styles.container}>
+        {showIcon && (
+          <Ionicons
+            name="warning-outline"
+            size={48}
+            color={ACTIVITY_THEME.ERROR_COLOR}
+            style={styles.icon}
+          />
+        )}
+        <Text style={styles.message}>{message}</Text>
+        {onRetry && (
+          <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
+            <Text style={styles.retryText}>{retryLabel}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  }
+);
 
-ErrorState.displayName = 'ErrorState';
+ErrorState.displayName = "ErrorState";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   icon: {
@@ -51,7 +48,7 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 14,
     color: ACTIVITY_THEME.ERROR_COLOR,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
     lineHeight: 20,
   },
@@ -64,6 +61,6 @@ const styles = StyleSheet.create({
   retryText: {
     color: ACTIVITY_THEME.WHITE,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

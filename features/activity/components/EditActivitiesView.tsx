@@ -269,7 +269,9 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
                     try {
                       await handleEnableActivity(activity);
                     } catch (error) {
-                      GlobalErrorHandler.logError(error, "ENABLE_ACTIVITY", { activityId: activity.id });
+                      GlobalErrorHandler.logError(error, "ENABLE_ACTIVITY", {
+                        activityId: activity.id,
+                      });
                     }
                   }}
                   activeOpacity={0.7}

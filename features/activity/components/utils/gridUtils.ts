@@ -1,4 +1,4 @@
-import { GRID_CONFIG } from '../../constants';
+import { GRID_CONFIG } from "../../constants";
 
 export interface GridConfig {
   columns: number;
@@ -62,7 +62,8 @@ export const calculateGridProperties = (
   const columns = gridConfig.columns || GRID_CONSTANTS.DEFAULT_COLUMNS;
   const totalRows = Math.ceil(activitiesCount / columns);
   const itemWidth = `${100 / columns}%`;
-  const minHeight = totalRows * (GRID_CONSTANTS.ITEM_HEIGHT + GRID_CONSTANTS.GRID_GAP);
+  const minHeight =
+    totalRows * (GRID_CONSTANTS.ITEM_HEIGHT + GRID_CONSTANTS.GRID_GAP);
 
   return {
     totalRows,
@@ -90,11 +91,18 @@ export const calculateGridPositionFromDrag = (
   const actualItemHeight = GRID_CONSTANTS.ITEM_HEIGHT + GRID_CONSTANTS.GRID_GAP;
 
   // Use centralized drag sensitivity
-  const deltaRows = Math.round(dy / (actualItemHeight * GRID_CONSTANTS.MIN_DRAG_SENSITIVITY));
-  const deltaCols = Math.round(dx / (actualItemWidth * GRID_CONSTANTS.MIN_DRAG_SENSITIVITY));
+  const deltaRows = Math.round(
+    dy / (actualItemHeight * GRID_CONSTANTS.MIN_DRAG_SENSITIVITY)
+  );
+  const deltaCols = Math.round(
+    dx / (actualItemWidth * GRID_CONSTANTS.MIN_DRAG_SENSITIVITY)
+  );
 
   const currentPos = getGridPosition(currentIndex, columns);
-  const newRow = Math.max(0, Math.min(totalRows - 1, currentPos.row + deltaRows));
+  const newRow = Math.max(
+    0,
+    Math.min(totalRows - 1, currentPos.row + deltaRows)
+  );
   const newCol = Math.max(0, Math.min(columns - 1, currentPos.col + deltaCols));
 
   const newIndex = getIndexFromPosition(newRow, newCol, columns);
@@ -104,7 +112,9 @@ export const calculateGridPositionFromDrag = (
 /**
  * Create default grid configuration
  */
-export const createDefaultGridConfig = (overrides: Partial<GridConfig> = {}): GridConfig => ({
+export const createDefaultGridConfig = (
+  overrides: Partial<GridConfig> = {}
+): GridConfig => ({
   columns: GRID_CONSTANTS.DEFAULT_COLUMNS,
   itemSpacing: GRID_CONFIG.DEFAULT_SPACING,
   containerPadding: GRID_CONFIG.DEFAULT_PADDING,

@@ -9,7 +9,7 @@ export * from "./GridView";
 // Form components
 export * from "./ActivityForm";
 
-// Form sub-components  
+// Form sub-components
 export * from "./form/FormInput";
 export * from "./form/ColorPicker";
 export * from "./form/CustomSlider";

@@ -1,11 +1,14 @@
 import { ActivityForm } from "@/features/activity/components/ui/ActivityForm";
 import { useI18n } from "@/shared/hooks/useI18n";
-import {
-  useActivitiesStore,
-  useDialogStore,
-} from "@/shared/stores";
+import { useActivitiesStore, useDialogStore } from "@/shared/stores";
 import type { Activity } from "@/shared/types/models/activity";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { getTimeslicesByActivityId } from "@/shared/api/resources/timeslices/get";
 import { reassignTimeslicesActivity } from "@/shared/api/resources/timeslices/update";
@@ -45,12 +48,17 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
   const handleSubmit = async (values: Partial<Activity>) => {
     try {
       if (!activity) return;
-      const updated = await updateActivity({ ...activity, ...values } as Activity);
+      const updated = await updateActivity({
+        ...activity,
+        ...values,
+      } as Activity);
       if (_dialogId && updated) {
         useDialogStore.getState().closeDialog(_dialogId);
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, "UPDATE_ACTIVITY", { activityId: activity?.id });
+      GlobalErrorHandler.logError(error, "UPDATE_ACTIVITY", {
+        activityId: activity?.id,
+      });
     }
   };
 
@@ -101,7 +109,9 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
       const ts = await getTimeslicesByActivityId(activity.id);
       ids = (ts || []).map((x) => x.id!).filter(Boolean) as string[];
     } catch (error) {
-      GlobalErrorHandler.logError(error, "FETCH_ACTIVITY_TIMESLICES", { activityId: activity.id });
+      GlobalErrorHandler.logError(error, "FETCH_ACTIVITY_TIMESLICES", {
+        activityId: activity.id,
+      });
       return;
     }
     if (ids.length === 0) {
@@ -120,7 +130,11 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
       t("Are you sure you want to delete this activity? You can’t undo this."),
       [
         { text: t("cancel"), style: "cancel" },
-        { text: t("delete"), style: "destructive", onPress: () => void performDeleteNow() },
+        {
+          text: t("delete"),
+          style: "destructive",
+          onPress: () => void performDeleteNow(),
+        },
       ]
     );
   }, [performDeleteNow, t]);
@@ -128,7 +142,10 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
   const confirmReassign = useCallback(async () => {
     try {
       if (!activity?.id || !reassignStage.required || !replacementId) return;
-      await reassignTimeslicesActivity(reassignStage.timesliceIds, replacementId);
+      await reassignTimeslicesActivity(
+        reassignStage.timesliceIds,
+        replacementId
+      );
       await softDeleteActivity(activity.id);
       if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
     } catch (error) {
@@ -138,7 +155,13 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
         timeslices: reassignStage.timesliceIds.length,
       });
     }
-  }, [activity?.id, reassignStage, replacementId, softDeleteActivity, _dialogId]);
+  }, [
+    activity?.id,
+    reassignStage,
+    replacementId,
+    softDeleteActivity,
+    _dialogId,
+  ]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -146,7 +169,9 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
       {activity?.id ? (
         <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
           <TouchableOpacity onPress={performDelete}>
-            <Text style={{ color: "#F04438", fontWeight: "600" }}>{t("delete")}</Text>
+            <Text style={{ color: "#F04438", fontWeight: "600" }}>
+              {t("delete")}
+            </Text>
           </TouchableOpacity>
         </View>
       ) : null}
@@ -165,7 +190,8 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
                 paddingVertical: 10,
                 borderBottomWidth: 0.5,
                 borderBottomColor: "#444",
-                backgroundColor: replacementId === a.id ? "#2a2a2a" : "transparent",
+                backgroundColor:
+                  replacementId === a.id ? "#2a2a2a" : "transparent",
                 paddingHorizontal: 6,
               }}
             >
@@ -185,7 +211,9 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
               borderRadius: 6,
             }}
           >
-            <Text style={{ color: "white", fontWeight: "600" }}>{t("confirm")}</Text>
+            <Text style={{ color: "white", fontWeight: "600" }}>
+              {t("confirm")}
+            </Text>
           </TouchableOpacity>
         </View>
       ) : null}

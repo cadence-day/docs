@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { CdDialog, CdText, CdTextInput, CdButton } from "@/shared/components/CadenceUI";
+import {
+  CdDialog,
+  CdText,
+  CdTextInput,
+  CdButton,
+} from "@/shared/components/CadenceUI";
 import { COLORS } from "@/shared/constants/COLORS";
 import {
   exportEncryptionKey,
@@ -57,7 +62,11 @@ const EncryptionLinkDialog: React.FC<Props> = ({
           setExportSource("");
         }
       } catch (err) {
-        GlobalErrorHandler.logError(err as Error, "ENCRYPTION_LINK_DIALOG_INIT", {});
+        GlobalErrorHandler.logError(
+          err as Error,
+          "ENCRYPTION_LINK_DIALOG_INIT",
+          {}
+        );
       }
     })();
   }, []);
@@ -77,7 +86,9 @@ const EncryptionLinkDialog: React.FC<Props> = ({
       setPasteError(error);
       if (error) return;
       const { fingerprint } = await importEncryptionKey(pasteValue);
-      setSuccessMessage(`Key imported (fp=${fingerprint}). You can now access encrypted data.`);
+      setSuccessMessage(
+        `Key imported (fp=${fingerprint}). You can now access encrypted data.`
+      );
       // Close after a short delay for user feedback
       setTimeout(() => closeSelf(), 900);
     } catch (err) {
@@ -88,7 +99,10 @@ const EncryptionLinkDialog: React.FC<Props> = ({
     }
   };
 
-  const Title = useMemo(() => headerProps?.title ?? "Link This Device", [headerProps]);
+  const Title = useMemo(
+    () => headerProps?.title ?? "Link This Device",
+    [headerProps]
+  );
 
   return (
     <CdDialog
@@ -103,7 +117,8 @@ const EncryptionLinkDialog: React.FC<Props> = ({
       <View style={styles.container}>
         <View style={styles.banner}>
           <CdText variant="body" size="medium" style={{ color: COLORS.white }}>
-            Encrypted data detected. Import your existing key to read it on this device.
+            Encrypted data detected. Import your existing key to read it on this
+            device.
           </CdText>
         </View>
 
@@ -148,7 +163,8 @@ const EncryptionLinkDialog: React.FC<Props> = ({
           {hasKeyOnThisDevice && exportedKey ? (
             <>
               <CdText variant="body" size="small" style={styles.helpText}>
-                Use this key on your new device. Fingerprint: {exportFingerprint}
+                Use this key on your new device. Fingerprint:{" "}
+                {exportFingerprint}
                 {exportSource ? ` • source: ${exportSource}` : ""}
               </CdText>
               <View style={styles.keyBox}>
@@ -157,7 +173,8 @@ const EncryptionLinkDialog: React.FC<Props> = ({
                 </Text>
               </View>
               <CdText variant="body" size="small" style={styles.warning}>
-                Warning: Anyone with this key can read your encrypted data. Do not share it.
+                Warning: Anyone with this key can read your encrypted data. Do
+                not share it.
               </CdText>
             </>
           ) : (
@@ -218,4 +235,3 @@ const styles = StyleSheet.create({
 });
 
 export default EncryptionLinkDialog;
-

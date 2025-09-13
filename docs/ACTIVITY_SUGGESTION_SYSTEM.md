@@ -813,7 +813,7 @@ export class ActivitySuggestionService {
   const allSuggestions = this.getPersonaBasedSuggestions(persona);
   const filteredSuggestions = this.filterExistingActivities(allSuggestions, existingActivities);
   const prioritizedSuggestions = this.prioritizeSuggestions(filteredSuggestions, persona);
-      return prioritizedSuggestions.slice(0, maxSuggestions);
+  return prioritizedSuggestions.slice(0, maxSuggestions);
   } catch (error) {
   GlobalErrorHandler.logError(error, 'ACTIVITY_SUGGESTION_GENERATION_FAILED', {
   personaType: persona.type,
@@ -833,23 +833,22 @@ export class ActivitySuggestionService {
   ): Promise<Activity[]> {
   const activities: Activity[] = [];
 
-
-    for (const suggestion of suggestions) {
-      try {
-        const activity: Partial<Activity> = {
-          name: suggestion.name,
-          color: suggestion.suggestedColor,
-          isActive: false, // User needs to explicitly enable
-          createdBy: userId,
-          isSystemSuggested: true,
-          metadata: {
-            category: suggestion.category,
-            timeOfDay: suggestion.timeOfDay,
-            estimatedDuration: suggestion.estimatedDuration,
-            priority: suggestion.priority,
-            description: suggestion.description
-          }
-        };
+  for (const suggestion of suggestions) {
+  try {
+  const activity: Partial<Activity> = {
+  name: suggestion.name,
+  color: suggestion.suggestedColor,
+  isActive: false, // User needs to explicitly enable
+  createdBy: userId,
+  isSystemSuggested: true,
+  metadata: {
+  category: suggestion.category,
+  timeOfDay: suggestion.timeOfDay,
+  estimatedDuration: suggestion.estimatedDuration,
+  priority: suggestion.priority,
+  description: suggestion.description
+  }
+  };
 
         // Use the existing activity creation logic
         const createdActivity = await useActivitiesStore.getState().insertActivity(activity);

@@ -36,11 +36,14 @@ const CreateActivityDialog: React.FC<Props> = ({ _dialogId }) => {
   };
 
   return (
-    <ActivityForm ref={formRef as any} onSubmit={handleSubmit} onCancel={() => {
-      if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
-    }} />
+    <ActivityForm
+      ref={formRef as any}
+      onSubmit={handleSubmit}
+      onCancel={() => {
+        if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
+      }}
+    />
   );
 };
 
 export default CreateActivityDialog;
-

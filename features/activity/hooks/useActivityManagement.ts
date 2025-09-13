@@ -135,7 +135,9 @@ export const useActivityManagement = ({
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
       } catch (error) {
-        GlobalErrorHandler.logError(error, "ENABLE_ACTIVITY", { activityId: activity.id });
+        GlobalErrorHandler.logError(error, "ENABLE_ACTIVITY", {
+          activityId: activity.id,
+        });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
     },

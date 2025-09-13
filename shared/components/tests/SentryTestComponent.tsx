@@ -63,30 +63,47 @@ export function SentryTestComponent() {
       <View style={styles.header}>
         <Text style={styles.title}>🔧 Sentry Integration Test</Text>
         <Text style={styles.subtitle}>
-          Test the GlobalErrorHandler integration with Sentry. In development, 
-          errors will be logged to console. In production, they'll be sent to Sentry.
+          Test the GlobalErrorHandler integration with Sentry. In development,
+          errors will be logged to console. In production, they'll be sent to
+          Sentry.
         </Text>
       </View>
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={[styles.button, styles.errorButton]} onPress={testErrorLogging}>
+        <TouchableOpacity
+          style={[styles.button, styles.errorButton]}
+          onPress={testErrorLogging}
+        >
           <Text style={styles.buttonText}>🚨 Test Error Logging</Text>
           <Text style={styles.buttonDescription}>Logs a test error</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.button, styles.warningButton]} onPress={testWarningLogging}>
+        <TouchableOpacity
+          style={[styles.button, styles.warningButton]}
+          onPress={testWarningLogging}
+        >
           <Text style={styles.buttonText}>⚠️ Test Warning Logging</Text>
           <Text style={styles.buttonDescription}>Logs a test warning</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.button, styles.breadcrumbButton]} onPress={testBreadcrumbs}>
+        <TouchableOpacity
+          style={[styles.button, styles.breadcrumbButton]}
+          onPress={testBreadcrumbs}
+        >
           <Text style={styles.buttonText}>🍞 Test Breadcrumbs</Text>
-          <Text style={styles.buttonDescription}>Adds debugging breadcrumbs</Text>
+          <Text style={styles.buttonDescription}>
+            Adds debugging breadcrumbs
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.button, styles.userButton]} onPress={testUserContext}>
+        <TouchableOpacity
+          style={[styles.button, styles.userButton]}
+          onPress={testUserContext}
+        >
           <Text style={styles.buttonText}>👤 Test User Context</Text>
-          <Text style={styles.buttonDescription}>Sets user context for errors</Text>
+          <Text style={styles.buttonDescription}>
+            Sets user context for errors
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

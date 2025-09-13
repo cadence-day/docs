@@ -8,7 +8,10 @@ type Props = {
 };
 
 // Minimal placeholder picker: accepts a URL and previews it.
-export const ProfileImagePicker: React.FC<Props> = ({ currentImageUrl, onPick }) => {
+export const ProfileImagePicker: React.FC<Props> = ({
+  currentImageUrl,
+  onPick,
+}) => {
   const [value, setValue] = React.useState<string>(currentImageUrl || "");
   return (
     <View style={styles.container}>
@@ -26,7 +29,12 @@ export const ProfileImagePicker: React.FC<Props> = ({ currentImageUrl, onPick })
       ) : (
         <View style={[styles.preview, styles.previewPlaceholder]} />
       )}
-      <CdButton title="Use Photo" onPress={() => onPick(value)} variant="primary" fullWidth />
+      <CdButton
+        title="Use Photo"
+        onPress={() => onPick(value)}
+        variant="primary"
+        fullWidth
+      />
     </View>
   );
 };
@@ -45,4 +53,3 @@ const styles = StyleSheet.create({
 });
 
 export default ProfileImagePicker;
-

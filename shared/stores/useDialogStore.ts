@@ -158,13 +158,13 @@ const useDialogStore = create<DialogStore>(
           const viewSpecificDialogs = Object.values(state.dialogs).filter(
             (dialog) => dialog.viewSpecific === state.currentView
           );
-          
+
           // Store the dialogs for the previous view
           const updatedViewSpecificDialogs = {
             ...state.viewSpecificDialogs,
             [state.currentView]: viewSpecificDialogs,
           };
-          
+
           // Remove view-specific dialogs from active dialogs
           const remainingDialogs: Record<DialogId, DialogSpec> = {};
           Object.entries(state.dialogs).forEach(([id, dialog]) => {
@@ -172,14 +172,14 @@ const useDialogStore = create<DialogStore>(
               remainingDialogs[id] = dialog;
             }
           });
-          
+
           return {
             currentView: viewName,
             dialogs: remainingDialogs,
             viewSpecificDialogs: updatedViewSpecificDialogs,
           };
         }
-        
+
         return { currentView: viewName };
       }),
 
@@ -189,15 +189,15 @@ const useDialogStore = create<DialogStore>(
         const viewSpecificDialogs = Object.values(state.dialogs).filter(
           (dialog) => dialog.viewSpecific === viewName
         );
-        
+
         if (viewSpecificDialogs.length === 0) return state;
-        
+
         // Store the dialogs for later restoration
         const updatedViewSpecificDialogs = {
           ...state.viewSpecificDialogs,
           [viewName]: viewSpecificDialogs,
         };
-        
+
         // Remove view-specific dialogs from active dialogs
         const remainingDialogs: Record<DialogId, DialogSpec> = {};
         Object.entries(state.dialogs).forEach(([id, dialog]) => {
@@ -205,7 +205,7 @@ const useDialogStore = create<DialogStore>(
             remainingDialogs[id] = dialog;
           }
         });
-        
+
         return {
           dialogs: remainingDialogs,
           viewSpecificDialogs: updatedViewSpecificDialogs,
@@ -216,19 +216,19 @@ const useDialogStore = create<DialogStore>(
     restoreViewSpecificDialogs: (viewName: string) =>
       set((state: DialogStore) => {
         const storedDialogs = state.viewSpecificDialogs[viewName];
-        
+
         if (!storedDialogs || storedDialogs.length === 0) return state;
-        
+
         // Restore the dialogs
         const restoredDialogs: Record<DialogId, DialogSpec> = {};
         storedDialogs.forEach((dialog) => {
           restoredDialogs[dialog.id] = dialog;
         });
-        
+
         // Remove from stored dialogs
         const updatedViewSpecificDialogs = { ...state.viewSpecificDialogs };
         delete updatedViewSpecificDialogs[viewName];
-        
+
         return {
           dialogs: { ...state.dialogs, ...restoredDialogs },
           viewSpecificDialogs: updatedViewSpecificDialogs,

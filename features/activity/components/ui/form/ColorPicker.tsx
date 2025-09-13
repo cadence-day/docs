@@ -1,5 +1,12 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Modal, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Modal,
+  Platform,
+} from "react-native";
 import { ColorPicker as ExpoColorPicker, Host } from "@expo/ui/swift-ui";
 import { ACTIVITY_THEME } from "../../../constants";
 import { useI18n } from "@/shared/hooks/useI18n";

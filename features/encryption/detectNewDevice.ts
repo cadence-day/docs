@@ -68,7 +68,10 @@ export async function checkAndPromptEncryptionLinking(userId: string | null) {
       });
     }
   } catch (error) {
-    GlobalErrorHandler.logError(error as Error, "ENCRYPTION_DETECT_NEW_DEVICE", {});
+    GlobalErrorHandler.logError(
+      error as Error,
+      "ENCRYPTION_DETECT_NEW_DEVICE",
+      {}
+    );
   }
 }
-

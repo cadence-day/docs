@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { ProfileFormData, ProfileSettings } from '../types';
+import { create } from "zustand";
+import { ProfileFormData, ProfileSettings } from "../types";
 
 interface ProfileStore {
   // Profile data state
@@ -17,22 +17,22 @@ interface ProfileStore {
 }
 
 const initialProfileData: ProfileFormData = {
-  name: '',
-  username: '',
-  email: '',
-  phoneNumber: '',
-  avatarUrl: '',
+  name: "",
+  username: "",
+  email: "",
+  phoneNumber: "",
+  avatarUrl: "",
 };
 
 const initialSettings: ProfileSettings = {
-  wakeTime: '07:30',
-  sleepTime: '23:30',
+  wakeTime: "07:30",
+  sleepTime: "23:30",
   notifications: {
     morningReminders: true,
     eveningReminders: false,
     weeklyStreaks: true,
   },
-  subscriptionPlan: 'free',
+  subscriptionPlan: "free",
 };
 
 export const useProfileStore = create<ProfileStore>((set, get) => ({
@@ -50,13 +50,13 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
 
   updateSettings: (newSettings: Partial<ProfileSettings>) =>
     set((state) => ({
-      settings: { 
-        ...state.settings, 
+      settings: {
+        ...state.settings,
         ...newSettings,
         // Handle nested notifications object properly
-        notifications: newSettings.notifications 
+        notifications: newSettings.notifications
           ? { ...state.settings.notifications, ...newSettings.notifications }
-          : state.settings.notifications
+          : state.settings.notifications,
       },
     })),
 
