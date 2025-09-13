@@ -216,5 +216,52 @@
   "no-active-activities": "There are sadly no active activities",
   "back-to-today": "Back to today",
   "common.saving": "Saving",
-  "done": "Done"
+  "done": "Done",
+  "profile": {
+    "edit-photo": "Edit Profile Photo",
+    "name": "Name",
+    "username": "Username",
+    "email": "Email",
+    "phone": "Phone Number",
+    "notifications": "Notifications",
+    "wake-time": "Wake up at",
+    "sleep-time": "Go to sleep",
+    "subscription": "Subscription plan",
+    "security": "Security",
+    "security-settings": "Security & Privacy",
+    "customer-support": "Customer Support",
+    "app-info": "App Information",
+    "app-version": "App Version",
+    "user-id": "User ID",
+    "free": "Free",
+    "deep-cadence": "Deep Cadence",
+    "subscription-plan": "Subscription Plan",
+    "set-wake-time": "Set Wake Up Time",
+    "set-sleep-time": "Set Sleep Time",
+    "deep-cadence-description": "Unlock deeper insights and enhanced personalization to make the most of your daily reflection journey.",
+    "whats-inside": "What's inside:",
+    "upgrade-now": "Upgrade now",
+    "current-plan": "Current Plan",
+    "subscription-footer": "Take control of your daily reflection and design the life you want to live.",
+    "support": {
+      "category": "Category",
+      "message": "Message",
+      "message-required": "Please enter a message",
+      "message-placeholder": "Tell us what happened. What did you expect? Any suggestions for improvement?",
+      "general": "General",
+      "bug": "Bug Report",
+      "feature": "Feature Request",
+      "submit": "Send Feedback",
+      "success": "Feedback Sent!",
+      "success-message": "Thank you for your feedback. It helps us improve the app!",
+      "error-message": "Unable to send feedback. Please try again later."
+    }
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "error": "Error",
+    "submitting": "Submitting..."
+  }
 }
