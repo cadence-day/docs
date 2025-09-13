@@ -18,7 +18,7 @@ export interface ActivitiesProps {
   onActivityPress?: ActivityHandler;
   onActivityLongPress?: ActivityHandler;
   onEditActivity?: ActivityHandler;
-  onDeleteActivity?: ActivityIdHandler;
+  onDisableActivity?: ActivityIdHandler;
   onAddActivity?: VoidHandler;
   gridConfig?: Partial<GridConfig>;
 }
@@ -35,7 +35,7 @@ export interface EditActivitiesViewProps {
   onDragStateChange?: (isDragging: boolean) => void;
   gridConfig?: Partial<GridConfig>;
   onAddActivity?: VoidHandler;
-  onDeleteActivity?: ActivityIdHandler;
+  onDisableActivity?: ActivityIdHandler;
 }
 
 export interface ActivityBoxProps {
@@ -67,7 +67,7 @@ export interface DraggableActivityItemProps {
   isShakeMode: boolean;
   draggedActivityId: string | null;
   dragPlaceholderIndex: number | null;
-  onDeleteActivity: ActivityIdHandler;
+  onDisableActivity: ActivityIdHandler;
 }
 
 // Dialog types

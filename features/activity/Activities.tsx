@@ -20,7 +20,7 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
       gridConfig,
       onAddActivity,
       onEditActivity,
-      onDeleteActivity,
+      onDisableActivity,
     },
     ref
   ) => {
@@ -82,7 +82,7 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
           onActivityPress={handleActivityPress}
           gridConfig={effectiveGridConfig}
           onAddActivity={onAddActivity}
-          onDeleteActivity={onDeleteActivity}
+          onDisableActivity={onDisableActivity}
         />
       );
     }

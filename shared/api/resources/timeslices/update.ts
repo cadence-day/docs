@@ -29,3 +29,28 @@ export async function updateTimeslice(
     handleApiError("updateTimeslice", error);
   }
 }
+
+/**
+ * Bulk reassigns a list of timeslices to a new activity id.
+ * Returns the updated timeslices.
+ */
+export async function reassignTimeslicesActivity(
+  timesliceIds: string[],
+  newActivityId: string
+): Promise<Timeslice[]> {
+  if (!Array.isArray(timesliceIds) || timesliceIds.length === 0) {
+    return [];
+  }
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .update({ activity_id: newActivityId })
+        .in("id", timesliceIds)
+        .select();
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("reassignTimeslicesActivity", error);
+  }
+}

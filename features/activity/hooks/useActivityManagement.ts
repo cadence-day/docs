@@ -1,4 +1,5 @@
 import { useActivitiesStore } from "@/shared/stores";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import type { Activity } from "@/shared/types/models/activity";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
@@ -34,8 +35,9 @@ interface UseActivityManagementReturn {
   setIsShakeMode: (enabled: boolean) => void;
 
   // Activity management operations
-  handleDeleteActivity: (activityId: string) => Promise<void>;
+  handleDisableActivity: (activityId: string) => Promise<void>;
   handleEnableActivity: (activity: Activity) => Promise<void>;
+  handleSoftDeleteActivity: (activityId: string) => Promise<void>;
   isSavingOrder: boolean;
   isLoading: boolean;
 }
@@ -110,7 +112,7 @@ export const useActivityManagement = ({
   });
 
   // Activity management operations
-  const handleDeleteActivity = useCallback(
+  const handleDisableActivity = useCallback(
     async (activityId: string) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
@@ -118,7 +120,7 @@ export const useActivityManagement = ({
         await disableActivity(activityId);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch (error) {
-        console.error("Error disabling activity:", error);
+        GlobalErrorHandler.logError(error, "DISABLE_ACTIVITY", { activityId });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
     },
@@ -133,7 +135,7 @@ export const useActivityManagement = ({
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
       } catch (error) {
-        console.error("Error enabling activity:", error);
+        GlobalErrorHandler.logError(error, "ENABLE_ACTIVITY", { activityId: activity.id });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
     },
@@ -148,8 +150,9 @@ export const useActivityManagement = ({
     ...dragOperations,
 
     // Activity management
-    handleDeleteActivity,
+    handleDisableActivity,
     handleEnableActivity,
+    handleSoftDeleteActivity: async (_: string) => {},
     isSavingOrder,
     isLoading,
   };

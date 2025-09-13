@@ -6,19 +6,13 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "day.cadence",
-    "deepLinking": true,
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "description": "A mobile app for recording daily activities and reflections",
-    "privacy": "unlisted",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "day.cadence.mobile",
-      "associatedDomains": [
-        "applinks:app.cadence.day",
-        "applinks:app.cadence.day"
-      ],
-      "useAppleSignIn": true,
+      "associatedDomains": ["applinks:app.cadence.day"],
       "icon": {
         "dark": "./assets/images/ios-dark.png",
         "light": "./assets/images/ios-light.png",

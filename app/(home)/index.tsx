@@ -47,9 +47,8 @@ export default function Today() {
   useEffect(() => {
     const openActivityLegend = () => {
       const id = useDialogStore.getState().openDialog({
-        type: "activity",
+        type: "activity-legend",
         props: {
-          mode: "legend",
           preventClose: true, // Make it persistent
         },
         position: "dock",
@@ -64,7 +63,7 @@ export default function Today() {
     // Check if activity dialog already exists
     const existingActivityDialog = Object.values(
       useDialogStore.getState().dialogs
-    ).find((dialog) => dialog.type === "activity" && dialog.viewSpecific === "index");
+    ).find((dialog) => dialog.type === "activity-legend" && dialog.viewSpecific === "index");
 
     if (!existingActivityDialog) {
       // Small delay to ensure stores are ready
@@ -79,7 +78,7 @@ export default function Today() {
   useEffect(() => {
     const unsubscribe = useDialogStore.subscribe((state) => {
       const hasActivityDialog = Object.values(state.dialogs).some(
-        (dialog) => dialog.type === "activity" && dialog.viewSpecific === "index"
+        (dialog) => dialog.type === "activity-legend" && dialog.viewSpecific === "index"
       );
       setIsActivityDialogOpen(hasActivityDialog);
     });
@@ -90,9 +89,8 @@ export default function Today() {
   // Function to reopen activity dialog
   const reopenActivityDialog = () => {
     useDialogStore.getState().openDialog({
-      type: "activity",
+      type: "activity-legend",
       props: {
-        mode: "legend",
         preventClose: true,
       },
       position: "dock",

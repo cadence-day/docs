@@ -8,6 +8,8 @@ import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
 import { Text, View } from "react-native";
+import { useUser } from "@clerk/clerk-expo";
+import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({
@@ -50,12 +52,28 @@ export default function TabLayout() {
   const { t } = useI18n();
   const segments = useSegments();
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
+  const { user } = useUser();
+  const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
 
   // Track current view based on segments
   useEffect(() => {
     const currentView = segments[segments.length - 1] || 'index';
     setCurrentView(currentView);
   }, [segments, setCurrentView]);
+
+  // On initial mount when signed-in, perform a one-time new-device check
+  useEffect(() => {
+    if (didCheckEncryption) return;
+    // Only probe on the Today tab (index)
+    const currentView = segments[segments.length - 1] || 'index';
+    if (currentView !== 'index') return;
+    const userId = user?.id ?? null;
+    (async () => {
+      await checkAndPromptEncryptionLinking(userId);
+      setDidCheckEncryption(true);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, segments, didCheckEncryption]);
 
   return (
     <>

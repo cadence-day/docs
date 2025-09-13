@@ -30,7 +30,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
   isShakeMode,
   draggedActivityId,
   dragPlaceholderIndex,
-  onDeleteActivity,
+  onDisableActivity,
 }) => {
   const shakeAnim = useRef(new Animated.Value(0)).current;
   const rotationAnim = useRef(new Animated.Value(0)).current;
@@ -240,7 +240,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
               shadowRadius: 2,
               elevation: 3,
             }}
-            onPress={() => activity.id && onDeleteActivity(activity.id)}
+            onPress={() => activity.id && onDisableActivity(activity.id)}
             activeOpacity={0.7}
           >
             <Ionicons name="remove" size={10} color="#000" />

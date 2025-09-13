@@ -19,6 +19,7 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
   onDragStateChange,
   gridConfig,
   onAddActivity,
+  onDisableActivity,
 }) => {
   const { t } = useI18n();
   const [containerWidth, setContainerWidth] = useState(350);
@@ -39,7 +40,7 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
     handleReorder,
     handlePlaceholderChange,
     setIsShakeMode,
-    handleDeleteActivity,
+    handleDisableActivity,
     handleEnableActivity,
     isSavingOrder,
     isLoading,
@@ -183,7 +184,7 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
                 isShakeMode={isShakeMode}
                 draggedActivityId={draggedActivityId}
                 dragPlaceholderIndex={dragPlaceholderIndex}
-                onDeleteActivity={handleDeleteActivity}
+                onDisableActivity={onDisableActivity ?? handleDisableActivity}
               />
             )}
           />
@@ -268,7 +269,7 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
                     try {
                       await handleEnableActivity(activity);
                     } catch (error) {
-                      console.error("Error enabling activity:", error);
+                      GlobalErrorHandler.logError(error, "ENABLE_ACTIVITY", { activityId: activity.id });
                     }
                   }}
                   activeOpacity={0.7}
@@ -285,3 +286,4 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
 };
 
 export default EditActivitiesView;
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";

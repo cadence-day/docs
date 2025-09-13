@@ -1,13 +1,8 @@
-import React, { useCallback } from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  FlatList,
-  Pressable,
-  StyleSheet,
-} from 'react-native';
-import { ACTIVITY_COLOR_PALETTE, ACTIVITY_THEME } from '../../../constants';
+import React, { useCallback, useState } from "react";
+import { View, StyleSheet, TouchableOpacity, Text, Modal, Platform } from "react-native";
+import { ColorPicker as ExpoColorPicker, Host } from "@expo/ui/swift-ui";
+import { ACTIVITY_THEME } from "../../../constants";
+import { useI18n } from "@/shared/hooks/useI18n";
 
 interface ColorPickerProps {
   selectedColor: string;
@@ -17,62 +12,54 @@ interface ColorPickerProps {
   buttonText: string;
 }
 
-export const ColorPicker = React.memo<ColorPickerProps>(({
-  selectedColor,
-  onColorChange,
-  disabled = false,
-  label,
-  buttonText,
-}) => {
-  const [showPicker, setShowPicker] = React.useState(false);
+// Wrapper that prefers an Expo/third‑party ColorPicker if present, with a
+// graceful fallback to our palette grid without adding new deps at build time.
+export const ColorPicker = React.memo<ColorPickerProps>(
+  ({ selectedColor, onColorChange, disabled = false, label, buttonText }) => {
+    const { t } = useI18n();
+    const [visible, setVisible] = useState(false);
 
-  const handleTogglePicker = useCallback(() => {
-    setShowPicker(prev => !prev);
-  }, []);
+    const open = useCallback(() => setVisible(true), []);
+    const close = useCallback(() => setVisible(false), []);
 
-  const handleColorSelect = useCallback((color: string) => {
-    onColorChange(color);
-    setShowPicker(false);
-  }, [onColorChange]);
+    return (
+      <View style={styles.container}>
+        <Text style={styles.label}>{label}</Text>
+        <TouchableOpacity
+          style={[styles.colorButton, { backgroundColor: selectedColor }]}
+          onPress={open}
+          disabled={disabled}
+        >
+          <Text style={styles.colorButtonText}>{buttonText}</Text>
+        </TouchableOpacity>
 
-  const renderColorOption = useCallback(({ item: color }: { item: string }) => (
-    <Pressable
-      style={[
-        styles.colorOption,
-        { backgroundColor: color },
-        color === selectedColor && styles.selectedColor,
-      ]}
-      onPress={() => handleColorSelect(color)}
-    />
-  ), [selectedColor, handleColorSelect]);
+        <Modal
+          visible={visible}
+          animationType={Platform.OS === "ios" ? "slide" : "fade"}
+          transparent
+          onRequestClose={close}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalBody}>
+              <Host style={styles.host}>
+                <ExpoColorPicker
+                  label={label}
+                  selection={selectedColor}
+                  onValueChanged={onColorChange}
+                />
+              </Host>
+              <TouchableOpacity style={styles.modalClose} onPress={close}>
+                <Text style={styles.modalCloseText}>{t("common.cancel")}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    );
+  }
+);
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <TouchableOpacity
-        style={[styles.colorButton, { backgroundColor: selectedColor }]}
-        onPress={handleTogglePicker}
-        disabled={disabled}
-      >
-        <Text style={styles.colorButtonText}>{buttonText}</Text>
-      </TouchableOpacity>
-
-      {showPicker && !disabled && (
-        <View style={styles.colorGrid}>
-          <FlatList
-            data={ACTIVITY_COLOR_PALETTE}
-            numColumns={5}
-            keyExtractor={(item) => item}
-            renderItem={renderColorOption}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
-      )}
-    </View>
-  );
-});
-
-ColorPicker.displayName = 'ColorPicker';
+ColorPicker.displayName = "ColorPicker";
 
 const styles = StyleSheet.create({
   container: {
@@ -103,21 +90,36 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
-  colorGrid: {
-    marginTop: 10,
+  host: {
+    width: "100%",
+    height: 220,
+    borderRadius: 12,
     backgroundColor: ACTIVITY_THEME.FORM_BG,
-    borderRadius: 8,
-    padding: 10,
+    overflow: "hidden",
   },
-  colorOption: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    margin: 5,
-    borderWidth: 2,
-    borderColor: "transparent",
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
-  selectedColor: {
-    borderColor: ACTIVITY_THEME.WHITE,
+  modalBody: {
+    width: "100%",
+    maxWidth: 520,
+    borderRadius: 12,
+    backgroundColor: ACTIVITY_THEME.FORM_BG,
+    padding: 12,
+  },
+  modalClose: {
+    alignSelf: "flex-end",
+    marginTop: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: "#333",
+  },
+  modalCloseText: {
+    color: ACTIVITY_THEME.WHITE,
   },
 });

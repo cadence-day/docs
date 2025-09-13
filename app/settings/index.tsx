@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import useDialogStore from "@/shared/stores/useDialogStore";
 
 export default function SettingsPage() {
   const { logDebug } = useErrorHandler();
@@ -20,6 +21,7 @@ export default function SettingsPage() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [healthDataAccess, setHealthDataAccess] = useState(false);
   const router = useRouter();
+  const openDialog = useDialogStore((s) => s.openDialog);
 
   const toggleNotifications = () => {
     setNotificationsEnabled(!notificationsEnabled);
@@ -118,6 +120,32 @@ export default function SettingsPage() {
             isButton={true}
             onPress={() => Alert.alert("Coming Soon", "Privacy settings will be available soon")}
             buttonIcon="shield-checkmark"
+          />
+        </View>
+
+        {/* Security & Encryption */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Security & Encryption</Text>
+
+          <CdTextInputOneLine
+            label="Link Device (Encryption)"
+            value="Open linking dialog"
+            isButton={true}
+            onPress={() => {
+              openDialog({
+                type: "encryption-link",
+                props: {
+                  height: 80,
+                  enableDragging: true,
+                  headerProps: { title: "Link This Device" },
+                },
+                position: "dock",
+                viewSpecific: "index",
+              });
+              // Navigate to Today so the dialog host can render it immediately
+              try { router.replace("/(home)/index"); } catch {}
+            }}
+            buttonIcon="key"
           />
         </View>
 

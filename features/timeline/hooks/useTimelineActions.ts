@@ -73,7 +73,7 @@ export const useTimelineActions = (opts?: {
 
         // Find existing activity dialog and enter picking mode
         const activityDialog = Object.values(getDialogs()).find(
-          (dialog) => dialog.type === "activity"
+          (dialog) => dialog.type === "activity-legend"
         );
 
         // First, collapse/close other dialogs to ensure only one container is expanded
@@ -105,18 +105,17 @@ export const useTimelineActions = (opts?: {
             toggleCollapse(activityDialog.id);
           }
 
-          // Call the enterPickingMode function if it exists
-          const props = activityDialog.props;
-          if (props && typeof props.enterPickingMode === "function") {
-            try {
-              props.enterPickingMode();
-            } catch (err) {
-              GlobalErrorHandler.logWarning(
-                "enterPickingMode threw",
-                "TIMELINE_DIALOGS",
-                { error: err }
-              );
-            }
+          // Set picking mode on the dialog so it updates its header
+          try {
+            useDialogStore.getState().setDialogProps(activityDialog.id, {
+              isPickingMode: true,
+            });
+          } catch (err) {
+            GlobalErrorHandler.logWarning(
+              "setDialogProps failed",
+              "TIMELINE_DIALOGS",
+              { id: activityDialog.id, error: err }
+            );
           }
 
           // Bring the dialog to front
@@ -132,9 +131,8 @@ export const useTimelineActions = (opts?: {
         } else {
           // Fallback: open new dialog if none exists
           openDialog({
-            type: "activity",
+            type: "activity-legend",
             props: {
-              mode: "legend",
               isPickingMode: true,
               preventClose: true,
             },
