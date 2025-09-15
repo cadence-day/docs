@@ -54,10 +54,64 @@ export default function TabLayout() {
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
 
-  // Track current view based on segments
+  // Consolidated effect to track view and manage ActivityLegendDialog
   useEffect(() => {
-    const currentView = segments[segments.length - 1] || "index";
+    const currentSegment = segments[segments.length - 1] || "index";
+    const currentView = String(currentSegment ?? "index");
+
+    // Check if we're on the home/index view - could be "index" or undefined (default route)
+    const isHomeView =
+      currentView === "index" ||
+      segments.length === 1 ||
+      (segments.length === 2 && segments[0] === "(home)" && !segments[1]);
+
+    // Update the current view in the store
     setCurrentView(currentView);
+
+    // Manage ActivityLegendDialog visibility with a small delay to ensure store is ready
+    const timeoutId = setTimeout(() => {
+      const dialogStore = useDialogStore.getState();
+      const dialogs = dialogStore.dialogs;
+      const activityLegendDialog = Object.values(dialogs).find(
+        (d) => d.type === "activity-legend"
+      );
+
+      console.log(
+        `[Dialog Manager] Segments: [${segments.join(", ")}], Current view: ${currentView}, Is Home: ${isHomeView}, Dialog exists: ${!!activityLegendDialog}`
+      );
+
+      if (isHomeView) {
+        // Always ensure dialog is open on home/index view
+        if (!activityLegendDialog) {
+          console.log(
+            "[Dialog Manager] Opening activity legend dialog for home view"
+          );
+          dialogStore.openDialog({
+            type: "activity-legend",
+            props: {
+              preventClose: true,
+            },
+            position: "dock",
+          });
+        } else {
+          console.log(
+            "[Dialog Manager] Activity legend dialog already exists on home view"
+          );
+        }
+      } else {
+        // Always close dialog on other views
+        if (activityLegendDialog) {
+          console.log(
+            "[Dialog Manager] Closing activity legend dialog (not on home view)"
+          );
+          dialogStore.closeDialog(activityLegendDialog.id, true);
+        } else {
+          console.log("[Dialog Manager] No activity legend dialog to close");
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
   }, [segments, setCurrentView]);
 
   // On initial mount when signed-in, perform a one-time new-device check

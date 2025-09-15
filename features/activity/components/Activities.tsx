@@ -4,10 +4,10 @@ import type { Activity } from "@/shared/types/models/activity";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
-import { EditActivitiesView } from "./components";
-import { ActivityGridView, ErrorState, LoadingState } from "./components/ui";
-import { createDefaultGridConfig } from "./components/utils/gridUtils";
-import { useActivitiesActions, useActivitiesData } from "./hooks";
+import { EditActivitiesView } from ".";
+import { useActivitiesActions, useActivitiesData } from "../hooks";
+import { ActivityGridView, ErrorState, LoadingState } from "./ui";
+import { createDefaultGridConfig } from "./utils/gridUtils";
 
 export interface ActivitiesRef {
   refresh: () => Promise<void>;

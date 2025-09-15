@@ -1,4 +1,4 @@
-import Activities from "@/features/activity/Activities";
+import Activities from "@/features/activity/components/Activities";
 import { useI18n } from "@/shared/hooks/useI18n";
 import { useDialogStore } from "@/shared/stores";
 import React, { useCallback, useEffect } from "react";

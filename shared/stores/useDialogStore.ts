@@ -24,7 +24,7 @@ interface DialogStore {
   closeAll: () => void;
   // Force close all dialogs, ignoring any preventClose flags.
   forceCloseAll: () => void;
-  closeDialog: (id: DialogId) => void;
+  closeDialog: (id: DialogId, force?: boolean) => void;
   toggleCollapse: (id: DialogId) => void;
   bringToFront: (id: DialogId) => void;
   setDialogProps: (id: DialogId, props: Record<string, any>) => void;
@@ -100,12 +100,12 @@ const useDialogStore = create<DialogStore>(
     // Force close all dialogs (clear the map entirely)
     forceCloseAll: () => set(() => ({ dialogs: {} })),
 
-    closeDialog: (id: DialogId) =>
+    closeDialog: (id: DialogId, force?: boolean) =>
       set((state: DialogStore) => {
         const d = state.dialogs[id];
         if (!d) return state as any;
-        // Respect preventClose flag on dialogs
-        if (d.props?.preventClose) return state as any;
+        // Respect preventClose flag on dialogs unless forced
+        if (d.props?.preventClose && !force) return state as any;
         const copy = { ...state.dialogs };
         delete copy[id];
         return { dialogs: copy };

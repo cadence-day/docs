@@ -1,6 +1,6 @@
-import Activities from "@/features/activity/Activities";
+import Activities from "@/features/activity/components/Activities";
 import { useI18n } from "@/shared/hooks/useI18n";
-import { useDialogStore, useSelectionStore } from "@/shared/stores";
+import { useDialogStore } from "@/shared/stores";
 import React, { useCallback, useEffect, useState } from "react";
 
 type Props = {
@@ -39,27 +39,6 @@ const ActivityLegendDialog: React.FC<Props> = ({
     },
     [t]
   );
-
-  // If dialog was opened in picking mode, watch for selection changes. When an
-  // activity is selected, exit picking mode and return to normal legend view.
-  const selectedActivityId = useSelectionStore((s) => s.selectedActivityId);
-
-  useEffect(() => {
-    if (!_dialogId) return;
-    if (!selectedActivityId) return;
-
-    // If we were in picking mode, clear it and return to legend view
-    try {
-      useDialogStore.getState().setDialogProps(_dialogId, {
-        isPickingMode: false,
-      });
-    } catch (err) {
-      // ignore errors - best effort
-    }
-
-    // Ensure local edit state is cleared
-    setIsEditMode(false);
-  }, [_dialogId, selectedActivityId]);
 
   // Handle mode changes to update dialog properties
   useEffect(() => {
