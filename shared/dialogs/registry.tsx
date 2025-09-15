@@ -4,6 +4,7 @@ import ColorPickerDialog from "@/features/activity/dialogs/ColorPickerDialog";
 import CreateActivityDialog from "@/features/activity/dialogs/CreateActivityDialog";
 import EditActivityDialog from "@/features/activity/dialogs/EditActivityDialog";
 import ManageActivitiesDialog from "@/features/activity/dialogs/ManageActivitiesDialog";
+import ReassignActivityDialog from "@/features/activity/dialogs/ReassignActivityDialog";
 import CalendarDialog from "@/features/calendar/CalendarDialog";
 import EncryptionLinkDialog from "@/features/encryption/EncryptionLinkDialog";
 import NoteDialog from "@/features/notes/NoteDialog";
@@ -18,6 +19,8 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   "activity-category-picker": CategoryPickerDialog,
   "activity-color-picker": ColorPickerDialog,
   "activity-edit": EditActivityDialog,
+  // Adding new dialog type mapping
+  "reassign-activity": ReassignActivityDialog,
   calendar: CalendarDialog,
   note: NoteDialog,
   "encryption-link": EncryptionLinkDialog,

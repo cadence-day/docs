@@ -1,10 +1,11 @@
-import React, { useRef, useState, useCallback, useMemo } from "react";
+import { useI18n } from "@/shared/hooks/useI18n";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
-  View,
   PanResponder,
-  TouchableWithoutFeedback,
-  Text,
   StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import { ACTIVITY_THEME, WEIGHT_CONFIG } from "../../../constants";
 import { getWeightDescription } from "../../../utils";
@@ -19,6 +20,7 @@ interface CustomSliderProps {
 
 export const CustomSlider = React.memo<CustomSliderProps>(
   ({ value, onValueChange, disabled = false, leftLabel, rightLabel }) => {
+    const { t } = useI18n();
     const sliderContainerRef = useRef<View>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [sliderLayout, setSliderLayout] = useState({
@@ -79,8 +81,8 @@ export const CustomSlider = React.memo<CustomSliderProps>(
       <View style={styles.container}>
         {/* Labels */}
         <View style={styles.labelsContainer}>
-          <Text style={styles.label}>{leftLabel}</Text>
-          <Text style={styles.label}>{rightLabel}</Text>
+          <Text style={styles.label}>{t(leftLabel)}</Text>
+          <Text style={styles.label}>{t(rightLabel)}</Text>
         </View>
 
         {/* Slider */}
@@ -119,7 +121,7 @@ export const CustomSlider = React.memo<CustomSliderProps>(
           </View>
         </TouchableWithoutFeedback>
 
-        <Text style={styles.weightDescription}>{weightDescription}</Text>
+        <Text style={styles.weightDescription}>{t(weightDescription)}</Text>
       </View>
     );
   }

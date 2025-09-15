@@ -263,5 +263,8 @@
   "activity.color-picker.lock-hue": "Locked",
   "back": "Back",
   "color": "Color",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "activity.legend.reassignTitle": "Reassigned previous timeslices",
+  "validate": "Confirm",
+  "activity.legend.editActivity": "Edit activity"
 }

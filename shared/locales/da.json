@@ -217,5 +217,6 @@
   "active-activities": "Aktive aktiviteter",
   "no-active-activities": "Der er desværre ingen aktive aktiviteter",
   "back-to-today": "Tilbage til i dag",
-  "cancel": "Tilbage"
+  "cancel": "Tilbage",
+  "validate": "Bekræft"
 }
