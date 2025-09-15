@@ -192,5 +192,35 @@
   "welcome": "Willkommen",
   "welcome-back": "Willkommen zurück,",
   "weve-sent-a-verification-code-to": "Wir haben einen Verifizierungscode an gesendet",
-  "yesterday": "GESTERN"
+  "yesterday": "GESTERN",
+  "activity": {
+    "color-picker": {
+      "done": "Fertig",
+      "title": "Farbe wählen"
+    },
+    "legend": {
+      "activities": "Aktivitäten",
+      "createActivity": "Aktivität erstellen",
+      "editActivities": "Aktivitäten bearbeiten",
+      "editActivity": "Aktivität bearbeiten",
+      "pickActivityCategory": "Aktivitätskategorie wählen",
+      "reassignTitle": "Vorherige Timeslices neu zuweisen"
+    },
+    "preview": "Aktivität"
+  },
+  "Are you sure you want to delete this activity? You can't undo this": {
+    "": "Sind Sie sicher, dass Sie diese Aktivität löschen möchten? Dies kann nicht rückgängig gemacht werden."
+  },
+  "back": "Zurück",
+  "cancel": "Abbrechen",
+  "choose_action": "Aktion wählen",
+  "color": "Farbe",
+  "common": {
+    "done": "Fertig",
+    "saving": "Speichern"
+  },
+  "This activity is used by timeslices": {
+    " Pick a replacement:": "Diese Aktivität wird von Timeslices verwendet. Wählen Sie einen Ersatz:"
+  },
+  "validate": "Bestätigen"
 }

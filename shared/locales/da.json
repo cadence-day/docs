@@ -148,7 +148,9 @@
       "editActivity": "Rediger aktivitet",
       "editActivities": "Rediger aktiviteter",
       "createActivity": "Opret aktivitet",
-      "reopen": "Åbn aktiviteter"
+      "reopen": "Åbn aktiviteter",
+      "pickActivityCategory": "Vælg aktivitetskategori",
+      "reassignTitle": "Gentildel tidligere timeslices"
     },
     "form": {
       "nameRequired": "Aktivitetsnavn er påkrævet",
@@ -156,7 +158,12 @@
       "idMissing": "Aktivitets-ID mangler",
       "updateFailed": "Opdatering af aktivitet mislykkedes",
       "createFailed": "Oprettelse af aktivitet mislykkedes"
-    }
+    },
+    "color-picker": {
+      "done": "Færdig",
+      "title": "Vælg farve"
+    },
+    "preview": "Aktivitet"
   },
   "common": {
     "save": "Gem",
@@ -165,7 +172,8 @@
     "cancel": "Annuller",
     "close": "Luk",
     "done": "Færdig",
-    "error": "Fejl"
+    "error": "Fejl",
+    "saving": "Gemmer"
   },
   "select-activity": "Vælg venligst en aktivitet først",
   "pick-activity-first": "Vælg en aktivitet først",
@@ -218,5 +226,14 @@
   "no-active-activities": "Der er desværre ingen aktive aktiviteter",
   "back-to-today": "Tilbage til i dag",
   "cancel": "Tilbage",
-  "validate": "Bekræft"
+  "validate": "Bekræft",
+  "Are you sure you want to delete this activity? You can't undo this": {
+    "": "Er du sikker på, at du vil slette denne aktivitet? Du kan ikke fortryde dette."
+  },
+  "back": "Tilbage",
+  "choose_action": "Vælg handling",
+  "color": "Farve",
+  "This activity is used by timeslices": {
+    " Pick a replacement:": "Denne aktivitet bruges af timeslices. Vælg en erstatning:"
+  }
 }

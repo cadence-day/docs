@@ -187,8 +187,15 @@
       "editActivity": "Edit Activity",
       "editActivities": "Edit Activities",
       "createActivity": "Create Activity",
+      "pickActivityCategory": "Pick an activity category",
+      "reassignTitle": "Reassign previous timeslices",
       "reopen": "Open Activities"
     },
+    "color-picker": {
+      "title": "Pick a color",
+      "done": "Done"
+    },
+    "preview": "Activity",
     "form": {
       "nameRequired": "Activity name is required",
       "categoryRequired": "Activity category is required",
@@ -202,7 +209,9 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "error": "Error",
-    "submitting": "Submitting..."
+    "submitting": "Submitting...",
+    "done": "Done",
+    "saving": "Saving"
   },
   "select-activity": "Please select an activity first",
   "pick-activity-first": "Pick an activity first",
@@ -249,22 +258,13 @@
   "drag-activities-to-reorder-them-in-the-grid": "Drag activities to reorder them in the grid",
   "saving-order": "Saving order...",
   "tap-x-to-disable-an-activity": "Tap \"-\" to temporarily disable an activity.",
-  "active-activities": "Activte Activities",
+  "active-activities": "Active Activities",
   "no-active-activities": "There are sadly no active activities",
   "back-to-today": "Back to today",
-  "common.saving": "Saving",
   "done": "Done",
-  "activity.legend.pickActivityCategory": "Pick an activity category",
-  "common.done": "Done",
-  "activity.legend.createActivity": "Create an activity",
-  "activity.color-picker.hue": "Hue",
-  "activity.color-picker.title": "Pick a color",
-  "activity.color-picker.done": "Done",
-  "activity.color-picker.lock-hue": "Locked",
   "back": "Back",
   "color": "Color",
   "cancel": "Cancel",
-  "activity.legend.reassignTitle": "Reassigned previous timeslices",
   "validate": "Confirm",
-  "activity.legend.editActivity": "Edit activity"
+  "choose_action": "Choose Action"
 }

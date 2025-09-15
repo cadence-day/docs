@@ -1,6 +1,10 @@
 import { useToast } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
-import { useSelectionStore, useTimeslicesStore } from "@/shared/stores";
+import {
+  useDialogStore,
+  useSelectionStore,
+  useTimeslicesStore,
+} from "@/shared/stores";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useEffect } from "react";
 import usePendingTimeslicesStore from "./usePendingTimeslicesStore";
@@ -95,6 +99,33 @@ export const useAutomaticTimesliceCreation = (opts?: {
                 });
 
           showSuccess(message);
+
+          // Close any activity legend dialog that is in picking mode
+          try {
+            const dialogs = useDialogStore.getState().dialogs;
+            const pickingDialog = Object.entries(dialogs).find(
+              ([_, dialog]) =>
+                dialog.type === "activity-legend" &&
+                dialog.props?.isPickingMode === true
+            );
+
+            if (pickingDialog) {
+              const [dialogId] = pickingDialog;
+              useDialogStore.getState().closeDialog(dialogId);
+
+              GlobalErrorHandler.logDebug(
+                "Closed picking mode dialog after successful timeslice creation",
+                "AUTOMATIC_TIMESLICE_CREATION:CLOSE_DIALOG",
+                { dialogId, createdCount: createdTimeslices.length }
+              );
+            }
+          } catch (err) {
+            GlobalErrorHandler.logWarning(
+              "Failed to close picking mode dialog",
+              "AUTOMATIC_TIMESLICE_CREATION:CLOSE_DIALOG",
+              { error: err }
+            );
+          }
 
           GlobalErrorHandler.logDebug(
             "Successfully created timeslices from pending selections",
