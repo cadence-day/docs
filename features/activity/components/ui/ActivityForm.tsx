@@ -3,6 +3,7 @@ import {
   useActivitiesStore,
   useActivityCategoriesStore,
 } from "@/shared/stores";
+import useDialogStore from "@/shared/stores/useDialogStore";
 import type { Activity } from "@/shared/types/models";
 import React, {
   forwardRef,
@@ -22,16 +23,17 @@ import {
 } from "react-native";
 import { ACTIVITY_THEME, WEIGHT_CONFIG } from "../../constants";
 import { useActivityValidation } from "../../hooks";
-import { ColorPicker } from "./form/ColorPicker";
 import { CustomSlider } from "./form/CustomSlider";
 import { FormInput } from "./form/FormInput";
 
 interface ActivityFormProps {
   initialValues?: Partial<Activity>;
+  activity?: Activity;
   onSubmit: (values: Partial<Activity>) => Promise<void>;
   onCancel: () => void;
   isSubmitting?: boolean;
   submitLabel?: string;
+  _dialogId?: string;
 }
 
 interface ActivityFormHandle {
@@ -98,11 +100,23 @@ const CategoryPicker = React.memo<{
         <Text style={styles.label}>
           {t("category")} <Text style={styles.required}>*</Text>
         </Text>
+
         <TouchableOpacity
-          style={styles.inputContainer}
+          style={[styles.inputContainer, styles.categoryInputContainer]}
           onPress={onToggle}
           disabled={disabled}
         >
+          {/* Color swatch */}
+          <View
+            style={[
+              styles.categorySwatch,
+              {
+                backgroundColor:
+                  selectedCategory?.color || ACTIVITY_THEME.GRAY_DARK,
+              },
+            ]}
+          />
+
           <Text
             style={[
               styles.textInput,
@@ -120,11 +134,34 @@ const CategoryPicker = React.memo<{
         </TouchableOpacity>
 
         {showPicker && !disabled && (
-          <View style={styles.pickerContainer}>
+          <View style={[styles.pickerContainer, styles.pickerContainerFull]}>
             <FlatList
               data={categories}
               keyExtractor={(item) => item.id || ""}
-              renderItem={renderCategoryItem}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={styles.categoryTile}
+                  onPress={() => {
+                    onCategorySelect(item.id || null);
+                    onToggle();
+                  }}
+                >
+                  <View
+                    style={[
+                      styles.categoryTileSwatch,
+                      {
+                        backgroundColor: item.color || ACTIVITY_THEME.GRAY_DARK,
+                      },
+                    ]}
+                  />
+                  <Text style={styles.categoryTileText}>
+                    {getCategoryDisplayName(item.key ?? item.id ?? "")}
+                  </Text>
+                </Pressable>
+              )}
+              numColumns={2}
+              columnWrapperStyle={styles.categoryRow}
+              scrollEnabled={false}
             />
           </View>
         )}
@@ -231,8 +268,19 @@ const ParentActivityPicker = React.memo<{
 ParentActivityPicker.displayName = "ParentActivityPicker";
 
 export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
-  ({ initialValues = {}, onSubmit, onCancel, isSubmitting = false }, ref) => {
+  (
+    {
+      initialValues = {},
+      activity,
+      onSubmit,
+      onCancel,
+      isSubmitting = false,
+      _dialogId,
+    },
+    ref
+  ) => {
     const { t } = useI18n();
+    // dialog is handled via the centralized dialog store
 
     // Form state
     const [name, setName] = useState(initialValues.name || "");
@@ -331,15 +379,44 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
     }, [validateField, name]);
 
     const handleCategoryToggle = useCallback(() => {
-      setShowCategoryPicker((prev) => {
-        const next = !prev;
-        // if we are opening the picker, validate
-        if (next) {
-          validateField("category", selectedCategoryId);
-        }
-        return next;
+      // Open full-screen category dialog using the centralized CdDialog registry
+      validateField("category", selectedCategoryId);
+
+      // Mark current dialog as persistent if we have a dialog ID
+      if (_dialogId) {
+        useDialogStore
+          .getState()
+          .setDialogProps(_dialogId, { preventClose: true });
+      }
+
+      useDialogStore.getState().openDialog({
+        type: "activity-category-picker",
+        props: {
+          onConfirm: (category: any) => {
+            setSelectedCategoryId(category?.id ?? null);
+            validateField("category", category?.id ?? null);
+
+            // Remove persistent flag from parent dialog after category selection
+            if (_dialogId) {
+              useDialogStore
+                .getState()
+                .setDialogProps(_dialogId, { preventClose: false });
+            }
+          },
+          activity: getActivityForDialogs(),
+        },
       });
-    }, [validateField, selectedCategoryId]);
+    }, [validateField, selectedCategoryId, _dialogId]);
+
+    // Helper to create an Activity-like object to pass into picker dialogs
+    const getActivityForDialogs = useCallback(() => {
+      if (activity) return activity;
+      return {
+        id: initialValues.id ?? "preview",
+        name: name || initialValues.name || "",
+        color,
+      } as Partial<Activity>;
+    }, [activity, initialValues.id, initialValues.name, name, color]);
 
     const handleCategorySelect = useCallback(
       (categoryId: string | null) => {
@@ -352,6 +429,34 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
     const handleParentToggle = useCallback(() => {
       setShowParentPicker((prev) => !prev);
     }, []);
+
+    const handleColorPickerOpen = useCallback(() => {
+      // Mark current dialog as persistent if we have a dialog ID
+      if (_dialogId) {
+        useDialogStore
+          .getState()
+          .setDialogProps(_dialogId, { preventClose: true });
+      }
+
+      useDialogStore.getState().openDialog({
+        type: "activity-color-picker",
+        props: {
+          initialColor: color,
+          categoryId: selectedCategoryId,
+          activity: getActivityForDialogs(),
+          onConfirm: (newColor: string) => {
+            setColor(newColor);
+
+            // Remove persistent flag from parent dialog after color selection
+            if (_dialogId) {
+              useDialogStore
+                .getState()
+                .setDialogProps(_dialogId, { preventClose: false });
+            }
+          },
+        },
+      });
+    }, [color, selectedCategoryId, _dialogId]);
 
     const handleSubmit = useCallback(async () => {
       const activity: Partial<Activity> = {
@@ -389,25 +494,10 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
       }),
       [handleSubmit]
     );
+    // Category selection is handled via the centralized CdDialog registry
 
     return (
       <View style={[styles.container, styles.contentContainer]}>
-        {/* Enable/Disable toggle for existing activities */}
-        {isEditingExisting && (
-          <View style={styles.statusToggleContainer}>
-            <TouchableOpacity
-              onPress={() => setStatus(isDisabled ? "ENABLED" : "DISABLED")}
-              disabled={isSubmitting}
-            >
-              <Text style={styles.statusToggleText}>
-                {isDisabled
-                  ? t("enable-activity")
-                  : t("temporarily-disable-activity")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
         {/* Name Input */}
         <FormInput
           label={t("name")}
@@ -435,24 +525,20 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
         />
 
         {/* Color Picker */}
-        <ColorPicker
-          selectedColor={color}
-          onColorChange={setColor}
-          disabled={isDisabled}
-          label="COLOR"
-          buttonText={t("tap-to-change-color")}
-        />
-
-        {/* Parent Activity Picker */}
-        <ParentActivityPicker
-          selectedParentId={selectedParentId}
-          onParentSelect={setSelectedParentId}
-          onToggle={handleParentToggle}
-          showPicker={showParentPicker}
-          disabled={isDisabled}
-          currentActivityId={initialValues.id ?? undefined}
-          t={t}
-        />
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>
+            {t("color")} <Text style={styles.required}>*</Text>
+          </Text>
+          <TouchableOpacity
+            style={[styles.colorButton, { backgroundColor: color }]}
+            onPress={handleColorPickerOpen}
+            disabled={isDisabled}
+          >
+            <Text style={styles.colorButtonText}>
+              {t("tap-to-change-color")}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Weight Slider */}
         <CustomSlider
@@ -526,6 +612,74 @@ const styles = StyleSheet.create({
     marginTop: 5,
     maxHeight: 150,
   },
+  pickerContainerFull: {
+    // allow the picker to fill remaining space in the form
+    flex: 1,
+    height: "100%",
+    padding: 12,
+  },
+  categoryInputContainer: {
+    alignItems: "center",
+    paddingVertical: 6,
+  },
+  categorySwatch: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: ACTIVITY_THEME.GRAY_DARK,
+  },
+  categoryRow: {
+    justifyContent: "space-between",
+  },
+  categoryTile: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    margin: 6,
+    backgroundColor: ACTIVITY_THEME.FORM_BG,
+    borderRadius: 8,
+  },
+  categoryTileSwatch: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: ACTIVITY_THEME.GRAY_DARK,
+  },
+  categoryTileText: {
+    color: ACTIVITY_THEME.WHITE,
+    fontSize: 13,
+    flexShrink: 1,
+  },
+  dialogOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    zIndex: 999,
+    paddingTop: 40,
+  },
+  dialogHeader: {
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: ACTIVITY_THEME.GRAY_DARK,
+  },
+  dialogCloseText: {
+    color: ACTIVITY_THEME.WHITE,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  dialogContent: {
+    flex: 1,
+    padding: 20,
+  },
   pickerItem: {
     padding: 12,
     borderBottomWidth: 1,
@@ -540,5 +694,19 @@ const styles = StyleSheet.create({
     color: ACTIVITY_THEME.ERROR_COLOR,
     marginTop: 6,
     marginLeft: 4,
+  },
+  colorButton: {
+    height: 36,
+    borderRadius: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  colorButtonText: {
+    color: ACTIVITY_THEME.WHITE,
+    fontSize: 14,
+    fontWeight: "500",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
 });

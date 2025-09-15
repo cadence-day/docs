@@ -1,4 +1,5 @@
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
+import useDialogStore from "@/shared/stores/useDialogStore";
 import { useErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import Constants from "expo-constants";
@@ -13,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import useDialogStore from "@/shared/stores/useDialogStore";
 
 export default function SettingsPage() {
   const { logDebug } = useErrorHandler();
@@ -163,7 +163,8 @@ export default function SettingsPage() {
               });
               // Navigate to Today so the dialog host can render it immediately
               try {
-                router.replace("/(home)/index");
+                // router.replace expects a strongly typed route; cast to any to keep existing runtime behavior
+                router.replace("/(home)/index" as unknown as any);
               } catch {}
             }}
             buttonIcon="key"

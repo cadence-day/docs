@@ -13,11 +13,28 @@ const CreateActivityDialog: React.FC<Props> = ({ _dialogId }) => {
   const insertActivity = useActivitiesStore((s) => s.insertActivity);
   const formRef = useRef<{ submit: () => void }>(null);
 
+  const handleBackToManage = () => {
+    if (_dialogId) {
+      useDialogStore.getState().closeDialog(_dialogId);
+    }
+    // Open manage activities dialog
+    useDialogStore.getState().openDialog({
+      type: "activity-manage",
+      position: "dock",
+      props: {
+        headerProps: { title: t("activity.legend.editActivities") },
+        height: 85,
+      },
+    });
+  };
+
   useEffect(() => {
     if (!_dialogId) return;
     useDialogStore.getState().setDialogProps(_dialogId, {
       headerProps: {
         title: t("activity.legend.createActivity"),
+        leftActionElement: t("back"),
+        onLeftAction: handleBackToManage,
         rightActionElement: t("save"),
         onRightAction: () => formRef.current?.submit(),
       },
@@ -38,6 +55,7 @@ const CreateActivityDialog: React.FC<Props> = ({ _dialogId }) => {
   return (
     <ActivityForm
       ref={formRef as any}
+      _dialogId={_dialogId}
       onSubmit={handleSubmit}
       onCancel={() => {
         if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);

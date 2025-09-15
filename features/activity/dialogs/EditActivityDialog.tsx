@@ -1,7 +1,11 @@
 import { ActivityForm } from "@/features/activity/components/ui/ActivityForm";
+import { getTimeslicesByActivityId } from "@/shared/api/resources/timeslices/get";
+import { reassignTimeslicesActivity } from "@/shared/api/resources/timeslices/update";
+import { CdButton } from "@/shared/components/CadenceUI";
 import { useI18n } from "@/shared/hooks/useI18n";
 import { useActivitiesStore, useDialogStore } from "@/shared/stores";
 import type { Activity } from "@/shared/types/models/activity";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import React, {
   useCallback,
   useEffect,
@@ -9,10 +13,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { getTimeslicesByActivityId } from "@/shared/api/resources/timeslices/get";
-import { reassignTimeslicesActivity } from "@/shared/api/resources/timeslices/update";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import {
+  ActionSheetIOS,
+  Alert,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type Props = {
   _dialogId?: string;
@@ -40,6 +48,10 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
         title: t("activity.legend.editActivity"),
         rightActionElement: t("save"),
         onRightAction: () => formRef.current?.submit(),
+        // Add a left/back action that closes the dialog without submitting
+        onLeftAction: () => {
+          useDialogStore.getState().closeDialog(_dialogId);
+        },
       },
       height: 85,
     });
@@ -139,6 +151,70 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
     );
   }, [performDeleteNow, t]);
 
+  const disableActivity = useActivitiesStore((s) => s.disableActivity);
+
+  const performDisable = useCallback(() => {
+    if (!activity?.id) return;
+    Alert.alert(
+      t("confirm"),
+      t("Are you sure you want to temporarily disable this activity?"),
+      [
+        { text: t("cancel"), style: "cancel" },
+        {
+          text: t("temporarily-disable-activity"),
+          style: "default",
+          onPress: async () => {
+            try {
+              await disableActivity(activity.id!);
+              if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
+            } catch (error) {
+              GlobalErrorHandler.logError(error, "DISABLE_ACTIVITY", {
+                activityId: activity.id,
+              });
+            }
+          },
+        },
+      ]
+    );
+  }, [activity?.id, disableActivity, _dialogId, t]);
+
+  const openDeleteMenu = useCallback(() => {
+    // Use native ActionSheet on iOS for contextual choices
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: [
+            t("cancel"),
+            t("temporarily-disable-activity"),
+            t("delete"),
+          ],
+          destructiveButtonIndex: 2,
+          cancelButtonIndex: 0,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 0) return;
+          if (buttonIndex === 1) return void performDisable();
+          if (buttonIndex === 2) return void performDelete();
+        }
+      );
+      return;
+    }
+
+    // Fallback for Android / other platforms: use simple Alert with choices
+    Alert.alert(t("choose_action"), "", [
+      { text: t("cancel"), style: "cancel" },
+      {
+        text: t("temporarily-disable-activity"),
+        onPress: () => performDisable(),
+      },
+      {
+        text: t("delete"),
+        style: "destructive",
+        onPress: () => performDelete(),
+      },
+    ]);
+  }, [performDelete, performDisable, t]);
+
   const confirmReassign = useCallback(async () => {
     try {
       if (!activity?.id || !reassignStage.required || !replacementId) return;
@@ -165,17 +241,6 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Inline Delete action per Option B (header remains Save) */}
-      {activity?.id ? (
-        <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
-          <TouchableOpacity onPress={performDelete}>
-            <Text style={{ color: "#F04438", fontWeight: "600" }}>
-              {t("delete")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-
       {/* Reassignment flow */}
       {reassignStage.required ? (
         <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
@@ -220,6 +285,7 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
 
       <ActivityForm
         ref={formRef as any}
+        _dialogId={_dialogId}
         initialValues={activity}
         onSubmit={handleSubmit}
         onCancel={() => {
@@ -227,6 +293,17 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
         }}
         submitLabel={t("save")}
       />
+      {activity?.id ? (
+        <View style={{ padding: 20 }}>
+          <CdButton
+            title={t("delete")}
+            onPress={openDeleteMenu}
+            variant="outline"
+            size="medium"
+            fullWidth={true}
+          />
+        </View>
+      ) : null}
     </View>
   );
 };

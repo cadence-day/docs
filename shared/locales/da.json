@@ -198,13 +198,15 @@
   "energetic": "Energisk",
   "activity-categories": {
     "work": "Arbejde",
-    "errands": "Ærinder",
-    "admin": "Administration",
-    "friends": "Venner",
-    "exercise": "Træning",
     "rest": "Hvile",
-    "meal_time": "Måltid",
-    "family": "Familie"
+    "health": "Sundhed",
+    "home": "Hjem",
+    "learn": "Lær",
+    "social": "Social",
+    "play": "Leg",
+    "food": "Mad",
+    "service": "Service",
+    "travel": "Rejse"
   },
   "disabled-activities": "Deaktiverede aktiviteter",
   "add-new-activity": "Tilføj ny aktivitet",
@@ -214,5 +216,6 @@
   "tap-x-to-disable-an-activity": "Tryk \"-\" for midlertidigt at deaktivere en aktivitet.",
   "active-activities": "Aktive aktiviteter",
   "no-active-activities": "Der er desværre ingen aktive aktiviteter",
-  "back-to-today": "Tilbage til i dag"
+  "back-to-today": "Tilbage til i dag",
+  "cancel": "Tilbage"
 }

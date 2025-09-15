@@ -1,15 +1,14 @@
+import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
-import { useI18n } from "@/shared/hooks/useI18n";
+import useTranslation from "@/shared/hooks/useI18n";
 import useDialogStore from "@/shared/stores/useDialogStore";
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
 import { Text, View } from "react-native";
-import { useUser } from "@clerk/clerk-expo";
-import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({
@@ -49,7 +48,7 @@ function TabLabel({
 }
 
 export default function TabLayout() {
-  const { t } = useI18n();
+  const { t } = useTranslation();
   const segments = useSegments();
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
   const { user } = useUser();
@@ -65,7 +64,8 @@ export default function TabLayout() {
   useEffect(() => {
     if (didCheckEncryption) return;
     // Only probe on the Today tab (index)
-    const currentView = segments[segments.length - 1] || "index";
+    const rawView = segments[segments.length - 1];
+    const currentView = String(rawView ?? "index");
     if (currentView !== "index") return;
     const userId = user?.id ?? null;
     (async () => {

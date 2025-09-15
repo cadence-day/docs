@@ -33,6 +33,7 @@ export interface ActivityGridViewProps {
 export interface EditActivitiesViewProps {
   onActivityPress: ActivityHandler;
   onDragStateChange?: (isDragging: boolean) => void;
+  onExitEditMode?: VoidHandler;
   gridConfig?: Partial<GridConfig>;
   onAddActivity?: VoidHandler;
   onDisableActivity?: ActivityIdHandler;

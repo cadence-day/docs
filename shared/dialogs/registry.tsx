@@ -1,14 +1,16 @@
 import ActivityLegendDialog from "@/features/activity/dialogs/ActivityLegendDialog";
-import ManageActivitiesDialog from "@/features/activity/dialogs/ManageActivitiesDialog";
+import CategoryPickerDialog from "@/features/activity/dialogs/CategoryPickerDialog";
+import ColorPickerDialog from "@/features/activity/dialogs/ColorPickerDialog";
 import CreateActivityDialog from "@/features/activity/dialogs/CreateActivityDialog";
 import EditActivityDialog from "@/features/activity/dialogs/EditActivityDialog";
+import ManageActivitiesDialog from "@/features/activity/dialogs/ManageActivitiesDialog";
 import CalendarDialog from "@/features/calendar/CalendarDialog";
-import NoteDialog from "@/features/notes/NoteDialog";
 import EncryptionLinkDialog from "@/features/encryption/EncryptionLinkDialog";
-import ProfileImagePickerDialog from "@/features/profile/dialogs/ProfileImagePickerDialog";
-import { TimePickerDialog } from "@/features/profile/dialogs/TimePickerDialog";
+import NoteDialog from "@/features/notes/NoteDialog";
+import ChangePasswordDialog from "@/features/profile/dialogs/ChangePasswordDialog";
 import { CustomerSupportDialog } from "@/features/profile/dialogs/CustomerSupportDialog";
 import { SubscriptionPlansDialog } from "@/features/profile/dialogs/SubscriptionPlansDialog";
+import { TimePickerDialog } from "@/features/profile/dialogs/TimePickerDialog";
 
 export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   // Legacy mapping for backward compatibility
@@ -17,15 +19,17 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   "activity-legend": ActivityLegendDialog,
   "activity-manage": ManageActivitiesDialog,
   "activity-create": CreateActivityDialog,
+  "activity-category-picker": CategoryPickerDialog,
+  "activity-color-picker": ColorPickerDialog,
   "activity-edit": EditActivityDialog,
   calendar: CalendarDialog,
   note: NoteDialog,
   "encryption-link": EncryptionLinkDialog,
-  "profile-image-picker": ProfileImagePickerDialog,
   // Profile and settings dialogs
   "time-picker": TimePickerDialog,
   "customer-support": CustomerSupportDialog,
   "subscription-plans": SubscriptionPlansDialog,
+  "change-password": ChangePasswordDialog,
 };
 
 export default DialogRegistry;

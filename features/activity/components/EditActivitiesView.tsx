@@ -1,6 +1,7 @@
 import { ENABLE_BUTTON_BG } from "@/features/activity/constants";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useI18n } from "@/shared/hooks/useI18n";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -17,6 +18,7 @@ import GridView from "./ui/GridView";
 const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
   onActivityPress,
   onDragStateChange,
+  onExitEditMode,
   gridConfig,
   onAddActivity,
   onDisableActivity,
@@ -50,6 +52,16 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
     onDragStateChange,
   });
 
+  // Enable shake mode when component mounts (edit mode should always have shaking)
+  React.useEffect(() => {
+    setIsShakeMode(true);
+
+    // Cleanup: disable shake mode when component unmounts
+    return () => {
+      setIsShakeMode(false);
+    };
+  }, [setIsShakeMode]);
+
   // Get grid properties
   const { totalRows, itemWidth, minHeight, itemHeight, gridGap } =
     gridProperties;
@@ -78,6 +90,20 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
 
   return (
     <View style={{ flex: 1 }}>
+      {/* Header with Done button */}
+      {onExitEditMode && (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            marginBottom: 16,
+          }}
+        ></View>
+      )}
+
       {/* Enabled Activities Section */}
       <View>
         {enabledActivities.length > 0 ? (
@@ -288,4 +314,3 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
 };
 
 export default EditActivitiesView;
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";

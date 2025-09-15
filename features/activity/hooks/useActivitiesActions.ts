@@ -1,6 +1,7 @@
+import { useSelectionStore } from "@/shared/stores";
 import type { Activity } from "@/shared/types/models/activity";
-import { useCallback } from "react";
 import * as Haptics from "expo-haptics";
+import { useCallback } from "react";
 import { useActivitiesData } from "./useActivitiesData";
 
 interface UseActivitiesActionsProps {
@@ -25,6 +26,14 @@ export const useActivitiesActions = ({
   const handleActivityPress = useCallback(
     (activity: Activity) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      // Set selected activity in selection store so other parts of the app
+      // (e.g. timeslice assignment) can read the current activity selection.
+      try {
+        useSelectionStore.getState().setSelectedActivityId(activity.id ?? null);
+      } catch (e) {
+        // If store not available for some reason, ignore silently
+      }
+
       onActivityPress?.(activity);
     },
     [onActivityPress]

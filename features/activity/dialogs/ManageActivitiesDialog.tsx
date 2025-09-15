@@ -23,7 +23,7 @@ const ManageActivitiesDialog: React.FC<Props> = ({ _dialogId }) => {
   const openCreate = useCallback(() => {
     useDialogStore.getState().openDialog({
       type: "activity-create",
-      position: "center",
+      position: "dock",
       props: {
         headerProps: { title: t("activity.legend.createActivity") },
         height: 85,
@@ -35,7 +35,7 @@ const ManageActivitiesDialog: React.FC<Props> = ({ _dialogId }) => {
     (activity: any) => {
       useDialogStore.getState().openDialog({
         type: "activity-edit",
-        position: "center",
+        position: "dock",
         props: {
           activity,
           headerProps: { title: t("activity.legend.editActivity") },

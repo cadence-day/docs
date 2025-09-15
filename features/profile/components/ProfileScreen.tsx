@@ -1,25 +1,18 @@
-import React from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
+import { COLORS } from "@/shared/constants/COLORS";
+import useTranslation from "@/shared/hooks/useI18n";
+import useDialogStore from "@/shared/stores/useDialogStore";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
-import useDialogStore from "@/shared/stores/useDialogStore";
-import { CdButton, CdText } from "@/shared/components/CadenceUI";
-import { COLORS } from "@/shared/constants/COLORS";
-import useTranslation from "@/shared/hooks/useI18n";
+import React from "react";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useProfileStore } from "../stores/useProfileStore";
 import { profileStyles } from "../styles";
 
 export const ProfileScreen: React.FC = () => {
   const { user } = useUser();
-  const { t } = useI18n();
+  const { t } = useTranslation();
   const openDialog = useDialogStore((s) => s.openDialog);
   const { profileData, settings, updateProfileData, updateSettings } =
     useProfileStore();
@@ -31,22 +24,6 @@ export const ProfileScreen: React.FC = () => {
     // @ts-ignore - optional
     (Constants.expoConfig as any)?.android?.versionCode ||
     "Unknown";
-
-  const onEditPhoto = () => {
-    openDialog({
-      type: "profile-image-picker",
-      props: {
-        currentImageUrl: user?.imageUrl ?? profileData.avatarUrl ?? null,
-        onImageSelected: (url: string) => {
-          updateProfileData({ avatarUrl: url });
-        },
-        height: 60,
-        headerProps: { title: t("profile.edit-photo") },
-      },
-      position: "dock",
-      viewSpecific: "profile",
-    });
-  };
 
   const handleTimePress = (type: "wake" | "sleep") => {
     openDialog({
@@ -65,6 +42,10 @@ export const ProfileScreen: React.FC = () => {
             type === "wake"
               ? t("profile.set-wake-time")
               : t("profile.set-sleep-time"),
+          onLeftAction: () => {
+            // Close the dialog when back button is pressed
+            useDialogStore.getState().closeAll();
+          },
         },
       },
       position: "dock",
@@ -86,7 +67,13 @@ export const ProfileScreen: React.FC = () => {
           updateSettings({ subscriptionPlan: plan as any });
         },
         height: 80,
-        headerProps: { title: t("profile.subscription-plan") },
+        headerProps: {
+          title: t("profile.subscription-plan"),
+          onLeftAction: () => {
+            // Close the dialog when back button is pressed
+            useDialogStore.getState().closeAll();
+          },
+        },
       },
       position: "dock",
       viewSpecific: "profile",
@@ -107,7 +94,13 @@ export const ProfileScreen: React.FC = () => {
         appVersion,
         buildNumber,
         height: 70,
-        headerProps: { title: t("profile.customer-support") },
+        headerProps: {
+          title: t("profile.customer-support"),
+          onLeftAction: () => {
+            // Close the dialog when back button is pressed
+            useDialogStore.getState().closeAll();
+          },
+        },
       },
       position: "dock",
       viewSpecific: "profile",
@@ -120,7 +113,6 @@ export const ProfileScreen: React.FC = () => {
       <View style={profileStyles.profileHeader}>
         <TouchableOpacity
           style={profileStyles.profileImageContainer}
-          onPress={onEditPhoto}
           activeOpacity={0.8}
         >
           {user?.imageUrl || profileData.avatarUrl ? (
@@ -144,10 +136,7 @@ export const ProfileScreen: React.FC = () => {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={profileStyles.editPhotoButton}
-          onPress={onEditPhoto}
-        >
+        <TouchableOpacity style={profileStyles.editPhotoButton}>
           <Text style={profileStyles.editPhotoText}>
             {t("profile.edit-photo")}
           </Text>
@@ -271,21 +260,26 @@ export const ProfileScreen: React.FC = () => {
       <View style={profileStyles.settingsSection}>
         <Text style={profileStyles.sectionTitle}>{t("profile.security")}</Text>
 
-        <TouchableOpacity
-          style={profileStyles.settingRow}
-          onPress={handleSecurityPress}
-        >
-          <Text style={profileStyles.settingLabel}>
-            {t("profile.security-settings")}
-          </Text>
-          <View style={profileStyles.settingValue}>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              style={profileStyles.chevronIcon}
-            />
-          </View>
-        </TouchableOpacity>
+        <CdTextInputOneLine
+          label={t("profile.security-settings")}
+          value={t("profile.changePasswordLabel")}
+          isButton
+          onPress={() =>
+            openDialog({
+              type: "change-password",
+              props: {
+                headerProps: {
+                  onLeftAction: () => {
+                    // Close the dialog when back button is pressed
+                    useDialogStore.getState().closeAll();
+                  },
+                },
+              },
+              position: "dock",
+              viewSpecific: "profile",
+            })
+          }
+        />
       </View>
 
       {/* Support Section */}

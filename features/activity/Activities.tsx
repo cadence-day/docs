@@ -1,6 +1,8 @@
 import { styles } from "@/features/activity/styles";
 import type { ActivitiesProps } from "@/features/activity/types";
-import React, { useMemo } from "react";
+import type { Activity } from "@/shared/types/models/activity";
+import * as Haptics from "expo-haptics";
+import React, { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
 import { EditActivitiesView } from "./components";
 import { ActivityGridView, ErrorState, LoadingState } from "./components/ui";
@@ -26,12 +28,42 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
   ) => {
     const { activities, disabledActivities, isLoading, error } =
       useActivitiesData();
-    const { handleActivityPress, handleActivityLongPress, refresh } =
-      useActivitiesActions({
-        onActivityPress,
-        onActivityLongPress,
-        onEditActivity,
-      });
+
+    // Internal state to manage edit mode when not controlled by props
+    const [internalMode, setInternalMode] = useState<"view" | "edit">("view");
+
+    // Use prop mode if provided, otherwise use internal state
+    const currentMode = mode !== "view" ? mode : internalMode;
+
+    // Enhanced long press handler that can enter edit mode
+    const handleEnhancedActivityLongPress = useCallback(
+      (activity: Activity) => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+        // If we're in view mode and no external mode control, enter edit mode
+        if (mode === "view" && currentMode === "view") {
+          setInternalMode("edit");
+        }
+
+        // Call the original handlers
+        onActivityLongPress?.(activity);
+        onEditActivity?.(activity);
+      },
+      [mode, currentMode, onActivityLongPress, onEditActivity]
+    );
+
+    // Handler to exit edit mode
+    const handleExitEditMode = useCallback(() => {
+      if (mode === "view") {
+        setInternalMode("view");
+      }
+    }, [mode]);
+
+    const { handleActivityPress, refresh } = useActivitiesActions({
+      onActivityPress,
+      onActivityLongPress: handleEnhancedActivityLongPress,
+      onEditActivity,
+    });
 
     // Memoize effective grid configuration
     const effectiveGridConfig = useMemo(
@@ -76,10 +108,11 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
     }
 
     // Render edit mode
-    if (mode === "edit") {
+    if (currentMode === "edit") {
       return (
         <EditActivitiesView
           onActivityPress={handleActivityPress}
+          onExitEditMode={handleExitEditMode}
           gridConfig={effectiveGridConfig}
           onAddActivity={onAddActivity}
           onDisableActivity={onDisableActivity}
@@ -92,7 +125,7 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
       <View style={styles.container}>
         <ActivityGridView
           onActivityPress={handleActivityPress}
-          onActivityLongPress={handleActivityLongPress}
+          onActivityLongPress={handleEnhancedActivityLongPress}
           gridConfig={effectiveGridConfig}
         />
       </View>
