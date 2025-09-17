@@ -113,6 +113,12 @@
   "password-reset.weve-sent-a-6-digit-verification-code-to": "Wir haben einen 6-stelligen Überprüfungscode an gesendet",
   "passwords-should-match": "- Passwörter sollten übereinstimmen.",
   "pick-activity-first": "Wählen Sie zuerst eine Aktivität aus",
+  "confirm": "Bestätigen",
+  "delete": "Löschen",
+  "This activity is a child of another. Change its parent first before deleting.": "Diese Aktivität ist einem anderen untergeordnet. Ändern Sie zuerst den übergeordneten Eintrag, bevor Sie löschen.",
+  "This activity has sub-activities. Reassign or remove their parent before deleting.": "Diese Aktivität hat Unteraktivitäten. Weisen Sie einen anderen übergeordneten Eintrag zu oder entfernen Sie ihn, bevor Sie löschen.",
+  "This activity is used by timeslices. Pick a replacement:": "Diese Aktivität wird von Zeitabschnitten verwendet. Wählen Sie einen Ersatz:",
+  "Are you sure you want to delete this activity? You can’t undo this.": "Möchten Sie diese Aktivität wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
   "please-enter-a-name": "Bitte geben Sie einen Namen ein",
   "please-select-a-category": "Bitte wählen Sie eine Kategorie aus",
   "privacy-policy": "Datenschutzrichtlinie",
@@ -186,5 +192,35 @@
   "welcome": "Willkommen",
   "welcome-back": "Willkommen zurück,",
   "weve-sent-a-verification-code-to": "Wir haben einen Verifizierungscode an gesendet",
-  "yesterday": "GESTERN"
+  "yesterday": "GESTERN",
+  "activity": {
+    "color-picker": {
+      "done": "Fertig",
+      "title": "Farbe wählen"
+    },
+    "legend": {
+      "activities": "Aktivitäten",
+      "createActivity": "Aktivität erstellen",
+      "editActivities": "Aktivitäten bearbeiten",
+      "editActivity": "Aktivität bearbeiten",
+      "pickActivityCategory": "Aktivitätskategorie wählen",
+      "reassignTitle": "Vorherige Timeslices neu zuweisen"
+    },
+    "preview": "Aktivität"
+  },
+  "Are you sure you want to delete this activity? You can't undo this": {
+    "": "Sind Sie sicher, dass Sie diese Aktivität löschen möchten? Dies kann nicht rückgängig gemacht werden."
+  },
+  "back": "Zurück",
+  "cancel": "Abbrechen",
+  "choose_action": "Aktion wählen",
+  "color": "Farbe",
+  "common": {
+    "done": "Fertig",
+    "saving": "Speichern"
+  },
+  "This activity is used by timeslices": {
+    " Pick a replacement:": "Diese Aktivität wird von Timeslices verwendet. Wählen Sie einen Ersatz:"
+  },
+  "validate": "Bestätigen"
 }

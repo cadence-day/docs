@@ -1,6 +1,7 @@
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Crypto from "expo-crypto";
 import * as SecureStore from "expo-secure-store";
+import * as CryptoJS from "crypto-js";
 
 // Constants for encryption
 const ENCRYPTION_KEY_NAME = "cadence_app_encryption_key";
@@ -109,6 +110,25 @@ export class EncryptionError extends Error {
 }
 
 /**
+ * Create a short fingerprint of a key for display/logging (never log the key itself)
+ * Uses SHA-256 and returns the first 8 hex characters by default.
+ */
+export function getKeyFingerprint(key: string, length: number = 8): string {
+  try {
+    if (!key) return "";
+    const hash = CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex);
+    return hash.slice(0, Math.max(1, Math.min(length, hash.length)));
+  } catch (error) {
+    GlobalErrorHandler.logWarning(
+      "Failed to compute key fingerprint",
+      "encryption.getKeyFingerprint",
+      {}
+    );
+    return "";
+  }
+}
+
+/**
  * Generate a new encryption key and store it securely
  * @returns Promise<string> The generated encryption key
  */
@@ -188,6 +208,51 @@ export async function getEncryptionKeyWithSource(): Promise<{
     );
     const ephemeral = await generateRandomKey();
     return { key: ephemeral, source: "ephemeral" };
+  }
+}
+
+/**
+ * Export the current encryption key for portability.
+ * Never log or expose the key outside caller control. Returns key + fingerprint.
+ */
+export async function exportEncryptionKey(): Promise<{
+  key: string;
+  fingerprint: string;
+  source: "securestore" | "ephemeral" | "asyncstorage";
+}> {
+  const { key, source } = await getEncryptionKeyWithSource();
+  const fingerprint = getKeyFingerprint(key);
+  return { key, fingerprint, source };
+}
+
+/**
+ * Import an encryption key (64 hex chars) and persist it.
+ * Overwrites any existing key in SecureStore.
+ */
+export async function importEncryptionKey(key: string): Promise<{
+  fingerprint: string;
+}> {
+  try {
+    if (!key) throw new EncryptionError("Key is empty");
+    const normalized = key.trim().toLowerCase();
+    const isValid = /^[0-9a-f]{64}$/.test(normalized);
+    if (!isValid) {
+      throw new EncryptionError(
+        "Invalid key format. Expected 64 hex characters"
+      );
+    }
+
+    await SecureStore.setItemAsync(ENCRYPTION_KEY_NAME, normalized);
+    const fp = getKeyFingerprint(normalized);
+    GlobalErrorHandler.logWarning(
+      `Encryption key imported (fp=${fp})`,
+      "encryption.importEncryptionKey",
+      { fp }
+    );
+    return { fingerprint: fp };
+  } catch (error) {
+    GlobalErrorHandler.logError(error, "ENCRYPTION_IMPORT_KEY_FAILED", {});
+    throw new EncryptionError("Failed to import encryption key", error);
   }
 }
 

@@ -1,0 +1,104 @@
+// Activity Color Palette - Consolidated and expanded
+export const ACTIVITY_COLOR_PALETTE = [
+  "#FF6B6B",
+  "#4ECDC4",
+  "#45B7D1",
+  "#96CEB4",
+  "#FECA57",
+  "#FF9FF3",
+  "#54A0FF",
+  "#5F27CD",
+  "#00D2D3",
+  "#FF9F43",
+  "#74B9FF",
+  "#A29BFE",
+  "#6C5CE7",
+  "#FD79A8",
+  "#FDCB6E",
+  "#FC427B",
+  "#26DE81",
+] as const;
+
+// Grid Configuration Constants
+export const GRID_CONFIG = {
+  DEFAULT_COLUMNS: 4,
+  ITEM_HEIGHT: 80,
+  GRID_GAP: 5,
+  MIN_DRAG_SENSITIVITY: 0.4,
+  DEFAULT_SPACING: 15,
+  DEFAULT_PADDING: 16,
+  MAX_WIDTH: 400,
+} as const;
+
+// Activity Theme Colors
+export const ACTIVITY_THEME = {
+  // Core colors
+  DEFAULT_ACTIVITY_BG: "#2196F3",
+  PLACEHOLDER_BG: "#666",
+  PLACEHOLDER_TEXT: "#9CA3AF",
+
+  // Action colors
+  ENABLE_BUTTON_BG: "#4CAF50",
+  DELETE_BUTTON_BG: "#ff4444",
+  ADD_PLACEHOLDER_BORDER: "#A1A1A1",
+
+  // Form colors
+  FORM_BG: "#222",
+  BORDER_PURPLE: "#6646EC",
+  ERROR_COLOR: "#EF4444",
+
+  // Slider colors
+  SLIDER_TRACK: "#374151",
+  SLIDER_FILL: "#6366F1",
+  SLIDER_THUMB_BG: "#6366F1",
+  SLIDER_THUMB_ACTIVE: "#5B56F0",
+
+  // Text colors
+  WHITE: "#fff",
+  GRAY_LIGHT: "#9CA3AF",
+  GRAY_DARK: "#333",
+  GRAY_MEDIUM: "#666",
+} as const;
+
+// Animation Constants
+export const ANIMATION_CONFIG = {
+  SHAKE_DURATION: 300,
+  FADE_DURATION: 200,
+  DRAG_SCALE: 1.2,
+  DEFAULT_SPRING: { tension: 300, friction: 8 },
+} as const;
+
+// Weight/Activity Level Constants
+export const WEIGHT_CONFIG = {
+  MIN: 0,
+  MAX: 10,
+  DEFAULT: 5,
+  SLIDER_STEPS: 10,
+  DESCRIPTIONS: {
+    VERY_LAID_BACK: [0, 2],
+    SOMEWHAT_RELAXED: [3, 4],
+    BALANCED: [5],
+    SOMEWHAT_ENERGETIC: [6, 7],
+    ENERGETIC: [8, 9],
+    HIGHLY_ENERGETIC: [10],
+  },
+} as const;
+
+// Backwards-compatible named exports for theme values
+export const DEFAULT_ACTIVITY_BG = ACTIVITY_THEME.DEFAULT_ACTIVITY_BG;
+export const PLACEHOLDER_BG = ACTIVITY_THEME.PLACEHOLDER_BG;
+export const PLACEHOLDER_TEXT = ACTIVITY_THEME.PLACEHOLDER_TEXT;
+export const ENABLE_BUTTON_BG = ACTIVITY_THEME.ENABLE_BUTTON_BG;
+export const DELETE_BUTTON_BG = ACTIVITY_THEME.DELETE_BUTTON_BG;
+export const ADD_PLACEHOLDER_BORDER = ACTIVITY_THEME.ADD_PLACEHOLDER_BORDER;
+export const FORM_BG = ACTIVITY_THEME.FORM_BG;
+export const BORDER_PURPLE = ACTIVITY_THEME.BORDER_PURPLE;
+export const ERROR_COLOR = ACTIVITY_THEME.ERROR_COLOR;
+export const SLIDER_TRACK = ACTIVITY_THEME.SLIDER_TRACK;
+export const SLIDER_FILL = ACTIVITY_THEME.SLIDER_FILL;
+export const SLIDER_THUMB_BG = ACTIVITY_THEME.SLIDER_THUMB_BG;
+export const SLIDER_THUMB_ACTIVE = ACTIVITY_THEME.SLIDER_THUMB_ACTIVE;
+export const WHITE = ACTIVITY_THEME.WHITE;
+export const GRAY_LIGHT = ACTIVITY_THEME.GRAY_LIGHT;
+export const GRAY_DARK = ACTIVITY_THEME.GRAY_DARK;
+export const GRAY_MEDIUM = ACTIVITY_THEME.GRAY_MEDIUM;

@@ -39,6 +39,14 @@ export const COLORS = {
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
   },
+  text: {
+    header: "#11181C",
+    subheader: "#ECEDEE",
+  },
+  separatorline: {
+    light: "rgba(255,255,255,0.12)",
+    dark: "#2B2B2B",
+  },
 };
 
 export const ACTIVITY_COLORS = [

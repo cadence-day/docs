@@ -83,6 +83,25 @@ export async function getAllTimeslices(): Promise<Timeslice[]> {
 }
 
 /**
+ * Fetches all timeslices associated with a specific activity id.
+ */
+export async function getTimeslicesByActivityId(
+  activityId: string
+): Promise<Timeslice[]> {
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("timeslices")
+        .select("*")
+        .eq("activity_id", activityId);
+      return { data: data ?? [], error };
+    });
+  } catch (error) {
+    handleApiError("getTimeslicesByActivityId", error);
+  }
+}
+
+/**
  * Fetches timeslices within a UTC date range (start inclusive, end exclusive).
  * @param startUtc - start Date (inclusive)
  * @param endUtc - end Date (exclusive)

@@ -43,30 +43,11 @@ export default function Today() {
     return () => clearInterval(interval);
   }, []);
 
-  // Open activity dialog by default as persistent
-  useEffect(() => {
-    const openActivityLegend = () => {
-      const id = useDialogStore.getState().openDialog({
-        type: "activity",
-        props: {
-          mode: "legend",
-          preventClose: true, // Make it persistent
-        },
-        position: "dock",
-      });
-      setIsActivityDialogOpen(true);
-    };
-
-    // Small delay to ensure stores are ready
-    const timer = setTimeout(openActivityLegend, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   // Listen to dialog store changes to track activity dialog state
   useEffect(() => {
     const unsubscribe = useDialogStore.subscribe((state) => {
       const hasActivityDialog = Object.values(state.dialogs).some(
-        (dialog) => dialog.type === "activity"
+        (dialog) => dialog.type === "activity-legend"
       );
       setIsActivityDialogOpen(hasActivityDialog);
     });
@@ -77,9 +58,8 @@ export default function Today() {
   // Function to reopen activity dialog
   const reopenActivityDialog = () => {
     useDialogStore.getState().openDialog({
-      type: "activity",
+      type: "activity-legend",
       props: {
-        mode: "legend",
         preventClose: true,
       },
       position: "dock",
@@ -189,17 +169,35 @@ export default function Today() {
                     onPress={() => setSelectedDate(new Date())}
                     style={{ marginLeft: 12 }}
                   >
-                    <Text
+                    <View
                       style={{
-                        textDecorationLine: "underline",
-                        textTransform: "uppercase",
-                        color: "#444",
-                        fontSize: 12,
-                        letterSpacing: 0.5,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 4,
                       }}
                     >
-                      {t("back-to-today")}
-                    </Text>
+                      <Text
+                        style={{
+                          textTransform: "uppercase",
+                          color: "#444",
+                          fontSize: 12,
+                          letterSpacing: 0.5,
+                        }}
+                      >
+                        {" < "}
+                      </Text>
+                      <Text
+                        style={{
+                          textDecorationLine: "underline",
+                          textTransform: "uppercase",
+                          color: "#444",
+                          fontSize: 12,
+                          letterSpacing: 0.5,
+                        }}
+                      >
+                        {t("back-to-today")}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 )}
                 {/* Calendar is opened via the central dialog store; DialogHost will render the

@@ -1,10 +1,6 @@
 import * as activitiesApi from "@/shared/api/resources/activities";
+import { activityOrderStorage } from "@/shared/storage/activities";
 import type { Activity } from "@/shared/types/models";
-import {
-  loadActivityOrderFromStorage,
-  saveActivityOrderToStorage,
-  sortActivitiesByStoredOrder,
-} from "@/shared/utils/activityOrderStorage";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { create } from "zustand";
 import {
@@ -61,7 +57,8 @@ interface ActivitiesStore extends BaseStoreState {
   getEnabledActivitiesByCategory: (categoryId: string) => Promise<Activity[]>;
 
   // Local state management for ordering (not in the API - Implementation in the DB later)
-  updateActivityOrder: (reorderedActivities: Activity[]) => void;
+  updateActivityOrder: (reorderedActivities: Activity[]) => Promise<void>;
+  loadStoredOrder: () => Promise<void>;
 
   // Utility functions
   setLoading: (loading: boolean) => void;
@@ -146,7 +143,20 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
   disableActivity: async (id: string) => {
     return handleVoidApiCall(
       set,
-      () => activitiesApi.disableActivity(id),
+      async () => {
+        await activitiesApi.disableActivity(id);
+        // Update stored order to maintain position when re-enabled
+        const allActivities = [
+          ...get().activities,
+          ...get().disabledActivities,
+          ...get().deletedActivities,
+        ];
+        await activityOrderStorage.updateActivityStatus(
+          allActivities,
+          id,
+          "DISABLED"
+        );
+      },
       "disable activity",
       (state) => {
         const activityToDisable = state.activities.find((a) => a.id === id);
@@ -204,6 +214,17 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
             ...activity,
             status: "ENABLED",
           });
+          // Update stored order to restore position
+          const allActivities = [
+            ...get().activities,
+            ...get().disabledActivities,
+            ...get().deletedActivities,
+          ];
+          await activityOrderStorage.updateActivityStatus(
+            allActivities,
+            id,
+            "ENABLED"
+          );
         }
       },
       "enable activity",
@@ -266,7 +287,11 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
   softDeleteActivity: async (id: string) => {
     return handleVoidApiCall(
       set,
-      () => activitiesApi.softDeleteActivity(id),
+      async () => {
+        await activitiesApi.softDeleteActivity(id);
+        // Remove from stored order since it's deleted
+        await activityOrderStorage.removeFromOrder(id);
+      },
       "delete activity",
       (state) => {
         const activityToDelete =
@@ -400,8 +425,11 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         const activities = await activitiesApi.getAllEnabledActivities();
 
         // Load and sort activities with stored order
-        const storedOrder = await loadActivityOrderFromStorage();
-        return sortActivitiesByStoredOrder(activities, storedOrder);
+        const orderResult = await activityOrderStorage.getOrder();
+        return activityOrderStorage.sortActivitiesByStoredOrder(
+          activities,
+          orderResult.data
+        );
       },
       "refresh activities",
       (sortedActivities) => ({
@@ -498,15 +526,55 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
   // Local state management for ordering
   updateActivityOrder: async (reorderedActivities: Activity[]) => {
     try {
-      await saveActivityOrderToStorage(reorderedActivities);
-      set({ activities: reorderedActivities });
+      const saved = await activityOrderStorage.saveOrder(reorderedActivities);
+      if (saved) {
+        set({
+          activities: reorderedActivities.filter((a) => a.status === "ENABLED"),
+        });
+      } else {
+        GlobalErrorHandler.logError(
+          new Error("Failed to save activity order"),
+          "updateActivityOrder",
+          { activitiesCount: reorderedActivities.length }
+        );
+      }
     } catch (error) {
       GlobalErrorHandler.logError(error, "updateActivityOrder", {
         activitiesCount: reorderedActivities.length,
         operationType: "save_activity_order",
       });
       // Still update the state even if storage fails
-      set({ activities: reorderedActivities });
+      set({
+        activities: reorderedActivities.filter((a) => a.status === "ENABLED"),
+      });
+    }
+  },
+
+  loadStoredOrder: async () => {
+    try {
+      const currentActivities = get().activities;
+      const orderResult = await activityOrderStorage.getOrder();
+
+      if (orderResult.success && orderResult.data) {
+        const allActivities = [
+          ...currentActivities,
+          ...get().disabledActivities,
+          ...get().deletedActivities,
+        ];
+        const sortedActivities =
+          activityOrderStorage.sortActivitiesByStoredOrder(
+            allActivities,
+            orderResult.data
+          );
+        const enabledActivities = sortedActivities.filter(
+          (a) => a.status === "ENABLED"
+        );
+        set({ activities: enabledActivities });
+      }
+    } catch (error) {
+      GlobalErrorHandler.logError(error, "loadStoredOrder", {
+        operation: "load_and_apply_stored_order",
+      });
     }
   },
 

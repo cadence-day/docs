@@ -24,7 +24,12 @@
   "activity.legend.createActivity": "Créer une activité",
   "activity.legend.editActivities": "Modifier les activités",
   "activity.legend.editActivity": "Modifier l'activité",
+  "activity.legend.pickActivityCategory": "Choisir une catégorie d'activité",
+  "activity.legend.reassignTitle": "Réassigner les tranches de temps précédentes",
   "activity.legend.reopen": "Activités ouvertes",
+  "activity.color-picker.title": "Choisir une couleur",
+  "activity.color-picker.done": "Terminé",
+  "activity.preview": "Activité",
   "add-new-activity": "Ajouter une nouvelle activité",
   "already-have-an-account": "Har du allerrede en konto?",
   "app-features": "Caractéristiques de l'application",
@@ -43,6 +48,7 @@
   "common.edit": "Modifier",
   "common.error": "Erreur",
   "common.save": "Sauvegarder",
+  "common.saving": "Enregistrement",
   "contain-one-digit": "- contenir un chiffre.",
   "contain-one-lowercase-letter": "- contiennent une lettre minuscule.",
   "contain-one-special-character": "- contiennent un caractère spécial.",
@@ -113,6 +119,12 @@
   "password-reset.weve-sent-a-6-digit-verification-code-to": "Nous avons envoyé un code de vérification à 6 chiffres à",
   "passwords-should-match": "- Les mots de passe doivent correspondre.",
   "pick-activity-first": "Choisissez d'abord une activité",
+  "confirm": "Confirmer",
+  "delete": "Supprimer",
+  "This activity is a child of another. Change its parent first before deleting.": "Cette activité est l'enfant d'une autre. Modifiez son parent avant de la supprimer.",
+  "This activity has sub-activities. Reassign or remove their parent before deleting.": "Cette activité a des sous-activités. Réassignez ou supprimez leur parent avant de supprimer.",
+  "This activity is used by timeslices. Pick a replacement:": "Cette activité est utilisée par des tranches de temps. Choisissez un remplacement :",
+  "Are you sure you want to delete this activity? You can’t undo this.": "Êtes-vous sûr de vouloir supprimer cette activité ? Cette action est irréversible.",
   "please-enter-a-name": "Veuillez saisir un nom",
   "please-select-a-category": "Veuillez sélectionner une catégorie",
   "privacy-policy": "politique de confidentialité",
@@ -186,5 +198,35 @@
   "welcome": "Accueillir",
   "welcome-back": "Content de te revoir,",
   "weve-sent-a-verification-code-to": "Nous avons envoyé un code de vérification à",
-  "yesterday": "HIER"
+  "yesterday": "HIER",
+  "back": "Retour",
+  "cancel": "Annuler",
+  "choose_action": "Choisir une action",
+  "color": "Couleur",
+  "validate": "Confirmer",
+  "activity": {
+    "color-picker": {
+      "done": "Terminé",
+      "title": "Choisir une couleur"
+    },
+    "legend": {
+      "activities": "Activités",
+      "createActivity": "Créer une activité",
+      "editActivities": "Modifier les activités",
+      "editActivity": "Modifier l'activité",
+      "pickActivityCategory": "Choisir une catégorie d'activité",
+      "reassignTitle": "Réassigner les tranches de temps précédentes"
+    },
+    "preview": "Activité"
+  },
+  "Are you sure you want to delete this activity? You can't undo this": {
+    "": "Êtes-vous sûr de vouloir supprimer cette activité ? Cette action est irréversible."
+  },
+  "common": {
+    "done": "Terminé",
+    "saving": "Enregistrement"
+  },
+  "This activity is used by timeslices": {
+    " Pick a replacement:": "Cette activité est utilisée par des tranches de temps. Choisissez un remplacement :"
+  }
 }
