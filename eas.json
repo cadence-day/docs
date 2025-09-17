@@ -7,12 +7,14 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "channel": "development",
       "env": {
         "NODE_ENV": "development"
       }
     },
     "preview": {
       "distribution": "internal",
+      "channel": "preview",
       "env": {
         "NODE_ENV": "preview",
         "SENTRY_ORG": "cadenceday",
@@ -21,6 +23,7 @@
     },
     "production": {
       "autoIncrement": true,
+      "channel": "production",
       "env": {
         "NODE_ENV": "production",
         "SENTRY_ORG": "cadenceday",

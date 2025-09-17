@@ -12,10 +12,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "day.cadence.mobile",
-      "associatedDomains": [
-        "applinks:app.cadence.day",
-        "applinks:app.cadence.day"
-      ],
+      "associatedDomains": ["applinks:app.cadence.day"],
       "icon": {
         "dark": "./assets/images/ios-dark.png",
         "light": "./assets/images/ios-light.png",
