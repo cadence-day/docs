@@ -248,13 +248,15 @@
   "energetic": "Energetic",
   "activity-categories": {
     "work": "Work",
-    "errands": "Errands",
-    "admin": "Admin",
-    "friends": "Friends",
-    "exercise": "Exercise",
     "rest": "Rest",
-    "meal_time": "Meal Time",
-    "family": "Family"
+    "health": "Health",
+    "home": "Home",
+    "learn": "Learn",
+    "social": "Social",
+    "play": "Play",
+    "food": "Food",
+    "service": "Service",
+    "travel": "Travel"
   },
   "disabled-activities": "Disabled Activities",
   "add-new-activity": "Add New Activity",

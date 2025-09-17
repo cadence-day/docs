@@ -34,7 +34,7 @@ function TabLabel({
         style={{
           fontSize: 10,
           textTransform: "uppercase",
-          letterSpacing: 1.5,
+          letterSpacing: 1.2,
           color: COLORS.light.text,
           textAlign: "center",
           textDecorationLine: focused ? "underline" : "none",
