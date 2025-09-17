@@ -15,7 +15,16 @@ type Props = {
 const CategoryPickerDialog: React.FC<Props> = ({ _dialogId, onConfirm }) => {
   const { t } = useI18n();
   const categories = useActivityCategoriesStore((s) => s.categories);
+  const refreshCategories = useActivityCategoriesStore((s) => s.refresh);
+  const isLoadingCategories = useActivityCategoriesStore((s) => s.isLoading);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Load categories when dialog mounts if they're not already loaded
+  useEffect(() => {
+    if (categories.length === 0 && !isLoadingCategories) {
+      refreshCategories();
+    }
+  }, [categories.length, isLoadingCategories, refreshCategories]);
 
   useEffect(() => {
     if (!_dialogId) return;
@@ -89,6 +98,28 @@ const CategoryPickerDialog: React.FC<Props> = ({ _dialogId, onConfirm }) => {
   const keyExtractor = (i: ActivityCategory) => i.id ?? "";
 
   const data = useMemo(() => categories ?? [], [categories]);
+
+  // Show loading state while fetching categories
+  if (isLoadingCategories && categories.length === 0) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <Text style={styles.loadingText}>
+          {t("activity.legend.loadingCategories") || "Loading categories..."}
+        </Text>
+      </View>
+    );
+  }
+
+  // Show empty state if no categories are available
+  if (!isLoadingCategories && categories.length === 0) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <Text style={styles.emptyText}>
+          {t("activity.legend.noCategories") || "No categories available"}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -174,6 +205,22 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 12,
     fontWeight: "bold",
+  },
+  centerContent: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loadingText: {
+    color: ACTIVITY_THEME.WHITE,
+    fontSize: 16,
+    fontWeight: "500",
+    textAlign: "center",
+  },
+  emptyText: {
+    color: ACTIVITY_THEME.GRAY_MEDIUM,
+    fontSize: 16,
+    fontWeight: "500",
+    textAlign: "center",
   },
 });
 

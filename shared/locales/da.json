@@ -147,6 +147,8 @@
       "editActivity": "Rediger aktivitet",
       "editActivities": "Rediger aktiviteter",
       "createActivity": "Opret aktivitet",
+      "loadingCategories": "Indlæser kategorier...",
+      "noCategories": "Ingen kategorier tilgængelige",
       "reopen": "Åbn aktiviteter",
       "pickActivityCategory": "Vælg aktivitetskategori",
       "reassignTitle": "Gentildel tidligere timeslices"

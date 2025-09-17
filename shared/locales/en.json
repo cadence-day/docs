@@ -189,6 +189,8 @@
       "editActivities": "Edit Activities",
       "createActivity": "Create Activity",
       "pickActivityCategory": "Pick an activity category",
+      "loadingCategories": "Loading categories...",
+      "noCategories": "No categories available",
       "reassignTitle": "Reassign previous timeslices",
       "reopen": "Open Activities"
     },

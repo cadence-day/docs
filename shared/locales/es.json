@@ -24,6 +24,8 @@
   "activity.legend.createActivity": "Crear actividad",
   "activity.legend.editActivities": "Editar actividades",
   "activity.legend.editActivity": "Editar actividad",
+  "activity.legend.loadingCategories": "Cargando categorías...",
+  "activity.legend.noCategories": "No hay categorías disponibles",
   "activity.legend.reopen": "Actividades abiertas",
   "add-new-activity": "Agregar nueva actividad",
   "already-have-an-account": "¿Har du Allerede en Konto?",

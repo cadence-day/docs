@@ -24,6 +24,8 @@
   "activity.legend.createActivity": "Créer une activité",
   "activity.legend.editActivities": "Modifier les activités",
   "activity.legend.editActivity": "Modifier l'activité",
+  "activity.legend.loadingCategories": "Chargement des catégories...",
+  "activity.legend.noCategories": "Aucune catégorie disponible",
   "activity.legend.pickActivityCategory": "Choisir une catégorie d'activité",
   "activity.legend.reassignTitle": "Réassigner les tranches de temps précédentes",
   "activity.legend.reopen": "Activités ouvertes",
