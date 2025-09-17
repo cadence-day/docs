@@ -1,4 +1,5 @@
 // Centralized error handler for API functions
+import { ToastService } from "@/shared/context/ToastProvider";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
 export interface RetryOptions {
@@ -17,6 +18,59 @@ export class ApiError extends Error {
     super(`[${context}] ${getErrorMessage(originalError)}`);
     this.name = "ApiError";
   }
+}
+
+/**
+ * Map a technical error to a friendly, user-facing message.
+ * Keep messages short and actionable; loggers still receive full details.
+ */
+function getUserFriendlyMessage(error: any): string {
+  const message = getErrorMessage(error).toLowerCase();
+
+  if (
+    message.includes("network") ||
+    message.includes("timeout") ||
+    message.includes("connection")
+  ) {
+    return "We couldn't reach our servers. Please check your internet connection and try again.";
+  }
+
+  if (
+    message.includes("401") ||
+    message.includes("unauthori") ||
+    message.includes("token")
+  ) {
+    return "You need to sign in again. Please log in to continue.";
+  }
+
+  if (message.includes("403") || message.includes("forbid")) {
+    return "You don't have permission to do that.";
+  }
+
+  if (message.includes("rate limit") || message.includes("429")) {
+    return "You're doing that a bit too quickly. Please wait a moment and try again.";
+  }
+
+  if (
+    message.includes("encrypt") ||
+    message.includes("decrypt") ||
+    message.includes("encryption")
+  ) {
+    return "There was a problem accessing secure data. Try restarting the app or contacting support.";
+  }
+
+  if (
+    message.includes("500") ||
+    message.includes("502") ||
+    message.includes("503") ||
+    message.includes("504") ||
+    message.includes("server")
+  ) {
+    return "Something went wrong on our end. Please try again later.";
+  }
+
+  // Fallback: show a concise, non-technical message
+  return "Something went wrong. Please try again.";
 }
 
 function getErrorMessage(error: any): string {
@@ -114,6 +168,9 @@ export async function handleApiErrorWithRetry<T>(
     maxRetriesReached: true,
   });
 
+  // Show a friendly message to the user while logging full details for developers
+  ToastService.showError(getUserFriendlyMessage(lastError));
+
   throw apiError;
 }
 
@@ -136,6 +193,9 @@ export function handleApiError(context: string, error: any): never {
     originalError: getErrorMessage(error),
     errorType: error?.constructor?.name || "Unknown",
   });
+
+  // Show a concise, user-friendly message instead of the raw technical message
+  ToastService.showError(getUserFriendlyMessage(error));
 
   throw apiError;
 }

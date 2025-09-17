@@ -8,6 +8,10 @@ import ReassignActivityDialog from "@/features/activity/dialogs/ReassignActivity
 import CalendarDialog from "@/features/calendar/CalendarDialog";
 import EncryptionLinkDialog from "@/features/encryption/EncryptionLinkDialog";
 import { NoteDialog } from "@/features/notes/dialogs/NoteDialog";
+import ChangePasswordDialog from "@/features/profile/dialogs/ChangePasswordDialog";
+import { CustomerSupportDialog } from "@/features/profile/dialogs/CustomerSupportDialog";
+import { SubscriptionPlansDialog } from "@/features/profile/dialogs/SubscriptionPlansDialog";
+import { TimePickerDialog } from "@/features/profile/dialogs/TimePickerDialog";
 
 export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   // Legacy mapping for backward compatibility
@@ -24,6 +28,11 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   calendar: CalendarDialog,
   note: NoteDialog,
   "encryption-link": EncryptionLinkDialog,
+  // Profile and settings dialogs
+  "time-picker": TimePickerDialog,
+  "customer-support": CustomerSupportDialog,
+  "subscription-plans": SubscriptionPlansDialog,
+  "change-password": ChangePasswordDialog,
 };
 
 export default DialogRegistry;
