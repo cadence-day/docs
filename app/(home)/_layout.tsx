@@ -64,7 +64,9 @@ export default function TabLayout() {
     const isHomeView =
       currentView === "index" ||
       segments.length === 1 ||
-      (segments.length === 2 && segments[0] === "(home)" && !segments[1]);
+      (segments.length === 2 &&
+        segments[0] === "(home)" &&
+        !segments.slice(1)[0]);
 
     // Update the current view in the store
     setCurrentView(currentView);

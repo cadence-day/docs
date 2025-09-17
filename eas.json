@@ -27,8 +27,5 @@
         "SENTRY_PROJECT": "cadence-app"
       }
     }
-  },
-  "submit": {
-    "production": {}
   }
 }

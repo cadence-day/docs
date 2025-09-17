@@ -270,5 +270,8 @@
   "color": "Color",
   "cancel": "Cancel",
   "validate": "Confirm",
-  "choose_action": "Choose Action"
+  "choose_action": "Choose Action",
+  "energyLabel": "ENERGY",
+  "energyLow": "Low",
+  "energyHigh": "High"
 }
