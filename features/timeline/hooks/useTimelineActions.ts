@@ -266,7 +266,7 @@ export const useTimelineActions = (opts?: {
 
       // Show confirmation dialog for timeslices with notes or states
       const deleteMessage = t("delete-timeslice-with-data-warning");
-      
+
       if (Platform.OS === "ios") {
         ActionSheetIOS.showActionSheetWithOptions(
           {
@@ -283,18 +283,14 @@ export const useTimelineActions = (opts?: {
         );
       } else {
         // Android fallback
-        Alert.alert(
-          t("confirm"),
-          deleteMessage,
-          [
-            { text: t("cancel"), style: "cancel" },
-            {
-              text: t("delete"),
-              style: "destructive",
-              onPress: () => void performDelete(),
-            },
-          ]
-        );
+        Alert.alert(t("confirm"), deleteMessage, [
+          { text: t("cancel"), style: "cancel" },
+          {
+            text: t("delete"),
+            style: "destructive",
+            onPress: () => void performDelete(),
+          },
+        ]);
       }
     },
     [deleteTimesliceInStore, t]
