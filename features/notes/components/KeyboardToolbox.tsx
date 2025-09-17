@@ -1,13 +1,17 @@
 import * as Haptics from "expo-haptics";
 import { FloppyDisk, Plus, Trash } from "phosphor-react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Dimensions,
+  Keyboard,
   Platform,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+
+const { width: screenWidth } = Dimensions.get("window");
 
 interface KeyboardToolboxProps {
   visible: boolean;
@@ -34,6 +38,28 @@ export const KeyboardToolbox: React.FC<KeyboardToolboxProps> = ({
   onAddNote,
   onClose,
 }) => {
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      (event) => {
+        setKeyboardHeight(event.endCoordinates.height);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
   if (!visible) return null;
 
   const handleSave = () => {
@@ -57,7 +83,15 @@ export const KeyboardToolbox: React.FC<KeyboardToolboxProps> = ({
   };
 
   return (
-    <View style={styles.toolboxContainer}>
+    <View
+      style={[
+        styles.toolboxContainer,
+        {
+          bottom: keyboardHeight > 0 ? keyboardHeight : 0,
+          width: screenWidth,
+        },
+      ]}
+    >
       <View style={styles.toolboxContent}>
         {/* Left side - Status */}
         <View style={styles.statusSection}>
@@ -129,27 +163,37 @@ export const KeyboardToolbox: React.FC<KeyboardToolboxProps> = ({
 const styles = {
   toolboxContainer: {
     position: "absolute" as const,
-    bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    backgroundColor: "rgba(0, 0, 0, 0.95)",
     borderTopWidth: 1,
     borderTopColor: "rgba(255, 255, 255, 0.1)",
     paddingHorizontal: 16,
     paddingVertical: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    zIndex: 1000,
     ...(Platform.OS === "ios" && {
-      paddingBottom: 34, // Account for iPhone home indicator
+      paddingBottom: 34, // Account for iPhone home indicator when keyboard is visible
     }),
   },
   toolboxContent: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
     justifyContent: "space-between" as const,
+    minHeight: 52, // Ensure consistent height
   },
   statusSection: {
     flex: 1,
     flexDirection: "row" as const,
     alignItems: "center" as const,
+    paddingRight: 12,
   },
   statusItem: {
     flexDirection: "row" as const,
@@ -167,16 +211,24 @@ const styles = {
   actionsSection: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    gap: 8,
+    gap: 12, // Increased gap for better spacing on full width
   },
   toolButton: {
-    padding: 10,
-    borderRadius: 8,
+    padding: 12, // Increased padding for better touch targets
+    borderRadius: 10,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
-    minWidth: 44,
-    minHeight: 44,
+    minWidth: 48,
+    minHeight: 48,
     alignItems: "center" as const,
     justifyContent: "center" as const,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
   },
   toolButtonDisabled: {
     opacity: 0.5,
@@ -191,8 +243,9 @@ const styles = {
     backgroundColor: "#EF4444",
   },
   doneButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    paddingHorizontal: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.25)",
+    paddingHorizontal: 20,
+    borderRadius: 10,
   },
   doneButtonText: {
     color: "#FFFFFF",

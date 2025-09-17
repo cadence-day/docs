@@ -51,6 +51,8 @@ export const useTimelineActions = (opts?: {
     opts?.addPendingTimeslice ??
     usePendingTimeslicesStore((s) => s.addPendingTimeslice);
 
+  const addPendingUpdate = usePendingTimeslicesStore((s) => s.addPendingUpdate);
+
   const { t } = useI18n();
   const { showWarning } = useToast();
   const handleTimeslicePress = useCallback(
@@ -59,14 +61,22 @@ export const useTimelineActions = (opts?: {
 
       const isEmpty = timeslice.id == null;
 
-      // If no activity is selected, add empty timeslice to pending and open activity dialog
+      // If no activity is selected, add timeslice to appropriate pending list and open activity dialog
       if (!selectedActivityId) {
-        // Only add empty timeslices to pending list
         if (isEmpty) {
+          // Add empty timeslices to pending creation list
           addPendingTimeslice(timeslice);
           GlobalErrorHandler.logDebug(
             "Added empty timeslice to pending list",
             "PENDING_TIMESLICE_ADDITION",
+            { timeslice }
+          );
+        } else {
+          // Add existing timeslices to pending update list
+          addPendingUpdate(timeslice);
+          GlobalErrorHandler.logDebug(
+            "Added existing timeslice to pending updates list",
+            "PENDING_TIMESLICE_UPDATE",
             { timeslice }
           );
         }
@@ -118,12 +128,15 @@ export const useTimelineActions = (opts?: {
             );
           }
 
-          // Bring the dialog to front
+          // Don't bring activity legend dialogs to front - they should stay in the background
+          // Only expand them if collapsed
           try {
-            bringToFront(activityDialog.id);
+            if (activityDialog.collapsed) {
+              toggleCollapse(activityDialog.id);
+            }
           } catch (err) {
             GlobalErrorHandler.logWarning(
-              "bringToFront failed",
+              "toggleCollapse failed",
               "TIMELINE_DIALOGS",
               { id: activityDialog.id, error: err }
             );

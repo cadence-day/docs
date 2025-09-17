@@ -110,7 +110,6 @@
   "unable-to-show-feedback-button-please-try-again": "Kan ikke vise feedback-knap. Prøv igen.",
   "reflection": "REFLEKSION",
   "reflection-empty": "Tom refleksion",
-  "profile": "PROFIL",
   "timeline.previousDay": "Vil du opdatere i går?",
   "home.title": "Daglig Cadence",
   "sage.title": "Sage",
@@ -235,5 +234,8 @@
   "color": "Farve",
   "This activity is used by timeslices": {
     " Pick a replacement:": "Denne aktivitet bruges af timeslices. Vælg en erstatning:"
+  },
+  "profile": {
+    "title": "PROFIL"
   }
 }

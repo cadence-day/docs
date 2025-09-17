@@ -44,9 +44,16 @@ export const useNoteHandlers = ({
 
   const updateNoteMessage = useCallback(
     (index: number, message: string) => {
-      setNotes((prev) =>
-        prev.map((note, i) => (i === index ? { ...note, message } : note))
+      console.log(
+        `[useNoteHandlers] updateNoteMessage called - Index: ${index}, Message: "${message}"`
       );
+      setNotes((prev) => {
+        const updated = prev.map((note, i) =>
+          i === index ? { ...note, message } : note
+        );
+        console.log(`[useNoteHandlers] Updated notes:`, updated);
+        return updated;
+      });
     },
     [setNotes]
   );

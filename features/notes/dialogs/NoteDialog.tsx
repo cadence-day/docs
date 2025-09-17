@@ -10,8 +10,6 @@ import {
   ActivityIndicator,
   Alert,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   Text,
   TextInput,
@@ -24,13 +22,17 @@ import { createEmptyNote } from "../utils";
 import { ActivityBox } from "@/features/activity/components/ui/ActivityBox";
 import { CdLevelIndicator } from "@/shared/components/CadenceUI";
 import { useI18n } from "@/shared/hooks/useI18n";
-import useActivitiesStore from "@/shared/stores/resources/useActivitiesStore";
-import useNotesStore from "@/shared/stores/resources/useNotesStore";
-import useStatesStore from "@/shared/stores/resources/useStatesStore";
-import useDialogStore from "@/shared/stores/useDialogStore";
+
+import {
+  useActivitiesStore,
+  useDialogStore,
+  useNotesStore,
+  useStatesStore,
+} from "@/shared/stores";
+
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
-import { KeyboardToolbox, SwipeableNoteItem } from "../components";
+import { SwipeableNoteItem } from "../components";
 import { useNoteHandlers } from "../hooks/useNoteHandlers";
 import { styles } from "../styles";
 import type { NoteDialogProps, NoteItem } from "../types";
@@ -47,6 +49,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [pinnedNotes, setPinnedNotes] = useState<Set<number>>(new Set());
 
   const textInputRefs = useRef<(TextInput | null)[]>([]);
@@ -191,15 +194,31 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     }
   }, [ts_id, loadNotes, loadEnergyState]);
 
+  // Debug: Monitor notes state changes
+  useEffect(() => {
+    console.log("[NoteDialog] Notes state changed:", notes);
+  }, [notes]);
+
+  // Debug: Monitor active note index changes
+  useEffect(() => {
+    console.log("[NoteDialog] Active note index changed:", activeNoteIndex);
+  }, [activeNoteIndex]);
+
   // Handle keyboard visibility
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      () => setKeyboardVisible(true)
+      (event) => {
+        setKeyboardVisible(true);
+        setKeyboardHeight(event.endCoordinates.height);
+      }
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
-      () => setKeyboardVisible(false)
+      () => {
+        setKeyboardVisible(false);
+        setKeyboardHeight(0);
+      }
     );
 
     return () => {
@@ -320,139 +339,102 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-      >
-        <View style={{ flex: 1 }}>
-          <CdLevelIndicator
-            label={t("energyLabel", "Energy")}
-            value={energy}
-            onChange={handleEnergyChange}
-            props={{
-              lowLabel: t("energyLow", "Low"),
-              highLabel: t("energyHigh", "High"),
-            }}
-          />
+      <View style={{ flex: 1 }}>
+        <CdLevelIndicator
+          label={t("energyLabel", "Energy")}
+          value={energy}
+          onChange={handleEnergyChange}
+          props={{
+            lowLabel: t("energyLow", "Low"),
+            highLabel: t("energyHigh", "High"),
+          }}
+        />
 
-          <ScrollView
-            style={{ flex: 1, marginTop: 20 }}
-            contentContainerStyle={{
-              paddingBottom:
-                keyboardVisible && activeNoteIndex !== null ? 100 : 20,
-            }}
-            scrollEnabled={true}
-            scrollIndicatorInsets={{ right: 0, left: 0 }}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={true}
-            ref={scrollViewRef}
-          >
-            {error && (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{error}</Text>
-              </View>
-            )}
+        <ScrollView
+          style={{ flex: 1, marginTop: 20 }}
+          contentContainerStyle={{
+            paddingBottom:
+              keyboardVisible && activeNoteIndex !== null ? 120 : 20, // Extra padding when keyboard is visible
+          }}
+          scrollEnabled={true}
+          scrollIndicatorInsets={{ right: 0, left: 0 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={true}
+          ref={scrollViewRef}
+        >
+          {error && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          )}
 
-            {isLoading ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#6366F1" />
-                <Text style={styles.loadingText}>Loading notes...</Text>
-              </View>
-            ) : notes.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyStateText}>
-                  No notes yet. Add your first note below.
-                </Text>
-              </View>
-            ) : (
-              notes.map((note, index) => (
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#6366F1" />
+              <Text style={styles.loadingText}>Loading notes...</Text>
+            </View>
+          ) : notes.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateText}>
+                No notes yet. Add your first note below.
+              </Text>
+            </View>
+          ) : (
+            notes.map((note, index) => {
+              const canSave = (note.message?.trim().length || 0) > 0;
+              const isSaving = note.isSaving || false;
+
+              return (
                 <View key={index}>
-                  {index > 0 && (
-                    <View
-                      style={{
-                        height: 1,
-                        backgroundColor: "#444",
-                        marginVertical: 15,
-                        opacity: 0.5,
-                      }}
-                    />
-                  )}
-
                   <SwipeableNoteItem
                     note={note}
                     index={index}
                     isActive={activeNoteIndex === index}
                     isPinned={pinnedNotes.has(index)}
+                    canSave={canSave}
+                    isSaving={isSaving}
                     placeholder={
                       note.isNew ? "Add a new note..." : "Edit your note..."
                     }
-                    onChangeText={(text) =>
-                      noteHandlers.updateNote(index, text)
-                    }
-                    onFocus={() => setActiveNoteIndex(index)}
+                    onChangeText={(text) => {
+                      console.log(
+                        `[NoteDialog] onChangeText called - Index: ${index}, Text: "${text}"`
+                      );
+                      noteHandlers.updateNote(index, text);
+                    }}
+                    onFocus={() => {
+                      console.log(
+                        `[NoteDialog] onFocus called - Index: ${index}`
+                      );
+                      setActiveNoteIndex(index);
+                    }}
+                    onSave={() => handleSaveNote(index)}
                     onDelete={() => handleDeleteNote(index)}
                     onPin={() => handlePinNote(index)}
                     onUnpin={() => handleUnpinNote(index)}
                     textInputRef={{ current: textInputRefs.current[index] }}
                   />
                 </View>
-              ))
-            )}
+              );
+            })
+          )}
 
-            <TouchableOpacity
-              onPress={noteHandlers.addNote}
-              style={{
-                marginTop: 15,
-                paddingVertical: 10,
-                paddingHorizontal: 8,
-                backgroundColor: "#333",
-                borderRadius: 8,
-              }}
-            >
-              <Text style={{ color: "#fff", textAlign: "center" }}>
-                {t("add_new_note", "Add Note")}
-              </Text>
-            </TouchableOpacity>
-          </ScrollView>
-
-          {/* Keyboard Toolbox */}
-          <KeyboardToolbox
-            visible={keyboardVisible && activeNoteIndex !== null}
-            activeNoteIndex={activeNoteIndex}
-            canSave={
-              activeNoteIndex !== null &&
-              (notes[activeNoteIndex]?.message?.trim().length ?? 0) > 0
-            }
-            canDelete={
-              activeNoteIndex !== null && !notes[activeNoteIndex]?.isNew
-            }
-            isSaving={
-              activeNoteIndex !== null &&
-              (notes[activeNoteIndex]?.isSaving || false)
-            }
-            hasError={
-              activeNoteIndex !== null &&
-              (notes[activeNoteIndex]?.hasError || false)
-            }
-            onSave={async () => {
-              if (activeNoteIndex !== null) {
-                await handleSaveNote(activeNoteIndex);
-              }
+          <TouchableOpacity
+            onPress={noteHandlers.addNote}
+            style={{
+              marginTop: 15,
+              paddingVertical: 10,
+              paddingHorizontal: 8,
+              backgroundColor: "#333",
+              borderRadius: 8,
             }}
-            onDelete={() => {
-              if (activeNoteIndex !== null) {
-                handleDeleteNote(activeNoteIndex);
-              }
-            }}
-            onAddNote={noteHandlers.addNote}
-            onClose={() => {
-              setActiveNoteIndex(null);
-              Keyboard.dismiss();
-            }}
-          />
-        </View>
-      </KeyboardAvoidingView>
+          >
+            <Text style={{ color: "#fff", textAlign: "center" }}>
+              {t("add_new_note", "Add Note")}
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     </GestureHandlerRootView>
   );
 };

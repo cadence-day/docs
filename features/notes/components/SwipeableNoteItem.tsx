@@ -1,7 +1,14 @@
 import * as Haptics from "expo-haptics";
-import { Star, StarHalf, Trash } from "phosphor-react-native";
+import { Check, Star, StarHalf, Trash } from "phosphor-react-native";
 import React, { useRef } from "react";
-import { Animated, Dimensions, Text, TextInput, View } from "react-native";
+import {
+  Animated,
+  Dimensions,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -20,8 +27,11 @@ interface SwipeableNoteItemProps {
   isActive: boolean;
   isPinned?: boolean;
   placeholder: string;
+  canSave: boolean;
+  isSaving: boolean;
   onChangeText: (text: string) => void;
   onFocus: () => void;
+  onSave: () => void;
   onDelete: () => void;
   onPin?: () => void;
   onUnpin?: () => void;
@@ -34,8 +44,11 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
   isActive,
   isPinned = false,
   placeholder,
+  canSave,
+  isSaving,
   onChangeText,
   onFocus,
+  onSave,
   onDelete,
   onPin,
   onUnpin,
@@ -56,6 +69,9 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
     if (state === State.BEGAN) {
       isSwipeActive.current = true;
       lastGestureX.current = 0;
+      console.log(
+        `[SwipeableNoteItem] Swipe BEGAN - Index: ${index}, isSwipeActive: ${isSwipeActive.current}`
+      );
     }
 
     if (state === State.END || state === State.CANCELLED) {
@@ -64,10 +80,10 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
 
       if (shouldTriggerAction) {
         if (translationX < -SWIPE_THRESHOLD) {
-          // Left swipe - Delete action
+          // Left swipe - Delete action (reveals right side)
           handleDelete();
         } else if (translationX > SWIPE_THRESHOLD) {
-          // Right swipe - Pin/Unpin action
+          // Right swipe - Pin/Unpin action (reveals left side)
           handlePinToggle();
         }
       }
@@ -81,6 +97,9 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
       }).start();
 
       isSwipeActive.current = false;
+      console.log(
+        `[SwipeableNoteItem] Swipe END - Index: ${index}, isSwipeActive: ${isSwipeActive.current}`
+      );
     }
   };
 
@@ -181,6 +200,7 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
             },
           ]}
         >
+          {/* TextInput */}
           <TextInput
             ref={textInputRef}
             style={[styles.noteInput, isActive && styles.noteInputActive]}
@@ -189,9 +209,20 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
             multiline
             scrollEnabled={false}
             value={note.message || ""}
-            onChangeText={onChangeText}
-            onFocus={onFocus}
-            editable={!isSwipeActive.current}
+            onChangeText={(text) => {
+              console.log(
+                `[SwipeableNoteItem] onChangeText called - Index: ${index}, Text: "${text}", isSwipeActive: ${isSwipeActive.current}, editable: ${!isSwipeActive.current}`
+              );
+              onChangeText(text);
+            }}
+            onFocus={() => {
+              console.log(
+                `[SwipeableNoteItem] onFocus called - Index: ${index}, isSwipeActive: ${isSwipeActive.current}`
+              );
+              onFocus();
+            }}
+            editable={true} // Temporarily force true for debugging
+            // editable={!isSwipeActive.current}
           />
 
           {isPinned && (
@@ -201,6 +232,76 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
           )}
         </Animated.View>
       </PanGestureHandler>
+
+      {/* Action buttons outside the note container - only show when input is focused */}
+      {isActive && (
+        <View style={styles.actionButtonsContainer}>
+          {/* Case 1: New note with content (not yet saved) - show only V */}
+          {!note.id && canSave ? (
+            <TouchableOpacity
+              style={[styles.actionButton, styles.saveButton]}
+              onPress={onSave}
+              disabled={isSaving}
+            >
+              <Check size={18} color="#10B981" />
+            </TouchableOpacity>
+          ) : /* Case 2: Existing note being edited with changes - show V, trash, star */ note.id &&
+            canSave ? (
+            <>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.saveButton]}
+                onPress={onSave}
+                disabled={isSaving}
+              >
+                <Check size={18} color="#10B981" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={onDelete}
+                disabled={isSaving}
+              >
+                <Trash size={16} color="#EF4444" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={isPinned ? onUnpin : onPin}
+                disabled={isSaving}
+              >
+                {isPinned ? (
+                  <StarHalf size={16} color="#F59E0B" />
+                ) : (
+                  <Star size={16} color="#6B7280" />
+                )}
+              </TouchableOpacity>
+            </>
+          ) : /* Case 3: Existing note focused but no changes - show trash, star */ note.id &&
+            !canSave ? (
+            <>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={onDelete}
+                disabled={isSaving}
+              >
+                <Trash size={16} color="#EF4444" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={isPinned ? onUnpin : onPin}
+                disabled={isSaving}
+              >
+                {isPinned ? (
+                  <StarHalf size={16} color="#F59E0B" />
+                ) : (
+                  <Star size={16} color="#6B7280" />
+                )}
+              </TouchableOpacity>
+            </>
+          ) : null}
+        </View>
+      )}
     </View>
   );
 };
@@ -230,7 +331,7 @@ const styles = {
     color: "#FFFFFF",
     fontSize: 16,
     padding: 16,
-    paddingRight: 40, // Space for pin indicator
+    paddingRight: 16,
     minHeight: 60,
     textAlignVertical: "top" as const,
   },
@@ -246,13 +347,57 @@ const styles = {
     alignItems: "center" as const,
     justifyContent: "center" as const,
   },
+  actionButtonsContainer: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "flex-end" as const,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 4,
+    gap: 8,
+  },
+  actionButton: {
+    padding: 6,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    width: 32,
+    height: 32,
+  },
+  saveButton: {
+    backgroundColor: "rgba(16, 185, 129, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(16, 185, 129, 0.3)",
+  },
+  inlineActions: {
+    flexDirection: "row" as const,
+    justifyContent: "flex-start" as const,
+    alignItems: "center" as const,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 12,
+    gap: 12,
+  },
+  inlineButton: {
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    minWidth: 32,
+    minHeight: 32,
+  },
+  saveButtonActive: {
+    backgroundColor: "rgba(16, 185, 129, 0.1)",
+  },
   leftAction: {
     position: "absolute" as const,
     left: 0,
     top: 0,
     bottom: 0,
     width: ACTION_WIDTH,
-    backgroundColor: "#EF4444",
+    backgroundColor: "#EF4444", // Red for delete
     alignItems: "center" as const,
     justifyContent: "center" as const,
     borderTopLeftRadius: 8,
@@ -265,7 +410,7 @@ const styles = {
     top: 0,
     bottom: 0,
     width: ACTION_WIDTH,
-    backgroundColor: "#6366F1",
+    backgroundColor: "#6366F1", // Purple for pin/unpin
     alignItems: "center" as const,
     justifyContent: "center" as const,
     borderTopRightRadius: 8,

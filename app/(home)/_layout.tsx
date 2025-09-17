@@ -190,7 +190,7 @@ export default function TabLayout() {
                 <TabLabel
                   focused={focused}
                   color={color}
-                  label={t("profile")}
+                  label={t("profile.title")}
                 />
               ),
             }}

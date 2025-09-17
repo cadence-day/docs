@@ -111,6 +111,7 @@
   "reflection": "REFLECTION",
   "reflection-empty": "Empty Reflection",
   "profile": {
+    "title": "PROFILE",
     "edit-photo": "Edit Profile Photo",
     "name": "Name",
     "username": "Username",
