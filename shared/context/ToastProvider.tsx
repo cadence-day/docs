@@ -1,4 +1,4 @@
-import Toast, { ToastProps, ToastType } from "@/shared/components/Toast";
+import Toast from "@/shared/components/Toast";
 import React, {
   createContext,
   ReactNode,
@@ -8,9 +8,11 @@ import React, {
   useState,
 } from "react";
 
+type ToastComponentProps = React.ComponentProps<typeof Toast>;
+
 interface ToastOptions {
   message: string;
-  type?: ToastType;
+  type?: ToastComponentProps["type"];
   duration?: number;
 }
 
@@ -40,7 +42,7 @@ export const ToastService = {
 };
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
-  const [toast, setToast] = useState<ToastProps | null>(null);
+  const [toast, setToast] = useState<ToastComponentProps | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showToast = useCallback(
@@ -54,7 +56,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
         type,
         isVisible: true,
         onHide: () => setToast(null),
-      });
+      } as ToastComponentProps);
 
       timeoutRef.current = setTimeout(() => {
         setToast(null);

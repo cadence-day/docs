@@ -1,3 +1,4 @@
+import { supabaseClient } from "@/shared/api/client";
 import useActivitiesStore from "@/shared/stores/resources/useActivitiesStore";
 import useActivityCategoriesStore from "@/shared/stores/resources/useActivityCategoriesStore";
 import useNotesStore from "@/shared/stores/resources/useNotesStore";
@@ -6,6 +7,7 @@ import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -47,12 +49,41 @@ const DebugScreen = () => {
   const statesState = useStatesStore();
   const timeslicesState = useTimeslicesStore();
 
+  const showSessionInfo = async () => {
+    const {
+      data: { session },
+      error,
+    } = await supabaseClient.auth.getSession();
+
+    if (error) {
+      Alert.alert("Error fetching session", error.message);
+      return;
+    }
+
+    if (session) {
+      Alert.alert(
+        "Supabase Session Details",
+        `Access Token: \n${session.access_token} \n\nSession: \n${JSON.stringify(
+          session,
+          null,
+          2
+        )}`,
+        [{ text: "OK" }]
+      );
+    } else {
+      Alert.alert("No active session found.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Link href="/(home)">
         <Text style={styles.link}>Back to Home</Text>
       </Link>
       <Text style={styles.title}>Debug Screen</Text>
+      <TouchableOpacity onPress={showSessionInfo} style={styles.button}>
+        <Text style={styles.buttonText}>Show Supabase Session</Text>
+      </TouchableOpacity>
       <ScrollView style={styles.scrollView}>
         <StoreStateDisplay
           storeName="useActivityCategoriesStore"
@@ -78,6 +109,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: "#fff",
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
   link: {
     fontSize: 16,

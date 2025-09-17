@@ -111,6 +111,7 @@
   "reflection": "REFLECTION",
   "reflection-empty": "Empty Reflection",
   "profile": {
+    "logout": "Log Out",
     "title": "PROFILE",
     "edit-photo": "Edit Profile Photo",
     "name": "Name",
@@ -275,5 +276,6 @@
   "choose_action": "Choose Action",
   "energyLabel": "ENERGY",
   "energyLow": "Low",
-  "energyHigh": "High"
+  "energyHigh": "High",
+  "home.todayTitle": "Today's Cadence"
 }

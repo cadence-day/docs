@@ -10,7 +10,7 @@ import {
 interface CdButtonProps {
   title: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "outline" | "text";
+  variant?: "primary" | "secondary" | "outline" | "text" | "destructive";
   size?: "small" | "medium" | "large";
   disabled?: boolean;
   style?: ViewStyle;
@@ -146,5 +146,14 @@ const localStyles = StyleSheet.create({
   // Disabled text styles
   disabledButtonText: {
     opacity: 0.7,
+  },
+
+  // Destructive styles
+  destructiveButton: {
+    backgroundColor: "#FF3B30",
+    borderWidth: 0,
+  },
+  destructiveButtonText: {
+    color: "#FFFFFF",
   },
 });

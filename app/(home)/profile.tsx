@@ -1,17 +1,31 @@
-import { Link } from "expo-router";
+import ProfileScreen from "@/features/profile/components/ProfileScreen";
+import { backgroundLinearColors } from "@/shared/constants/COLORS";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native";
 
 export default function ProfileRoute() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        {/* Profile content goes here */}
-        <Text>Profile Screen</Text>
-        <Link href="/(utils)/debug">
-          <Text>Debug Screen</Text>
-        </Link>
-      </View>
-    </SafeAreaView>
+    <LinearGradient
+      colors={[
+        backgroundLinearColors.primary.end,
+        backgroundLinearColors.primary.end,
+      ]}
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 12,
+          paddingTop: 10,
+          paddingBottom: 10,
+          margin: 12,
+        }}
+      >
+        <ProfileScreen />
+      </SafeAreaView>
+    </LinearGradient>
   );
 }

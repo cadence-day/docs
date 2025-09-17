@@ -239,6 +239,12 @@
     " Pick a replacement:": "Denne aktivitet bruges af timeslices. Vælg en erstatning:"
   },
   "profile": {
-    "title": "PROFIL"
-  }
+    "title": "PROFIL",
+    "logout": "Log ud",
+    "delete-account": "Slet konto",
+    "edit-photo": "Rediger profilbillede",
+    "name": "Navn",
+    "email": "Email"
+  },
+  "home.todayTitle": "Dagens Cadence"
 }

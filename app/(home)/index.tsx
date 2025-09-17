@@ -36,6 +36,9 @@ export default function Today() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
+  // isToday is true if selectedDate is today's date (but ignore time)
+  const isToday = selectedDate.toDateString() === new Date().toDateString();
+  const title = isToday ? t("home.todayTitle") : t("home.title");
 
   useEffect(() => {
     setCurrentTime(new Date());
@@ -88,9 +91,7 @@ export default function Today() {
             }}
           >
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 24, color: "#222" }}>
-                {t("home.title")}
-              </Text>
+              <Text style={{ fontSize: 24, color: "#222" }}>{title}</Text>
               <View
                 style={{
                   flexDirection: "row",
