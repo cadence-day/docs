@@ -34,11 +34,12 @@ function TabLabel({
         style={{
           fontSize: 10,
           textTransform: "uppercase",
-          letterSpacing: 1,
+          letterSpacing: 1.5,
           color: COLORS.light.text,
           textAlign: "center",
           textDecorationLine: focused ? "underline" : "none",
-          fontWeight: focused ? "600" : "400",
+          fontWeight: focused ? "700" : "400",
+          verticalAlign: "middle",
         }}
       >
         {label}
@@ -155,6 +156,7 @@ export default function TabLayout() {
               alignItems: "center",
               alignSelf: "stretch",
               alignContent: "center",
+              marginTop: 12,
             },
           }}
         >
