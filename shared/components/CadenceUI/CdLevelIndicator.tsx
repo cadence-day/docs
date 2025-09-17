@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     width: 60, // Fixed width for label
     marginRight: 18,
     flexShrink: 0, // Prevent label from shrinking
+    textTransform: "uppercase",
   },
   indicatorSection: {
     flex: 1,
@@ -149,5 +150,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textAlign: "center",
     flexShrink: 0, // Prevent text from shrinking
+    color: "#fff",
   },
 });

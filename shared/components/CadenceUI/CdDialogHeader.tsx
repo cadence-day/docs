@@ -88,7 +88,7 @@ export const CdDialogHeader: React.FC<CdDialogHeaderProps> = ({
           )}
           {typeof title === "string" ? (
             <TouchableWithoutFeedback onPress={handleTitlePress}>
-              <View>
+              <View style={styles.titleContainer}>
                 <Text
                   style={[
                     styles.title,
@@ -199,11 +199,15 @@ const styles = StyleSheet.create({
     textAlign: "left",
     flexShrink: 1,
   },
+  titleContainer: {
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
   titleButton: {
     marginLeft: 8,
+    justifyContent: "flex-end",
     alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
+    paddingBottom: 2,
   },
   right: {
     minWidth: 32,
