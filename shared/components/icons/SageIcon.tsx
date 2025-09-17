@@ -1,6 +1,6 @@
-import { Animated, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Svg, Path, Defs, RadialGradient, Stop } from "react-native-svg";
+import { Animated, View } from "react-native";
+import { Defs, Path, RadialGradient, Stop, Svg } from "react-native-svg";
 
 interface SageIconProps {
   status?: "pulsating" | "changing" | "still";

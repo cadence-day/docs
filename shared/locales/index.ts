@@ -59,3 +59,15 @@ if (!i18n.isInitialized) {
     console.warn("i18n initialization failed:", err);
   }
 }
+
+// Export locale in the right format for other modules to use
+export const locale = i18n.language || fallbackLng;
+
+// Listen for language changes and update locale export
+i18n.on("languageChanged", (lng) => {
+  // Update exported locale variable
+  // Note: This won't update existing imports; they need to re-import or use i18n directly.
+  // This is a limitation of module exports in JavaScript/TypeScript.
+  // eslint-disable-next-line no-console
+  console.log(`i18n language changed to ${lng}`);
+});

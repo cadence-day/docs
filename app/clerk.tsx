@@ -20,7 +20,7 @@ export default function ClerkRedirect() {
       } finally {
         if (mounted) {
           // Navigate to home; the auth layout will redirect signed-in users appropriately
-          router.replace("/");
+          router.replace("/(home)");
         }
       }
     })();

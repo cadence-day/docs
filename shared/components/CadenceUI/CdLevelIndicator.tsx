@@ -21,7 +21,6 @@ interface CdLevelIndicatorProps {
 
 const CIRCLE_COUNT = 5;
 const ACTIVE_COLOR = "#7B61FF";
-const INACTIVE_COLOR = "#666";
 const LINE_COLOR = "#444";
 
 export const CdLevelIndicator: React.FC<CdLevelIndicatorProps> = ({
@@ -52,8 +51,7 @@ export const CdLevelIndicator: React.FC<CdLevelIndicatorProps> = ({
                     style={[
                       styles.circle,
                       {
-                        backgroundColor:
-                          i < value ? ACTIVE_COLOR : INACTIVE_COLOR,
+                        backgroundColor: i < value ? ACTIVE_COLOR : "#444",
                       },
                     ]}
                   />
@@ -63,8 +61,7 @@ export const CdLevelIndicator: React.FC<CdLevelIndicatorProps> = ({
                   style={[
                     styles.circle,
                     {
-                      backgroundColor:
-                        i < value ? ACTIVE_COLOR : INACTIVE_COLOR,
+                      backgroundColor: i < value ? ACTIVE_COLOR : "#222",
                     },
                   ]}
                 />
@@ -138,7 +135,6 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: INACTIVE_COLOR,
   },
   line: {
     flex: 1, // Dynamic width to fill available space
@@ -148,7 +144,6 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   endLabel: {
-    color: INACTIVE_COLOR,
     fontSize: 10,
     fontWeight: "400",
     letterSpacing: 1,

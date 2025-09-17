@@ -1,7 +1,8 @@
 import type { Activity } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { decryptString, encryptString } from "../core";
-
+// Get isDev from global config to avoid cycle
+import { isDev } from "@/shared/constants/isDev";
 /**
  * Encrypts the name field of an activity
  * @param activity - The activity object to encrypt
@@ -15,7 +16,7 @@ export async function encryptActivityName(
   }
 
   try {
-    const encryptedName = await encryptString(activity.name);
+    const encryptedName = await encryptString(activity.name, isDev); // Enable fallback in dev
     return {
       ...activity,
       name: encryptedName,
@@ -95,7 +96,7 @@ export async function encryptActivityForInsertion(
   }
 
   try {
-    const encryptedName = await encryptString(activity.name);
+    const encryptedName = await encryptString(activity.name, isDev); // Enable fallback in Dev
     return {
       ...activity,
       name: encryptedName,

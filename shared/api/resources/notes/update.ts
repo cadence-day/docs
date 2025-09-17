@@ -1,11 +1,11 @@
-import { apiCall } from "@/shared/api/utils/apiHelpers";
-import { handleApiError } from "@/shared/api/utils/errorHandler";
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
-import type { Note } from "@/shared/types/models/";
 import {
   decryptNoteMessage,
   encryptNoteMessage,
 } from "@/shared/api/encryption/resources/notes";
+import { apiCall } from "@/shared/api/utils/apiHelpers";
+import { handleApiError } from "@/shared/api/utils/errorHandler";
+import type { Note } from "@/shared/types/models/";
 
 /* Update an existing note.
  * @param note - The note to update, including its ID.
@@ -28,16 +28,15 @@ export async function updateNote(note: Note): Promise<Note> {
         .eq("id", id)
         .select()
         .single();
-      if (data == null) {
-        throw new Error(
-          "Failed to update note: no data returned from database."
-        );
-      }
       return { data, error };
     });
 
     // Decrypt the note message for return
-    return await decryptNoteMessage(result);
+    if (result) {
+      return await decryptNoteMessage(result);
+    }
+
+    throw new Error("Failed to update note: no data returned from database.");
   } catch (error) {
     handleApiError("updateNote", error);
   }

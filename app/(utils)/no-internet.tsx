@@ -1,13 +1,11 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-  ActivityIndicator,
-} from "react-native";
+import { CdButton } from "@/shared/components/CadenceUI";
+import { COLORS } from "@/shared/constants/COLORS";
+import { useNetwork } from "@/shared/context/NetworkProvider";
+import NetInfo from "@react-native-community/netinfo";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import Svg, { Rect } from "react-native-svg";
 
 interface NoInternetScreenProps {
@@ -18,19 +16,49 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
   const [isRetrying, setIsRetrying] = useState(false);
 
   const handleRetry = async () => {
-    if (onRetry && !isRetrying) {
-      setIsRetrying(true);
-      try {
-        await onRetry();
-      } finally {
-        setIsRetrying(false);
+    if (isRetrying) return;
+
+    setIsRetrying(true);
+    try {
+      // First, ask the NetworkProvider to refresh global state (non-blocking).
+      if (typeof retry === "function") {
+        try {
+          retry();
+        } catch (e) {
+          // noop
+        }
       }
+
+      // If a custom onRetry was provided, call it and wait for it to complete.
+      if (onRetry) {
+        await onRetry();
+      }
+
+      // Perform an explicit connectivity check and only navigate when connected.
+      const state = await NetInfo.fetch();
+      if (state.isConnected) {
+        // Replace to root (NetworkProvider will also be in sync). Using replace keeps navigation clean.
+        router.replace("/");
+      }
+    } finally {
+      setIsRetrying(false);
     }
   };
 
+  const router = useRouter();
+  const network = useNetwork();
+  const { isConnected, retry } = network;
+
+  // If network becomes online while this screen is mounted, navigate away.
+  useEffect(() => {
+    if (isConnected) {
+      router.replace("/");
+    }
+  }, [isConnected, router]);
+
   return (
     <LinearGradient
-      colors={["#2B2B2B", "#151414"]}
+      colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
       locations={[0, 0.6]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
@@ -99,30 +127,15 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
           connected to Wi-Fi or mobile data.
         </Text>
 
-        {/* Retry Button */}
-        {onRetry && (
-          <TouchableOpacity
-            style={[
-              styles.retryButton,
-              isRetrying && styles.retryButtonDisabled,
-            ]}
-            onPress={handleRetry}
-            disabled={isRetrying}
-          >
-            {isRetrying ? (
-              <View style={styles.retryButtonContent}>
-                <ActivityIndicator
-                  size="small"
-                  color="white"
-                  style={styles.loadingIcon}
-                />
-                <Text style={styles.retryButtonText}>Checking...</Text>
-              </View>
-            ) : (
-              <Text style={styles.retryButtonText}>Try Again</Text>
-            )}
-          </TouchableOpacity>
-        )}
+        {/* Retry Button using shared CdButton */}
+        <CdButton
+          title={isRetrying ? "Checking..." : "Try Again"}
+          onPress={handleRetry}
+          disabled={isRetrying}
+          variant="outline"
+          size="large"
+          style={styles.cdButton}
+        />
       </View>
     </LinearGradient>
   );
@@ -149,41 +162,19 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: "white",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: 12,
   },
   message: {
     fontSize: 16,
     color: "rgba(255, 255, 255, 0.6)",
     textAlign: "center",
     lineHeight: 24,
-    marginBottom: 48,
+    marginBottom: 24,
     paddingHorizontal: 20,
   },
-  retryButton: {
-    backgroundColor: "transparent",
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    borderWidth: 1,
-    paddingHorizontal: 48,
-    paddingVertical: 16,
-    borderRadius: 8,
+  cdButton: {
+    marginTop: 8,
     minWidth: 200,
-  },
-  retryButtonDisabled: {
-    opacity: 0.6,
-  },
-  retryButtonContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loadingIcon: {
-    marginRight: 8,
-  },
-  retryButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "400",
-    textAlign: "center",
   },
 });
 
