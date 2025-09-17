@@ -12,15 +12,8 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "day.cadence.mobile",
-      "associatedDomains": [
-        "applinks:app.cadence.day",
-        "applinks:app.cadence.day"
-      ],
-      "icon": {
-        "dark": "./assets/images/ios-dark.png",
-        "light": "./assets/images/ios-light.png",
-        "tinted": "./assets/images/ios-tinted.png"
-      },
+      "associatedDomains": ["applinks:app.cadence.day"],
+      "icon": "./assets/images/ios-light.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
@@ -66,7 +59,9 @@
           }
         ]
       },
-      "runtimeVersion": "1.0.0"
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
