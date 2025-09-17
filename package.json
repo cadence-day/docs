@@ -22,6 +22,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@babel/runtime": "^7.28.4",
     "@clerk/clerk-expo": "^2.14.18",
     "@expo/metro-runtime": "~6.1.1",
     "@expo/ui": "^0.2.0-beta.3",
