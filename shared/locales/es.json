@@ -115,6 +115,7 @@
   "pick-activity-first": "Elija una actividad primero",
   "confirm": "Confirmar",
   "delete": "Eliminar",
+  "delete-timeslice-with-data-warning": "Este intervalo de tiempo tiene notas o estado adjunto. Eliminarlo también eliminará todos los datos asociados. Esta acción no se puede deshacer.",
   "This activity is a child of another. Change its parent first before deleting.": "Esta actividad es hija de otra. Cambia su padre antes de eliminarla.",
   "This activity has sub-activities. Reassign or remove their parent before deleting.": "Esta actividad tiene subactividades. Reasigna o elimina su padre antes de eliminarla.",
   "This activity is used by timeslices. Pick a replacement:": "Esta actividad se usa en intervalos de tiempo. Elige un reemplazo:",

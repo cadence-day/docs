@@ -115,6 +115,7 @@
   "pick-activity-first": "Wählen Sie zuerst eine Aktivität aus",
   "confirm": "Bestätigen",
   "delete": "Löschen",
+  "delete-timeslice-with-data-warning": "Dieser Zeitabschnitt hat Notizen oder einen Zustand angehängt. Das Löschen entfernt auch alle zugehörigen Daten. Diese Aktion kann nicht rückgängig gemacht werden.",
   "This activity is a child of another. Change its parent first before deleting.": "Diese Aktivität ist einem anderen untergeordnet. Ändern Sie zuerst den übergeordneten Eintrag, bevor Sie löschen.",
   "This activity has sub-activities. Reassign or remove their parent before deleting.": "Diese Aktivität hat Unteraktivitäten. Weisen Sie einen anderen übergeordneten Eintrag zu oder entfernen Sie ihn, bevor Sie löschen.",
   "This activity is used by timeslices. Pick a replacement:": "Diese Aktivität wird von Zeitabschnitten verwendet. Wählen Sie einen Ersatz:",

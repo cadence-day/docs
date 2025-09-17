@@ -178,6 +178,7 @@
   "pick-activity-first": "Vælg en aktivitet først",
   "confirm": "Bekræft",
   "delete": "Slet",
+  "delete-timeslice-with-data-warning": "Dette tidsudsnit har noter eller tilstand tilknyttet. At slette det vil også fjerne alle tilknyttede data. Denne handling kan ikke fortrydes.",
   "This activity is a child of another. Change its parent first before deleting.": "Denne aktivitet er et barn af en anden. Skift dens overordnede først, før du sletter.",
   "This activity has sub-activities. Reassign or remove their parent before deleting.": "Denne aktivitet har underaktiviteter. Tildel en ny overordnet eller fjern den, før du sletter.",
   "This activity is used by timeslices. Pick a replacement:": "Denne aktivitet bruges af tidsudsnit. Vælg en erstatning:",

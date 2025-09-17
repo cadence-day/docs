@@ -218,6 +218,7 @@
   "pick-activity-first": "Pick an activity first",
   "confirm": "Confirm",
   "delete": "Delete",
+  "delete-timeslice-with-data-warning": "This timeslice has notes or state attached. Deleting it will also remove all associated data. This action cannot be undone.",
   "This activity is a child of another. Change its parent first before deleting.": "This activity is a child of another. Change its parent first before deleting.",
   "This activity has sub-activities. Reassign or remove their parent before deleting.": "This activity has sub-activities. Reassign or remove their parent before deleting.",
   "This activity is used by timeslices. Pick a replacement:": "This activity is used by timeslices. Pick a replacement:",

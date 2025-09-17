@@ -121,6 +121,7 @@
   "pick-activity-first": "Choisissez d'abord une activité",
   "confirm": "Confirmer",
   "delete": "Supprimer",
+  "delete-timeslice-with-data-warning": "Cette tranche de temps contient des notes ou un état attaché. La supprimer supprimera également toutes les données associées. Cette action ne peut pas être annulée.",
   "This activity is a child of another. Change its parent first before deleting.": "Cette activité est l'enfant d'une autre. Modifiez son parent avant de la supprimer.",
   "This activity has sub-activities. Reassign or remove their parent before deleting.": "Cette activité a des sous-activités. Réassignez ou supprimez leur parent avant de supprimer.",
   "This activity is used by timeslices. Pick a replacement:": "Cette activité est utilisée par des tranches de temps. Choisissez un remplacement :",
