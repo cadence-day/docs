@@ -12,23 +12,25 @@ import { COLORS } from "../../constants/COLORS";
 
 interface CdTextInputOneLineProps extends Omit<TextInputProps, "onChangeText"> {
   label: string;
-  value: string;
+  value?: string; // Made optional to allow no text
   onChangeText?: (text: string) => void;
   onSubmit?: (text: string) => void;
   isButton?: boolean;
   onPress?: () => void;
   buttonIcon?: keyof typeof Ionicons.glyphMap;
+  showValueText?: boolean; // New prop to control text visibility
 }
 
 export const CdTextInputOneLine: React.FC<CdTextInputOneLineProps> = ({
   label,
-  value,
+  value = "", // Default to empty string
   onChangeText,
   onSubmit,
   isButton = false,
   onPress,
   buttonIcon,
   editable = true,
+  showValueText = true, // Default to showing text
   ...textInputProps
 }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -88,19 +90,21 @@ export const CdTextInputOneLine: React.FC<CdTextInputOneLineProps> = ({
             </View>
           ) : (
             <View style={styles.displayContainer}>
-              <Text
-                style={[styles.value, isButton && styles.buttonValue]}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {value}
-              </Text>
+              {showValueText && value && (
+                <Text
+                  style={[styles.value, isButton && styles.buttonValue]}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {value}
+                </Text>
+              )}
               {(editable || isButton) && (
                 <Ionicons
                   name={buttonIcon || (isButton ? "chevron-forward" : "pencil")}
                   size={16}
                   color={COLORS.textIcons}
-                  style={styles.icon}
+                  style={showValueText && value ? styles.icon : styles.iconOnly}
                 />
               )}
             </View>
@@ -129,6 +133,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: COLORS.text.header,
     flex: 1,
+    minWidth: 60,
   },
   rightSection: {
     flex: 2,
@@ -149,6 +154,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     opacity: 0.6,
+  },
+  iconOnly: {
+    opacity: 0.6,
+    marginRight: 0,
   },
   editingContainer: {
     flexDirection: "row",
