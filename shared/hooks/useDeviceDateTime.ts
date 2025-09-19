@@ -49,12 +49,6 @@ export const getDeviceDateTimePreferences = (): DateTimePreferences => {
       typeof resolved.hour12 === "boolean" ? resolved.hour12 : undefined;
     const timeFormat =
       hour12 === true ? "12h" : hour12 === false ? "24h" : undefined;
-    GlobalErrorHandler.logDebug("getDeviceDateTimePreferences", "DATETIME", {
-      preferredLocale,
-      timeZone,
-      timeFormat,
-      resolved,
-    });
     return { locale: preferredLocale, timezone: timeZone, timeFormat };
   } catch (err) {
     try {
