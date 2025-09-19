@@ -126,9 +126,7 @@ const ReflectionTimesliceInfo: React.FC<ReflectionTimesliceInfoProps> = ({
   };
 
   // Get mood value (convert from 1-10 to 1-5 scale if needed)
-  const moodValue = state?.energy
-    ? Math.min(Math.ceil(state.energy / 2), 5)
-    : 0;
+  const moodValue = state?.energy ? Math.min(Math.ceil(state.energy), 5) : 0;
 
   return (
     <ScrollView style={styles.container}>
@@ -156,7 +154,7 @@ const ReflectionTimesliceInfo: React.FC<ReflectionTimesliceInfoProps> = ({
             <View style={styles.statsRow}>
               <Text style={styles.statsLabel}>AVG ENERGY (WEEK)</Text>
               <MoodIndicator
-                mood={Math.min(Math.ceil(activityStats.averageEnergy / 2), 5)}
+                mood={Math.min(Math.ceil(activityStats.averageEnergy), 5)}
               />
             </View>
           )}

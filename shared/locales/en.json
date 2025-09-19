@@ -162,6 +162,26 @@
     "upgrade-now": "Upgrade now",
     "current-plan": "Current Plan",
     "subscription-footer": "Take control of your daily reflection and design the life you want to live.",
+    "delete-account": "Delete account",
+    "placeholders": {
+      "name": "Enter your name",
+      "email": "Enter your email",
+      "phone": "Enter your phone number",
+      "wake-time": "07:30",
+      "sleep-time": "23:30"
+    },
+    "fallbacks": {
+      "name": "Your Name",
+      "email": "email@example.com",
+      "user-id": "Unknown"
+    },
+    "debug-screen": "Debug Screen",
+    "error-messages": {
+      "time-required": "Please enter a time",
+      "time-format": "Please use format HH:MM (e.g., 07:30)",
+      "wake-time-range": "Wake time should be between 4:00 AM and 12:00 PM",
+      "sleep-time-range": "Sleep time should be between 8:00 PM and 2:00 AM"
+    },
     "support": {
       "category": "Category",
       "message": "Message",

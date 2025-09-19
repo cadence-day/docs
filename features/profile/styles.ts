@@ -340,4 +340,13 @@ export const profileStyles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#E5E5E5",
   },
+
+  // Error text for form validation
+  errorText: {
+    fontSize: 12,
+    color: COLORS.error,
+    marginTop: 4,
+    marginBottom: 8,
+    paddingHorizontal: 4,
+  },
 });

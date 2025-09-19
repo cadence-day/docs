@@ -267,8 +267,61 @@
     "delete-account": "Slet konto",
     "edit-photo": "Rediger profilbillede",
     "name": "Navn",
+    "username": "Brugernavn",
     "email": "Email",
-    "support": "Kundesupport"
+    "phone": "Telefonnummer",
+    "notifications": "Notifikationer",
+    "wake-time": "Vågn op kl.",
+    "sleep-time": "Gå i seng",
+    "subscription": "Abonnementsplan",
+    "security": "Sikkerhed",
+    "security-settings": "Sikkerhed og privatlivspolitik",
+    "customer-support": "Kundesupport",
+    "app-info": "App Information",
+    "app-version": "App Version",
+    "user-id": "Bruger ID",
+    "free": "Gratis",
+    "deep-cadence": "Deep Cadence",
+    "subscription-plan": "Abonnementsplan",
+    "set-wake-time": "Indstil vækningstid",
+    "set-sleep-time": "Indstil sengetid",
+    "deep-cadence-description": "Lås op for dybere indsigter og forbedret personalisering for at få mest muligt ud af din daglige refleksionsrejse.",
+    "whats-inside": "Hvad er inkluderet:",
+    "upgrade-now": "Opgradér nu",
+    "current-plan": "Nuværende plan",
+    "subscription-footer": "Tag kontrol over din daglige reflektion og design det liv, du ønsker at leve.",
+    "placeholders": {
+      "name": "Indtast dit navn",
+      "email": "Indtast din email",
+      "phone": "Indtast dit telefonnummer",
+      "wake-time": "07:30",
+      "sleep-time": "23:30"
+    },
+    "fallbacks": {
+      "name": "Dit navn",
+      "email": "email@eksempel.dk",
+      "user-id": "Ukendt"
+    },
+    "debug-screen": "Debug Skærm",
+    "error-messages": {
+      "time-required": "Indtast venligst en tid",
+      "time-format": "Brug venligst format TT:MM (f.eks. 07:30)",
+      "wake-time-range": "Vækningstid skal være mellem 04:00 og 12:00",
+      "sleep-time-range": "Sengetid skal være mellem 20:00 og 02:00"
+    },
+    "support": {
+      "category": "Kategori",
+      "message": "Besked",
+      "message-required": "Indtast venligst en besked",
+      "message-placeholder": "Fortæl os hvad der skete. Hvad forventede du? Nogen forslag til forbedringer?",
+      "general": "Generelt",
+      "bug": "Fejlrapport",
+      "feature": "Funktionsanmodning",
+      "submit": "Send feedback",
+      "success": "Feedback sendt!",
+      "success-message": "Tak for din feedback. Det hjælper os med at forbedre appen!",
+      "error-message": "Kunne ikke sende feedback. Prøv igen senere."
+    }
   },
   "home.todayTitle": "Dagens Cadence",
   "reflection.weekly-cadence": "Ugentlig Cadence"
