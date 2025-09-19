@@ -42,7 +42,7 @@ const ReflectionTimesliceInfoDialog: React.FC<
         titleFontSize: 18,
         rightActionFontSize: 14,
       },
-      height: 70,
+      height: 45,
     });
   }, [_dialogId, t, timesliceInfo?.activity]);
 

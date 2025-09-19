@@ -257,11 +257,9 @@ export const useTimesliceStatistics = (
         }
       }
 
-      // Get notes
-      const notes = timeslice.note_ids
-        ? notesStore.notes.filter(
-            (note) => note.id && timeslice.note_ids?.includes(note.id)
-          )
+      // Get notes - fetch from API if not in store
+      const notes = timeslice.note_ids?.length
+        ? await notesStore.getNotes(timeslice.note_ids)
         : [];
 
       // Calculate activity-specific daily and weekly totals

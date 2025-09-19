@@ -1,11 +1,13 @@
 import { useI18n } from "@/shared/hooks/useI18n";
 import {
   useActivitiesStore,
+  useNotesStore,
   useStatesStore,
   useTimeslicesStore,
 } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { getClerkInstance } from "@clerk/clerk-expo";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { timeslicesParser } from "../utils";
 
@@ -69,13 +71,23 @@ export function useReflectionData(
       const timeslicesStoreState = useTimeslicesStore.getState();
       const activitiesStoreState = useActivitiesStore.getState();
       const statesStoreState = useStatesStore.getState();
+      const notesStoreState = useNotesStore.getState();
+
+      // Get current user ID from Clerk
+      const clerk = getClerkInstance();
+      const currentUserId = clerk.user?.id;
+
+      if (!currentUserId) {
+        throw new Error("User must be authenticated to fetch reflection data");
+      }
 
       // Fetch data in parallel using the same pattern as timeline refresh
-      const [timeslicesResult, activitiesResult, statesResult] =
+      const [timeslicesResult, activitiesResult, statesResult, notesResult] =
         await Promise.allSettled([
           timeslicesStoreState.getTimeslicesFromTo(fromDate, toDate),
           activitiesStoreState.getAllActivities(),
           statesStoreState.getAllStates(),
+          notesStoreState.getUserNotes(currentUserId),
         ]);
 
       GlobalErrorHandler.logDebug("Fetch results", "useReflectionData", {

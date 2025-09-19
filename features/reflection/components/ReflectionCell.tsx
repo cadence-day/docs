@@ -14,6 +14,7 @@ type ReflectionCellProps = {
   style?: object;
   dimmed?: boolean;
   notSelectedOpacity?: number;
+  isSelected?: boolean;
 };
 
 type EmptyReflectionCellProps = {
@@ -29,6 +30,7 @@ export const ReflectionCell = ({
   style,
   dimmed = false,
   notSelectedOpacity = 0.3,
+  isSelected = false,
 }: ReflectionCellProps) => {
   const hasTimeslice = !!timeslice?.id;
   const { activityColor, energy, isLoading, error } = useTimesliceDetails(
@@ -50,6 +52,7 @@ export const ReflectionCell = ({
             ? activityColor || COLORS.primary
             : "transparent",
           opacity: dimmed ? notSelectedOpacity : 1,
+          borderWidth: isSelected ? 2 : 1,
         },
         style, // Apply incoming style if passed in
       ]}

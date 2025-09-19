@@ -124,7 +124,7 @@ export const reflectionStyles = StyleSheet.create({
   },
   emptyCell: {
     borderWidth: REFLECTION_LAYOUT.BORDER_WIDTH,
-    borderColor: COLORS.primary,
+    borderColor: `${COLORS.primary}80`, // 0.5 opacity (80 in hex = 0.5 * 255)
     marginBottom: REFLECTION_LAYOUT.CELL_MARGIN,
     marginRight: REFLECTION_LAYOUT.CELL_MARGIN,
     height: REFLECTION_LAYOUT.CELL_HEIGHT,

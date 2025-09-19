@@ -1,10 +1,18 @@
+import { useProfileStore } from "@/features/profile/stores/useProfileStore";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import useI18n from "@/shared/hooks/useI18n";
 import { useDialogStore } from "@/shared/stores";
 import { Activity, Note, State, Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { REFLECTION_LAYOUT } from "../constants/layout";
 import { useReflectionData } from "../hooks/useReflectionData";
@@ -44,6 +52,7 @@ type DateColumnProps = {
   selectedRows: string[];
   isColumnSelected: boolean;
   isolatedActivityId: string | null;
+  highlightedTimeslice: Timeslice | null;
   onTimeslicePress: (timeslice: Timeslice) => void;
   onTimesliceLongPress: (timeslice: Timeslice) => void;
   onClearIsolation: () => void;
@@ -57,6 +66,7 @@ const DateColumn: React.FC<DateColumnProps> = ({
   selectedRows,
   isColumnSelected,
   isolatedActivityId,
+  highlightedTimeslice,
   onTimeslicePress,
   onTimesliceLongPress,
   onClearIsolation,
@@ -93,6 +103,7 @@ const DateColumn: React.FC<DateColumnProps> = ({
         }
 
         if (timeslice) {
+          const isSelectedTimeslice = highlightedTimeslice?.id === timeslice.id;
           return (
             <ReflectionCell
               key={`${dateIndex}-${timeIndex}`}
@@ -101,6 +112,7 @@ const DateColumn: React.FC<DateColumnProps> = ({
               onLongPress={() => onTimesliceLongPress(timeslice)}
               dimmed={isDimmed}
               notSelectedOpacity={isolationOpacity}
+              isSelected={isSelectedTimeslice}
             />
           );
         } else {
@@ -130,6 +142,7 @@ const MemoizedDateColumn = React.memo(DateColumn, (prevProps, nextProps) => {
     ) &&
     prevProps.parsedTimeslices[prevProps.date.full] ===
       nextProps.parsedTimeslices[nextProps.date.full] &&
+    prevProps.highlightedTimeslice?.id === nextProps.highlightedTimeslice?.id &&
     prevProps.onClearIsolation === nextProps.onClearIsolation
   );
 });
@@ -153,6 +166,56 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
     null
   );
 
+  // Track dialog state
+  const dialogStore = useDialogStore();
+  const isTimesliceDialogOpen = useMemo(() => {
+    return Object.values(dialogStore.dialogs).some(
+      (dialog) => dialog.type === "reflection-timeslice-info"
+    );
+  }, [dialogStore.dialogs]);
+
+  // Find current ongoing timeslice based on current time
+  const currentTimeslice = useMemo(() => {
+    const now = Date.now();
+    const today = new Date().toLocaleDateString();
+
+    // Only look for current timeslice in today's data
+    const todayTimeslices = parsedTimeslices[today] || {};
+
+    for (const timeSlot of Object.keys(todayTimeslices)) {
+      const timeslice = todayTimeslices[timeSlot];
+      if (timeslice?.start_time && timeslice?.end_time) {
+        const startMs = Date.parse(timeslice.start_time);
+        const endMs = Date.parse(timeslice.end_time);
+
+        if (!Number.isNaN(startMs) && !Number.isNaN(endMs)) {
+          if (now >= startMs && now < endMs) {
+            return timeslice;
+          }
+        }
+      }
+    }
+    return null;
+  }, [parsedTimeslices]);
+
+  // Determine which timeslice should be highlighted
+  const highlightedTimeslice = useMemo(() => {
+    if (isTimesliceDialogOpen) {
+      // When dialog is open, highlight the selected timeslice
+      return selectedTimeslice;
+    } else {
+      // When dialog is off, highlight the current ongoing timeslice
+      return currentTimeslice;
+    }
+  }, [isTimesliceDialogOpen, selectedTimeslice, currentTimeslice]);
+
+  // Clear selected timeslice when dialog closes
+  useEffect(() => {
+    if (!isTimesliceDialogOpen && selectedTimeslice) {
+      setSelectedTimeslice(null);
+    }
+  }, [isTimesliceDialogOpen, selectedTimeslice]);
+
   // Statistics hook for enhanced timeslice information
   const { getTimesliceWithDetails } = useTimesliceStatistics(fromDate, toDate);
 
@@ -163,6 +226,10 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
 
   const clearActivityIsolation = useCallback(() => {
     setIsolatedActivityId(null);
+  }, []);
+
+  const clearTimesliceSelection = useCallback(() => {
+    setSelectedTimeslice(null);
   }, []);
 
   // Memoize date range key for dependency tracking
@@ -212,6 +279,10 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
 
   // Refs for scroll view
   const gridScrollViewRef = useRef<ScrollView>(null);
+  const hoursScrollViewRef = useRef<ScrollView>(null);
+
+  // Get wake time from profile settings
+  const { settings } = useProfileStore();
 
   // Calculate dates array for display - optimized with better memoization
   const dates = useMemo(() => {
@@ -296,6 +367,51 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
     [dates.length, timeSlots.length, getDateRange]
   );
 
+  // Function to scroll to wake time
+  const scrollToWakeTime = useCallback(() => {
+    if (
+      hoursScrollViewRef.current &&
+      timeSlots.length > 0 &&
+      settings.wakeTime
+    ) {
+      const wakeTimeIndex = timeSlots.findIndex((slot) => {
+        const [wakeHour, wakeMinute] = settings.wakeTime.split(":").map(Number);
+        const [slotHour, slotMinute] = slot.split(":").map(Number);
+
+        // Find the closest time slot to wake time
+        const wakeTimeMinutes = wakeHour * 60 + wakeMinute;
+        const slotTimeMinutes = slotHour * 60 + slotMinute;
+
+        return slotTimeMinutes >= wakeTimeMinutes;
+      });
+
+      if (wakeTimeIndex !== -1) {
+        // Calculate scroll position (each row has a specific height from layout)
+        const scrollY = wakeTimeIndex * REFLECTION_LAYOUT.ROW_HEIGHT;
+
+        // Scroll with a small delay to ensure the component is fully mounted
+        setTimeout(() => {
+          hoursScrollViewRef.current?.scrollTo({
+            y: scrollY,
+            animated: true,
+          });
+        }, 300);
+      }
+    }
+  }, [timeSlots, settings.wakeTime]);
+
+  // Scroll to wake time when screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      scrollToWakeTime();
+    }, [scrollToWakeTime])
+  );
+
+  // Auto-scroll to wake time when component mounts or data changes
+  useEffect(() => {
+    scrollToWakeTime();
+  }, [scrollToWakeTime, parsedTimeslices]); // Re-run when data loads
+
   // Handle column selection
   const toggleColumn = useCallback((dateString: string) => {
     setSelectedColumns((prev) =>
@@ -343,6 +459,9 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
     async (timeslice: Timeslice) => {
       try {
         if (!timeslice?.id) return;
+
+        // Set the selected timeslice for highlighting
+        setSelectedTimeslice(timeslice);
 
         // Get enhanced timeslice information with statistics
         const enhancedInfo = await getTimesliceWithDetails(timeslice.id);
@@ -518,6 +637,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
               {/* Time column as the first column */}
               <ReflectionTimeAxis
                 hours={timeSlots}
+                hoursScrollViewRef={hoursScrollViewRef}
                 toggleRow={toggleRow}
                 resetSelectedRows={resetSelectedRows}
               />
@@ -538,6 +658,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
                     selectedRows={selectedRows}
                     isColumnSelected={isColumnSelected}
                     isolatedActivityId={isolatedActivityId}
+                    highlightedTimeslice={highlightedTimeslice}
                     onTimeslicePress={handleTimeslicePress}
                     onTimesliceLongPress={handleTimesliceLongPress}
                     onClearIsolation={clearActivityIsolation}
