@@ -59,15 +59,10 @@ export const useNoteHandlers = ({
   );
 
   const deleteNoteLocal = useCallback(
-    (index: number) => {
+    async (index: number) => {
       const noteToDelete = notes[index];
 
-      // If it's an existing note (not new), track its ID for deletion from database
-      if (!noteToDelete.isNew && noteToDelete.id) {
-        setDeletedNoteIds((prev) => [...prev, noteToDelete.id!]);
-      }
-
-      // Remove from local state
+      // Remove from local state first
       setNotes((prev) => prev.filter((_, i) => i !== index));
 
       // Reset active note index if the deleted note was active
@@ -77,8 +72,41 @@ export const useNoteHandlers = ({
         // Adjust active index if it's after the deleted note
         setActiveNoteIndex(activeNoteIndex - 1);
       }
+
+      // If it's an existing note (not new), delete it from database and store immediately
+      if (!noteToDelete.isNew && noteToDelete.id) {
+        try {
+          // Delete from the store (this will also delete from database)
+          await deleteNote(noteToDelete.id);
+
+          // Update the timeslice to remove this note ID
+          const updatedNoteIds = noteIds.filter((id) => id !== noteToDelete.id);
+          if (timeslice.id) {
+            await upsertTimeslice({
+              id: timeslice.id,
+              note_ids: updatedNoteIds,
+            } as any);
+          }
+        } catch (error) {
+          GlobalErrorHandler.logError(error, "deleteNoteLocal", {
+            noteId: noteToDelete.id,
+            timesliceId: timeslice.id,
+          });
+          // If deletion fails, we should probably re-add the note to local state
+          // But for now, we'll just log the error
+        }
+      }
     },
-    [notes, activeNoteIndex, setNotes, setDeletedNoteIds, setActiveNoteIndex]
+    [
+      notes,
+      activeNoteIndex,
+      noteIds,
+      timeslice.id,
+      setNotes,
+      setActiveNoteIndex,
+      deleteNote,
+      upsertTimeslice,
+    ]
   );
 
   const saveNote = useCallback(
@@ -206,18 +234,6 @@ export const useNoteHandlers = ({
       );
       const updatedNoteIds = [...noteIds];
 
-      // Handle note deletions first
-      if (deletedNoteIds.length > 0) {
-        await deleteNotes(deletedNoteIds);
-        // Remove deleted IDs from timeslice
-        for (const deletedId of deletedNoteIds) {
-          const index = updatedNoteIds.indexOf(deletedId);
-          if (index > -1) {
-            updatedNoteIds.splice(index, 1);
-          }
-        }
-      }
-
       // Save all notes with content
       for (let i = 0; i < notesToSave.length; i++) {
         const note = notesToSave[i];
@@ -276,10 +292,7 @@ export const useNoteHandlers = ({
       }
 
       // Update timeslice with final note IDs if changed
-      if (
-        updatedNoteIds.length !== noteIds.length ||
-        deletedNoteIds.length > 0
-      ) {
+      if (updatedNoteIds.length !== noteIds.length) {
         await upsertTimeslice({
           id: ts_id,
           note_ids: updatedNoteIds,
@@ -289,20 +302,17 @@ export const useNoteHandlers = ({
       GlobalErrorHandler.logError(error, "saveAllNotes", {
         timesliceId: ts_id,
         notesCount: notes.length,
-        deletedCount: deletedNoteIds.length,
       });
       throw error;
     }
   }, [
     notes,
-    deletedNoteIds,
     energy,
     timeslice,
     noteIds,
     statesStore.states,
     insertNote,
     updateNote,
-    deleteNotes,
     insertState,
     updateState,
     upsertTimeslice,

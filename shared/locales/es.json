@@ -8,7 +8,7 @@
   "activity-categories.family": "Familia",
   "activity-categories.friends": "Amigos",
   "activity-categories.meal_time": "Tiempo de comida",
-  "activity-categories.rest": "Descansar",
+  "activity-categories.rest": "",
   "activity-categories.work": "Trabajar",
   "activity-category-is-required": "Se requiere categoría de actividad",
   "activity-created-successfully": "¡Actividad creada con éxito!",
@@ -248,5 +248,27 @@
   "This activity is used by timeslices": {
     " Pick a replacement:": "Esta actividad es utilizada por timeslices. Elige un reemplazo:"
   },
-  "validate": "Confirmar"
+  "validate": "Confirmar",
+  "activity-categories.play": "",
+  "activity-categories.service": "",
+  "activity-categories.social": "",
+  "activity-categories.travel": "",
+  "profile.__i18n_ally_root__.current-plan": "",
+  "profile.app-info": "Información de la aplicación",
+  "profile.app-version": "Versión de la aplicación",
+  "profile.current-plan": "Plan actual",
+  "profile.customer-support": "Soporte al cliente",
+  "profile.debug-screen": "Pantalla de depuración",
+  "profile.deep-cadence": "Cadencia profunda",
+  "profile.deep-cadence-description": "Desbloquee ideas más profundas y una mejor personalización para aprovechar al máximo su viaje de reflexión diaria.",
+  "profile.delete-account": "Eliminar cuenta",
+  "profile.edit-photo": "Editar foto de perfil",
+  "profile.support.general": "",
+  "profile.support.message": "",
+  "profile.support.message-placeholder": "",
+  "profile.support.message-required": "",
+  "profile.support.submit": "",
+  "profile.error-messages.time-format": "Utilice el formato HH:MM (por ejemplo, 07:30)",
+  "profile.error-messages.time-required": "Por favor ingrese una hora",
+  "profile.error-messages.wake-time-range": "El tiempo de Wake -Off debe ser entre las 04:00 y las 12:00"
 }

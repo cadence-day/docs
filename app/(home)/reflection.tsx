@@ -129,7 +129,10 @@ export default function Reflection() {
         )}
         subtitle={
           <View style={styles.dateNavigationContainer}>
-            <TouchableOpacity onPress={handlePreviousWeek}>
+            <TouchableOpacity
+              onPress={handlePreviousWeek}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
               <Text
                 style={{
                   fontSize: 14,
@@ -147,6 +150,7 @@ export default function Reflection() {
             <TouchableOpacity
               onPress={handleNextWeek}
               disabled={isAtCurrentWeek()}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Text
                 style={{

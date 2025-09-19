@@ -147,7 +147,7 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
             (onIconPress ? (
               <TouchableOpacity
                 onPress={onIconPress}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <NoteIcon color={iconColor} size="normal" />
               </TouchableOpacity>
@@ -158,7 +158,7 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
             (onIconPress ? (
               <TouchableOpacity
                 onPress={onIconPress}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <Ionicons name="add" size={20} color={iconColor} />
               </TouchableOpacity>
@@ -172,6 +172,7 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
             noteCount={displayNoteCount}
             energy={displayEnergy ?? null}
             iconColor={iconColor}
+            onPress={onIconPress}
           />
         </View>
       </View>

@@ -92,6 +92,7 @@ export default function Today() {
               <>
                 {/* Tappable date: opens calendar modal */}
                 <TouchableOpacity
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   onPress={() => {
                     const idHolder: { id?: string } = {};
                     const id = useDialogStore.getState().openDialog({

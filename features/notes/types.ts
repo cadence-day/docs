@@ -58,7 +58,7 @@ export interface NoteDialogProps {
 export interface NoteOperations {
   addNote: () => void;
   updateNote: (index: number, message: string) => void;
-  deleteNote: (index: number) => void;
+  deleteNote: (index: number) => Promise<void>;
   saveNote: (index: number) => Promise<void>;
   saveAllNotes: () => Promise<void>;
   setActiveNote: (index: number | null) => void;

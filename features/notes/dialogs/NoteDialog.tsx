@@ -227,6 +227,23 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     };
   }, []);
 
+  // Ensure textInputRefs array has the correct length
+  useEffect(() => {
+    const currentLength = textInputRefs.current.length;
+    const requiredLength = notes.length;
+
+    if (currentLength < requiredLength) {
+      // Extend the array with null values
+      textInputRefs.current = [
+        ...textInputRefs.current,
+        ...Array(requiredLength - currentLength).fill(null),
+      ];
+    } else if (currentLength > requiredLength) {
+      // Truncate the array
+      textInputRefs.current = textInputRefs.current.slice(0, requiredLength);
+    }
+  }, [notes.length]);
+
   const handleEnergyChange = useCallback(
     async (newValue: number) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -280,9 +297,37 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       {
         text: "Delete",
         style: "destructive",
-        onPress: () => {
-          noteHandlers.deleteNote(index);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        onPress: async () => {
+          try {
+            // Update pinnedNotes set to account for shifted indices BEFORE deletion
+            setPinnedNotes((prev) => {
+              const newSet = new Set<number>();
+              prev.forEach((pinnedIndex) => {
+                if (pinnedIndex < index) {
+                  // Notes before the deleted note keep the same index
+                  newSet.add(pinnedIndex);
+                } else if (pinnedIndex > index) {
+                  // Notes after the deleted note shift down by 1
+                  newSet.add(pinnedIndex - 1);
+                }
+                // The deleted note (pinnedIndex === index) is not added back
+              });
+              return newSet;
+            });
+
+            // Update textInputRefs array to remove the deleted note's ref BEFORE deletion
+            textInputRefs.current = textInputRefs.current.filter(
+              (_, i) => i !== index
+            );
+
+            // Then handle the note deletion
+            await noteHandlers.deleteNote(index);
+
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          } catch (error) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            Alert.alert("Error", "Failed to delete note. Please try again.");
+          }
         },
       },
     ]);
@@ -305,9 +350,8 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
   const hasAnyContent = useMemo(
     () =>
       notes.some((note) => (note.message?.trim().length ?? 0) > 0) ||
-      energy > 0 ||
-      deletedNoteIds.length > 0,
-    [notes, energy, deletedNoteIds]
+      energy > 0,
+    [notes, energy]
   );
 
   // Set initial dialog header props once when dialog mounts
@@ -324,6 +368,8 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
             boxHeight={20}
             boxWidth={60}
             showTitle={false}
+            showHighlight={false}
+            marginBottom={-2}
           />
         ) : null,
         rightActionElement: "Close",
@@ -412,7 +458,14 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
                     onDelete={() => handleDeleteNote(index)}
                     onPin={() => handlePinNote(index)}
                     onUnpin={() => handleUnpinNote(index)}
-                    textInputRef={{ current: textInputRefs.current[index] }}
+                    textInputRef={{
+                      get current() {
+                        return textInputRefs.current[index] || null;
+                      },
+                      set current(value) {
+                        textInputRefs.current[index] = value;
+                      },
+                    }}
                   />
                 </View>
               );

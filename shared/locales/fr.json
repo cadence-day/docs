@@ -254,5 +254,13 @@
   },
   "This activity is used by timeslices": {
     " Pick a replacement:": "Cette activité est utilisée par des tranches de temps. Choisissez un remplacement :"
-  }
+  },
+  "profile.current-plan": "",
+  "profile.customer-support": "",
+  "profile.debug-screen": "",
+  "profile.deep-cadence": "",
+  "profile.deep-cadence-description": "",
+  "profile.__i18n_ally_root__.support.message-required": "",
+  "profile.__i18n_ally_root__.support.submit": "",
+  "profile.error-messages.wake-time-range": ""
 }

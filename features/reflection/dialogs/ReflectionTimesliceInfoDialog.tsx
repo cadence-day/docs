@@ -32,6 +32,7 @@ const ReflectionTimesliceInfoDialog: React.FC<
             boxHeight={20}
             boxWidth={60}
             showTitle={false}
+            showHighlight={false}
             marginBottom={-2}
           />
         ) : null,

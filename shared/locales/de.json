@@ -248,5 +248,31 @@
   "This activity is used by timeslices": {
     " Pick a replacement:": "Diese Aktivität wird von Timeslices verwendet. Wählen Sie einen Ersatz:"
   },
-  "validate": "Bestätigen"
+  "validate": "Bestätigen",
+  "activity-categories.food": "Essen",
+  "activity-categories.health": "Gesundheit",
+  "activity-categories.home": "Heim",
+  "activity-categories.learn": "Lernen",
+  "activity-categories.play": "Spielen",
+  "activity-categories.service": "Service",
+  "activity-categories.social": "Sozial",
+  "activity-categories.travel": "Reisen",
+  "activity.color-picker.done": "Erledigt",
+  "activity.color-picker.title": "Wählen Sie Farbe",
+  "activity.legend.pickActivityCategory": "Wählen Sie die Aktivitätskategorie",
+  "activity.legend.reassignTitle": "Gentiddelde frühere Zeitleitungen",
+  "activity.preview": "Aktivität",
+  "common.confirm": "",
+  "common.ok": "",
+  "common.saving": "Sparen",
+  "common.submitting": "",
+  "done": "",
+  "energyHigh": "",
+  "energyLabel": "",
+  "energyLow": "",
+  "home.todayTitle": "Die heutige Trittfrequenz",
+  "profile.__i18n_ally_root__.app-info": "",
+  "profile.__i18n_ally_root__.app-version": "",
+  "profile.__i18n_ally_root__.current-plan": "",
+  "profile.__i18n_ally_root__.support.message-required": ""
 }

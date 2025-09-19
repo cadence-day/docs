@@ -6,7 +6,7 @@ import useDialogStore from "@/shared/stores/useDialogStore";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
@@ -215,12 +215,6 @@ export const ProfileScreen: React.FC = () => {
             )}
           </View>
         </TouchableOpacity>
-
-        <TouchableOpacity style={profileStyles.editPhotoButton}>
-          <Text style={profileStyles.editPhotoText}>
-            {t("profile.edit-photo")}
-          </Text>
-        </TouchableOpacity>
       </View>
 
       {/* Profile Information */}
@@ -368,12 +362,6 @@ export const ProfileScreen: React.FC = () => {
           value={user?.id || t("profile.fallbacks.user-id")}
           editable={false}
         />
-
-        <Link href="/(utils)/debug">
-          <Text style={{ color: "blue", textAlign: "center", padding: 10 }}>
-            {t("profile.debug-screen")}
-          </Text>
-        </Link>
       </View>
 
       {/* Logout and Delete Account */}
@@ -382,8 +370,8 @@ export const ProfileScreen: React.FC = () => {
           title={t("profile.logout")}
           onPress={handleLogout}
           variant="outline"
-          style={{ marginBottom: 10, borderColor: "#OOO" }}
-          textStyle={{ color: "#OOO" }}
+          style={{ marginBottom: 10, borderColor: "#000" }}
+          textStyle={{ color: "#000" }}
         />
         <CdButton
           title={t("profile.delete-account")}
