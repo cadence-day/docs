@@ -4,7 +4,6 @@ import { StyleSheet } from "react-native";
 export const profileStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
   },
 
   // Profile Header Section
@@ -18,9 +17,18 @@ export const profileStyles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    borderWidth: 3,
-    borderColor: COLORS.primary,
+    borderWidth: 3, // Increased to accommodate two rings
+    borderColor: COLORS.primary, // Outer ring - primary color
     marginBottom: 16,
+    overflow: "hidden",
+  },
+
+  profileImageInner: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 80, // Slightly smaller radius for inner content
+    borderWidth: 3,
+    borderColor: COLORS.light.background, // Inner transparent ring
     overflow: "hidden",
   },
 

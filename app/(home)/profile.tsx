@@ -18,10 +18,6 @@ export default function ProfileRoute() {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          paddingHorizontal: 12,
-          paddingTop: 10,
-          paddingBottom: 10,
-          margin: 12,
         }}
       >
         <ProfileScreen />
