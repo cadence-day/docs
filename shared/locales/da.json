@@ -108,8 +108,31 @@
   "feedback-button-enabled": "Feedback-knap aktiveret",
   "a-feedback-button-has-been-added-to-your-screen-you-can-hide-it-from-this-settings-page": "En feedback-knap er blevet tilføjet til din skærm. Du kan skjule den fra denne indstillingsside.",
   "unable-to-show-feedback-button-please-try-again": "Kan ikke vise feedback-knap. Prøv igen.",
-  "reflection": "REFLEKSION",
-  "reflection-empty": "Tom refleksion",
+  "reflection": {
+    "title": "REFLEKSION",
+    "empty": "Tom refleksion",
+    "noTimesliceInfo": "Ingen tidsintervaler informationer tilgængelige",
+    "activityLabel": "Aktivitet",
+    "unknownActivity": "Ukendt aktivitet",
+    "energyLevel": "Energiniveau",
+    "mood": "Humør",
+    "totalSessions": "Samlede sessioner",
+    "totalTime": "Samlet tid",
+    "avgEnergy": "Gennemsn. energi",
+    "notesCount": "Antal noter",
+    "dailyTotal": "Daglig total",
+    "periodTotal": "Periode total",
+    "notesForSession": "Noter for denne session:",
+    "periodSummary": "Periode sammendrag:",
+    "totalActivities": "Samlede aktiviteter",
+    "overallAvgEnergy": "Samlet gennemsn. energi",
+    "timeslices": "tidsintervaler",
+    "hours": "timer",
+    "notes": "noter",
+    "activities": "aktiviteter",
+    "note": "Note",
+    "details": "Detaljer"
+  },
   "timeline.previousDay": "Vil du opdatere i går?",
   "home.title": "Daglig Cadence",
   "sage.title": "Sage",
@@ -244,7 +267,9 @@
     "delete-account": "Slet konto",
     "edit-photo": "Rediger profilbillede",
     "name": "Navn",
-    "email": "Email"
+    "email": "Email",
+    "support": "Kundesupport"
   },
-  "home.todayTitle": "Dagens Cadence"
+  "home.todayTitle": "Dagens Cadence",
+  "reflection.weekly-cadence": "Ugentlig Cadence"
 }

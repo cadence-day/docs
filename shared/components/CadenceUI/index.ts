@@ -6,3 +6,4 @@ export { CdDialogHeader } from "./CdDialogHeader";
 export { CdLevelIndicator } from "./CdLevelIndicator";
 export { CdText } from "./CdText";
 export { CdTextInput } from "./CdTextInput";
+export { ScreenHeader } from "./ScreenHeader";

@@ -108,8 +108,32 @@
   "feedback-button-enabled": "Feedback Button Enabled",
   "a-feedback-button-has-been-added-to-your-screen-you-can-hide-it-from-this-settings-page": "A feedback button has been added to your screen. You can hide it from this settings page.",
   "unable-to-show-feedback-button-please-try-again": "Unable to show feedback button. Please try again.",
-  "reflection": "REFLECTION",
-  "reflection-empty": "Empty Reflection",
+  "reflection": {
+    "weekly-cadence": "Weekly Cadence",
+    "title": "Reflection",
+    "empty": "Empty Reflection",
+    "noTimesliceInfo": "No timeslice information available",
+    "activityLabel": "Activity",
+    "unknownActivity": "Unknown Activity",
+    "energyLevel": "Energy Level",
+    "mood": "Mood",
+    "totalSessions": "Total Sessions",
+    "totalTime": "Total Time",
+    "avgEnergy": "Avg Energy",
+    "notesCount": "Notes Count",
+    "dailyTotal": "Daily Total",
+    "periodTotal": "Period Total",
+    "notesForSession": "Notes for this session:",
+    "periodSummary": "Period Summary:",
+    "totalActivities": "Total Activities",
+    "overallAvgEnergy": "Overall Avg Energy",
+    "timeslices": "timeslices",
+    "hours": "hours",
+    "notes": "notes",
+    "activities": "activities",
+    "note": "Note",
+    "details": "Details"
+  },
   "profile": {
     "logout": "Log Out",
     "title": "PROFILE",
@@ -277,5 +301,7 @@
   "energyLabel": "ENERGY",
   "energyLow": "Low",
   "energyHigh": "High",
-  "home.todayTitle": "Today's Cadence"
+  "home.todayTitle": "Today's Cadence",
+  "profile.delete-account": "Delete account",
+  "profile.logout": "Log out"
 }
