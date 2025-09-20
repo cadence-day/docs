@@ -2,10 +2,11 @@ import { useProfileStore } from "@/features/profile/stores/useProfileStore";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
+import { useNotifications } from "@/shared/notifications";
 import { DateTimePicker, Host } from "@expo/ui/swift-ui";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   ScrollView,
@@ -20,15 +21,28 @@ export default function NotificationsSettings() {
   const { t } = useTranslation();
   const router = useRouter();
   const { settings, updateSettings } = useProfileStore();
+  const {
+    preferences,
+    updatePreferences,
+    permissionStatus,
+    requestPermissions,
+    isInitialized,
+    isLoading,
+  } = useNotifications();
   const [pushNotificationsEnabled, setPushNotificationsEnabled] =
-    useState(true);
+    useState(permissionStatus.granted);
 
   // Time picker state
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [timePickerMode, setTimePickerMode] = useState<"wake" | "sleep">(
+  const [timePickerMode, setTimePickerMode] = useState<"wake" | "sleep" | "midday" | "evening">(
     "wake"
   );
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  // Update push notifications state when permission status changes
+  useEffect(() => {
+    setPushNotificationsEnabled(permissionStatus.granted);
+  }, [permissionStatus.granted]);
 
   // Helper function to convert time string to Date object
   const timeStringToDate = (timeString: string): Date => {
@@ -63,8 +77,12 @@ export default function NotificationsSettings() {
 
     if (timePickerMode === "wake") {
       updateSettings({ wakeTime: timeString });
-    } else {
+    } else if (timePickerMode === "sleep") {
       updateSettings({ sleepTime: timeString });
+    } else if (timePickerMode === "midday") {
+      updatePreferences({ middayTime: timeString });
+    } else if (timePickerMode === "evening") {
+      updatePreferences({ eveningTimeStart: timeString });
     }
 
     setSelectedDate(date);
@@ -81,16 +99,71 @@ export default function NotificationsSettings() {
         [type]: value,
       },
     });
+
+    // Update notification preferences based on the toggles
+    let newRhythm = preferences.rhythm;
+
+    if (type === "morningReminders") {
+      if (value && !settings.notifications.eveningReminders) {
+        newRhythm = "morning-only";
+      } else if (value && settings.notifications.eveningReminders) {
+        newRhythm = "both";
+      } else if (!value && settings.notifications.eveningReminders) {
+        newRhythm = "evening-only";
+      } else {
+        newRhythm = "disabled";
+      }
+    } else if (type === "eveningReminders") {
+      if (value && !settings.notifications.morningReminders) {
+        newRhythm = "evening-only";
+      } else if (value && settings.notifications.morningReminders) {
+        newRhythm = "both";
+      } else if (!value && settings.notifications.morningReminders) {
+        newRhythm = "morning-only";
+      } else {
+        newRhythm = "disabled";
+      }
+    }
+
+    updatePreferences({
+      rhythm: newRhythm,
+      streaksEnabled: type === "weeklyStreaks" ? value : preferences.streaksEnabled,
+    });
   };
 
-  const handlePushNotificationsToggle = () => {
-    setPushNotificationsEnabled(!pushNotificationsEnabled);
-    // Here you would typically request/revoke push notification permissions
-    Alert.alert(
-      "Push Notifications",
-      `Push notifications ${!pushNotificationsEnabled ? "enabled" : "disabled"}`,
-      [{ text: "OK" }]
-    );
+  const handlePushNotificationsToggle = async () => {
+    if (!pushNotificationsEnabled) {
+      try {
+        const status = await requestPermissions();
+        if (status.granted) {
+          setPushNotificationsEnabled(true);
+          Alert.alert(
+            "Push Notifications",
+            "Push notifications enabled successfully!",
+            [{ text: "OK" }]
+          );
+        } else {
+          Alert.alert(
+            "Permission Denied",
+            "Push notification permissions were not granted. You can enable them later in your device settings.",
+            [{ text: "OK" }]
+          );
+        }
+      } catch (error) {
+        Alert.alert(
+          "Error",
+          "Failed to request push notification permissions. Please try again.",
+          [{ text: "OK" }]
+        );
+      }
+    } else {
+      setPushNotificationsEnabled(false);
+      Alert.alert(
+        "Push Notifications",
+        "Push notifications disabled. You can re-enable them anytime.",
+        [{ text: "OK" }]
+      );
+    }
   };
 
   const openSystemSettings = () => {
@@ -133,6 +206,13 @@ export default function NotificationsSettings() {
       />
 
       <ScrollView style={styles.container}>
+        {/* Loading State */}
+        {isLoading && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Loading notification settings...</Text>
+          </View>
+        )}
+
         {/* Push Notifications Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Push Notifications</Text>
@@ -258,6 +338,38 @@ export default function NotificationsSettings() {
             buttonIcon="moon-outline"
           />
 
+          <CdTextInputOneLine
+            label="Midday Reflection Time"
+            value={preferences.middayTime}
+            isButton
+            onPress={() => {
+              // Handle midday time picker
+              const [hours, minutes] = preferences.middayTime.split(":").map(Number);
+              const date = new Date();
+              date.setHours(hours, minutes, 0, 0);
+              setSelectedDate(date);
+              setTimePickerMode("midday");
+              setShowTimePicker(true);
+            }}
+            buttonIcon="sunny-outline"
+          />
+
+          <CdTextInputOneLine
+            label="Evening Reflection Start"
+            value={preferences.eveningTimeStart}
+            isButton
+            onPress={() => {
+              // Handle evening start time picker
+              const [hours, minutes] = preferences.eveningTimeStart.split(":").map(Number);
+              const date = new Date();
+              date.setHours(hours, minutes, 0, 0);
+              setSelectedDate(date);
+              setTimePickerMode("evening");
+              setShowTimePicker(true);
+            }}
+            buttonIcon="moon-outline"
+          />
+
           <View style={styles.infoBox}>
             <Ionicons
               name="information-circle-outline"
@@ -285,7 +397,10 @@ export default function NotificationsSettings() {
                   <Text style={styles.pickerCancelText}>Cancel</Text>
                 </TouchableOpacity>
                 <Text style={styles.pickerTitle}>
-                  Set {timePickerMode === "wake" ? "Wake" : "Sleep"} Time
+                  Set {timePickerMode === "wake" ? "Wake"
+                       : timePickerMode === "sleep" ? "Sleep"
+                       : timePickerMode === "midday" ? "Midday Reflection"
+                       : "Evening Reflection"} Time
                 </Text>
                 <View style={styles.pickerButton} />
               </View>
