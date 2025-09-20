@@ -30,9 +30,9 @@ export const createWeeklyScheduledDate = (
     date.setDate(now.getDate() + daysUntilTarget);
     date.setHours(hour, minute, 0, 0);
 
-    // If the scheduled time is in the past, schedule for the next day (not next week)
+    // If the scheduled time is in the past (i.e., today but earlier than now), schedule for the same weekday next week
     if (date <= now) {
-        date.setDate(date.getDate() + 1);
+        date.setDate(date.getDate() + 7);
     }
 
     return date;
