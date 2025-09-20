@@ -164,8 +164,8 @@ export default function Reflection() {
             </TouchableOpacity>
           </View>
         }
-        headerContainerStyle={styles.headerOverride}
       />
+
       <View style={styles.gridContainer}>
         <ReflectionGrid
           fromDate={fromDate}
