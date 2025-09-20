@@ -35,7 +35,7 @@ export function useReflectionData(
   toDate: Date,
 ): UseReflectionDataReturn {
   // Use Clerk's React hook to obtain the current user in a testable, react-friendly way
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
   const timeslicesStore = useTimeslicesStore();
   const activitiesStore = useActivitiesStore();
   const statesStore = useStatesStore();
@@ -77,9 +77,12 @@ export function useReflectionData(
 
       // Get current user ID from Clerk's `useUser` hook
       const currentUserId = user?.id;
+      const sessionStatus = isSignedIn ? "active" : "inactive";
 
-      if (!currentUserId) {
-        throw new Error("User must be authenticated to fetch reflection data");
+      if (!currentUserId || sessionStatus !== "active") {
+        throw new Error(
+          "User must be authenticated with an active session to fetch reflection data",
+        );
       }
 
       // Fetch data in parallel using the same pattern as timeline refresh

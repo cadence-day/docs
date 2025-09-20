@@ -6,16 +6,20 @@ import useDialogStore from "@/shared/stores/useDialogStore";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
+  ActionSheetIOS,
   Alert,
   Image,
+  Platform,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { ProfileImageService } from "../services/ProfileImageService";
 import { useProfileStore } from "../stores/useProfileStore";
 import { profileStyles } from "../styles";
 import {
@@ -44,6 +48,9 @@ export const ProfileScreen: React.FC = () => {
     wake?: string;
     sleep?: string;
   }>({});
+
+  // Profile image upload state
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const appVersion = Constants.expoConfig?.version || "Unknown";
   const expoConfig = Constants.expoConfig as ExpoConfig | undefined;
@@ -99,6 +106,191 @@ export const ProfileScreen: React.FC = () => {
     }
 
     return formatted;
+  };
+
+  const handleProfileImagePress = () => {
+    if (isUploadingImage) return;
+
+    const showImagePicker = async () => {
+      try {
+        setIsUploadingImage(true);
+
+        const result = await ProfileImageService.showImagePicker();
+
+        if (result && !result.canceled && result.assets?.[0]) {
+          const imageUri = result.assets[0].uri;
+
+          // Upload the image
+          const uploadResult = await ProfileImageService.uploadImage(imageUri);
+
+          if (uploadResult.success) {
+            // Update profile store with new avatar URL
+            updateProfileData({ avatarUrl: uploadResult.url });
+
+            // Haptic feedback for success
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+            Alert.alert(
+              t("profile.image-upload.success"),
+              t("profile.image-upload.success-message")
+            );
+          } else {
+            Alert.alert(t("profile.image-upload.error"), uploadResult.error);
+          }
+        }
+      } catch (error) {
+        console.log("Image picker error:", error);
+
+        // Check if it's a native module error
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        if (
+          errorMessage?.includes("Cannot find native module") ||
+          errorMessage?.includes("not available in this build")
+        ) {
+          Alert.alert(
+            t("profile.image-upload.error"),
+            "Image picker is not available in this development build. Please rebuild the app with the latest dependencies."
+          );
+        } else {
+          Alert.alert(
+            t("profile.image-upload.error"),
+            t("profile.image-upload.error-message")
+          );
+        }
+      } finally {
+        setIsUploadingImage(false);
+      }
+    };
+
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: [
+            t("common.cancel"),
+            t("profile.image-upload.take-photo"),
+            t("profile.image-upload.choose-from-library"),
+          ],
+          cancelButtonIndex: 0,
+        },
+        async (buttonIndex) => {
+          if (buttonIndex === 1) {
+            // Take photo
+            try {
+              setIsUploadingImage(true);
+              const result = await ProfileImageService.takePhoto();
+
+              if (result && !result.canceled && result.assets?.[0]) {
+                const imageUri = result.assets[0].uri;
+                const uploadResult =
+                  await ProfileImageService.uploadImage(imageUri);
+
+                if (uploadResult.success) {
+                  updateProfileData({ avatarUrl: uploadResult.url });
+                  Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Success
+                  );
+                  Alert.alert(
+                    t("profile.image-upload.success"),
+                    t("profile.image-upload.success-message")
+                  );
+                } else {
+                  Alert.alert(
+                    t("profile.image-upload.error"),
+                    uploadResult.error
+                  );
+                }
+              }
+            } catch (error) {
+              console.log("Camera error:", error);
+
+              const errorMessage =
+                error instanceof Error ? error.message : String(error);
+              if (
+                errorMessage?.includes("Cannot find native module") ||
+                errorMessage?.includes("not available in this build")
+              ) {
+                Alert.alert(
+                  t("profile.image-upload.error"),
+                  "Camera is not available in this development build. Please rebuild the app with the latest dependencies."
+                );
+              } else {
+                Alert.alert(
+                  t("profile.image-upload.error"),
+                  t("profile.image-upload.error-message")
+                );
+              }
+            } finally {
+              setIsUploadingImage(false);
+            }
+          } else if (buttonIndex === 2) {
+            // Choose from library
+            showImagePicker();
+          }
+        }
+      );
+    } else {
+      // For Android, show a simple alert for now
+      Alert.alert(t("profile.image-upload.select-option"), "", [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("profile.image-upload.take-photo"),
+          onPress: async () => {
+            try {
+              setIsUploadingImage(true);
+              const result = await ProfileImageService.takePhoto();
+
+              if (result && !result.canceled && result.assets?.[0]) {
+                const imageUri = result.assets[0].uri;
+                const uploadResult =
+                  await ProfileImageService.uploadImage(imageUri);
+
+                if (uploadResult.success) {
+                  updateProfileData({ avatarUrl: uploadResult.url });
+                  Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Success
+                  );
+                  Alert.alert(
+                    t("profile.image-upload.success"),
+                    t("profile.image-upload.success-message")
+                  );
+                } else {
+                  Alert.alert(
+                    t("profile.image-upload.error"),
+                    uploadResult.error
+                  );
+                }
+              }
+            } catch (error) {
+              console.log("Camera error:", error);
+
+              const errorMessage =
+                error instanceof Error ? error.message : String(error);
+              if (
+                errorMessage?.includes("Cannot find native module") ||
+                errorMessage?.includes("not available in this build")
+              ) {
+                Alert.alert(
+                  t("profile.image-upload.error"),
+                  "Camera is not available in this development build. Please rebuild the app with the latest dependencies."
+                );
+              } else {
+                Alert.alert(
+                  t("profile.image-upload.error"),
+                  t("profile.image-upload.error-message")
+                );
+              }
+            } finally {
+              setIsUploadingImage(false);
+            }
+          },
+        },
+        {
+          text: t("profile.image-upload.choose-from-library"),
+          onPress: showImagePicker,
+        },
+      ]);
+    }
   };
 
   const handleNotificationsPress = () => {
@@ -197,12 +389,17 @@ export const ProfileScreen: React.FC = () => {
         <TouchableOpacity
           style={profileStyles.profileImageContainer}
           activeOpacity={0.8}
+          onPress={handleProfileImagePress}
+          disabled={isUploadingImage}
         >
           <View style={profileStyles.profileImageInner}>
             {user?.imageUrl || profileData.avatarUrl ? (
               <Image
                 source={{ uri: user?.imageUrl || profileData.avatarUrl }}
-                style={profileStyles.profileImage}
+                style={[
+                  profileStyles.profileImage,
+                  isUploadingImage && { opacity: 0.5 },
+                ]}
               />
             ) : (
               <View
@@ -213,12 +410,30 @@ export const ProfileScreen: React.FC = () => {
                     justifyContent: "center",
                     alignItems: "center",
                   },
+                  isUploadingImage && { opacity: 0.5 },
                 ]}
               >
                 <Ionicons name="person" size={40} color={COLORS.textIcons} />
               </View>
             )}
+            {isUploadingImage && (
+              <View style={profileStyles.uploadingOverlay}>
+                <Ionicons name="cloud-upload" size={24} color={COLORS.white} />
+              </View>
+            )}
           </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={profileStyles.editPhotoButton}
+          onPress={handleProfileImagePress}
+          disabled={isUploadingImage}
+        >
+          <Text style={profileStyles.editPhotoText}>
+            {isUploadingImage
+              ? t("profile.uploading")
+              : t("profile.edit-photo")}
+          </Text>
         </TouchableOpacity>
       </View>
 
