@@ -21,12 +21,19 @@ export const createWeeklyScheduledDate = (
     hour: number,
     minute: number,
 ): Date => {
-    const date = new Date();
-    const currentDay = date.getDay();
+    const now = new Date();
+    const currentDay = now.getDay();
     const daysUntilTarget = (weekday - currentDay + 7) % 7;
 
-    date.setDate(date.getDate() + daysUntilTarget);
+    // Start with the next occurrence of the target weekday
+    const date = new Date(now);
+    date.setDate(now.getDate() + daysUntilTarget);
     date.setHours(hour, minute, 0, 0);
+
+    // If the scheduled time is in the past, schedule for the next day (not next week)
+    if (date <= now) {
+        date.setDate(date.getDate() + 1);
+    }
 
     return date;
 };
