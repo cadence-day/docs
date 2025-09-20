@@ -13,6 +13,9 @@ export const SECRETS = {
 
   // Sentry
   EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN,
+
+  // Expo Notifications
+  EXPO_PROJECT_ID: process.env.EXPO_PROJECT_ID,
 } as const;
 
 // Type guard to ensure required secrets are present
@@ -27,7 +30,7 @@ export const validateRequiredSecrets = () => {
 
   if (missing.length > 0) {
     throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`
+      `Missing required environment variables: ${missing.join(", ")}`,
     );
   }
 };

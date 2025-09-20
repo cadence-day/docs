@@ -18,6 +18,7 @@ import { SECRETS } from "@/shared/constants/SECRETS";
 import { ToastProvider } from "@/shared/context/ToastProvider";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { getIsDev } from "@/shared/hooks/useDev";
+import { NotificationProvider } from "@/shared/notifications";
 import * as Sentry from "@sentry/react-native";
 
 // Initialize Sentry
@@ -102,7 +103,9 @@ export default Sentry.wrap(function RootLayout() {
                 publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
                 tokenCache={tokenCache}
               >
-                <Slot />
+                <NotificationProvider>
+                  <Slot />
+                </NotificationProvider>
               </ClerkProvider>
             </ToastProvider>
           </NetworkProvider>
