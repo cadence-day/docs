@@ -98,7 +98,7 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
   const performDelete = useCallback(() => {
     Alert.alert(
       t("confirm"),
-      t("Are you sure you want to delete this activity? You can’t undo this."),
+      "Are you sure you want to delete this activity? You can’t undo this.",
       [
         { text: t("cancel"), style: "cancel" },
         {
