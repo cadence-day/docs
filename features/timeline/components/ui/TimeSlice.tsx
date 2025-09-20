@@ -1,5 +1,6 @@
 import NoteIcon from "@/shared/components/icons/NoteIcon";
 import { COLORS } from "@/shared/constants/COLORS";
+import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import { locale } from "@/shared/locales";
 import { Timeslice } from "@/shared/types/models";
@@ -145,10 +146,7 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
         <View style={[styles.timeSliceIconContainer]}>
           {iconType === "note" &&
             (onIconPress ? (
-              <TouchableOpacity
-                onPress={onIconPress}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
+              <TouchableOpacity onPress={onIconPress} hitSlop={HIT_SLOP_10}>
                 <NoteIcon color={iconColor} size="normal" />
               </TouchableOpacity>
             ) : (
@@ -156,10 +154,7 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
             ))}
           {iconType === "plus" &&
             (onIconPress ? (
-              <TouchableOpacity
-                onPress={onIconPress}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
+              <TouchableOpacity onPress={onIconPress} hitSlop={HIT_SLOP_10}>
                 <Ionicons name="add" size={20} color={iconColor} />
               </TouchableOpacity>
             ) : (

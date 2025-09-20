@@ -1,3 +1,4 @@
+import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -131,7 +132,7 @@ export default function Reflection() {
           <View style={styles.dateNavigationContainer}>
             <TouchableOpacity
               onPress={handlePreviousWeek}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              hitSlop={HIT_SLOP_10}
             >
               <Text
                 style={{
@@ -150,7 +151,7 @@ export default function Reflection() {
             <TouchableOpacity
               onPress={handleNextWeek}
               disabled={isAtCurrentWeek()}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              hitSlop={HIT_SLOP_10}
             >
               <Text
                 style={{

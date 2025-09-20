@@ -1,3 +1,4 @@
+import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -81,7 +82,7 @@ export const CdDialogHeader: React.FC<CdDialogHeaderProps> = ({
             <TouchableOpacity
               onPress={onBackAction}
               style={styles.backButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="arrow-back" size={20} color="#fff" />
             </TouchableOpacity>
@@ -117,10 +118,7 @@ export const CdDialogHeader: React.FC<CdDialogHeaderProps> = ({
           {rightActionElement &&
             isRightActionButton &&
             (typeof rightActionElement === "string" ? (
-              <TouchableOpacity
-                onPress={onRightAction}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
+              <TouchableOpacity onPress={onRightAction} hitSlop={HIT_SLOP_10}>
                 <Text
                   style={[
                     styles.rightActionText,
@@ -137,7 +135,7 @@ export const CdDialogHeader: React.FC<CdDialogHeaderProps> = ({
               <TouchableOpacity
                 onPress={onRightAction}
                 disabled={!onRightAction}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                hitSlop={HIT_SLOP_10}
               >
                 {rightActionElement}
               </TouchableOpacity>

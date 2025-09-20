@@ -370,8 +370,8 @@ export const ProfileScreen: React.FC = () => {
           title={t("profile.logout")}
           onPress={handleLogout}
           variant="outline"
-          style={{ marginBottom: 10, borderColor: "#000" }}
-          textStyle={{ color: "#000" }}
+          style={{ marginBottom: 10, borderColor: COLORS.textIcons }}
+          textStyle={{ color: COLORS.textIcons }}
         />
         <CdButton
           title={t("profile.delete-account")}
