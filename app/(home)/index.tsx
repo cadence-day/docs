@@ -4,13 +4,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-import Timeline from "@/features/timeline/Timeline";
 import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import SignIn from "../(auth)/sign-in";
+import LoadingScreen from "../(utils)/LoadingScreen";
+const Timeline = React.lazy(() => import("@/features/timeline/Timeline"));
 
 // Provide tiny fallbacks if these shared components don't exist in the repo.
 const ErrorBoundary: React.FC<{ children?: React.ReactNode }> = ({
@@ -187,7 +188,9 @@ export default function Today() {
 
           <ErrorBoundary>
             {/* Pass selected date into the timeline so it renders the chosen day */}
-            <Timeline date={selectedDate} />
+            <React.Suspense fallback={<LoadingScreen />}>
+              <Timeline date={selectedDate} />
+            </React.Suspense>
           </ErrorBoundary>
 
           {/* Spacer to ensure there's room below the timeline (e.g., above nav) */}

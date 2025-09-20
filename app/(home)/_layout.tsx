@@ -2,6 +2,7 @@ import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNew
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
+import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
 import useTranslation from "@/shared/hooks/useI18n";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
@@ -10,7 +11,7 @@ import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({
@@ -212,6 +213,20 @@ export default function TabLayout() {
               alignSelf: "stretch",
               alignContent: "center",
               marginTop: 12,
+            },
+            // Ensure each tab's touch target is larger via a custom tabBarButton
+            tabBarButton: (props: any) => {
+              // If the underlying component is provided we wrap it in a TouchableOpacity
+              const { children, onPress } = props;
+              return (
+                <TouchableOpacity
+                  onPress={onPress}
+                  hitSlop={HIT_SLOP_24}
+                  style={{ flex: 1 }}
+                >
+                  {children}
+                </TouchableOpacity>
+              );
             },
           }}
         >

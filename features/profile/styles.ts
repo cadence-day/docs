@@ -66,6 +66,7 @@ export const profileStyles = StyleSheet.create({
   formSection: {
     paddingHorizontal: 24,
     marginBottom: 32,
+    gap: 16,
   },
 
   fieldContainer: {
@@ -99,6 +100,7 @@ export const profileStyles = StyleSheet.create({
   settingsSection: {
     paddingHorizontal: 24,
     marginBottom: 32,
+    gap: 16,
   },
 
   sectionTitle: {
@@ -107,7 +109,6 @@ export const profileStyles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 1,
-    marginBottom: 16,
   },
 
   settingRow: {
@@ -139,29 +140,6 @@ export const profileStyles = StyleSheet.create({
 
   chevronIcon: {
     color: COLORS.bodyText,
-  },
-
-  // Time Picker
-  timePickerContainer: {
-    backgroundColor: COLORS.white,
-    paddingVertical: 40,
-  },
-
-  timePickerWheel: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  timeColumn: {
-    width: 80,
-    height: 200,
-  },
-
-  timeColumnSeparator: {
-    width: 20,
-    alignItems: "center",
-    justifyContent: "center",
   },
 
   // Subscription Plan
@@ -265,6 +243,7 @@ export const profileStyles = StyleSheet.create({
     paddingBottom: 32,
     borderTopWidth: 1,
     borderTopColor: "#E5E5E5",
+    gap: 16,
   },
 
   appInfoRow: {
@@ -360,5 +339,12 @@ export const profileStyles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 8,
     paddingHorizontal: 4,
+  },
+
+  developerSection: {
+    backgroundColor: "#F0F0F0",
+    borderRadius: 24,
+    alignItems: "center",
+    margin: 24,
   },
 });

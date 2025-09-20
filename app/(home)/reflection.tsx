@@ -1,6 +1,6 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ScreenHeader } from "@/shared/components/CadenceUI";
@@ -8,7 +8,10 @@ import SageIcon from "@/shared/components/icons/SageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { useI18n } from "@/shared/hooks/useI18n";
 
-import { ReflectionGrid } from "@/features/reflection";
+import LoadingScreen from "../(utils)/LoadingScreen";
+const ReflectionGrid = React.lazy(() =>
+  import("@/features/reflection").then((m) => ({ default: m.ReflectionGrid }))
+);
 
 export default function Reflection() {
   const [fromDate, setFromDate] = useState(new Date());
@@ -91,11 +94,6 @@ export default function Reflection() {
     setToDate(newToDate);
   };
 
-  const handleOpenSageDialog = () => {
-    // router.push("/chat");
-    Alert.alert("Sage Chat", "Chat functionality is currently being updated");
-  };
-
   // Check if we're at the current week to disable next week navigation
   const isAtCurrentWeek = () => {
     const today = new Date();
@@ -167,12 +165,14 @@ export default function Reflection() {
       />
 
       <View style={styles.gridContainer}>
-        <ReflectionGrid
-          fromDate={fromDate}
-          toDate={toDate}
-          refreshing={refreshing}
-          setRefreshing={setRefreshing}
-        />
+        <React.Suspense fallback={<LoadingScreen />}>
+          <ReflectionGrid
+            fromDate={fromDate}
+            toDate={toDate}
+            refreshing={refreshing}
+            setRefreshing={setRefreshing}
+          />
+        </React.Suspense>
       </View>
     </LinearGradient>
   );

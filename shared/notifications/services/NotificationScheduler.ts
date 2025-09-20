@@ -1,3 +1,4 @@
+import useTranslation from "@/shared/hooks/useI18n";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import {
   createNotificationId,
@@ -11,7 +12,6 @@ import {
   NotificationMessage,
   NotificationPreferences,
 } from "../types";
-
 export interface SchedulerConfig {
   userId: string;
   preferences: NotificationPreferences;
@@ -28,6 +28,7 @@ export class NotificationScheduler {
   }
 
   async scheduleAllNotifications(): Promise<void> {
+    const { t } = useTranslation();
     try {
       // Cancel existing notifications first
       await this.engine.cancelAllNotifications();
@@ -287,6 +288,7 @@ export class NotificationScheduler {
     scheduledFor: Date,
     customMessage?: { title: string; body: string },
   ): Promise<void> {
+    const { t } = useTranslation();
     try {
       let notification: NotificationMessage;
 
@@ -304,8 +306,8 @@ export class NotificationScheduler {
         default:
           notification = {
             id: createNotificationId(),
-            title: customMessage?.title || "Cadence Notification",
-            body: customMessage?.body || "You have a new notification",
+            title: customMessage?.title || t("cadence-notification"),
+            body: customMessage?.body || t("you-have-a-new-notification"),
             type,
           };
       }
