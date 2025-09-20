@@ -207,9 +207,9 @@
     "unknownActivity": "Activité inconnue",
     "weekly-cadence": "Cadence hebdomadaire"
   },
-  "resend-code": "Code de resend",
+  "resend-code": "Code de renvoi",
   "resend-in-resendcooldown-s": "Renouveler dans {0} S",
-  "sa": "Assis",
+  "sa": "Sam",
   "sage": {
     "unavailableMessage": "Cadence AI n'est actuellement pas disponible."
   },

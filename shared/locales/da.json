@@ -61,7 +61,7 @@
   "contain-one-special-character": "- indeholder en speciel karakter.",
   "contain-one-uppercase-letter": "- Indeholder et stort bogstav.",
   "dateTime": {
-    "preposition": "på"
+    "preposition": "kl."
   },
   "delete": "Slet",
   "delete-timeslice-with-data-warning": "Denne timeslice har noter eller tilstand vedhæftet. \nSletning af det vil også fjerne alle tilknyttede data. \nDenne handling kan ikke fortrydes. \nEr du sikker på, at du vil fortsætte?",
