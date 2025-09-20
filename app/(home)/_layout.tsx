@@ -242,7 +242,7 @@ export default function TabLayout() {
           <Tabs.Screen
             name="profile"
             options={{
-              title: t("profile"),
+              title: t("profile.title"),
               tabBarIcon: ({ focused, color }: any) => (
                 <TabLabel
                   focused={focused}

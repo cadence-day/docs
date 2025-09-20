@@ -83,7 +83,7 @@ const ReassignActivityDialog: React.FC<Props> = ({
   return (
     <View style={{ flex: 1, paddingHorizontal: 8, paddingTop: 8 }}>
       <Text style={{ marginBottom: 20, color: "#fff" }}>
-        {t("This activity is used by timeslices. Pick a replacement:")}
+        {"This activity is used by timeslices. Pick a replacement:"}
       </Text>
       <GridView
         items={candidates}

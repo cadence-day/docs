@@ -1,4 +1,5 @@
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
+import { useI18n } from "@/shared/hooks/useI18n";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { useErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
@@ -18,6 +19,7 @@ import {
 export default function SettingsPage() {
   const { logDebug } = useErrorHandler();
   const { user } = useUser();
+  const { t } = useI18n();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [healthDataAccess, setHealthDataAccess] = useState(false);
   const router = useRouter();
@@ -26,23 +28,23 @@ export default function SettingsPage() {
   const toggleNotifications = () => {
     setNotificationsEnabled(!notificationsEnabled);
     Alert.alert(
-      "Notifications",
-      `Notifications ${!notificationsEnabled ? "enabled" : "disabled"}`
+      t("settings.notifications.title"),
+      `${t("settings.notifications.title")} ${!notificationsEnabled ? t("settings.notifications.enabled") : t("settings.notifications.disabled")}`
     );
   };
 
   const toggleHealthData = () => {
     setHealthDataAccess(!healthDataAccess);
     Alert.alert(
-      "Health Data",
-      `Health data access ${!healthDataAccess ? "enabled" : "disabled"}`
+      t("settings.alerts.health-data-title"),
+      `${t("settings.health-data.access")} ${!healthDataAccess ? t("settings.notifications.enabled") : t("settings.notifications.disabled")}`
     );
   };
 
   const contactSupport = () => {
     const email = "support@cadenceapp.com";
-    const subject = "Support Request";
-    const body = `User ID: ${user?.id}\nApp Version: ${Constants.expoConfig?.version}\n\nDescribe your issue here...`;
+    const subject = t("settings.support.support-subject");
+    const body = `${t("settings.support.user-id")}: ${user?.id}\n${t("settings.support.app-version")}: ${Constants.expoConfig?.version}\n\n${t("settings.support.support-body-prefix")}`;
 
     Linking.openURL(
       `mailto:${email}?subject=${subject}&body=${encodeURIComponent(body)}`
@@ -51,9 +53,9 @@ export default function SettingsPage() {
 
   const openAppInformation = () => {
     Alert.alert(
-      "App Information",
-      `Version: ${Constants.expoConfig?.version || "Unknown"}\nBuild: ${Constants.expoConfig?.extra?.buildNumber || "Unknown"}\nPlatform: ${Constants.platform?.ios ? "iOS" : "Android"}`,
-      [{ text: "OK" }]
+      t("settings.alerts.app-info-title"),
+      `Version: ${Constants.expoConfig?.version || t("settings.support.version-unknown")}\nBuild: ${Constants.expoConfig?.extra?.buildNumber || t("settings.support.version-unknown")}\nPlatform: ${Constants.platform?.ios ? "iOS" : "Android"}`,
+      [{ text: t("common.ok") }]
     );
   };
 
@@ -61,14 +63,14 @@ export default function SettingsPage() {
     <>
       <Stack.Screen
         options={{
-          title: "Settings",
+          title: t("settings.title"),
           headerShown: true,
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.back()}
               style={{ paddingHorizontal: 12 }}
             >
-              <Text style={{ color: "#007bff", fontSize: 16 }}>Back</Text>
+              <Text style={{ color: "#007bff", fontSize: 16 }}>{t("settings.back")}</Text>
             </TouchableOpacity>
           ),
         }}
@@ -77,11 +79,11 @@ export default function SettingsPage() {
       <ScrollView style={styles.container}>
         {/* Notifications Settings */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Notifications</Text>
+          <Text style={styles.sectionTitle}>{t("settings.notifications.title")}</Text>
 
           <CdTextInputOneLine
-            label="Push Notifications"
-            value={notificationsEnabled ? "Enabled" : "Disabled"}
+            label={t("settings.notifications.push")}
+            value={notificationsEnabled ? t("settings.notifications.enabled") : t("settings.notifications.disabled")}
             isButton={true}
             onPress={toggleNotifications}
             buttonIcon={
@@ -90,13 +92,13 @@ export default function SettingsPage() {
           />
 
           <CdTextInputOneLine
-            label="Email Notifications"
-            value="Configure email preferences"
+            label={t("settings.notifications.email")}
+            value={t("settings.notifications.configure-email")}
             isButton={true}
             onPress={() =>
               Alert.alert(
-                "Coming Soon",
-                "Email notification settings will be available soon"
+                t("settings.notifications.coming-soon"),
+                t("settings.notifications.email-coming-soon")
               )
             }
             buttonIcon="mail"
@@ -105,37 +107,37 @@ export default function SettingsPage() {
 
         {/* Health & Data Settings */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Health & Data</Text>
+          <Text style={styles.sectionTitle}>{t("settings.health-data.title")}</Text>
 
           <CdTextInputOneLine
-            label="Health Data Access"
-            value={healthDataAccess ? "Enabled" : "Disabled"}
+            label={t("settings.health-data.access")}
+            value={healthDataAccess ? t("settings.notifications.enabled") : t("settings.notifications.disabled")}
             isButton={true}
             onPress={toggleHealthData}
             buttonIcon={healthDataAccess ? "fitness" : "fitness-outline"}
           />
 
           <CdTextInputOneLine
-            label="Data Export"
-            value="Export your data"
+            label={t("settings.health-data.export")}
+            value={t("settings.health-data.export-value")}
             isButton={true}
             onPress={() =>
               Alert.alert(
-                "Coming Soon",
-                "Data export feature will be available soon"
+                t("settings.health-data.coming-soon"),
+                t("settings.health-data.export-coming-soon")
               )
             }
             buttonIcon="download"
           />
 
           <CdTextInputOneLine
-            label="Privacy Settings"
-            value="Manage data privacy"
+            label={t("settings.health-data.privacy")}
+            value={t("settings.health-data.privacy-value")}
             isButton={true}
             onPress={() =>
               Alert.alert(
-                "Coming Soon",
-                "Privacy settings will be available soon"
+                t("settings.health-data.coming-soon"),
+                t("settings.health-data.privacy-coming-soon")
               )
             }
             buttonIcon="shield-checkmark"
@@ -144,11 +146,11 @@ export default function SettingsPage() {
 
         {/* Security & Encryption */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Security & Encryption</Text>
+          <Text style={styles.sectionTitle}>{t("settings.security.title")}</Text>
 
           <CdTextInputOneLine
-            label="Link Device (Encryption)"
-            value="Open linking dialog"
+            label={t("settings.security.link-device")}
+            value={t("settings.security.link-device-value")}
             isButton={true}
             onPress={() => {
               openDialog({
@@ -156,7 +158,7 @@ export default function SettingsPage() {
                 props: {
                   height: 80,
                   enableDragging: true,
-                  headerProps: { title: "Link This Device" },
+                  headerProps: { title: t("settings.security.link-device-title") },
                 },
                 position: "dock",
                 viewSpecific: "index",
@@ -173,33 +175,33 @@ export default function SettingsPage() {
 
         {/* Support & Information */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Support & Information</Text>
+          <Text style={styles.sectionTitle}>{t("settings.support.title")}</Text>
 
           <CdTextInputOneLine
-            label="Contact Support"
-            value="Get help and support"
+            label={t("settings.support.contact")}
+            value={t("settings.support.contact-value")}
             isButton={true}
             onPress={contactSupport}
             buttonIcon="help-circle"
           />
 
           <CdTextInputOneLine
-            label="App Information"
-            value="Version and build details"
+            label={t("settings.support.app-info")}
+            value={t("settings.support.app-info-value")}
             isButton={true}
             onPress={openAppInformation}
             buttonIcon="information-circle"
           />
 
           <CdTextInputOneLine
-            label="User ID"
-            value={user?.id || "Not available"}
+            label={t("settings.support.user-id")}
+            value={user?.id || t("settings.support.user-id-fallback")}
             editable={false}
           />
 
           <CdTextInputOneLine
-            label="App Version"
-            value={Constants.expoConfig?.version || "Unknown"}
+            label={t("settings.support.app-version")}
+            value={Constants.expoConfig?.version || t("settings.support.version-unknown")}
             editable={false}
           />
         </View>
@@ -207,11 +209,11 @@ export default function SettingsPage() {
         {/* Development Tools (if in dev mode) */}
         {__DEV__ && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Development Tools</Text>
+            <Text style={styles.sectionTitle}>{t("settings.development.title")}</Text>
 
             <CdTextInputOneLine
-              label="Test Error Reporting"
-              value="Test Sentry integration"
+              label={t("settings.development.test-error")}
+              value={t("settings.development.test-sentry")}
               isButton={true}
               onPress={() => router.push("/sentry-test")}
               buttonIcon="bug"

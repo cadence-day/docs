@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNotifications } from '../context/NotificationContext';
-import { NotificationScheduler } from '../services/NotificationScheduler';
-import { GlobalErrorHandler } from '@/shared/utils/errorHandler';
-import { useProfileStore } from '@/features/profile/stores/useProfileStore';
+import { useProfileStore } from "@/features/profile/stores/useProfileStore";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNotifications } from "../context/NotificationContext";
+import { NotificationScheduler } from "../services/NotificationScheduler";
 
 export interface UseNotificationSchedulerReturn {
   scheduler: NotificationScheduler | null;
@@ -11,17 +11,25 @@ export interface UseNotificationSchedulerReturn {
   scheduleAllNotifications: () => Promise<void>;
   cancelAllNotifications: () => Promise<void>;
   scheduleOneTimeNotification: (
-    type: 'midday-reflection' | 'evening-reflection' | 'achievement' | 'reminder',
+    type:
+      | "midday-reflection"
+      | "evening-reflection"
+      | "achievement"
+      | "reminder",
     scheduledFor: Date,
-    customMessage?: { title: string; body: string }
+    customMessage?: { title: string; body: string },
   ) => Promise<void>;
   error: string | null;
 }
 
-export const useNotificationScheduler = (userId?: string): UseNotificationSchedulerReturn => {
+export const useNotificationScheduler = (
+  userId?: string,
+): UseNotificationSchedulerReturn => {
   const { engine, preferences, isInitialized } = useNotifications();
   const { settings } = useProfileStore();
-  const [scheduler, setScheduler] = useState<NotificationScheduler | null>(null);
+  const [scheduler, setScheduler] = useState<NotificationScheduler | null>(
+    null,
+  );
   const [isScheduling, setIsScheduling] = useState(false);
   const [lastScheduledAt, setLastScheduledAt] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -43,13 +51,13 @@ export const useNotificationScheduler = (userId?: string): UseNotificationSchedu
       setError(null);
 
       GlobalErrorHandler.logDebug(
-        'Notification scheduler initialized',
-        'useNotificationScheduler',
-        { userId }
+        "Notification scheduler initialized",
+        "useNotificationScheduler",
+        { userId },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'useNotificationScheduler.initialize');
-      setError('Failed to initialize notification scheduler');
+      GlobalErrorHandler.logError(error, "useNotificationScheduler.initialize");
+      setError("Failed to initialize notification scheduler");
     }
   }, [isInitialized, engine, userId, preferences]);
 
@@ -66,7 +74,7 @@ export const useNotificationScheduler = (userId?: string): UseNotificationSchedu
 
   const scheduleAllNotifications = useCallback(async (): Promise<void> => {
     if (!scheduler) {
-      throw new Error('Scheduler not initialized');
+      throw new Error("Scheduler not initialized");
     }
 
     try {
@@ -77,13 +85,16 @@ export const useNotificationScheduler = (userId?: string): UseNotificationSchedu
       setLastScheduledAt(new Date());
 
       GlobalErrorHandler.logDebug(
-        'All notifications scheduled successfully',
-        'useNotificationScheduler.scheduleAllNotifications',
-        { userId }
+        "All notifications scheduled successfully",
+        "useNotificationScheduler.scheduleAllNotifications",
+        { userId },
       );
     } catch (error) {
-      const errorMessage = 'Failed to schedule notifications';
-      GlobalErrorHandler.logError(error, 'useNotificationScheduler.scheduleAllNotifications');
+      const errorMessage = "Failed to schedule notifications";
+      GlobalErrorHandler.logError(
+        error,
+        "useNotificationScheduler.scheduleAllNotifications",
+      );
       setError(errorMessage);
       throw error;
     } finally {
@@ -93,7 +104,7 @@ export const useNotificationScheduler = (userId?: string): UseNotificationSchedu
 
   const cancelAllNotifications = useCallback(async (): Promise<void> => {
     if (!scheduler) {
-      throw new Error('Scheduler not initialized');
+      throw new Error("Scheduler not initialized");
     }
 
     try {
@@ -103,13 +114,16 @@ export const useNotificationScheduler = (userId?: string): UseNotificationSchedu
       await scheduler.cancelAllNotifications();
 
       GlobalErrorHandler.logDebug(
-        'All notifications cancelled successfully',
-        'useNotificationScheduler.cancelAllNotifications',
-        { userId }
+        "All notifications cancelled successfully",
+        "useNotificationScheduler.cancelAllNotifications",
+        { userId },
       );
     } catch (error) {
-      const errorMessage = 'Failed to cancel notifications';
-      GlobalErrorHandler.logError(error, 'useNotificationScheduler.cancelAllNotifications');
+      const errorMessage = "Failed to cancel notifications";
+      GlobalErrorHandler.logError(
+        error,
+        "useNotificationScheduler.cancelAllNotifications",
+      );
       setError(errorMessage);
       throw error;
     } finally {
@@ -118,27 +132,38 @@ export const useNotificationScheduler = (userId?: string): UseNotificationSchedu
   }, [scheduler, userId]);
 
   const scheduleOneTimeNotification = useCallback(async (
-    type: 'midday-reflection' | 'evening-reflection' | 'achievement' | 'reminder',
+    type:
+      | "midday-reflection"
+      | "evening-reflection"
+      | "achievement"
+      | "reminder",
     scheduledFor: Date,
-    customMessage?: { title: string; body: string }
+    customMessage?: { title: string; body: string },
   ): Promise<void> => {
     if (!scheduler) {
-      throw new Error('Scheduler not initialized');
+      throw new Error("Scheduler not initialized");
     }
 
     try {
       setError(null);
 
-      await scheduler.scheduleOneTimeNotification(type, scheduledFor, customMessage);
+      await scheduler.scheduleOneTimeNotification(
+        type,
+        scheduledFor,
+        customMessage,
+      );
 
       GlobalErrorHandler.logDebug(
-        'One-time notification scheduled',
-        'useNotificationScheduler.scheduleOneTimeNotification',
-        { userId, type, scheduledFor: scheduledFor.toISOString() }
+        "One-time notification scheduled",
+        "useNotificationScheduler.scheduleOneTimeNotification",
+        { userId, type, scheduledFor: scheduledFor.toISOString() },
       );
     } catch (error) {
-      const errorMessage = 'Failed to schedule notification';
-      GlobalErrorHandler.logError(error, 'useNotificationScheduler.scheduleOneTimeNotification');
+      const errorMessage = "Failed to schedule notification";
+      GlobalErrorHandler.logError(
+        error,
+        "useNotificationScheduler.scheduleOneTimeNotification",
+      );
       setError(errorMessage);
       throw error;
     }
@@ -159,24 +184,62 @@ export const useNotificationScheduler = (userId?: string): UseNotificationSchedu
 export const useAutoNotificationScheduler = (userId?: string) => {
   const { scheduleAllNotifications, error } = useNotificationScheduler(userId);
   const { preferences } = useNotifications();
+  const schedulingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const isSchedulingRef = useRef(false);
 
-  // Auto-reschedule when preferences change
+  // Auto-reschedule when preferences change with debouncing and race condition prevention
   useEffect(() => {
     if (!userId) return;
 
-    const scheduleWithDelay = setTimeout(async () => {
+    // Clear any existing timeout to prevent overlapping operations
+    if (schedulingTimeoutRef.current) {
+      clearTimeout(schedulingTimeoutRef.current);
+      schedulingTimeoutRef.current = null;
+    }
+
+    // Debounced scheduling with race condition protection
+    schedulingTimeoutRef.current = setTimeout(async () => {
+      // Prevent concurrent scheduling operations
+      if (isSchedulingRef.current) {
+        GlobalErrorHandler.logDebug(
+          "Skipping auto-scheduling: operation already in progress",
+          "useAutoNotificationScheduler",
+          { userId },
+        );
+        return;
+      }
+
       try {
+        isSchedulingRef.current = true;
         await scheduleAllNotifications();
+
+        GlobalErrorHandler.logDebug(
+          "Auto-scheduling completed successfully",
+          "useAutoNotificationScheduler",
+          { userId },
+        );
       } catch (error) {
         GlobalErrorHandler.logWarning(
-          'Auto-scheduling failed',
-          'useAutoNotificationScheduler',
-          { userId }
+          "Auto-scheduling failed",
+          "useAutoNotificationScheduler",
+          { userId, error },
         );
+      } finally {
+        isSchedulingRef.current = false;
+        schedulingTimeoutRef.current = null;
       }
-    }, 1000); // Small delay to prevent rapid rescheduling
+    }, 1000); // Debounce delay to prevent rapid rescheduling
 
-    return () => clearTimeout(scheduleWithDelay);
+    // Cleanup function to clear timeout and reset scheduling flag
+    return () => {
+      if (schedulingTimeoutRef.current) {
+        clearTimeout(schedulingTimeoutRef.current);
+        schedulingTimeoutRef.current = null;
+      }
+      isSchedulingRef.current = false;
+    };
   }, [preferences, userId, scheduleAllNotifications]);
 
   return { error };

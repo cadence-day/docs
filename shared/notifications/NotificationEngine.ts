@@ -1,18 +1,17 @@
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import {
-  NotificationProvider,
-  NotificationMessage,
-  NotificationEvent,
-  NotificationSubscriber,
-  NotificationEngineConfig,
-  NotificationLog,
-  NotificationType,
   NotificationDeliveryMethod,
-  NotificationPreferences
-} from './types';
-import { GlobalErrorHandler } from '@/shared/utils/errorHandler';
+  NotificationEngineConfig,
+  NotificationEvent,
+  NotificationLog,
+  NotificationProvider,
+  NotificationSubscriber,
+  NotificationType,
+} from "./types";
 
 export class NotificationEngine {
-  private providers: Map<NotificationDeliveryMethod, NotificationProvider> = new Map();
+  private providers: Map<NotificationDeliveryMethod, NotificationProvider> =
+    new Map();
   private subscribers: NotificationSubscriber[] = [];
   private config: NotificationEngineConfig;
   private logs: NotificationLog[] = [];
@@ -21,17 +20,26 @@ export class NotificationEngine {
     this.config = config;
   }
 
-  registerProvider(method: NotificationDeliveryMethod, provider: NotificationProvider): void {
+  registerProvider(
+    method: NotificationDeliveryMethod,
+    provider: NotificationProvider,
+  ): void {
     if (!this.config.enabledProviders.includes(method)) {
       if (this.config.enableLogging) {
-        GlobalErrorHandler.logWarning(`Provider ${method} is not enabled in config`, 'NotificationEngine.registerProvider');
+        GlobalErrorHandler.logWarning(
+          `Provider ${method} is not enabled in config`,
+          "NotificationEngine.registerProvider",
+        );
       }
       return;
     }
 
     this.providers.set(method, provider);
     if (this.config.enableLogging) {
-      GlobalErrorHandler.logDebug(`Registered provider: ${provider.name} for ${method}`, 'NotificationEngine.registerProvider');
+      GlobalErrorHandler.logDebug(
+        `Registered provider: ${provider.name} for ${method}`,
+        "NotificationEngine.registerProvider",
+      );
     }
   }
 
@@ -46,16 +54,21 @@ export class NotificationEngine {
   }
 
   async initialize(): Promise<void> {
-    const initPromises = Array.from(this.providers.values()).map(provider =>
-      provider.initialize().catch(error => {
-        GlobalErrorHandler.logError(error, 'NotificationEngine.initialize', { providerName: provider.name });
+    const initPromises = Array.from(this.providers.values()).map((provider) =>
+      provider.initialize().catch((error) => {
+        GlobalErrorHandler.logError(error, "NotificationEngine.initialize", {
+          providerName: provider.name,
+        });
       })
     );
 
     await Promise.allSettled(initPromises);
 
     if (this.config.enableLogging) {
-      GlobalErrorHandler.logDebug(`Initialized with ${this.providers.size} providers`, 'NotificationEngine.initialize');
+      GlobalErrorHandler.logDebug(
+        `Initialized with ${this.providers.size} providers`,
+        "NotificationEngine.initialize",
+      );
     }
   }
 
@@ -65,25 +78,46 @@ export class NotificationEngine {
         const provider = this.providers.get(method);
         if (!provider) {
           if (this.config.enableLogging) {
-            GlobalErrorHandler.logWarning(`No provider found for method: ${method}`, 'NotificationEngine.emit');
+            GlobalErrorHandler.logWarning(
+              `No provider found for method: ${method}`,
+              "NotificationEngine.emit",
+            );
           }
           return;
         }
 
         if (!provider.isSupported()) {
           if (this.config.enableLogging) {
-            GlobalErrorHandler.logWarning(`Provider ${provider.name} is not supported`, 'NotificationEngine.emit');
+            GlobalErrorHandler.logWarning(
+              `Provider ${provider.name} is not supported`,
+              "NotificationEngine.emit",
+            );
           }
           return;
         }
 
         try {
           await provider.sendNotification(event.message);
-          this.logNotification(event.userId || 'unknown', event.type, method, 'sent');
-          this.notifySubscribers('onNotificationSent', event.message);
+          this.logNotification(
+            event.userId || "unknown",
+            event.type,
+            method,
+            "sent",
+          );
+          this.notifySubscribers("onNotificationSent", event.message);
         } catch (error) {
-          this.logNotification(event.userId || 'unknown', event.type, method, 'failed', error as Error);
-          this.notifySubscribers('onNotificationFailed', event.message, error as Error);
+          this.logNotification(
+            event.userId || "unknown",
+            event.type,
+            method,
+            "failed",
+            error as Error,
+          );
+          this.notifySubscribers(
+            "onNotificationFailed",
+            event.message,
+            error as Error,
+          );
         }
       });
 
@@ -93,7 +127,7 @@ export class NotificationEngine {
   async schedule(
     event: NotificationEvent,
     scheduledFor: Date,
-    userId?: string
+    userId?: string,
   ): Promise<void> {
     const schedulePromises = event.deliveryMethod
       .map(async (method) => {
@@ -105,20 +139,20 @@ export class NotificationEngine {
         try {
           await provider.scheduleNotification(event.message, scheduledFor);
           this.logNotification(
-            userId || event.userId || 'unknown',
+            userId || event.userId || "unknown",
             event.type,
             method,
-            'scheduled',
+            "scheduled",
             undefined,
-            scheduledFor
+            scheduledFor,
           );
         } catch (error) {
           this.logNotification(
-            userId || event.userId || 'unknown',
+            userId || event.userId || "unknown",
             event.type,
             method,
-            'failed',
-            error as Error
+            "failed",
+            error as Error,
           );
         }
       });
@@ -127,9 +161,13 @@ export class NotificationEngine {
   }
 
   async cancelNotification(notificationId: string): Promise<void> {
-    const cancelPromises = Array.from(this.providers.values()).map(provider =>
-      provider.cancelNotification(notificationId).catch(error => {
-        GlobalErrorHandler.logError(error, 'NotificationEngine.cancelNotification', { notificationId, providerName: provider.name });
+    const cancelPromises = Array.from(this.providers.values()).map((provider) =>
+      provider.cancelNotification(notificationId).catch((error) => {
+        GlobalErrorHandler.logError(
+          error,
+          "NotificationEngine.cancelNotification",
+          { notificationId, providerName: provider.name },
+        );
       })
     );
 
@@ -137,16 +175,22 @@ export class NotificationEngine {
   }
 
   async cancelAllNotifications(): Promise<void> {
-    const cancelPromises = Array.from(this.providers.values()).map(provider =>
-      provider.cancelAllNotifications().catch(error => {
-        GlobalErrorHandler.logError(error, 'NotificationEngine.cancelAllNotifications', { providerName: provider.name });
+    const cancelPromises = Array.from(this.providers.values()).map((provider) =>
+      provider.cancelAllNotifications().catch((error) => {
+        GlobalErrorHandler.logError(
+          error,
+          "NotificationEngine.cancelAllNotifications",
+          { providerName: provider.name },
+        );
       })
     );
 
     await Promise.allSettled(cancelPromises);
   }
 
-  getProvider(method: NotificationDeliveryMethod): NotificationProvider | undefined {
+  getProvider(
+    method: NotificationDeliveryMethod,
+  ): NotificationProvider | undefined {
     return this.providers.get(method);
   }
 
@@ -158,7 +202,7 @@ export class NotificationEngine {
     let filteredLogs = this.logs;
 
     if (userId) {
-      filteredLogs = filteredLogs.filter(log => log.userId === userId);
+      filteredLogs = filteredLogs.filter((log) => log.userId === userId);
     }
 
     if (limit) {
@@ -173,7 +217,7 @@ export class NotificationEngine {
 
   clearLogs(userId?: string): void {
     if (userId) {
-      this.logs = this.logs.filter(log => log.userId !== userId);
+      this.logs = this.logs.filter((log) => log.userId !== userId);
     } else {
       this.logs = [];
     }
@@ -183,22 +227,22 @@ export class NotificationEngine {
     userId: string,
     type: NotificationType,
     deliveryMethod: NotificationDeliveryMethod,
-    status: 'scheduled' | 'sent' | 'failed' | 'cancelled',
+    status: "scheduled" | "sent" | "failed" | "cancelled",
     error?: Error,
-    scheduledFor?: Date
+    scheduledFor?: Date,
   ): void {
     if (!this.config.enableLogging) return;
 
     const log: NotificationLog = {
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       userId,
       type,
       status,
       deliveryMethod,
-      sentAt: status === 'sent' ? new Date() : undefined,
+      sentAt: status === "sent" ? new Date() : undefined,
       scheduledFor,
       errorMessage: error?.message,
-      metadata: error ? { stack: error.stack } : undefined
+      metadata: error ? { stack: error.stack } : undefined,
     };
 
     this.logs.push(log);
@@ -213,13 +257,17 @@ export class NotificationEngine {
     event: keyof NotificationSubscriber,
     ...args: any[]
   ): void {
-    this.subscribers.forEach(subscriber => {
+    this.subscribers.forEach((subscriber) => {
       const handler = subscriber[event];
-      if (handler && typeof handler === 'function') {
+      if (handler && typeof handler === "function") {
         try {
           (handler as Function)(...args);
         } catch (error) {
-          GlobalErrorHandler.logError(error, 'NotificationEngine.notifySubscribers', { event });
+          GlobalErrorHandler.logError(
+            error,
+            "NotificationEngine.notifySubscribers",
+            { event },
+          );
         }
       }
     });

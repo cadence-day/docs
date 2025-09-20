@@ -10,11 +10,11 @@ import React, {
 } from "react";
 import { DEFAULT_CADENCE_PREFERENCES } from "../cadenceMessages";
 import { NotificationEngine } from "../NotificationEngine";
-import { ExpoNotificationProvider } from "../providers/ExpoNotificationProvider";
 import {
-  InAppNotificationDisplay,
-  InAppNotificationProvider,
-} from "../providers/InAppNotificationProvider";
+  getNotificationEngineSingleton,
+  notificationEngineSingleton,
+} from "../NotificationEngineSingleton";
+import { InAppNotificationDisplay } from "../providers/InAppNotificationProvider";
 import { LocaleNotificationProvider } from "../providers/LocaleNotificationProvider";
 import {
   NotificationEngineConfig,
@@ -102,63 +102,69 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const engineConfig = React.useMemo<NotificationEngineConfig>(
     () => ({
       enabledProviders: config?.enabledProviders ?? ["push", "local", "in-app"],
-      defaultPreferences: config?.defaultPreferences ?? DEFAULT_CADENCE_PREFERENCES,
+      defaultPreferences:
+        config?.defaultPreferences ?? DEFAULT_CADENCE_PREFERENCES,
       enableLogging: config?.enableLogging ?? true,
     }),
-    [config?.enabledProviders, config?.defaultPreferences, config?.enableLogging]
+    [
+      config?.enabledProviders,
+      config?.defaultPreferences,
+      config?.enableLogging,
+    ]
   );
 
+  // Initialize notification engine using singleton
   useEffect(() => {
-    // Skip if already initialized
-    if (isInitialized) return;
-
     let mounted = true;
-    let notificationEngine: NotificationEngine | null = null;
-    let inAppUnsubscribe: (() => void) | null = null;
+    let unsubscribeFromSingleton: (() => void) | null = null;
+    let unsubscribeFromInApp: (() => void) | null = null;
 
     const initializeEngine = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        notificationEngine = new NotificationEngine(engineConfig);
+        // Get engine instance from singleton
+        const engineInstance =
+          await getNotificationEngineSingleton(engineConfig);
 
-        // Create providers
-        const expoProvider = new ExpoNotificationProvider();
-        const inAppProvider = new InAppNotificationProvider({
-          autoHideDuration: 5000,
-          maxDisplayedNotifications: 3,
-          persistNotifications: true,
-        });
+        if (!mounted) return;
 
-        // Wrap providers with locale support
-        const localeExpoProvider = new LocaleNotificationProvider(expoProvider);
-        const localeInAppProvider = new LocaleNotificationProvider(
-          inAppProvider
+        // Subscribe to engine changes from singleton
+        unsubscribeFromSingleton = notificationEngineSingleton.subscribe(
+          (newEngine) => {
+            if (mounted) {
+              setEngine(newEngine);
+              setIsInitialized(!!newEngine);
+            }
+          }
         );
 
-        // Register providers
-        notificationEngine.registerProvider("push", localeExpoProvider);
-        notificationEngine.registerProvider("local", localeExpoProvider);
-        notificationEngine.registerProvider("in-app", localeInAppProvider);
-
         // Subscribe to in-app notifications
-        inAppUnsubscribe = inAppProvider.subscribe(setInAppNotifications);
+        const inAppProvider = notificationEngineSingleton.getInAppProvider();
+        if (inAppProvider) {
+          unsubscribeFromInApp = inAppProvider.subscribe(setInAppNotifications);
+        }
 
-        // Initialize engine
-        await notificationEngine.initialize();
-
-        // Check permissions
-        if (expoProvider.getPermissionStatus) {
-          const permStatus = await expoProvider.getPermissionStatus();
+        // Check permissions from the expo provider
+        const expoProvider = engineInstance.getProvider(
+          "push"
+        ) as LocaleNotificationProvider;
+        if (
+          expoProvider &&
+          (expoProvider as any).wrappedProvider?.getPermissionStatus
+        ) {
+          const permStatus = await (
+            expoProvider as any
+          ).wrappedProvider.getPermissionStatus();
           if (mounted) setPermissionStatus(permStatus);
         }
 
         if (mounted) {
-          setEngine(notificationEngine);
+          setEngine(engineInstance);
           setIsInitialized(true);
           GlobalErrorHandler.logDebug(
-            "Notification engine initialized successfully",
+            "Notification engine singleton connected successfully",
             "NotificationProvider"
           );
         }
@@ -177,25 +183,14 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     return () => {
       mounted = false;
-      // Clean up subscribers and engine state
-      try {
-        if (inAppUnsubscribe) inAppUnsubscribe();
-      } catch (e) {
-        GlobalErrorHandler.logError(
-          e,
-          "NotificationProvider.cleanup.unsubscribe"
-        );
+      if (unsubscribeFromSingleton) {
+        unsubscribeFromSingleton();
       }
-      try {
-        if (notificationEngine) {
-          // best-effort cleanup if provider exposes any teardown in the future
-          notificationEngine.clearLogs();
-        }
-      } catch (e) {
-        GlobalErrorHandler.logError(e, "NotificationProvider.cleanup.engine");
+      if (unsubscribeFromInApp) {
+        unsubscribeFromInApp();
       }
     };
-  }, [engineConfig, isInitialized]);
+  }, [engineConfig]);
 
   // Sync preferences with profile store
   useEffect(() => {
