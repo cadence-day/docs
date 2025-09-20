@@ -1,6 +1,7 @@
 import { styles } from "@/features/timeline/styles";
 import NoteIcon from "@/shared/components/icons/NoteIcon";
 import { COLORS } from "@/shared/constants/COLORS";
+import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { Lightning } from "phosphor-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -19,10 +20,7 @@ const MetadataVertical: React.FC<Props> = ({
   onPress,
 }) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-    >
+    <TouchableOpacity onPress={onPress} hitSlop={HIT_SLOP_10}>
       <View style={styles.metadataContainer}>
         {/* Note bubble */}
         {typeof noteCount !== "undefined" && noteCount > 0 && (

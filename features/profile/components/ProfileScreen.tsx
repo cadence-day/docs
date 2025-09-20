@@ -28,6 +28,12 @@ import {
   getTimeValidationError,
 } from "../utils";
 
+type ExpoConfig = {
+  ios?: { buildNumber?: string };
+  android?: { versionCode?: string | number };
+  version?: string;
+};
+
 export const ProfileScreen: React.FC = () => {
   const { user } = useUser();
   const { signOut } = useAuth();
@@ -47,11 +53,10 @@ export const ProfileScreen: React.FC = () => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const appVersion = Constants.expoConfig?.version || "Unknown";
+  const expoConfig = Constants.expoConfig as ExpoConfig | undefined;
   const buildNumber =
-    // @ts-ignore - optional
-    (Constants.expoConfig as any)?.ios?.buildNumber ||
-    // @ts-ignore - optional
-    (Constants.expoConfig as any)?.android?.versionCode ||
+    expoConfig?.ios?.buildNumber ||
+    expoConfig?.android?.versionCode?.toString() ||
     "Unknown";
 
   // Handle time input submission with validation
@@ -585,8 +590,8 @@ export const ProfileScreen: React.FC = () => {
           title={t("profile.logout")}
           onPress={handleLogout}
           variant="outline"
-          style={{ marginBottom: 10, borderColor: "#000" }}
-          textStyle={{ color: "#000" }}
+          style={{ marginBottom: 10, borderColor: COLORS.textIcons }}
+          textStyle={{ color: COLORS.textIcons }}
         />
         <CdButton
           title={t("profile.delete-account")}

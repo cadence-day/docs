@@ -21,7 +21,7 @@ export const fetchPeriodTimeslices = async (fromDate: Date, toDate: Date) => {
 
 // This function retrieves detailed information about a specific timeslice -
 export const getTimesliceInformation = async (
-  timeslice_id: string
+  timeslice_id: string,
 ): Promise<{
   timeslice: Timeslice | undefined;
   activity: Activity | undefined;
@@ -39,9 +39,9 @@ export const getTimesliceInformation = async (
   if (timeslices.length > 0) {
     const timeslice = timeslices[0];
 
-    const activities = await activitiesStore.getActivities([
-      timeslice?.activity_id || "",
-    ]);
+    const activities = await activitiesStore.getActivities(
+      timeslice?.activity_id ? [timeslice.activity_id] : [],
+    );
 
     const notes = await notesStore.getNotes(timeslice?.note_ids || []);
 
@@ -73,7 +73,7 @@ export const getTimesliceInformation = async (
 
 export const timeslicesParser = (
   timeslices: Timeslice[],
-  locale?: string
+  locale?: string,
 ): {
   [date: string]: {
     [time: string]: Timeslice | null;
@@ -97,7 +97,7 @@ export const timeslicesParser = (
       // Convert UTC string to local date
       const utcDate = new Date(ts.start_time as string);
       return utcDate.toLocaleDateString(dateLocale);
-    })
+    }),
   );
 
   // Pre-generate time keys array for reuse
@@ -105,9 +105,11 @@ export const timeslicesParser = (
   for (let hour = 0; hour < 24; hour++) {
     for (let minute = 0; minute < 60; minute += 30) {
       timeKeys.push(
-        `${hour.toString().padStart(2, "0")}:${minute
-          .toString()
-          .padStart(2, "0")}`
+        `${hour.toString().padStart(2, "0")}:${
+          minute
+            .toString()
+            .padStart(2, "0")
+        }`,
       );
     }
   }
@@ -128,9 +130,11 @@ export const timeslicesParser = (
     const dateKey = utcStartTime.toLocaleDateString(dateLocale);
     const hour = utcStartTime.getHours();
     const minute = Math.floor(utcStartTime.getMinutes() / 30) * 30;
-    const timeKey = `${hour.toString().padStart(2, "0")}:${minute
-      .toString()
-      .padStart(2, "0")}`;
+    const timeKey = `${hour.toString().padStart(2, "0")}:${
+      minute
+        .toString()
+        .padStart(2, "0")
+    }`;
 
     if (result[dateKey] && result[dateKey][timeKey] !== undefined) {
       result[dateKey][timeKey] = timeslice;

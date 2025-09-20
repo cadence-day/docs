@@ -7,7 +7,7 @@ import {
 } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
-import { getClerkInstance } from "@clerk/clerk-expo";
+import { useUser } from "@clerk/clerk-expo";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { timeslicesParser } from "../utils";
 
@@ -34,6 +34,8 @@ export function useReflectionData(
   fromDate: Date,
   toDate: Date,
 ): UseReflectionDataReturn {
+  // Use Clerk's React hook to obtain the current user in a testable, react-friendly way
+  const { user, isSignedIn } = useUser();
   const timeslicesStore = useTimeslicesStore();
   const activitiesStore = useActivitiesStore();
   const statesStore = useStatesStore();
@@ -73,10 +75,9 @@ export function useReflectionData(
       const statesStoreState = useStatesStore.getState();
       const notesStoreState = useNotesStore.getState();
 
-      // Get current user ID from Clerk
-      const clerk = getClerkInstance();
-      const currentUserId = clerk.user?.id;
-      const sessionStatus = clerk.session?.status;
+      // Get current user ID from Clerk's `useUser` hook
+      const currentUserId = user?.id;
+      const sessionStatus = isSignedIn ? "active" : "inactive";
 
       if (!currentUserId || sessionStatus !== "active") {
         throw new Error(
@@ -243,7 +244,7 @@ export function useReflectionData(
     } finally {
       setIsLoading(false);
     }
-  }, [fromDate, toDate]);
+  }, [fromDate, toDate, user]);
 
   // Initial fetch when dates change (using refetch logic)
   useEffect(() => {
