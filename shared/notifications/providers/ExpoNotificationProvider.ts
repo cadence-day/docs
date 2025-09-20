@@ -1,11 +1,16 @@
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import { Platform } from 'react-native';
-import { NotificationProvider, NotificationMessage, NotificationPermissionStatus } from '../types';
-import { GlobalErrorHandler } from '@/shared/utils/errorHandler';
+import { SECRETS } from "@/shared/constants/SECRETS";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
+import {
+  NotificationMessage,
+  NotificationPermissionStatus,
+  NotificationProvider,
+} from "../types";
 
 export class ExpoNotificationProvider implements NotificationProvider {
-  name = 'ExpoNotificationProvider';
+  name = "ExpoNotificationProvider";
   private isInitialized = false;
 
   constructor() {
@@ -31,14 +36,14 @@ export class ExpoNotificationProvider implements NotificationProvider {
       await this.registerForPushNotificationsAsync();
       this.isInitialized = true;
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'ExpoNotificationProvider.initialize');
+      GlobalErrorHandler.logError(error, "ExpoNotificationProvider.initialize");
       throw error;
     }
   }
 
   async sendNotification(notification: NotificationMessage): Promise<void> {
     if (!this.isSupported()) {
-      throw new Error('Push notifications are not supported on this device');
+      throw new Error("Push notifications are not supported on this device");
     }
 
     try {
@@ -48,19 +53,26 @@ export class ExpoNotificationProvider implements NotificationProvider {
           title: notification.title,
           body: notification.body,
           data: notification.metadata || {},
-          sound: 'default',
+          sound: "default",
         },
         trigger: null, // Send immediately
       });
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'ExpoNotificationProvider.sendNotification', { notificationId: notification.id });
+      GlobalErrorHandler.logError(
+        error,
+        "ExpoNotificationProvider.sendNotification",
+        { notificationId: notification.id },
+      );
       throw error;
     }
   }
 
-  async scheduleNotification(notification: NotificationMessage, scheduledFor: Date): Promise<void> {
+  async scheduleNotification(
+    notification: NotificationMessage,
+    scheduledFor: Date,
+  ): Promise<void> {
     if (!this.isSupported()) {
-      throw new Error('Push notifications are not supported on this device');
+      throw new Error("Push notifications are not supported on this device");
     }
 
     try {
@@ -76,15 +88,19 @@ export class ExpoNotificationProvider implements NotificationProvider {
           title: notification.title,
           body: notification.body,
           data: notification.metadata || {},
-          sound: 'default',
+          sound: "default",
         },
         trigger,
       });
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'ExpoNotificationProvider.scheduleNotification', {
-        notificationId: notification.id,
-        scheduledFor: scheduledFor.toISOString()
-      });
+      GlobalErrorHandler.logError(
+        error,
+        "ExpoNotificationProvider.scheduleNotification",
+        {
+          notificationId: notification.id,
+          scheduledFor: scheduledFor.toISOString(),
+        },
+      );
       throw error;
     }
   }
@@ -93,7 +109,11 @@ export class ExpoNotificationProvider implements NotificationProvider {
     try {
       await Notifications.cancelScheduledNotificationAsync(notificationId);
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'ExpoNotificationProvider.cancelNotification', { notificationId });
+      GlobalErrorHandler.logError(
+        error,
+        "ExpoNotificationProvider.cancelNotification",
+        { notificationId },
+      );
       throw error;
     }
   }
@@ -102,22 +122,26 @@ export class ExpoNotificationProvider implements NotificationProvider {
     try {
       await Notifications.cancelAllScheduledNotificationsAsync();
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'ExpoNotificationProvider.cancelAllNotifications');
+      GlobalErrorHandler.logError(
+        error,
+        "ExpoNotificationProvider.cancelAllNotifications",
+      );
       throw error;
     }
   }
 
   isSupported(): boolean {
-    return Device.isDevice && (Platform.OS === 'ios' || Platform.OS === 'android');
+    return Device.isDevice &&
+      (Platform.OS === "ios" || Platform.OS === "android");
   }
 
   async getPermissionStatus(): Promise<NotificationPermissionStatus> {
     const { status } = await Notifications.getPermissionsAsync();
 
     return {
-      granted: status === 'granted',
-      canAskAgain: status !== 'denied',
-      status: status as 'granted' | 'denied' | 'undetermined',
+      granted: status === "granted",
+      canAskAgain: status !== "denied",
+      status: status as "granted" | "denied" | "undetermined",
     };
   }
 
@@ -131,9 +155,9 @@ export class ExpoNotificationProvider implements NotificationProvider {
     });
 
     return {
-      granted: status === 'granted',
-      canAskAgain: status !== 'denied',
-      status: status as 'granted' | 'denied' | 'undetermined',
+      granted: status === "granted",
+      canAskAgain: status !== "denied",
+      status: status as "granted" | "denied" | "undetermined",
     };
   }
 
@@ -144,34 +168,46 @@ export class ExpoNotificationProvider implements NotificationProvider {
 
     try {
       const token = await Notifications.getExpoPushTokenAsync({
-        projectId: process.env.EXPO_PROJECT_ID,
+        projectId: SECRETS.EXPO_PROJECT_ID,
       });
       return token.data;
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'ExpoNotificationProvider.getExpoPushToken');
+      GlobalErrorHandler.logError(
+        error,
+        "ExpoNotificationProvider.getExpoPushToken",
+      );
       return null;
     }
   }
 
-  async getScheduledNotifications(): Promise<Notifications.NotificationRequest[]> {
+  async getScheduledNotifications(): Promise<
+    Notifications.NotificationRequest[]
+  > {
     try {
       return await Notifications.getAllScheduledNotificationsAsync();
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'ExpoNotificationProvider.getScheduledNotifications');
+      GlobalErrorHandler.logError(
+        error,
+        "ExpoNotificationProvider.getScheduledNotifications",
+      );
       return [];
     }
   }
 
   private async registerForPushNotificationsAsync(): Promise<string | null> {
     if (!this.isSupported()) {
-      GlobalErrorHandler.logWarning('Push notifications are not supported on this device', 'ExpoNotificationProvider.registerForPushNotificationsAsync');
+      GlobalErrorHandler.logWarning(
+        "Push notifications are not supported on this device",
+        "ExpoNotificationProvider.registerForPushNotificationsAsync",
+      );
       return null;
     }
 
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } = await Notifications
+      .getPermissionsAsync();
     let finalStatus = existingStatus;
 
-    if (existingStatus !== 'granted') {
+    if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync({
         ios: {
           allowAlert: true,
@@ -182,18 +218,24 @@ export class ExpoNotificationProvider implements NotificationProvider {
       finalStatus = status;
     }
 
-    if (finalStatus !== 'granted') {
-      GlobalErrorHandler.logWarning('Push notification permissions not granted', 'ExpoNotificationProvider.registerForPushNotificationsAsync');
+    if (finalStatus !== "granted") {
+      GlobalErrorHandler.logWarning(
+        "Push notification permissions not granted",
+        "ExpoNotificationProvider.registerForPushNotificationsAsync",
+      );
       return null;
     }
 
     try {
       const token = await Notifications.getExpoPushTokenAsync({
-        projectId: process.env.EXPO_PROJECT_ID,
+        projectId: SECRETS.EXPO_PROJECT_ID,
       });
       return token.data;
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'ExpoNotificationProvider.registerForPushNotificationsAsync');
+      GlobalErrorHandler.logError(
+        error,
+        "ExpoNotificationProvider.registerForPushNotificationsAsync",
+      );
       return null;
     }
   }
@@ -201,10 +243,10 @@ export class ExpoNotificationProvider implements NotificationProvider {
   // Helper method to schedule recurring notifications
   async scheduleRecurringNotification(
     notification: NotificationMessage,
-    trigger: Notifications.TimeIntervalTriggerInput
+    trigger: Notifications.TimeIntervalTriggerInput,
   ): Promise<void> {
     if (!this.isSupported()) {
-      throw new Error('Push notifications are not supported on this device');
+      throw new Error("Push notifications are not supported on this device");
     }
 
     try {
@@ -214,18 +256,25 @@ export class ExpoNotificationProvider implements NotificationProvider {
           title: notification.title,
           body: notification.body,
           data: notification.metadata || {},
-          sound: 'default',
+          sound: "default",
         },
         trigger,
       });
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'ExpoNotificationProvider.scheduleRecurringNotification', { notificationId: notification.id });
+      GlobalErrorHandler.logError(
+        error,
+        "ExpoNotificationProvider.scheduleRecurringNotification",
+        { notificationId: notification.id },
+      );
       throw error;
     }
   }
 
   // Helper method to create daily trigger
-  createDailyTrigger(hour: number, minute: number): Notifications.TimeIntervalTriggerInput {
+  createDailyTrigger(
+    hour: number,
+    minute: number,
+  ): Notifications.TimeIntervalTriggerInput {
     const now = new Date();
     const target = new Date();
     target.setHours(hour, minute, 0, 0);
@@ -244,7 +293,11 @@ export class ExpoNotificationProvider implements NotificationProvider {
   }
 
   // Helper method to create weekly trigger
-  createWeeklyTrigger(weekday: number, hour: number, minute: number): Notifications.TimeIntervalTriggerInput {
+  createWeeklyTrigger(
+    weekday: number,
+    hour: number,
+    minute: number,
+  ): Notifications.TimeIntervalTriggerInput {
     const now = new Date();
     const target = new Date();
 
