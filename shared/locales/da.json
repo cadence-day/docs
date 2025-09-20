@@ -96,7 +96,6 @@
   "close": "Luk",
   "welcome-back": "Velkommen tilbage,",
   "app-features": "App-funktioner",
-  "settings": "⚙️ Indstillinger",
   "development-tools": "Udviklingsværktøjer",
   "test-sentry-integration": "🔧 Test Sentry-integration",
   "test-not-found-page": "🚫 Test Ikke Fundet-side",
@@ -109,7 +108,8 @@
   "a-feedback-button-has-been-added-to-your-screen-you-can-hide-it-from-this-settings-page": "En feedback-knap er blevet tilføjet til din skærm. Du kan skjule den fra denne indstillingsside.",
   "unable-to-show-feedback-button-please-try-again": "Kan ikke vise feedback-knap. Prøv igen.",
   "reflection": {
-    "title": "REFLEKSION",
+    "weekly-cadence": "Ugentlig Cadence",
+    "title": "Refleksion",
     "empty": "Tom refleksion",
     "noTimesliceInfo": "Ingen tidsintervaler informationer tilgængelige",
     "activityLabel": "Aktivitet",
@@ -161,9 +161,6 @@
   "failed-to-create-timeslices": "Kunne ikke oprette tidsintervaller. Prøv igen.",
   "create-activity": "Opret aktivitet",
   "edit-activity": "Rediger aktivitet",
-  "save": "Gem",
-  "create": "Opret",
-  "edit": "Rediger",
   "activity": {
     "legend": {
       "activities": "Aktiviteter",
@@ -190,19 +187,20 @@
     "preview": "Aktivitet"
   },
   "common": {
+    "ok": "OK",
+    "cancel": "Annuller",
+    "confirm": "Bekræft",
+    "error": "Fejl",
+    "submitting": "Indsender...",
+    "done": "Færdig",
+    "saving": "Gemmer",
+    "edit": "Rediger",
     "save": "Gem",
     "create": "Opret",
-    "edit": "Rediger",
-    "cancel": "Annuller",
-    "close": "Luk",
-    "done": "Færdig",
-    "error": "Fejl",
-    "saving": "Gemmer"
+    "delete": "Slet"
   },
   "select-activity": "Vælg venligst en aktivitet først",
   "pick-activity-first": "Vælg en aktivitet først",
-  "confirm": "Bekræft",
-  "delete": "Slet",
   "delete-timeslice-with-data-warning": "Dette tidsudsnit har noter eller tilstand tilknyttet. At slette det vil også fjerne alle tilknyttede data. Denne handling kan ikke fortrydes.",
   "This activity is a child of another. Change its parent first before deleting.": "Denne aktivitet er et barn af en anden. Skift dens overordnede først, før du sletter.",
   "This activity has sub-activities. Reassign or remove their parent before deleting.": "Denne aktivitet har underaktiviteter. Tildel en ny overordnet eller fjern den, før du sletter.",
@@ -250,17 +248,8 @@
   "active-activities": "Aktive aktiviteter",
   "no-active-activities": "Der er desværre ingen aktive aktiviteter",
   "back-to-today": "Tilbage til i dag",
-  "cancel": "Tilbage",
-  "validate": "Bekræft",
-  "Are you sure you want to delete this activity? You can't undo this": {
-    "": "Er du sikker på, at du vil slette denne aktivitet? Du kan ikke fortryde dette."
-  },
-  "back": "Tilbage",
   "choose_action": "Vælg handling",
   "color": "Farve",
-  "This activity is used by timeslices": {
-    " Pick a replacement:": "Denne aktivitet bruges af timeslices. Vælg en erstatning:"
-  },
   "profile": {
     "title": "PROFIL",
     "logout": "Log ud",
@@ -324,5 +313,60 @@
     }
   },
   "home.todayTitle": "Dagens Cadence",
-  "reflection.weekly-cadence": "Ugentlig Cadence"
+  "energyLabel": "ENERGI",
+  "energyLow": "Lav",
+  "energyHigh": "Høj",
+  "settings": {
+    "title": "Indstillinger",
+    "back": "Tilbage",
+    "notifications": {
+      "title": "Notifikationer",
+      "push": "Push Notifikationer",
+      "email": "Email Notifikationer",
+      "enabled": "Aktiveret",
+      "disabled": "Deaktiveret",
+      "configure-email": "Konfigurer email præferencer",
+      "coming-soon": "Kommer snart",
+      "email-coming-soon": "Email notifikationsindstillinger vil være tilgængelige snart"
+    },
+    "health-data": {
+      "title": "Sundhed & Data",
+      "access": "Sundhedsdata Adgang",
+      "export": "Data Eksport",
+      "export-value": "Eksporter dine data",
+      "privacy": "Privatlivsindstillinger",
+      "privacy-value": "Administrer data privatliv",
+      "coming-soon": "Kommer snart",
+      "export-coming-soon": "Data eksport funktion vil være tilgængelig snart",
+      "privacy-coming-soon": "Privatlivsindstillinger vil være tilgængelige snart"
+    },
+    "security": {
+      "title": "Sikkerhed & Kryptering",
+      "link-device": "Link Enhed (Kryptering)",
+      "link-device-value": "Åbn linking dialog",
+      "link-device-title": "Link Denne Enhed"
+    },
+    "support": {
+      "title": "Support & Information",
+      "contact": "Kontakt Support",
+      "contact-value": "Få hjælp og support",
+      "app-info": "App Information",
+      "app-info-value": "Version og build detaljer",
+      "user-id": "Bruger ID",
+      "user-id-fallback": "Ikke tilgængelig",
+      "app-version": "App Version",
+      "version-unknown": "Ukendt",
+      "support-subject": "Support Forespørgsel",
+      "support-body-prefix": "Beskriv dit problem her..."
+    },
+    "development": {
+      "title": "Udviklingsværktøjer",
+      "test-error": "Test Fejlrapportering",
+      "test-sentry": "Test Sentry integration"
+    },
+    "alerts": {
+      "app-info-title": "App Information",
+      "health-data-title": "Sundhedsdata"
+    }
+  }
 }
