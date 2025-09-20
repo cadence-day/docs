@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: "2%",
+    padding: 8,
   },
   activityHeader: {
     flexDirection: "row",

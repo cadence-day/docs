@@ -32,7 +32,7 @@ export interface UseReflectionDataReturn {
 
 export function useReflectionData(
   fromDate: Date,
-  toDate: Date
+  toDate: Date,
 ): UseReflectionDataReturn {
   const timeslicesStore = useTimeslicesStore();
   const activitiesStore = useActivitiesStore();
@@ -42,7 +42,7 @@ export function useReflectionData(
   // Memoize the locale to prevent infinite re-renders
   const currentLocale = useMemo(
     () => getCurrentLanguage(),
-    [getCurrentLanguage]
+    [getCurrentLanguage],
   );
 
   const [timeslices, setTimeslices] = useState<Timeslice[]>([]);
@@ -64,7 +64,7 @@ export function useReflectionData(
         {
           fromDate: fromDate.toLocaleDateString(),
           toDate: toDate.toLocaleDateString(),
-        }
+        },
       );
 
       // Get store state and API methods directly (like timeline refresh)
@@ -76,9 +76,12 @@ export function useReflectionData(
       // Get current user ID from Clerk
       const clerk = getClerkInstance();
       const currentUserId = clerk.user?.id;
+      const sessionStatus = clerk.session?.status;
 
-      if (!currentUserId) {
-        throw new Error("User must be authenticated to fetch reflection data");
+      if (!currentUserId || sessionStatus !== "active") {
+        throw new Error(
+          "User must be authenticated with an active session to fetch reflection data",
+        );
       }
 
       // Fetch data in parallel using the same pattern as timeline refresh
@@ -103,7 +106,7 @@ export function useReflectionData(
 
         GlobalErrorHandler.logDebug(
           `Fetched ${fetchedTimeslices.length} timeslices`,
-          "useReflectionData"
+          "useReflectionData",
         );
 
         // Update the store directly with fresh data (timeline refresh pattern)
@@ -130,7 +133,7 @@ export function useReflectionData(
             reason: timeslicesResult.reason,
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
         GlobalErrorHandler.logError(
           timeslicesResult.reason,
@@ -138,12 +141,12 @@ export function useReflectionData(
           {
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
         setError(
           timeslicesResult.reason instanceof Error
             ? timeslicesResult.reason.message
-            : "Failed to refetch timeslices"
+            : "Failed to refetch timeslices",
         );
       }
 
@@ -152,20 +155,20 @@ export function useReflectionData(
         const fetchedActivities = activitiesResult.value;
         GlobalErrorHandler.logDebug(
           `Fetched ${fetchedActivities.length} activities`,
-          "useReflectionData"
+          "useReflectionData",
         );
 
         // Update activities store with fresh data
         if (fetchedActivities.length > 0) {
           useActivitiesStore.setState((state) => {
             const enabledActivities = fetchedActivities.filter(
-              (a) => a.status === "ENABLED"
+              (a) => a.status === "ENABLED",
             );
             const disabledActivities = fetchedActivities.filter(
-              (a) => a.status === "DISABLED"
+              (a) => a.status === "DISABLED",
             );
             const deletedActivities = fetchedActivities.filter(
-              (a) => a.status === "DELETED"
+              (a) => a.status === "DELETED",
             );
 
             return {
@@ -183,7 +186,7 @@ export function useReflectionData(
             reason: activitiesResult.reason,
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
         GlobalErrorHandler.logError(
           activitiesResult.reason,
@@ -191,7 +194,7 @@ export function useReflectionData(
           {
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
       }
 
@@ -200,7 +203,7 @@ export function useReflectionData(
         const fetchedStates = statesResult.value;
         GlobalErrorHandler.logDebug(
           `Fetched ${fetchedStates.length} states`,
-          "useReflectionData"
+          "useReflectionData",
         );
 
         // Update states store with fresh data
@@ -217,7 +220,7 @@ export function useReflectionData(
             reason: statesResult.reason,
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
         GlobalErrorHandler.logError(
           statesResult.reason,
@@ -225,14 +228,13 @@ export function useReflectionData(
           {
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to refetch reflection data";
+      const errorMessage = err instanceof Error
+        ? err.message
+        : "Failed to refetch reflection data";
       setError(errorMessage);
       GlobalErrorHandler.logError(err, "useReflectionData.refetch", {
         fromDate: fromDate.toISOString(),
@@ -272,7 +274,8 @@ export function useReflectionData(
     GlobalErrorHandler.logDebug("Syncing timeslices", "useReflectionData", {
       allTimeslicesCount: allTimeslices.length,
       filteredCount: filteredTimeslices.length,
-      dateRange: `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
+      dateRange:
+        `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
     });
 
     setTimeslices(filteredTimeslices);
@@ -282,7 +285,7 @@ export function useReflectionData(
   useEffect(() => {
     GlobalErrorHandler.logDebug(
       `Parsing ${timeslices.length} timeslices`,
-      "useReflectionData"
+      "useReflectionData",
     );
     const parsed = timeslicesParser(timeslices, currentLocale);
     GlobalErrorHandler.logDebug("Parsed timeslices", "useReflectionData", {
@@ -296,15 +299,15 @@ export function useReflectionData(
 
   // Function to get the date range of displayed data
   const getDateRange = useCallback(() => {
-    const totalDays =
-      Math.ceil(
-        (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24)
-      ) + 1;
+    const totalDays = Math.ceil(
+      (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24),
+    ) + 1;
 
     return {
       from: fromDate,
       to: toDate,
-      formattedRange: `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
+      formattedRange:
+        `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
       totalDays,
     };
   }, [fromDate, toDate]);
@@ -334,7 +337,7 @@ export function useReflectionData(
       timeslicesStore.timeslices.length,
       activitiesStore.activities.length,
       statesStore.states.length,
-    ]
+    ],
   );
 
   return returnValue;
