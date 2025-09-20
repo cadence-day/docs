@@ -57,7 +57,6 @@ export const useNoteHandlers = ({
       });
     },
     [setNotes],
-    [setNotes],
   );
 
   const deleteNoteLocal = useCallback(
@@ -74,41 +73,8 @@ export const useNoteHandlers = ({
         // Adjust active index if it's after the deleted note
         setActiveNoteIndex(activeNoteIndex - 1);
       }
-
-      // If it's an existing note (not new), delete it from database and store immediately
-      if (!noteToDelete.isNew && noteToDelete.id) {
-        try {
-          // Delete from the store (this will also delete from database)
-          await deleteNote(noteToDelete.id);
-
-          // Update the timeslice to remove this note ID
-          const updatedNoteIds = noteIds.filter((id) => id !== noteToDelete.id);
-          if (timeslice.id) {
-            await upsertTimeslice({
-              id: timeslice.id,
-              note_ids: updatedNoteIds,
-            } as unknown as TimesliceUpsertInput);
-          }
-        } catch (error) {
-          GlobalErrorHandler.logError(error, "deleteNoteLocal", {
-            noteId: noteToDelete.id,
-            timesliceId: timeslice.id,
-          });
-          // If deletion fails, we should probably re-add the note to local state
-          // But for now, we'll just log the error
-        }
-      }
     },
-    [
-      notes,
-      activeNoteIndex,
-      noteIds,
-      timeslice.id,
-      setNotes,
-      setActiveNoteIndex,
-      deleteNote,
-      upsertTimeslice,
-    ],
+    [notes, activeNoteIndex, setNotes, setDeletedNoteIds, setActiveNoteIndex],
   );
 
   const saveNote = useCallback(

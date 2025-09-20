@@ -69,9 +69,6 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
     if (state === State.BEGAN) {
       isSwipeActive.current = true;
       lastGestureX.current = 0;
-      console.log(
-        `[SwipeableNoteItem] Swipe BEGAN - Index: ${index}, isSwipeActive: ${isSwipeActive.current}`
-      );
     }
 
     if (state === State.END || state === State.CANCELLED) {
@@ -97,9 +94,6 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
       }).start();
 
       isSwipeActive.current = false;
-      console.log(
-        `[SwipeableNoteItem] Swipe END - Index: ${index}, isSwipeActive: ${isSwipeActive.current}`
-      );
     }
   };
 
@@ -210,19 +204,12 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
             scrollEnabled={false}
             value={note.message || ""}
             onChangeText={(text) => {
-              console.log(
-                `[SwipeableNoteItem] onChangeText called - Index: ${index}, Text: "${text}", isSwipeActive: ${isSwipeActive.current}, editable: ${!isSwipeActive.current}`
-              );
               onChangeText(text);
             }}
             onFocus={() => {
-              console.log(
-                `[SwipeableNoteItem] onFocus called - Index: ${index}, isSwipeActive: ${isSwipeActive.current}`
-              );
               onFocus();
             }}
-            editable={true} // Temporarily force true for debugging
-            // editable={!isSwipeActive.current}
+            editable={!isSwipeActive.current}
           />
 
           {isPinned && (

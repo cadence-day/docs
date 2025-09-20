@@ -194,16 +194,6 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     }
   }, [ts_id, loadNotes, loadEnergyState]);
 
-  // Debug: Monitor notes state changes
-  useEffect(() => {
-    console.log("[NoteDialog] Notes state changed:", notes);
-  }, [notes]);
-
-  // Debug: Monitor active note index changes
-  useEffect(() => {
-    console.log("[NoteDialog] Active note index changed:", activeNoteIndex);
-  }, [activeNoteIndex]);
-
   // Handle keyboard visibility
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -443,15 +433,9 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
                       note.isNew ? "Add a new note..." : "Edit your note..."
                     }
                     onChangeText={(text) => {
-                      console.log(
-                        `[NoteDialog] onChangeText called - Index: ${index}, Text: "${text}"`
-                      );
                       noteHandlers.updateNote(index, text);
                     }}
                     onFocus={() => {
-                      console.log(
-                        `[NoteDialog] onFocus called - Index: ${index}`
-                      );
                       setActiveNoteIndex(index);
                     }}
                     onSave={() => handleSaveNote(index)}
