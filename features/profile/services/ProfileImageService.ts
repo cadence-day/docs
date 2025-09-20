@@ -65,8 +65,8 @@ export class ProfileImageService {
       const { ImagePicker } = modules;
 
       // Request permissions
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } = await ImagePicker
+        .requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
         throw new Error("Media library permission required");
       }
@@ -143,7 +143,7 @@ export class ProfileImageService {
         {
           compress: this.JPEG_QUALITY,
           format: ImageManipulator.SaveFormat.JPEG,
-        }
+        },
       );
 
       return result.uri;
@@ -171,15 +171,36 @@ export class ProfileImageService {
       // Get the image as array buffer
       const arrayBuffer = await response.arrayBuffer();
 
-      // Convert array buffer to binary string, then to base64
+      // Convert array buffer to binary string in chunks to avoid
+      // quadratic string concatenation and stack/argument size limits.
       const bytes = new Uint8Array(arrayBuffer);
-      let binary = '';
-      for (let i = 0; i < bytes.byteLength; i++) {
-        binary += String.fromCharCode(bytes[i]);
-      }
 
-      // Convert binary string to base64
-      const base64String = btoa(binary);
+      // If the environment provides a direct way to convert to base64 from
+      // a byte array (like Node's Buffer), use it. Otherwise fall back to
+      // chunked String.fromCharCode + btoa approach which is safe for
+      // large arrays in JS engines.
+      let base64String: string;
+
+      // Browser/React Native: try using btoa on chunks
+      try {
+        const CHUNK_SIZE = 0x8000; // 32KB per chunk — tuned for performance/safety
+        const chunks: string[] = [];
+        for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
+          const slice = bytes.subarray(i, i + CHUNK_SIZE);
+          // Use apply-safe conversion for the slice
+          chunks.push(String.fromCharCode.apply(null, Array.from(slice)));
+        }
+        const binary = chunks.join("");
+        base64String = (globalThis as any).btoa(binary);
+      } catch (e) {
+        // Fallback for environments where apply or btoa is not available
+        // (for example, some JS runtimes). Try Node Buffer if available.
+        if (typeof Buffer !== "undefined") {
+          base64String = Buffer.from(bytes).toString("base64");
+        } else {
+          throw e;
+        }
+      }
 
       // Return with data URL format that Clerk expects
       return `data:image/jpeg;base64,${base64String}`;
@@ -212,7 +233,8 @@ export class ProfileImageService {
 
       // Check file size by estimating from base64 length
       // Base64 adds ~33% overhead, so actual size is roughly base64Length * 0.75
-      const estimatedSize = (base64Image.length - 'data:image/jpeg;base64,'.length) * 0.75;
+      const estimatedSize =
+        (base64Image.length - "data:image/jpeg;base64,".length) * 0.75;
       if (estimatedSize > this.MAX_FILE_SIZE) {
         return {
           success: false,
@@ -247,7 +269,9 @@ export class ProfileImageService {
       });
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unexpected error during image upload",
+        error: error instanceof Error
+          ? error.message
+          : "Unexpected error during image upload",
       };
     }
   }
