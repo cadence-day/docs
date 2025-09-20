@@ -59,7 +59,7 @@ export const useNoteHandlers = ({
     [setNotes],
   );
 
-  const deleteNoteLocal = useCallback(
+  const deleteNoteAsync = useCallback(
     async (index: number) => {
       const noteToDelete = notes[index];
 
@@ -315,7 +315,8 @@ export const useNoteHandlers = ({
   return {
     addNote,
     updateNote: updateNoteMessage,
-    deleteNote: deleteNoteLocal,
+  // Keep the external API key `deleteNote` while using a clearer internal name
+  deleteNote: deleteNoteAsync,
     saveNote,
     saveAllNotes,
     setActiveNote,
