@@ -3,6 +3,8 @@ import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
 import useTranslation from "@/shared/hooks/useI18n";
+import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
+import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { Tabs, useSegments } from "expo-router";
@@ -131,6 +133,57 @@ export default function TabLayout() {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, segments, didCheckEncryption]);
+
+  // On initial mount when signed-in, open onboarding if the user has no timeslices
+  useEffect(() => {
+    // Only run once per mount
+    let didRun = false;
+    const rawView = segments[segments.length - 1];
+    const currentView = String(rawView ?? "index");
+    if (currentView !== "index") return;
+
+    const tryOpenOnboarding = async () => {
+      if (didRun) return;
+      didRun = true;
+
+      const userId = user?.id ?? null;
+      if (!userId) return;
+
+      try {
+        const shown = await userOnboardingStorage.getShown();
+        if (shown) return;
+
+        const timeslices = await useTimeslicesStore
+          .getState()
+          .getAllTimeslices();
+        if (!timeslices || timeslices.length === 0) {
+          // Open onboarding dialog with requested props
+          useDialogStore.getState().openDialog({
+            type: "onboarding",
+            props: {
+              height: 85,
+              enableDragging: false,
+              headerProps: {
+                title: t("welcome-to-cadence"),
+                rightActionElement: t("common.close"),
+                onRightAction: () => {
+                  useDialogStore.getState().closeAll();
+                },
+              },
+            },
+            position: "dock",
+            viewSpecific: "profile",
+          });
+        }
+      } catch (err) {
+        // Ignore errors here - non-fatal
+        console.log("Error checking timeslices for onboarding:", err);
+      }
+    };
+
+    tryOpenOnboarding();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, segments]);
 
   return (
     <>

@@ -43,6 +43,22 @@ const StoreStateDisplay = ({
 };
 
 const DebugScreen = () => {
+  const isDev = typeof __DEV__ !== "undefined" ? __DEV__ : false;
+
+  if (!isDev) {
+    return (
+      <View style={styles.container}>
+        <Link href="/(home)">
+          <Text style={styles.link}>Back to Home</Text>
+        </Link>
+        <Text style={styles.title}>Debug Screen (development only)</Text>
+        <Text>
+          This page is only available in development builds. Rebuild in dev to
+          access debug tools.
+        </Text>
+      </View>
+    );
+  }
   const activityCategoriesState = useActivityCategoriesStore();
   const activitiesState = useActivitiesStore();
   const notesState = useNotesStore();
