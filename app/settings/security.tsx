@@ -67,42 +67,40 @@ export default function SecuritySettings() {
 
   const handleChangePassword = async () => {
     if (!user) {
-      showError("User not found. Please sign in again.");
+      showError(t("user-not-found-please-sign-in"));
       return;
     }
 
     // Show a password change dialog with input fields
     Alert.prompt(
-      "Change Password",
-      "Enter your current password:",
+      t("change-password"),
+      t("enter-your-current-password"),
       [
         {
-          text: "Cancel",
+          text: t("common.cancel"),
           style: "cancel",
         },
         {
-          text: "Next",
+          text: t("next"),
           onPress: (currentPassword?: string) => {
             if (!currentPassword?.trim()) {
-              showError("Current password is required.");
+              showError(t("current-password-is-required"));
               return;
             }
             // Ask for new password
             Alert.prompt(
-              "New Password",
-              "Enter your new password:",
+              t("new-password"),
+              t("enter-your-new-password"),
               [
                 {
-                  text: "Cancel",
+                  text: t("common.cancel"),
                   style: "cancel",
                 },
                 {
-                  text: "Change Password",
+                  text: t("change-password"),
                   onPress: async (newPassword?: string) => {
                     if (!newPassword?.trim() || newPassword.length < 8) {
-                      showError(
-                        "New password must be at least 8 characters long."
-                      );
+                      showError(t("new-password-must-be-at-least"));
                       return;
                     }
                     await performPasswordChange(currentPassword, newPassword);
@@ -131,40 +129,36 @@ export default function SecuritySettings() {
         newPassword,
       });
 
-      showSuccess("Password changed successfully!");
+      showSuccess(t("password-changed-successfully"));
 
-      Alert.alert(
-        "Password Changed",
-        "Your password has been changed successfully. For security reasons, you'll be signed out now.",
-        [
-          {
-            text: "OK",
-            onPress: async () => {
-              try {
-                // Clear all stores before signing out
-                clearAllStores();
+      Alert.alert(t("password-changed"), t("your-password-has-been-changed"), [
+        {
+          text: "OK",
+          onPress: async () => {
+            try {
+              // Clear all stores before signing out
+              clearAllStores();
 
-                await signOut();
-                router.replace("/(auth)/sign-in");
-              } catch (error) {
-                console.error("Error signing out:", error);
-                router.replace("/(auth)/sign-in");
-              }
-            },
+              await signOut();
+              router.replace("/(auth)/sign-in");
+            } catch (error) {
+              console.error("Error signing out:", error);
+              router.replace("/(auth)/sign-in");
+            }
           },
-        ]
-      );
+        },
+      ]);
     } catch (error: any) {
       console.error("Password change error:", error);
 
       if (error?.errors) {
         const errorMessage =
-          error.errors[0]?.message || "Failed to change password.";
+          error.errors[0]?.message || t("failed-to-change-password");
         showError(errorMessage);
       } else if (error?.message) {
         showError(error.message);
       } else {
-        showError("Failed to change password. Please try again.");
+        showError(t("failed-to-change-password-plea"));
       }
     } finally {
       setIsChangingPassword(false);
@@ -173,20 +167,20 @@ export default function SecuritySettings() {
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      "Delete Account",
-      "This action cannot be undone. Are you sure you want to delete your account permanently?",
+      t("profile.delete-account"),
+      t("this-action-cannot-be-undone-a"),
       [
         {
-          text: "Cancel",
+          text: t("common.cancel"),
           style: "cancel",
         },
         {
-          text: "Delete",
+          text: t("delete"),
           style: "destructive",
           onPress: () => {
             Alert.alert(
-              "Contact Support",
-              "To delete your account, please contact our support team. They will help you with the account deletion process and ensure all your data is properly removed.",
+              t("settings.support.contact"),
+              t("to-delete-your-account-please"),
               [{ text: "OK" }]
             );
           },
@@ -196,13 +190,13 @@ export default function SecuritySettings() {
   };
 
   const handleSignOut = async () => {
-    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+    Alert.alert(t("sign-out"), t("are-you-sure-you-want-to-sign"), [
       {
-        text: "Cancel",
+        text: t("common.cancel"),
         style: "cancel",
       },
       {
-        text: "Sign Out",
+        text: t("sign-out"),
         style: "default",
         onPress: async () => {
           try {
@@ -213,7 +207,7 @@ export default function SecuritySettings() {
             router.replace("/(auth)/sign-in");
           } catch (error) {
             console.error("Error signing out:", error);
-            showError("Failed to sign out. Please try again.");
+            showError(t("failed-to-sign-out-please-try"));
           }
         },
       },
@@ -224,7 +218,7 @@ export default function SecuritySettings() {
     <>
       <Stack.Screen
         options={{
-          title: "Security",
+          title: t("profile.security"),
           headerShown: true,
           headerStyle: {
             backgroundColor: COLORS.light.background,
@@ -236,7 +230,7 @@ export default function SecuritySettings() {
               style={styles.backButton}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
-              <Text style={styles.backText}>Back</Text>
+              <Text style={styles.backText}>{t("back")}</Text>
             </TouchableOpacity>
           ),
         }}
@@ -248,11 +242,13 @@ export default function SecuritySettings() {
         <ScrollView style={styles.scrollableContent}>
           {/* Password Section */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Password</Text>
+            <Text style={profileStyles.sectionTitle}>
+              {t("sign-in.password")}
+            </Text>
 
             <CdTextInputOneLine
-              label="Change Password"
-              value={isChangingPassword ? "Sending..." : "Send reset email"}
+              label={t("change-password")}
+              value={isChangingPassword ? t("sending") : t("send-reset-email")}
               showValueText={true}
               isButton={true}
               onPress={handleChangePassword}
@@ -263,11 +259,13 @@ export default function SecuritySettings() {
 
           {/* Account Management Section */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Account Management</Text>
+            <Text style={profileStyles.sectionTitle}>
+              {t("account-management")}
+            </Text>
 
             <CdTextInputOneLine
-              label="Sign Out"
-              value="Sign out of your account"
+              label={t("sign-out")}
+              value={t("sign-out-of-your-account")}
               showValueText={true}
               isButton={true}
               onPress={handleSignOut}
@@ -275,8 +273,8 @@ export default function SecuritySettings() {
             />
 
             <CdTextInputOneLine
-              label="Delete Account"
-              value="Permanently delete account"
+              label={t("profile.delete-account")}
+              value={t("permanently-delete-account")}
               showValueText={true}
               isButton={true}
               onPress={handleDeleteAccount}
@@ -287,7 +285,9 @@ export default function SecuritySettings() {
 
         {/* Fixed Info Section at the bottom */}
         <View style={styles.fixedInfoSection}>
-          <Text style={profileStyles.sectionTitle}>Security Information</Text>
+          <Text style={profileStyles.sectionTitle}>
+            {t("security-information")}
+          </Text>
 
           <View style={styles.infoContainer}>
             <Ionicons
@@ -297,9 +297,7 @@ export default function SecuritySettings() {
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
-              Your account security is important to us. Password changes require
-              email verification for your protection. Contact support for
-              account deletion requests.
+              {t("your-account-security-is-impor")}
             </Text>
           </View>
         </View>

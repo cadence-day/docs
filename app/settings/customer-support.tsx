@@ -29,36 +29,40 @@ export default function CustomerSupportSettings() {
   const router = useRouter();
   const { user } = useUser();
 
-  const appVersion = Constants.expoConfig?.version || "Unknown";
+  const appVersion =
+    Constants.expoConfig?.version || t("settings.support.version-unknown");
   const expoConfig = Constants.expoConfig as ExpoConfig | undefined;
   const buildNumber =
     expoConfig?.ios?.buildNumber ||
     expoConfig?.android?.versionCode?.toString() ||
-    "Unknown";
+    t("settings.support.version-unknown");
 
   const handleEmailSupport = () => {
-    const subject = encodeURIComponent("Cadence.day Support Request");
+    const subject = encodeURIComponent(t("cadence-day-support-request"));
     const body = encodeURIComponent(
-      `Hi Cadence.day Support Team,
-
-Please describe your issue or question below:
-
-[Your message here]
-
----
-App Version: ${appVersion} (${buildNumber})
-User ID: ${user?.id || "Unknown"}
-User Email: ${user?.emailAddresses[0]?.emailAddress || "Unknown"}
-Device: ${Constants.platform?.ios ? "iOS" : "Android"}
-`
+      t("hi-cadence-day-support-team-pl")
+        .replace("{0}", appVersion)
+        .replace("{1}", buildNumber)
+        .replace("{2}", user?.id || "Unknown")
+        .replace("{3}", user?.emailAddresses?.[0]?.emailAddress || "Unknown")
+        .replace(
+          "{4}",
+          Constants.platform?.web
+            ? "Web"
+            : Constants.platform?.ios
+              ? "iOS"
+              : Constants.platform?.android
+                ? "Android"
+                : "Unknown"
+        )
     );
 
     const emailUrl = `mailto:dev@cadence.day?subject=${subject}&body=${body}`;
 
     Linking.openURL(emailUrl).catch(() => {
       Alert.alert(
-        "Email Not Available",
-        "Unable to open email app. Please send your support request to: dev@cadence.day"
+        t("email-not-available"),
+        t("unable-to-open-email-app-pleas")
       );
     });
   };
@@ -67,8 +71,8 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
     const faqUrl = "https://cadence.day/faq";
     Linking.openURL(faqUrl).catch(() => {
       Alert.alert(
-        "Unable to Open Link",
-        "Please visit https://cadence.day/faq in your browser"
+        t("unable-to-open-link"),
+        t("please-visit-https-cadence-day")
       );
     });
   };
@@ -109,7 +113,7 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
               style={styles.backButton}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
-              <Text style={styles.backText}>Back</Text>
+              <Text style={styles.backText}>{t("back")}</Text>
             </TouchableOpacity>
           ),
         }}
@@ -121,11 +125,11 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
         <ScrollView style={styles.scrollableContent}>
           {/* Get Help Section */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Get Help</Text>
+            <Text style={profileStyles.sectionTitle}>{t("get-help")}</Text>
 
             <CdTextInputOneLine
-              label="Email Support"
-              value="Contact our support team"
+              label={t("email-support")}
+              value={t("t-contact-our-support-team")}
               showValueText={true}
               isButton={true}
               onPress={handleEmailSupport}
@@ -134,7 +138,7 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
 
             <CdTextInputOneLine
               label="FAQ"
-              value="Frequently asked questions"
+              value={t("frequently-asked-questions")}
               showValueText={true}
               isButton={true}
               onPress={handleFAQ}
@@ -144,11 +148,11 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
 
           {/* Feedback Section */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Feedback</Text>
+            <Text style={profileStyles.sectionTitle}>{t("feedback")}</Text>
 
             <CdTextInputOneLine
-              label="Feature Request"
-              value="Submit feature suggestions"
+              label={t("feature-request")}
+              value={t("submit-feature-suggestions")}
               showValueText={true}
               isButton={true}
               onPress={handleFeatureRequest}
@@ -156,8 +160,8 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
             />
 
             <CdTextInputOneLine
-              label="Report Bug"
-              value="Submit bug reports"
+              label={t("report-bug")}
+              value={t("submit-bug-reports")}
               showValueText={true}
               isButton={true}
               onPress={handleBugReport}
@@ -167,17 +171,17 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
 
           {/* App Information */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>App Information</Text>
+            <Text style={profileStyles.sectionTitle}>t('app-information')</Text>
 
             <CdTextInputOneLine
-              label="App Version"
+              label={t("profile.app-version")}
               value={`${appVersion} (${buildNumber})`}
               editable={false}
               allowCopy={true}
             />
 
             <CdTextInputOneLine
-              label="User ID"
+              label={t("profile.user-id")}
               value={user?.id || "Unknown"}
               editable={false}
               allowCopy={true}
@@ -186,11 +190,11 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
 
           {/* Legal Section */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Legal</Text>
+            <Text style={profileStyles.sectionTitle}>{t("legal")}</Text>
 
             <CdTextInputOneLine
-              label="Privacy Policy"
-              value="View our privacy policy"
+              label={t("privacy-policy")}
+              value={t("view-our-privacy-policy")}
               showValueText={true}
               isButton={true}
               onPress={handlePrivacyPolicy}
@@ -198,8 +202,8 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
             />
 
             <CdTextInputOneLine
-              label="Terms of Service"
-              value="View terms of service"
+              label={t("terms-of-service")}
+              value={t("view-terms-of-service")}
               showValueText={true}
               isButton={true}
               onPress={handleTermsOfService}
@@ -210,7 +214,9 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
 
         {/* Fixed Info Section */}
         <View style={styles.fixedInfoSection}>
-          <Text style={profileStyles.sectionTitle}>Support Information</Text>
+          <Text style={profileStyles.sectionTitle}>
+            {t("support-information")}
+          </Text>
 
           <View style={styles.infoContainer}>
             <Ionicons
@@ -220,9 +226,7 @@ Device: ${Constants.platform?.ios ? "iOS" : "Android"}
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
-              We're here to help! Our support team typically responds within 24
-              hours. For urgent issues, please include as much detail as
-              possible in your message.
+              {t("were-here-to-help-our-support")}
             </Text>
           </View>
         </View>

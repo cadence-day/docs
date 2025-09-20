@@ -73,12 +73,13 @@ export const ProfileScreen: React.FC = () => {
     }
   }, [user, updateProfileData]);
 
-  const appVersion = Constants.expoConfig?.version || "Unknown";
+  const appVersion =
+    Constants.expoConfig?.version || t("settings.support.version-unknown");
   const expoConfig = Constants.expoConfig as ExpoConfig | undefined;
   const buildNumber =
     expoConfig?.ios?.buildNumber ||
     expoConfig?.android?.versionCode?.toString() ||
-    "Unknown";
+    t("settings.support.version-unknown");
 
   // Handle time input submission with validation
   const handleTimeSubmit = (type: "wake" | "sleep", input: string) => {
@@ -120,7 +121,9 @@ export const ProfileScreen: React.FC = () => {
       if (result.success) {
         // Update local store with the new name
         updateProfileData({ name: newName });
-        ProfileUpdateService.showSuccessMessage(t("profile.actions.update-name-success"));
+        ProfileUpdateService.showSuccessMessage(
+          t("profile.actions.update-name-success")
+        );
       } else {
         ProfileUpdateService.showErrorMessage(
           result.error || t("profile.actions.update-name-failed")
@@ -381,7 +384,10 @@ export const ProfileScreen: React.FC = () => {
       // The user will be redirected to the sign-in screen automatically
     } catch (error) {
       console.error("Error signing out:", error);
-      Alert.alert(t("profile.actions.logout-failed"), t("profile.actions.logout-failed-message"));
+      Alert.alert(
+        t("profile.actions.logout-failed"),
+        t("profile.actions.logout-failed-message")
+      );
     }
   };
 
@@ -629,7 +635,9 @@ export const ProfileScreen: React.FC = () => {
       <View style={profileStyles.developerSection}>
         {isDev && (
           <View style={[profileStyles.settingsSection, { marginTop: 12 }]}>
-            <Text style={profileStyles.sectionTitle}>{t("profile.developer.section-title")}</Text>
+            <Text style={profileStyles.sectionTitle}>
+              {t("profile.developer.section-title")}
+            </Text>
             <CdButton
               title={t("profile.developer.show-onboarding")}
               onPress={handleShowOnboardingDebug}

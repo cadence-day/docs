@@ -17,6 +17,7 @@ import {
 
 import { profileStyles } from "@/features/profile/styles";
 import { COLORS } from "@/shared/constants/COLORS";
+import useTranslation from "@/shared/hooks/useI18n";
 import { CdButton } from "../../shared/components";
 
 const FeatureRequestScreen = () => {
@@ -25,13 +26,14 @@ const FeatureRequestScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [titleFocused, setTitleFocused] = useState(false);
   const [descriptionFocused, setDescriptionFocused] = useState(false);
-
+  const { t } = useTranslation();
   const { user } = useUser();
-  const appVersion = Constants.expoConfig?.version || "Unknown";
+  const appVersion =
+    Constants.expoConfig?.version || t("settings.support.version-unknown");
 
   const handleSubmit = async () => {
     if (!title.trim() || !description.trim()) {
-      Alert.alert("Error", "Please fill in both title and description");
+      Alert.alert(t("common.error"), t("please-fill-in-both-title-and"));
       return;
     }
 
@@ -80,8 +82,8 @@ const FeatureRequestScreen = () => {
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(
-        "Feature Request Submitted",
-        "Thank you! Your feature request has been sent to our development team.",
+        t("feature-request-submitted"),
+        t("thank-you-your-feature-request"),
         [
           {
             text: "OK",
@@ -92,10 +94,7 @@ const FeatureRequestScreen = () => {
     } catch (error) {
       console.error("Failed to submit feature request:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(
-        "Submission Failed",
-        "Failed to submit your feature request. Please try again or contact support."
-      );
+      Alert.alert(t("submission-failed"), t("failed-to-submit-your-feature"));
     } finally {
       setIsSubmitting(false);
     }
@@ -105,7 +104,7 @@ const FeatureRequestScreen = () => {
     <View style={profileStyles.container}>
       <Stack.Screen
         options={{
-          title: "Feature Request",
+          title: t("profile.support.feature"),
           headerShown: true,
           headerStyle: {
             backgroundColor: COLORS.light.background,
@@ -117,7 +116,7 @@ const FeatureRequestScreen = () => {
               style={styles.backButton}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
-              <Text style={styles.backText}>Back</Text>
+              <Text style={styles.backText}>{t("settings.back")}</Text>
             </TouchableOpacity>
           ),
         }}
@@ -127,7 +126,7 @@ const FeatureRequestScreen = () => {
       <View style={styles.container}>
         <ScrollView style={styles.scrollableContent}>
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Feature Title</Text>
+            <Text style={profileStyles.sectionTitle}>{t("feature-title")}</Text>
             <View
               style={[
                 styles.primaryBorder,
@@ -139,7 +138,7 @@ const FeatureRequestScreen = () => {
                   style={styles.noteInputStyle}
                   value={title}
                   onChangeText={setTitle}
-                  placeholder="Brief title for your feature request"
+                  placeholder={t("brief-title-for-your-feature-r")}
                   placeholderTextColor="#aaa"
                   maxLength={100}
                   multiline
@@ -153,7 +152,7 @@ const FeatureRequestScreen = () => {
           </View>
 
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Description</Text>
+            <Text style={profileStyles.sectionTitle}>{t("description")}</Text>
             <View
               style={[
                 styles.primaryBorder,
@@ -168,7 +167,7 @@ const FeatureRequestScreen = () => {
                   ]}
                   value={description}
                   onChangeText={setDescription}
-                  placeholder="Detailed description of the feature you'd like to see"
+                  placeholder={t("detailed-description-of-the-fe")}
                   placeholderTextColor="#aaa"
                   multiline
                   scrollEnabled={false}
@@ -182,19 +181,22 @@ const FeatureRequestScreen = () => {
 
           <View style={profileStyles.settingsSection}>
             <Text style={profileStyles.sectionTitle}>
-              Information We Collect
+              {t("information-we-collect")}
             </Text>
             <View style={styles.infoContainer}>
               <Text style={styles.infoTextStyle}>
-                • Your email address (for follow-up){"\n"}• App version and
-                platform{"\n"}• Feature request details{"\n"}• Timestamp of
-                submission
+                {t("your-email-address-for-follow")}
+                {"\n"}
+                {t("app-version-and-platform")}
+                {"\n"}
+                {t("feature-request-details")}
+                {"\n"}{t('timestamp-of-submission')}
               </Text>
             </View>
           </View>
 
           <CdButton
-            title={isSubmitting ? "Submitting..." : "Submit Feature Request"}
+            title={isSubmitting ? "Submitting..." : t('submit-feature-request')}
             onPress={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"

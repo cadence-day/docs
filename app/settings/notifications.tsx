@@ -61,8 +61,8 @@ export default function NotificationsSettings() {
     if (allDisabled && pushNotificationsEnabled) {
       setPushNotificationsEnabled(false);
       Alert.alert(
-        "Push Notifications Disabled",
-        "Since all notification types are disabled, push notifications have been turned off automatically."
+        t("push-notifications-disabled"),
+        t("since-all-notification-types-a")
       );
     }
 
@@ -128,37 +128,26 @@ export default function NotificationsSettings() {
             streaksEnabled: true,
           });
 
-          Alert.alert(
-            "Success",
-            "Push notifications have been enabled successfully! All notification types have been turned on."
-          );
+          Alert.alert(t("success"), t("push-notifications-have-been-e"));
         } else {
           Alert.alert(
-            "Permission Required",
-            "Push notification permissions are required to receive notifications. You can enable them in your device settings."
+            t("permission-required"),
+            t("push-notification-permissions")
           );
         }
       } catch (error) {
-        Alert.alert(
-          "Error",
-          "Failed to enable push notifications. Please try again."
-        );
+        Alert.alert(t("common.error"), t("failed-to-enable-push-notifica"));
       }
     } else {
       setPushNotificationsEnabled(false);
-      Alert.alert(
-        "Disabled",
-        "Push notifications have been disabled. You can re-enable them anytime."
-      );
+      Alert.alert(t("disabled"), t("push-notifications-have-been-d"));
     }
   };
 
   const openSystemSettings = () => {
-    Alert.alert(
-      "System Settings",
-      "To modify notification permissions at the system level, please go to your device's Settings app and find this app's notification settings.",
-      [{ text: "OK", style: "default" }]
-    );
+    Alert.alert(t("system-settings"), t("to-modify-notification-permiss"), [
+      { text: "OK", style: "default" },
+    ]);
   };
 
   return (
@@ -177,7 +166,7 @@ export default function NotificationsSettings() {
               style={styles.backButton}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
-              <Text style={styles.backText}>Back</Text>
+              <Text style={styles.backText}>{t("back")}</Text>
             </TouchableOpacity>
           ),
         }}
@@ -189,11 +178,13 @@ export default function NotificationsSettings() {
         <ScrollView style={styles.scrollableContent}>
           {/* Push Notifications Section */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Push Notifications</Text>
+            <Text style={profileStyles.sectionTitle}>
+              {t("settings.notifications.push")}
+            </Text>
 
             <CdTextInputOneLine
-              label="Push Notifications"
-              value={pushNotificationsEnabled ? "Enabled" : "Disabled"}
+              label={t("settings.notifications.push")}
+              value={pushNotificationsEnabled ? t("enabled") : t("disabled")}
               showValueText={true}
               isButton={true}
               onPress={handlePushNotificationsToggle}
@@ -207,15 +198,15 @@ export default function NotificationsSettings() {
               {/* App Notifications Section */}
               <View style={profileStyles.settingsSection}>
                 <Text style={profileStyles.sectionTitle}>
-                  Notification Types
+                  {t("notification-types")}
                 </Text>
 
                 <CdTextInputOneLine
-                  label="Morning Reminders"
+                  label={t("morning-reminders")}
                   value={
                     settings.notifications.morningReminders
-                      ? "Enabled"
-                      : "Disabled"
+                      ? t("enabled")
+                      : t("disabled")
                   }
                   showValueText={true}
                   isButton={true}
@@ -229,11 +220,11 @@ export default function NotificationsSettings() {
                 />
 
                 <CdTextInputOneLine
-                  label="Evening Reminders"
+                  label={t("evening-reminders")}
                   value={
                     settings.notifications.eveningReminders
-                      ? "Enabled"
-                      : "Disabled"
+                      ? t("enabled")
+                      : t("disabled")
                   }
                   showValueText={true}
                   isButton={true}
@@ -247,11 +238,11 @@ export default function NotificationsSettings() {
                 />
 
                 <CdTextInputOneLine
-                  label="Weekly Streak Updates"
+                  label={t("weekly-streak-updates")}
                   value={
                     settings.notifications.weeklyStreaks
-                      ? "Enabled"
-                      : "Disabled"
+                      ? t("enabled")
+                      : t("disabled")
                   }
                   showValueText={true}
                   isButton={true}
@@ -270,13 +261,13 @@ export default function NotificationsSettings() {
                 settings.notifications.eveningReminders) && (
                 <View style={profileStyles.settingsSection}>
                   <Text style={profileStyles.sectionTitle}>
-                    Notification Schedule
+                    {t("notification-schedule")}
                   </Text>
 
                   {/* Show Midday Reflection time only if morning reminders are enabled */}
                   {settings.notifications.morningReminders && (
                     <CdTextInputOneLine
-                      label="Midday Reflection"
+                      label={t("midday-reflection")}
                       value={preferences.middayTime}
                       showValueText={true}
                       onSave={(newTime) => {
@@ -285,8 +276,8 @@ export default function NotificationsSettings() {
                           updatePreferences({ middayTime: newTime });
                         } else {
                           Alert.alert(
-                            "Invalid Time",
-                            "Please enter time in HH:MM format (e.g., 12:00)"
+                            t("invalid-time"),
+                            t("please-enter-time-in-hh-mm-for")
                           );
                         }
                       }}
@@ -297,7 +288,7 @@ export default function NotificationsSettings() {
                   {/* Show Evening Reflection time only if evening reminders are enabled */}
                   {settings.notifications.eveningReminders && (
                     <CdTextInputOneLine
-                      label="Evening Reflection"
+                      label={t("evening-reflection")}
                       value={preferences.eveningTimeStart}
                       showValueText={true}
                       onSave={(newTime) => {
@@ -306,8 +297,8 @@ export default function NotificationsSettings() {
                           updatePreferences({ eveningTimeStart: newTime });
                         } else {
                           Alert.alert(
-                            "Invalid Time",
-                            "Please enter time in HH:MM format (e.g., 20:00)"
+                            t("invalid-time"),
+                            t("please-enter-time-in-hh-mm-for-0")
                           );
                         }
                       }}
@@ -322,7 +313,9 @@ export default function NotificationsSettings() {
 
         {/* Fixed Info Section at the bottom */}
         <View style={styles.fixedInfoSection}>
-          <Text style={profileStyles.sectionTitle}>About Notifications</Text>
+          <Text style={profileStyles.sectionTitle}>
+            {t("about-notifications")}
+          </Text>
 
           <View style={styles.infoContainer}>
             <Ionicons
@@ -332,9 +325,7 @@ export default function NotificationsSettings() {
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
-              Morning reminders are sent after your wake time, and evening
-              reminders before your sleep time. Weekly streak updates celebrate
-              your achievements every Sunday.
+              {t("morning-reminders-are-sent-aft")}
             </Text>
           </View>
         </View>

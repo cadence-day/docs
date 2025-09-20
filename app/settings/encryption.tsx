@@ -72,19 +72,19 @@ export default function EncryptionSettings() {
         "ENCRYPTION_SETTINGS_INIT",
         {}
       );
-      showError("Failed to check encryption status.");
+      showError(t("failed-to-check-encryption-sta"));
     }
   };
 
   const handleScanQRCode = () => {
     if (hasPermission === null) {
-      showError("Requesting camera permission...");
+      showError(t("requesting-camera-permission"));
       return;
     }
     if (hasPermission === false) {
       Alert.alert(
-        "Camera Permission Required",
-        "Please enable camera access in your device settings to scan QR codes.",
+        t("camera-permission-required"),
+        t("please-enable-camera-access-in"),
         [{ text: "OK" }]
       );
       return;
@@ -107,9 +107,7 @@ export default function EncryptionSettings() {
     try {
       // Validate the scanned data is a valid encryption key
       if (!/^[0-9a-f]{64}$/i.test(data)) {
-        showError(
-          "Invalid QR code. Please scan a valid encryption key QR code."
-        );
+        showError(t("invalid-qr-code-please-scan-a"));
         setScanned(false);
         return;
       }
@@ -117,11 +115,11 @@ export default function EncryptionSettings() {
       setIsLinking(true);
       const { fingerprint } = await importEncryptionKey(data);
 
-      showSuccess(`Key imported successfully! Fingerprint: ${fingerprint}`);
+      showSuccess(t("t-key-imported-successfully-fi"));
       await checkEncryptionStatus();
     } catch (error) {
       GlobalErrorHandler.logError(error as Error, "ENCRYPTION_QR_IMPORT", {});
-      showError("Failed to import key from QR code. Please try again.");
+      showError(t("failed-to-import-key-from-qr-c"));
     } finally {
       setIsLinking(false);
       setScanned(false);
@@ -130,13 +128,13 @@ export default function EncryptionSettings() {
 
   const handlePasteKey = async () => {
     if (!pasteValue.trim()) {
-      showError("Please enter an encryption key.");
+      showError(t("please-enter-an-encryption-key"));
       return;
     }
 
     const normalized = pasteValue.trim().toLowerCase();
     if (!/^[0-9a-f]{64}$/.test(normalized)) {
-      showError("Invalid key format. Key must be 64 hexadecimal characters.");
+      showError(t("invalid-key-format-key-must-be"));
       return;
     }
 
@@ -144,7 +142,9 @@ export default function EncryptionSettings() {
       setIsLinking(true);
       const { fingerprint } = await importEncryptionKey(normalized);
 
-      showSuccess(`Key imported successfully! Fingerprint: ${fingerprint}`);
+      showSuccess(
+        t("key-imported-successfully-fing").replace("{0}", fingerprint)
+      );
       setPasteValue("");
       await checkEncryptionStatus();
     } catch (error) {
@@ -153,7 +153,7 @@ export default function EncryptionSettings() {
         "ENCRYPTION_PASTE_IMPORT",
         {}
       );
-      showError("Failed to import key. Please try again.");
+      showError(t("failed-to-import-key-please-tr"));
     } finally {
       setIsLinking(false);
     }
@@ -167,7 +167,7 @@ export default function EncryptionSettings() {
       <>
         <Stack.Screen
           options={{
-            title: "Scan QR Code",
+            title: t("scan-qr-code"),
             headerShown: true,
             headerStyle: { backgroundColor: COLORS.light.background },
             headerLeft: () => (
@@ -180,7 +180,7 @@ export default function EncryptionSettings() {
                   size={24}
                   color={COLORS.primary}
                 />
-                <Text style={styles.backText}>Back</Text>
+                <Text style={styles.backText}>{t("back")}</Text>
               </TouchableOpacity>
             ),
           }}
@@ -196,7 +196,7 @@ export default function EncryptionSettings() {
           />
           <View style={styles.scannerOverlay}>
             <Text style={styles.scannerText}>
-              Point your camera at the QR code containing the encryption key
+              {t("point-your-camera-at-the-qr-co")}
             </Text>
           </View>
         </View>
@@ -208,7 +208,7 @@ export default function EncryptionSettings() {
     <>
       <Stack.Screen
         options={{
-          title: "Encryption",
+          title: t("encryption"),
           headerShown: true,
           headerStyle: { backgroundColor: COLORS.light.background },
           headerShadowVisible: true,
@@ -218,7 +218,7 @@ export default function EncryptionSettings() {
               style={styles.backButton}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
-              <Text style={styles.backText}>Back</Text>
+              <Text style={styles.backText}>{t("back")}</Text>
             </TouchableOpacity>
           ),
         }}
@@ -230,7 +230,7 @@ export default function EncryptionSettings() {
         <ScrollView style={styles.scrollableContent}>
           {/* Device Status Section */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Device Status</Text>
+            <Text style={profileStyles.sectionTitle}>{t("device-status")}</Text>
 
             <View style={styles.statusContainer}>
               <Ionicons
@@ -241,8 +241,11 @@ export default function EncryptionSettings() {
               />
               <Text style={styles.statusText}>
                 {hasKeyOnDevice
-                  ? `Encryption key present (${exportFingerprint})`
-                  : "No encryption key on this device"}
+                  ? t("encryption-key-present-exportf").replace(
+                      "{0}",
+                      exportFingerprint
+                    )
+                  : t("no-encryption-key-on-this-devi")}
               </Text>
             </View>
           </View>
@@ -251,7 +254,7 @@ export default function EncryptionSettings() {
           {hasKeyOnDevice && exportedKey && (
             <View style={profileStyles.settingsSection}>
               <Text style={profileStyles.sectionTitle}>
-                Share Encryption Key
+                {t("share-encryption-key")}
               </Text>
 
               <View style={styles.qrContainer}>
@@ -264,12 +267,11 @@ export default function EncryptionSettings() {
               </View>
 
               <Text style={styles.qrInstructions}>
-                Scan this QR code with your new device to import the encryption
-                key.
+                {t("scan-this-qr-code-with-your-ne")}
               </Text>
 
               <CdTextInputOneLine
-                label="Encryption Key"
+                label={t("encryption-key")}
                 value={exportedKey}
                 editable={false}
                 allowCopy={true}
@@ -281,7 +283,7 @@ export default function EncryptionSettings() {
           {!hasKeyOnDevice && (
             <View style={profileStyles.settingsSection}>
               <Text style={profileStyles.sectionTitle}>
-                Import Encryption Key
+                {t("import-encryption-key")}
               </Text>
 
               <View style={styles.warningContainer}>
@@ -292,14 +294,13 @@ export default function EncryptionSettings() {
                   style={styles.warningIcon}
                 />
                 <Text style={styles.warningText}>
-                  This device doesn't have an encryption key. You need to import
-                  a key from your previous device to access encrypted data.
+                  {t("this-device-doesnt-have-an-enc")}
                 </Text>
               </View>
 
               <CdTextInputOneLine
-                label="Scan QR Code"
-                value="Use camera to scan QR code"
+                label={t("scan-qr-code")}
+                value={t("use-camera-to-scan-qr-code")}
                 showValueText={true}
                 isButton={true}
                 onPress={handleScanQRCode}
@@ -307,12 +308,14 @@ export default function EncryptionSettings() {
               />
 
               <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Or paste encryption key:</Text>
+                <Text style={styles.inputLabel}>
+                  {t("or-paste-encryption-key")}
+                </Text>
                 <TextInput
                   style={styles.textInput}
                   value={pasteValue}
                   onChangeText={setPasteValue}
-                  placeholder="Enter 64-character encryption key"
+                  placeholder={t("enter-64-character-encryption")}
                   placeholderTextColor={COLORS.textIcons}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -335,7 +338,7 @@ export default function EncryptionSettings() {
                         styles.importButtonTextDisabled,
                     ]}
                   >
-                    {isLinking ? "Importing..." : "Import Key"}
+                    {isLinking ? "t('importing')" : t("import-key")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -345,7 +348,9 @@ export default function EncryptionSettings() {
 
         {/* Fixed Info Section */}
         <View style={styles.fixedInfoSection}>
-          <Text style={profileStyles.sectionTitle}>About Encryption</Text>
+          <Text style={profileStyles.sectionTitle}>
+            {t("about-encryption")}
+          </Text>
 
           <View style={styles.infoContainer}>
             <Ionicons
@@ -355,9 +360,7 @@ export default function EncryptionSettings() {
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
-              Your encryption key protects sensitive data. Keep it secure and
-              don't share it with others. You'll need this key to access your
-              encrypted data on new devices.
+              {t("your-encryption-key-protects-s")}
             </Text>
           </View>
         </View>

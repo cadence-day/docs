@@ -18,9 +18,11 @@ import {
 import { profileStyles } from "@/features/profile/styles";
 import { CdButton } from "@/shared/components";
 import { COLORS } from "@/shared/constants/COLORS";
+import useTranslation from "@/shared/hooks/useI18n";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
 export default function BugReportScreen() {
+  const { t } = useTranslation();
   const { user } = useUser();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -36,12 +38,12 @@ export default function BugReportScreen() {
 
   const handleSubmit = async () => {
     if (!title.trim()) {
-      Alert.alert("Error", "Please enter a bug title.");
+      Alert.alert(t("common.error"), t("please-enter-a-bug-title"));
       return;
     }
 
     if (!description.trim()) {
-      Alert.alert("Error", "Please enter a bug description.");
+      Alert.alert(t("common.error"), t("please-enter-a-bug-description"));
       return;
     }
 
@@ -52,8 +54,10 @@ export default function BugReportScreen() {
 
       const deviceInfo = {
         platform: "mobile",
-        version: Constants.expoConfig?.version || "Unknown",
-        model: "React Native Device",
+        version:
+          Constants.expoConfig?.version ||
+          t("settings.support.version-unknown"),
+        model: t("react-native-device"),
       };
 
       const sentryEventId = Sentry.withScope((scope) => {
@@ -136,8 +140,8 @@ export default function BugReportScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       Alert.alert(
-        "Bug Report Submitted",
-        "Thank you! Your bug report has been submitted.",
+        t("bug-report-submitted"),
+        t("thank-you-your-bug-report-has"),
         [
           {
             text: "OK",
@@ -160,10 +164,7 @@ export default function BugReportScreen() {
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 
-      Alert.alert(
-        "Error",
-        "Unable to submit bug report. Please try again or contact support."
-      );
+      Alert.alert(t("common.error"), t("unable-to-submit-bug-report-pl"));
     } finally {
       setIsSubmitting(false);
     }
@@ -173,7 +174,7 @@ export default function BugReportScreen() {
     <View style={profileStyles.container}>
       <Stack.Screen
         options={{
-          title: "Bug Report",
+          title: t("profile.support.bug"),
           headerShown: true,
           headerStyle: { backgroundColor: COLORS.light.background },
           headerShadowVisible: true,
@@ -183,7 +184,7 @@ export default function BugReportScreen() {
               style={styles.backButton}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
-              <Text style={styles.backText}>Back</Text>
+              <Text style={styles.backText}>{t("back")}</Text>
             </TouchableOpacity>
           ),
         }}
@@ -194,7 +195,7 @@ export default function BugReportScreen() {
       <View style={styles.container}>
         <ScrollView style={styles.scrollableContent}>
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Bug Title</Text>
+            <Text style={profileStyles.sectionTitle}>{t("bug-title")}</Text>
             <View
               style={[
                 styles.primaryBorder,
@@ -206,7 +207,7 @@ export default function BugReportScreen() {
                   style={styles.noteInputStyle}
                   value={title}
                   onChangeText={setTitle}
-                  placeholder="Brief title describing the bug"
+                  placeholder={t("brief-title-describing-the-bug")}
                   placeholderTextColor="#aaa"
                   maxLength={100}
                   multiline
@@ -220,7 +221,7 @@ export default function BugReportScreen() {
           </View>
 
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Description</Text>
+            <Text style={profileStyles.sectionTitle}>{t("description")}</Text>
             <View
               style={[
                 styles.primaryBorder,
@@ -235,7 +236,7 @@ export default function BugReportScreen() {
                   ]}
                   value={description}
                   onChangeText={setDescription}
-                  placeholder="Describe what happened in detail..."
+                  placeholder={t("describe-what-happened-in-deta")}
                   placeholderTextColor="#aaa"
                   multiline
                   scrollEnabled={false}
@@ -248,7 +249,9 @@ export default function BugReportScreen() {
           </View>
 
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Steps to Reproduce</Text>
+            <Text style={profileStyles.sectionTitle}>
+              {t("steps-to-reproduce")}
+            </Text>
             <View
               style={[
                 styles.primaryBorder,
@@ -260,7 +263,7 @@ export default function BugReportScreen() {
                   style={[styles.noteInputStyle, { minHeight: 80 }]}
                   value={stepsToReproduce}
                   onChangeText={setStepsToReproduce}
-                  placeholder="Steps to reproduce (optional)"
+                  placeholder={t("steps-to-reproduce-optional")}
                   placeholderTextColor="#aaa"
                   multiline
                   scrollEnabled={false}
@@ -273,7 +276,9 @@ export default function BugReportScreen() {
           </View>
 
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Expected Behavior</Text>
+            <Text style={profileStyles.sectionTitle}>
+              {t("expected-behavior")}
+            </Text>
             <View
               style={[
                 styles.primaryBorder,
@@ -285,7 +290,7 @@ export default function BugReportScreen() {
                   style={styles.noteInputStyle}
                   value={expectedBehavior}
                   onChangeText={setExpectedBehavior}
-                  placeholder="Expected behavior (optional)"
+                  placeholder={t("expected-behavior-optional")}
                   placeholderTextColor="#aaa"
                   multiline
                   scrollEnabled={false}
@@ -298,7 +303,9 @@ export default function BugReportScreen() {
           </View>
 
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>Actual Behavior</Text>
+            <Text style={profileStyles.sectionTitle}>
+              {t("actual-behavior")}
+            </Text>
             <View
               style={[
                 styles.primaryBorder,
@@ -308,9 +315,9 @@ export default function BugReportScreen() {
               <View style={styles.noteContainerStyle}>
                 <TextInput
                   style={styles.noteInputStyle}
-                  value={actualBehavior}
+                  value={t("actual-behavior-optional")}
                   onChangeText={setActualBehavior}
-                  placeholder="Actual behavior (optional)"
+                  placeholder={t("actual-behavior-optional")}
                   placeholderTextColor="#aaa"
                   multiline
                   scrollEnabled={false}
@@ -324,19 +331,27 @@ export default function BugReportScreen() {
 
           <View style={profileStyles.settingsSection}>
             <Text style={profileStyles.sectionTitle}>
-              Information We Collect
+              {t("information-we-collect")}
             </Text>
             <View style={styles.infoContainer}>
               <Text style={styles.infoTextStyle}>
-                • Your email address (for follow-up){"\n"}• App version and
-                platform{"\n"}• Bug report details (title, description){"\n"}•
-                Steps to reproduce (optional){"\n"}• Timestamp of submission
+                {t("your-email-address-for-follow")}
+                {"\n"}
+                {t("app-version-and-platform")}
+                {"\n"}
+                {t("bug-report-details-title-descr")}
+                {"\n"}
+                {t("steps-to-reproduce-optional-0")}
+                {"\n"}
+                {t("timestamp-of-submission")}
               </Text>
             </View>
           </View>
 
           <CdButton
-            title={isSubmitting ? "Submitting..." : "Submit Bug Report"}
+            title={
+              isSubmitting ? "t('common.submitting')" : t("submit-bug-report")
+            }
             onPress={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"
@@ -350,7 +365,9 @@ export default function BugReportScreen() {
         </ScrollView>
         {/* Fixed Info Section */}
         <View style={styles.fixedInfoSection}>
-          <Text style={profileStyles.sectionTitle}>Support Information</Text>
+          <Text style={profileStyles.sectionTitle}>
+            {t("support-information")}
+          </Text>
 
           <View style={styles.infoContainer}>
             <Ionicons
@@ -360,9 +377,7 @@ export default function BugReportScreen() {
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
-              We collect your email (for follow-up), app version & platform, the
-              bug details you provide, optional reproduction steps, and a
-              timestamp/device info so we can investigate and follow up.
+              {t("we-collect-your-email-for-foll")}
             </Text>
           </View>
         </View>
