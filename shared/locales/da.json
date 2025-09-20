@@ -3,7 +3,7 @@
   "active-activities": "Aktive aktiviteter",
   "activity": {
     "color-picker": {
-      "done": "Færdig",
+      "done": "Gem",
       "title": "Farvevælger"
     },
     "legend": {
@@ -37,7 +37,7 @@
   "back-to-today": "Tilbage til i dag",
   "cadence-is-in-beta": "Cadence er i beta.",
   "calendarDialog": {
-    "2-days": "For 2 dage siden",
+    "2-days": "2 dage siden",
     "pick-a-date": "Vælg en dato"
   },
   "cancel": "Ophæve",
@@ -47,13 +47,13 @@
   "close": "Tæt",
   "color": "Farve",
   "common": {
-    "cancel": "Ophæve",
+    "cancel": "Annuller",
     "confirm": "Bekræfte",
-    "done": "Færdig",
+    "done": "Gem",
     "error": "Fejl",
     "ok": "OK",
-    "saving": "Savende ...",
-    "submitting": "Indsendelse ..."
+    "saving": "Gemmer ...",
+    "submitting": "Indsender ..."
   },
   "confirm": "Bekræfte",
   "contain-one-digit": "- indeholder et ciffer.",
@@ -68,7 +68,7 @@
   "didnt-receive-the-code": "Modtog ikke koden?",
   "disabled-activities": "Handicappede aktiviteter",
   "dont-have-an-account": "Har du ikke en konto?",
-  "edit": "Redigere",
+  "edit": "Rediger",
   "enter-6-digit-code": "Indtast 6-cifret kode",
   "enter-activity-name": "Indtast aktivitetsnavn",
   "failed-to-create-timeslices": "Kunne ikke oprette timeskiver. \nPrøv igen.",
@@ -152,7 +152,7 @@
     },
     "free": "Gratis",
     "image-upload": {
-      "choose-from-library": "Vælg imellem",
+      "choose-from-library": "Vælg fra biblioteket",
       "error": "Upload mislykkedes. \nPrøv igen.",
       "error-message": "Kan ikke uploade billede. \nPrøv igen.",
       "select-option": "Vælg foto",
@@ -203,17 +203,17 @@
     "activityLabel": "Aktivitet",
     "details": "Detaljer",
     "noTimesliceInfo": "Ingen yderligere info til denne timeslice.",
-    "title": "Afspejling",
+    "title": "Refleksion",
     "unknownActivity": "Ukendt aktivitet",
     "weekly-cadence": "Ugentlig Cadence"
   },
-  "resend-code": "Resend Code",
+  "resend-code": "Send kode igen",
   "resend-in-resendcooldown-s": "Send i {0} s",
   "sa": "Lør",
   "sage": {
     "unavailableMessage": "Cadence AI er i øjeblikket ikke tilgængelig."
   },
-  "save": "Spare",
+  "save": "Gem",
   "select-a-category": "Vælg en kategori",
   "select-activity": "Vælg aktivitet",
   "send-feedback": "Send feedback",
@@ -298,16 +298,16 @@
     "sign-up": "Tilmeld dig"
   },
   "sign-up-now": "Tilmeld dig nu",
-  "su": "Sol",
+  "su": "Søn",
   "tap-to-change-color": "Tryk for at ændre farve",
   "temporarily-disable-activity": "Deaktiverer midlertidigt aktivitet",
   "terms-and-conditions": "Vilkår og betingelser",
-  "th": "Thu",
+  "th": "Tors",
   "the-password-should-be-at-least": "- Adgangskoden skal være i det mindste",
   "timeslice-created-successfully": "Timeslice skabte med succes.",
   "timeslice-updated-successfully": "Timeslice opdateres med succes.",
   "today": "I dag",
-  "tu": "Tirsdag",
+  "tu": "Tir",
   "validate": "Validerer",
   "verification-code-sent-check-your-email": "Verifikationskode sendt. \nTjek din e -mail.",
   "verification-incomplete": "Verifikation ufuldstændig.",
