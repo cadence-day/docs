@@ -8,6 +8,7 @@ import ReassignActivityDialog from "@/features/activity/dialogs/ReassignActivity
 import CalendarDialog from "@/features/calendar/CalendarDialog";
 import EncryptionLinkDialog from "@/features/encryption/EncryptionLinkDialog";
 import { NoteDialog } from "@/features/notes/dialogs/NoteDialog";
+import OnboardingDialog from "@/features/onboarding/components/Onboarding";
 import ChangePasswordDialog from "@/features/profile/dialogs/ChangePasswordDialog";
 import { CustomerSupportDialog } from "@/features/profile/dialogs/CustomerSupportDialog";
 import { SubscriptionPlansDialog } from "@/features/profile/dialogs/SubscriptionPlansDialog";
@@ -36,6 +37,8 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   "change-password": ChangePasswordDialog,
   // Reflection dialogs
   "reflection-timeslice-info": ReflectionTimesliceInfoDialog,
+  // Onboarding
+  onboarding: OnboardingDialog,
 };
 
 export default DialogRegistry;

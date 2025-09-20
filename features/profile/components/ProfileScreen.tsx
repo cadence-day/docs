@@ -2,6 +2,7 @@ import { CdButton } from "@/shared/components/CadenceUI/CdButton";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
+import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
@@ -382,6 +383,43 @@ export const ProfileScreen: React.FC = () => {
     );
   };
 
+  // Developer debug utilities (hidden in production)
+  const isDev = __DEV__;
+  const handleShowOnboardingDebug = async () => {
+    try {
+      // Clear persisted flag so onboarding can be shown again
+      await userOnboardingStorage.clearShown();
+    } catch (e) {
+      console.log("Failed to clear onboarding storage:", e);
+    }
+
+    // Open onboarding dialog
+    openDialog({
+      type: "onboarding",
+      props: {
+        height: 85,
+        enableDragging: false,
+        headerProps: {
+          title: t("welcome-to-cadence"),
+          rightActionElement: t("common.close"),
+          onRightAction: () => {
+            useDialogStore.getState().closeAll();
+          },
+        },
+      },
+      position: "dock",
+      viewSpecific: "profile",
+    });
+  };
+
+  const handleOpenDebugPage = () => {
+    try {
+      router.push("/debug");
+    } catch (e) {
+      console.log("Failed to open debug page:", e);
+    }
+  };
+
   return (
     <ScrollView style={profileStyles.container}>
       {/* Profile Header */}
@@ -568,6 +606,22 @@ export const ProfileScreen: React.FC = () => {
       </View>
 
       {/* App Information */}
+      {isDev && (
+        <View style={[profileStyles.settingsSection, { marginTop: 12 }]}>
+          <Text style={profileStyles.sectionTitle}>Developer</Text>
+          <CdButton
+            title="Show Onboarding (debug)"
+            onPress={handleShowOnboardingDebug}
+            variant="outline"
+            style={{ marginBottom: 8 }}
+          />
+          <CdButton
+            title="Open Debug Page"
+            onPress={handleOpenDebugPage}
+            variant="outline"
+          />
+        </View>
+      )}
       <View style={profileStyles.appInfoSection}>
         <Text style={profileStyles.sectionTitle}>{t("profile.app-info")}</Text>
 
