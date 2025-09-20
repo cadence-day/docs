@@ -44,18 +44,14 @@ export const useNoteHandlers = ({
 
   const updateNoteMessage = useCallback(
     (index: number, message: string) => {
-      console.log(
-        `[useNoteHandlers] updateNoteMessage called - Index: ${index}, Message: "${message}"`
-      );
       setNotes((prev) => {
         const updated = prev.map((note, i) =>
           i === index ? { ...note, message } : note
         );
-        console.log(`[useNoteHandlers] Updated notes:`, updated);
         return updated;
       });
     },
-    [setNotes]
+    [setNotes],
   );
 
   const deleteNoteLocal = useCallback(
@@ -78,7 +74,7 @@ export const useNoteHandlers = ({
         setActiveNoteIndex(activeNoteIndex - 1);
       }
     },
-    [notes, activeNoteIndex, setNotes, setDeletedNoteIds, setActiveNoteIndex]
+    [notes, activeNoteIndex, setNotes, setDeletedNoteIds, setActiveNoteIndex],
   );
 
   const saveNote = useCallback(
@@ -91,7 +87,7 @@ export const useNoteHandlers = ({
         GlobalErrorHandler.logError(
           new Error("Cannot save empty note"),
           "saveNote",
-          { noteIndex, timesliceId: ts_id }
+          { noteIndex, timesliceId: ts_id },
         );
         return;
       }
@@ -100,7 +96,7 @@ export const useNoteHandlers = ({
         GlobalErrorHandler.logError(
           new Error("No timeslice ID provided"),
           "saveNote",
-          { noteIndex }
+          { noteIndex },
         );
         return;
       }
@@ -145,13 +141,13 @@ export const useNoteHandlers = ({
               prev.map((n, i) =>
                 i === noteIndex
                   ? {
-                      ...n,
-                      id: createdNote.id,
-                      user_id: createdNote.user_id, // Use the user_id returned from API
-                      isNew: false,
-                      isSaving: false,
-                      hasError: false,
-                    }
+                    ...n,
+                    id: createdNote.id,
+                    user_id: createdNote.user_id, // Use the user_id returned from API
+                    isNew: false,
+                    isSaving: false,
+                    hasError: false,
+                  }
                   : n
               )
             );
@@ -187,7 +183,7 @@ export const useNoteHandlers = ({
       updateNote,
       upsertTimeslice,
       setNotes,
-    ]
+    ],
   );
 
   const saveAllNotes = useCallback(async (): Promise<void> => {
@@ -195,14 +191,14 @@ export const useNoteHandlers = ({
     if (!ts_id) {
       GlobalErrorHandler.logError(
         new Error("No timeslice ID provided"),
-        "saveAllNotes"
+        "saveAllNotes",
       );
       return;
     }
 
     try {
       const notesToSave = notes.filter(
-        (note) => (note.message?.trim()?.length ?? 0) > 0
+        (note) => (note.message?.trim()?.length ?? 0) > 0,
       );
       const updatedNoteIds = [...noteIds];
 
@@ -248,7 +244,7 @@ export const useNoteHandlers = ({
       // Handle energy state (simplified - only save if energy > 0)
       if (energy > 0 && ts_id) {
         const existingState = statesStore.states.find(
-          (state) => state.timeslice_id === ts_id
+          (state) => state.timeslice_id === ts_id,
         );
 
         if (existingState) {
@@ -312,30 +308,26 @@ export const useNoteHandlers = ({
     (index: number | null) => {
       setActiveNoteIndex(index);
     },
-    [setActiveNoteIndex]
+    [setActiveNoteIndex],
   );
 
   // Pin/unpin operations (local only for now)
   const pinNote = useCallback(
     (index: number) => {
       setNotes((prev) =>
-        prev.map((note, i) =>
-          i === index ? { ...note, isPinned: true } : note
-        )
+        prev.map((note, i) => i === index ? { ...note, isPinned: true } : note)
       );
     },
-    [setNotes]
+    [setNotes],
   );
 
   const unpinNote = useCallback(
     (index: number) => {
       setNotes((prev) =>
-        prev.map((note, i) =>
-          i === index ? { ...note, isPinned: false } : note
-        )
+        prev.map((note, i) => i === index ? { ...note, isPinned: false } : note)
       );
     },
-    [setNotes]
+    [setNotes],
   );
 
   return {
