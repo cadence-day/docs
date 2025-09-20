@@ -1,4 +1,9 @@
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import {
+  createNotificationId,
+  createScheduledDate,
+  createWeeklyScheduledDate,
+} from "../index";
 import { NotificationEngine } from "../NotificationEngine";
 import { LocaleNotificationProvider } from "../providers/LocaleNotificationProvider";
 import {
@@ -6,11 +11,6 @@ import {
   NotificationMessage,
   NotificationPreferences,
 } from "../types";
-import {
-  createNotificationId,
-  createScheduledDate,
-  createWeeklyScheduledDate,
-} from "../utils";
 
 export interface SchedulerConfig {
   userId: string;
