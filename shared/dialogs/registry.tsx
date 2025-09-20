@@ -12,7 +12,6 @@ import OnboardingDialog from "@/features/onboarding/components/Onboarding";
 import ChangePasswordDialog from "@/features/profile/dialogs/ChangePasswordDialog";
 import { CustomerSupportDialog } from "@/features/profile/dialogs/CustomerSupportDialog";
 import { SubscriptionPlansDialog } from "@/features/profile/dialogs/SubscriptionPlansDialog";
-import { TimePickerDialog } from "@/features/profile/dialogs/TimePickerDialog";
 import { ReflectionTimesliceInfoDialog } from "@/features/reflection/dialogs";
 
 export const DialogRegistry: Record<string, React.ComponentType<any>> = {
@@ -31,7 +30,6 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   note: NoteDialog,
   "encryption-link": EncryptionLinkDialog,
   // Profile and settings dialogs
-  "time-picker": TimePickerDialog,
   "customer-support": CustomerSupportDialog,
   "subscription-plans": SubscriptionPlansDialog,
   "change-password": ChangePasswordDialog,

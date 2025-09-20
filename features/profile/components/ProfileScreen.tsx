@@ -9,7 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActionSheetIOS,
   Alert,
@@ -21,6 +21,7 @@ import {
   View,
 } from "react-native";
 import { ProfileImageService } from "../services/ProfileImageService";
+import { ProfileUpdateService } from "../services/ProfileUpdateService";
 import { useProfileStore } from "../stores/useProfileStore";
 import { profileStyles } from "../styles";
 import {
@@ -53,6 +54,25 @@ export const ProfileScreen: React.FC = () => {
   // Profile image upload state
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
+  // Sync user data from Clerk on mount
+  useEffect(() => {
+    const syncUserData = () => {
+      const userData = ProfileUpdateService.getCurrentUserData();
+      if (userData) {
+        updateProfileData({
+          name: userData.fullName,
+          email: userData.email,
+          phoneNumber: userData.phone,
+          avatarUrl: userData.avatarUrl,
+        });
+      }
+    };
+
+    if (user) {
+      syncUserData();
+    }
+  }, [user, updateProfileData]);
+
   const appVersion = Constants.expoConfig?.version || "Unknown";
   const expoConfig = Constants.expoConfig as ExpoConfig | undefined;
   const buildNumber =
@@ -84,6 +104,33 @@ export const ProfileScreen: React.FC = () => {
       updateSettings({ wakeTime: formattedTime });
     } else {
       updateSettings({ sleepTime: formattedTime });
+    }
+  };
+
+  // Handle name update through Clerk
+  const handleNameUpdate = async (newName: string) => {
+    if (!newName.trim()) {
+      Alert.alert(t("common.error"), t("profile.actions.update-name-error"));
+      return;
+    }
+
+    try {
+      const result = await ProfileUpdateService.updateName(newName);
+
+      if (result.success) {
+        // Update local store with the new name
+        updateProfileData({ name: newName });
+        ProfileUpdateService.showSuccessMessage(t("profile.actions.update-name-success"));
+      } else {
+        ProfileUpdateService.showErrorMessage(
+          result.error || t("profile.actions.update-name-failed")
+        );
+      }
+    } catch (error) {
+      console.error("Error updating name:", error);
+      ProfileUpdateService.showErrorMessage(
+        t("profile.actions.update-name-failed-retry")
+      );
     }
   };
 
@@ -151,7 +198,7 @@ export const ProfileScreen: React.FC = () => {
         ) {
           Alert.alert(
             t("profile.image-upload.error"),
-            "Image picker is not available in this development build. Please rebuild the app with the latest dependencies."
+            t("profile.errors.image-picker-unavailable")
           );
         } else {
           Alert.alert(
@@ -213,7 +260,7 @@ export const ProfileScreen: React.FC = () => {
               ) {
                 Alert.alert(
                   t("profile.image-upload.error"),
-                  "Camera is not available in this development build. Please rebuild the app with the latest dependencies."
+                  t("profile.errors.camera-unavailable")
                 );
               } else {
                 Alert.alert(
@@ -273,7 +320,7 @@ export const ProfileScreen: React.FC = () => {
               ) {
                 Alert.alert(
                   t("profile.image-upload.error"),
-                  "Camera is not available in this development build. Please rebuild the app with the latest dependencies."
+                  t("profile.errors.camera-unavailable")
                 );
               } else {
                 Alert.alert(
@@ -321,30 +368,11 @@ export const ProfileScreen: React.FC = () => {
   };
 
   const handleSecurityPress = () => {
-    // TODO: Navigate to security screen in future iteration
-    console.log("Security pressed - to be implemented");
+    router.push("/settings/security");
   };
 
   const handleSupportPress = () => {
-    openDialog({
-      type: "customer-support",
-      props: {
-        userId: user?.id,
-        userEmail: user?.emailAddresses[0]?.emailAddress,
-        appVersion,
-        buildNumber,
-        height: 70,
-        headerProps: {
-          title: t("profile.customer-support"),
-          onLeftAction: () => {
-            // Close the dialog when back button is pressed
-            useDialogStore.getState().closeAll();
-          },
-        },
-      },
-      position: "dock",
-      viewSpecific: "profile",
-    });
+    router.push("/settings/customer-support");
   };
 
   const handleLogout = async () => {
@@ -353,18 +381,18 @@ export const ProfileScreen: React.FC = () => {
       // The user will be redirected to the sign-in screen automatically
     } catch (error) {
       console.error("Error signing out:", error);
-      Alert.alert("Logout Failed", "Could not log out. Please try again.");
+      Alert.alert(t("profile.actions.logout-failed"), t("profile.actions.logout-failed-message"));
     }
   };
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      "Delete Account",
-      "Are you sure you want to delete your account? This action is irreversible.",
+      t("profile.actions.delete-account"),
+      t("profile.actions.delete-account-confirmation"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("delete"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -373,8 +401,8 @@ export const ProfileScreen: React.FC = () => {
             } catch (error) {
               console.error("Error deleting account:", error);
               Alert.alert(
-                "Delete Failed",
-                "Could not delete account. Please try again."
+                t("profile.actions.delete-failed"),
+                t("profile.actions.delete-failed-message")
               );
             }
           },
@@ -482,9 +510,7 @@ export const ProfileScreen: React.FC = () => {
           value={
             profileData.name || user?.fullName || t("profile.fallbacks.name")
           }
-          onSubmit={(newName) => {
-            updateProfileData({ name: newName });
-          }}
+          onSave={handleNameUpdate}
           placeholder={t("profile.placeholders.name")}
         />
 
@@ -495,9 +521,7 @@ export const ProfileScreen: React.FC = () => {
             user?.emailAddresses[0]?.emailAddress ||
             t("profile.fallbacks.email")
           }
-          onSubmit={(newEmail) => {
-            updateProfileData({ email: newEmail });
-          }}
+          editable={false}
           placeholder={t("profile.placeholders.email")}
           keyboardType="email-address"
           autoCapitalize="none"
@@ -511,9 +535,7 @@ export const ProfileScreen: React.FC = () => {
               profileData.phoneNumber ||
               ""
             }
-            onSubmit={(newPhone) => {
-              updateProfileData({ phoneNumber: newPhone });
-            }}
+            editable={false}
             placeholder={t("profile.placeholders.phone")}
             keyboardType="phone-pad"
           />
@@ -527,12 +549,13 @@ export const ProfileScreen: React.FC = () => {
           showValueText={false}
           isButton
           onPress={handleNotificationsPress}
+          showChevron={true}
         />
 
         <CdTextInputOneLine
           label={t("profile.wake-time")}
           value={settings.wakeTime}
-          onSubmit={(input) => handleTimeSubmit("wake", input)}
+          onSave={(input) => handleTimeSubmit("wake", input)}
           onChangeText={(input) => handleTimeChange("wake", input)}
           placeholder={t("profile.placeholders.wake-time")}
           keyboardType="numeric"
@@ -544,7 +567,7 @@ export const ProfileScreen: React.FC = () => {
         <CdTextInputOneLine
           label={t("profile.sleep-time")}
           value={settings.sleepTime}
-          onSubmit={(input) => handleTimeSubmit("sleep", input)}
+          onSave={(input) => handleTimeSubmit("sleep", input)}
           onChangeText={(input) => handleTimeChange("sleep", input)}
           placeholder={t("profile.placeholders.sleep-time")}
           keyboardType="numeric"
@@ -562,6 +585,7 @@ export const ProfileScreen: React.FC = () => {
           }
           isButton
           onPress={handleSubscriptionPress}
+          showChevron={true}
         />
       </View>
 
@@ -573,21 +597,16 @@ export const ProfileScreen: React.FC = () => {
           label={t("profile.security-settings")}
           showValueText={false}
           isButton
-          onPress={() =>
-            openDialog({
-              type: "change-password",
-              props: {
-                headerProps: {
-                  onLeftAction: () => {
-                    // Close the dialog when back button is pressed
-                    useDialogStore.getState().closeAll();
-                  },
-                },
-              },
-              position: "dock",
-              viewSpecific: "profile",
-            })
-          }
+          onPress={handleSecurityPress}
+          showChevron={true}
+        />
+        {/* Encryption Section */}
+        <CdTextInputOneLine
+          label={t("profile.actions.link-new-device")}
+          showValueText={false}
+          isButton={true}
+          onPress={() => router.push("/settings/encryption")}
+          showChevron={true}
         />
       </View>
 
@@ -602,56 +621,31 @@ export const ProfileScreen: React.FC = () => {
           showValueText={false}
           isButton
           onPress={handleSupportPress}
+          showChevron={true}
         />
       </View>
 
-      {/* App Information */}
-      {isDev && (
-        <View style={[profileStyles.settingsSection, { marginTop: 12 }]}>
-          <Text style={profileStyles.sectionTitle}>Developer</Text>
-          <CdButton
-            title="Show Onboarding (debug)"
-            onPress={handleShowOnboardingDebug}
-            variant="outline"
-            style={{ marginBottom: 8 }}
-          />
-          <CdButton
-            title="Open Debug Page"
-            onPress={handleOpenDebugPage}
-            variant="outline"
-          />
-        </View>
-      )}
-      <View style={profileStyles.appInfoSection}>
-        <Text style={profileStyles.sectionTitle}>{t("profile.app-info")}</Text>
-
-        <CdTextInputOneLine
-          label={t("profile.app-version")}
-          value={`${appVersion} (${buildNumber})`}
-          editable={false}
-        />
-
-        <CdTextInputOneLine
-          label={t("profile.user-id")}
-          value={user?.id || t("profile.fallbacks.user-id")}
-          editable={false}
-        />
-      </View>
-
-      {/* Logout and Delete Account */}
-      <View style={profileStyles.actionsSection}>
-        <CdButton
-          title={t("profile.logout")}
-          onPress={handleLogout}
-          variant="outline"
-          style={{ marginBottom: 10, borderColor: COLORS.textIcons }}
-          textStyle={{ color: COLORS.textIcons }}
-        />
-        <CdButton
-          title={t("profile.delete-account")}
-          onPress={handleDeleteAccount}
-          variant="destructive"
-        />
+      {/* Developer Section */}
+      <View style={profileStyles.developerSection}>
+        {isDev && (
+          <View style={[profileStyles.settingsSection, { marginTop: 12 }]}>
+            <Text style={profileStyles.sectionTitle}>{t("profile.developer.section-title")}</Text>
+            <CdButton
+              title={t("profile.developer.show-onboarding")}
+              onPress={handleShowOnboardingDebug}
+              variant="outline"
+              style={{ marginBottom: 8, borderColor: COLORS.primary }}
+              textStyle={{ color: COLORS.primary }}
+            />
+            <CdButton
+              title={t("profile.developer.open-debug-page")}
+              onPress={handleOpenDebugPage}
+              variant="outline"
+              style={{ marginBottom: 8, borderColor: COLORS.primary }}
+              textStyle={{ color: COLORS.primary }}
+            />
+          </View>
+        )}
       </View>
     </ScrollView>
   );

@@ -19,6 +19,12 @@ export const makeHitSlop = (
 ) => ({ top: value, bottom: value, left: value, right: value } as const);
 
 /**
+ * Larger hitSlop for navigation and small tappable items (tabs, icons).
+ * Default 24 gives a comfortable touch target on mobile devices.
+ */
+export const HIT_SLOP_24 = makeHitSlop(24);
+
+/**
  * Type for hitSlop objects used across the app.
  */
 export type HitSlop = typeof HIT_SLOP_10;
