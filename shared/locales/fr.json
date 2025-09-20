@@ -132,8 +132,32 @@
   "please-select-a-category": "Veuillez sélectionner une catégorie",
   "privacy-policy": "politique de confidentialité",
   "profile": "PROFIL",
-  "reflection": "RÉFLEXION",
-  "reflection-empty": "Réflexion vide",
+  "reflection": {
+    "weekly-cadence": "Cadence Hebdomadaire",
+    "title": "Réflexion",
+    "empty": "Réflexion vide",
+    "noTimesliceInfo": "Aucune information de tranche de temps disponible",
+    "activityLabel": "Activité",
+    "unknownActivity": "Activité inconnue",
+    "energyLevel": "Niveau d'énergie",
+    "mood": "Humeur",
+    "totalSessions": "Sessions totales",
+    "totalTime": "Temps total",
+    "avgEnergy": "Énergie moy.",
+    "notesCount": "Nombre de notes",
+    "dailyTotal": "Total quotidien",
+    "periodTotal": "Total de la période",
+    "notesForSession": "Notes pour cette session:",
+    "periodSummary": "Résumé de la période:",
+    "totalActivities": "Activités totales",
+    "overallAvgEnergy": "Énergie moy. globale",
+    "timeslices": "tranches de temps",
+    "hours": "heures",
+    "notes": "notes",
+    "activities": "activités",
+    "note": "Note",
+    "details": "Détails"
+  },
   "resend-code": "Code de resend",
   "resend-in-resendcooldown-s": "Renouveler dans {0} S",
   "sa": "SA",
@@ -202,11 +226,8 @@
   "welcome-back": "Content de te revoir,",
   "weve-sent-a-verification-code-to": "Nous avons envoyé un code de vérification à",
   "yesterday": "HIER",
-  "back": "Retour",
-  "cancel": "Annuler",
   "choose_action": "Choisir une action",
   "color": "Couleur",
-  "validate": "Confirmer",
   "activity": {
     "color-picker": {
       "done": "Terminé",
@@ -222,14 +243,145 @@
     },
     "preview": "Activité"
   },
-  "Are you sure you want to delete this activity? You can't undo this": {
-    "": "Êtes-vous sûr de vouloir supprimer cette activité ? Cette action est irréversible."
-  },
   "common": {
+    "ok": "OK",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "error": "Erreur",
+    "submitting": "Envoi en cours...",
     "done": "Terminé",
-    "saving": "Enregistrement"
+    "saving": "Enregistrement",
+    "edit": "Modifier",
+    "save": "Sauvegarder",
+    "create": "Créer",
+    "delete": "Supprimer"
   },
-  "This activity is used by timeslices": {
-    " Pick a replacement:": "Cette activité est utilisée par des tranches de temps. Choisissez un remplacement :"
+  "energyLabel": "ÉNERGIE",
+  "energyLow": "Basse",
+  "energyHigh": "Haute",
+  "settings": {
+    "title": "Paramètres",
+    "back": "Retour",
+    "notifications": {
+      "title": "Notifications",
+      "push": "Notifications Push",
+      "email": "Notifications Email",
+      "enabled": "Activé",
+      "disabled": "Désactivé",
+      "configure-email": "Configurer les préférences email",
+      "coming-soon": "Bientôt disponible",
+      "email-coming-soon": "Les paramètres de notifications email seront bientôt disponibles"
+    },
+    "health-data": {
+      "title": "Santé et Données",
+      "access": "Accès aux Données de Santé",
+      "export": "Export de Données",
+      "export-value": "Exporter vos données",
+      "privacy": "Paramètres de Confidentialité",
+      "privacy-value": "Gérer la confidentialité des données",
+      "coming-soon": "Bientôt disponible",
+      "export-coming-soon": "La fonction d'export de données sera bientôt disponible",
+      "privacy-coming-soon": "Les paramètres de confidentialité seront bientôt disponibles"
+    },
+    "security": {
+      "title": "Sécurité et Chiffrement",
+      "link-device": "Lier l'Appareil (Chiffrement)",
+      "link-device-value": "Ouvrir le dialogue de liaison",
+      "link-device-title": "Lier Cet Appareil"
+    },
+    "support": {
+      "title": "Support et Informations",
+      "contact": "Contacter le Support",
+      "contact-value": "Obtenir de l'aide et du support",
+      "app-info": "Informations de l'App",
+      "app-info-value": "Détails de version et de compilation",
+      "user-id": "ID Utilisateur",
+      "user-id-fallback": "Non disponible",
+      "app-version": "Version de l'App",
+      "version-unknown": "Inconnue",
+      "support-subject": "Demande de Support",
+      "support-body-prefix": "Décrivez votre problème ici..."
+    },
+    "development": {
+      "title": "Outils de Développement",
+      "test-error": "Tester le Rapport d'Erreurs",
+      "test-sentry": "Tester l'intégration Sentry"
+    },
+    "alerts": {
+      "app-info-title": "Informations de l'App",
+      "health-data-title": "Données de Santé"
+    }
+  },
+  "profile": {
+    "logout": "Se Déconnecter",
+    "title": "PROFIL",
+    "name": "Nom",
+    "username": "Nom d'Utilisateur",
+    "email": "Email",
+    "phone": "Numéro de Téléphone",
+    "notifications": "Notifications",
+    "wake-time": "Se réveiller à",
+    "sleep-time": "Aller dormir",
+    "subscription": "Plan d'Abonnement",
+    "security": "Sécurité",
+    "security-settings": "Sécurité et Confidentialité",
+    "customer-support": "Support Client",
+    "app-info": "Informations de l'Application",
+    "app-version": "Version de l'Application",
+    "user-id": "ID Utilisateur",
+    "free": "Gratuit",
+    "deep-cadence": "Cadence Profonde",
+    "subscription-plan": "Plan d'Abonnement",
+    "set-wake-time": "Définir l'Heure de Réveil",
+    "set-sleep-time": "Définir l'Heure de Coucher",
+    "deep-cadence-description": "Débloquez des perspectives plus profondes et une personnalisation améliorée pour tirer le meilleur parti de votre parcours de réflexion quotidien.",
+    "whats-inside": "Ce qui est inclus :",
+    "upgrade-now": "Mettre à niveau maintenant",
+    "current-plan": "Plan Actuel",
+    "subscription-footer": "Prenez le contrôle de votre réflexion quotidienne et concevez la vie que vous voulez vivre.",
+    "delete-account": "Supprimer le compte",
+    "edit-photo": "Modifier la photo",
+    "uploading": "Téléchargement...",
+    "image-upload": {
+      "select-option": "Sélectionner une Photo",
+      "take-photo": "Prendre une Photo",
+      "choose-from-library": "Choisir dans la Bibliothèque",
+      "success": "Photo Mise à Jour",
+      "success-message": "Votre photo de profil a été mise à jour avec succès !",
+      "error": "Échec du Téléchargement",
+      "error-message": "Impossible de télécharger la photo. Veuillez réessayer."
+    },
+    "placeholders": {
+      "name": "Entrez votre nom",
+      "email": "Entrez votre email",
+      "phone": "Entrez votre numéro de téléphone",
+      "wake-time": "07:30",
+      "sleep-time": "23:30"
+    },
+    "fallbacks": {
+      "name": "Votre Nom",
+      "email": "email@exemple.fr",
+      "user-id": "Inconnu"
+    },
+    "debug-screen": "Écran de Débogage",
+    "error-messages": {
+      "time-required": "Veuillez entrer une heure",
+      "time-format": "Veuillez utiliser le format HH:MM (ex. 07:30)",
+      "wake-time-range": "L'heure de réveil doit être entre 4:00 et 12:00",
+      "sleep-time-range": "L'heure de coucher doit être entre 20:00 et 2:00"
+    },
+    "support": {
+      "category": "Catégorie",
+      "message": "Message",
+      "message-required": "Veuillez entrer un message",
+      "message-placeholder": "Dites-nous ce qui s'est passé. Qu'attendiez-vous ? Des suggestions d'amélioration ?",
+      "general": "Général",
+      "bug": "Rapport de Bug",
+      "feature": "Demande de Fonctionnalité",
+      "submit": "Envoyer les Commentaires",
+      "success": "Commentaires Envoyés !",
+      "success-message": "Merci pour vos commentaires. Cela nous aide à améliorer l'application !",
+      "error-message": "Impossible d'envoyer les commentaires. Veuillez réessayer plus tard."
+    }
   }
 }

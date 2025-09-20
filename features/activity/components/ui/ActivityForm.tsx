@@ -263,7 +263,7 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
     const [showParentPicker, setShowParentPicker] = useState(false);
 
     // Validation hook - destructure stable callbacks to avoid unstable object identity
-    const validation = useActivityValidation(name);
+    const validation = useActivityValidation(name, selectedCategoryId);
     const {
       resetValidation,
       validateField,

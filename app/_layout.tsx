@@ -15,6 +15,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
 import { SECRETS } from "@/shared/constants/SECRETS";
+import { ToastProvider } from "@/shared/context/ToastProvider";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { getIsDev } from "@/shared/hooks/useDev";
 import * as Sentry from "@sentry/react-native";
@@ -96,12 +97,14 @@ export default Sentry.wrap(function RootLayout() {
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <I18nextProvider i18n={i18n}>
           <NetworkProvider>
-            <ClerkProvider
-              publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-              tokenCache={tokenCache}
-            >
-              <Slot />
-            </ClerkProvider>
+            <ToastProvider>
+              <ClerkProvider
+                publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+                tokenCache={tokenCache}
+              >
+                <Slot />
+              </ClerkProvider>
+            </ToastProvider>
           </NetworkProvider>
           <StatusBar style="auto" />
         </I18nextProvider>

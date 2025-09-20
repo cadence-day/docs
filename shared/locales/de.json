@@ -126,8 +126,32 @@
   "please-select-a-category": "Bitte wählen Sie eine Kategorie aus",
   "privacy-policy": "Datenschutzrichtlinie",
   "profile": "PROFIL",
-  "reflection": "SPIEGELUNG",
-  "reflection-empty": "Leere Reflexion",
+  "reflection": {
+    "weekly-cadence": "Wöchentliche Kadenz",
+    "title": "Reflexion",
+    "empty": "Leere Reflexion",
+    "noTimesliceInfo": "Keine Zeitscheiben-Informationen verfügbar",
+    "activityLabel": "Aktivität",
+    "unknownActivity": "Unbekannte Aktivität",
+    "energyLevel": "Energieniveau",
+    "mood": "Stimmung",
+    "totalSessions": "Gesamtsitzungen",
+    "totalTime": "Gesamtzeit",
+    "avgEnergy": "Durchschn. Energie",
+    "notesCount": "Notizen-Anzahl",
+    "dailyTotal": "Tagesgesamtzeit",
+    "periodTotal": "Periodengesamtzeit",
+    "notesForSession": "Notizen für diese Sitzung:",
+    "periodSummary": "Periodenzusammenfassung:",
+    "totalActivities": "Gesamtaktivitäten",
+    "overallAvgEnergy": "Gesamtdurchschn. Energie",
+    "timeslices": "Zeitscheiben",
+    "hours": "Stunden",
+    "notes": "Notizen",
+    "activities": "Aktivitäten",
+    "note": "Notiz",
+    "details": "Details"
+  },
   "resend-code": "Code wiedergeben",
   "resend-in-resendcooldown-s": "Senden Sie in {0} s",
   "sa": "Sa",
@@ -211,19 +235,162 @@
     },
     "preview": "Aktivität"
   },
-  "Are you sure you want to delete this activity? You can't undo this": {
-    "": "Sind Sie sicher, dass Sie diese Aktivität löschen möchten? Dies kann nicht rückgängig gemacht werden."
-  },
-  "back": "Zurück",
-  "cancel": "Abbrechen",
   "choose_action": "Aktion wählen",
   "color": "Farbe",
   "common": {
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "error": "Fehler",
+    "submitting": "Wird übermittelt...",
     "done": "Fertig",
-    "saving": "Speichern"
+    "saving": "Speichern",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "create": "Erstellen",
+    "delete": "Löschen"
   },
-  "This activity is used by timeslices": {
-    " Pick a replacement:": "Diese Aktivität wird von Timeslices verwendet. Wählen Sie einen Ersatz:"
+  "activity-categories.food": "Essen",
+  "activity-categories.health": "Gesundheit",
+  "activity-categories.home": "Heim",
+  "activity-categories.learn": "Lernen",
+  "activity-categories.play": "Spielen",
+  "activity-categories.service": "Service",
+  "activity-categories.social": "Sozial",
+  "activity-categories.travel": "Reisen",
+  "activity.color-picker.done": "Erledigt",
+  "activity.color-picker.title": "Wählen Sie Farbe",
+  "activity.legend.pickActivityCategory": "Wählen Sie die Aktivitätskategorie",
+  "activity.legend.reassignTitle": "Frühere Timeslices neu zuweisen",
+  "activity.preview": "Aktivität",
+  "common.saving": "Speichern",
+  "home.todayTitle": "Die heutige Trittfrequenz",
+  "energyLabel": "ENERGIE",
+  "energyLow": "Niedrig",
+  "energyHigh": "Hoch",
+  "settings": {
+    "title": "Einstellungen",
+    "back": "Zurück",
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "push": "Push-Benachrichtigungen",
+      "email": "E-Mail-Benachrichtigungen",
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert",
+      "configure-email": "E-Mail-Einstellungen konfigurieren",
+      "coming-soon": "Kommt bald",
+      "email-coming-soon": "E-Mail-Benachrichtigungseinstellungen werden bald verfügbar sein"
+    },
+    "health-data": {
+      "title": "Gesundheit & Daten",
+      "access": "Gesundheitsdaten-Zugang",
+      "export": "Datenexport",
+      "export-value": "Exportieren Sie Ihre Daten",
+      "privacy": "Datenschutzeinstellungen",
+      "privacy-value": "Datenschutz verwalten",
+      "coming-soon": "Kommt bald",
+      "export-coming-soon": "Datenexport-Funktion wird bald verfügbar sein",
+      "privacy-coming-soon": "Datenschutzeinstellungen werden bald verfügbar sein"
+    },
+    "security": {
+      "title": "Sicherheit & Verschlüsselung",
+      "link-device": "Gerät verknüpfen (Verschlüsselung)",
+      "link-device-value": "Verknüpfungsdialog öffnen",
+      "link-device-title": "Dieses Gerät verknüpfen"
+    },
+    "support": {
+      "title": "Support & Informationen",
+      "contact": "Support kontaktieren",
+      "contact-value": "Hilfe und Support erhalten",
+      "app-info": "App-Informationen",
+      "app-info-value": "Versions- und Build-Details",
+      "user-id": "Benutzer-ID",
+      "user-id-fallback": "Nicht verfügbar",
+      "app-version": "App-Version",
+      "version-unknown": "Unbekannt",
+      "support-subject": "Support-Anfrage",
+      "support-body-prefix": "Beschreiben Sie Ihr Problem hier..."
+    },
+    "development": {
+      "title": "Entwicklungstools",
+      "test-error": "Fehlerberichterstattung testen",
+      "test-sentry": "Sentry-Integration testen"
+    },
+    "alerts": {
+      "app-info-title": "App-Informationen",
+      "health-data-title": "Gesundheitsdaten"
+    }
   },
-  "validate": "Bestätigen"
+  "profile": {
+    "logout": "Abmelden",
+    "title": "PROFIL",
+    "name": "Name",
+    "username": "Benutzername",
+    "email": "E-Mail",
+    "phone": "Telefonnummer",
+    "notifications": "Benachrichtigungen",
+    "wake-time": "Aufwachen um",
+    "sleep-time": "Schlafen gehen",
+    "subscription": "Abonnement-Plan",
+    "security": "Sicherheit",
+    "security-settings": "Sicherheit & Datenschutz",
+    "customer-support": "Kundensupport",
+    "app-info": "App-Informationen",
+    "app-version": "App-Version",
+    "user-id": "Benutzer-ID",
+    "free": "Kostenlos",
+    "deep-cadence": "Deep Cadence",
+    "subscription-plan": "Abonnement-Plan",
+    "set-wake-time": "Aufwachzeit einstellen",
+    "set-sleep-time": "Schlafenszeit einstellen",
+    "deep-cadence-description": "Schalten Sie tiefere Einblicke und verbesserte Personalisierung frei, um das Beste aus Ihrer täglichen Reflexionsreise herauszuholen.",
+    "whats-inside": "Was ist enthalten:",
+    "upgrade-now": "Jetzt upgraden",
+    "current-plan": "Aktueller Plan",
+    "subscription-footer": "Übernehmen Sie die Kontrolle über Ihre tägliche Reflexion und gestalten Sie das Leben, das Sie leben möchten.",
+    "delete-account": "Konto löschen",
+    "edit-photo": "Foto bearbeiten",
+    "uploading": "Wird hochgeladen...",
+    "image-upload": {
+      "select-option": "Foto auswählen",
+      "take-photo": "Foto aufnehmen",
+      "choose-from-library": "Aus Bibliothek wählen",
+      "success": "Foto aktualisiert",
+      "success-message": "Ihr Profilbild wurde erfolgreich aktualisiert!",
+      "error": "Upload fehlgeschlagen",
+      "error-message": "Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut."
+    },
+    "placeholders": {
+      "name": "Geben Sie Ihren Namen ein",
+      "email": "Geben Sie Ihre E-Mail ein",
+      "phone": "Geben Sie Ihre Telefonnummer ein",
+      "wake-time": "07:30",
+      "sleep-time": "23:30"
+    },
+    "fallbacks": {
+      "name": "Ihr Name",
+      "email": "email@beispiel.de",
+      "user-id": "Unbekannt"
+    },
+    "debug-screen": "Debug-Bildschirm",
+    "error-messages": {
+      "time-required": "Bitte geben Sie eine Zeit ein",
+      "time-format": "Bitte verwenden Sie das Format HH:MM (z.B. 07:30)",
+      "wake-time-range": "Die Aufwachzeit sollte zwischen 4:00 und 12:00 Uhr liegen",
+      "sleep-time-range": "Die Schlafenszeit sollte zwischen 20:00 und 2:00 Uhr liegen"
+    },
+    "support": {
+      "category": "Kategorie",
+      "message": "Nachricht",
+      "message-required": "Bitte geben Sie eine Nachricht ein",
+      "message-placeholder": "Erzählen Sie uns, was passiert ist. Was haben Sie erwartet? Verbesserungsvorschläge?",
+      "general": "Allgemein",
+      "bug": "Fehlerbericht",
+      "feature": "Feature-Anfrage",
+      "submit": "Feedback senden",
+      "success": "Feedback gesendet!",
+      "success-message": "Vielen Dank für Ihr Feedback. Es hilft uns, die App zu verbessern!",
+      "error-message": "Feedback konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."
+    }
+  }
 }

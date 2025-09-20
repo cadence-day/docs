@@ -1,6 +1,6 @@
 import { useActivitiesStore } from "@/shared/stores";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import type { Activity } from "@/shared/types/models/activity";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
 import type { GridConfig } from "../components/utils/gridUtils";
@@ -95,7 +95,9 @@ export const useActivityManagement = ({
         await updateActivityOrder(allActivities);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch (error) {
-        console.error("Error saving activity order:", error);
+        GlobalErrorHandler.logError(error, "UPDATE_ACTIVITY_ORDER", {
+          message: "Error updating activity order",
+        });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       } finally {
         setIsSavingOrder(false);

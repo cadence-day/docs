@@ -1,10 +1,11 @@
+import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import Timeline from "@/features/timeline/Timeline";
-import { CdButton } from "@/shared/components/CadenceUI";
+import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
@@ -36,6 +37,9 @@ export default function Today() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
+  // isToday is true if selectedDate is today's date (but ignore time)
+  const isToday = selectedDate.toDateString() === new Date().toDateString();
+  const title = isToday ? t("home.todayTitle") : t("home.title");
 
   useEffect(() => {
     setCurrentTime(new Date());
@@ -76,51 +80,33 @@ export default function Today() {
           ]}
           style={{ flex: 1 }}
         >
-          <SafeAreaView
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingHorizontal: 12,
-              paddingTop: 10,
-              paddingBottom: 10,
-              margin: 12,
-            }}
-          >
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 24, color: "#222" }}>
-                {t("home.title")}
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingHorizontal: 0,
-                  paddingVertical: 4,
-                  marginTop: 2,
-                }}
+          <ScreenHeader
+            title={title}
+            OnRightElement={() => (
+              <TouchableOpacity
+                onPress={() => showInfo(t("sage.unavailableMessage"))}
               >
+                <SageIcon size={40} status={"pulsating"} auto={false} />
+              </TouchableOpacity>
+            )}
+            subtitle={
+              <>
                 {/* Tappable date: opens calendar modal */}
                 <TouchableOpacity
+                  hitSlop={HIT_SLOP_10}
                   onPress={() => {
-                    // Open the central dialog for the calendar. We create a holder
-                    // so the onSelect callback can close the dialog once a date
-                    // is picked.
                     const idHolder: { id?: string } = {};
                     const id = useDialogStore.getState().openDialog({
                       type: "calendar",
                       props: {
                         selectedDate,
-                        height: 60, // In percents of screen height
+                        height: 60,
                         enableDragging: false,
                         headerProps: {
                           title: t("calendarDialog.pick-a-date"),
                         },
-                        // onSelect will update the selected date live
                         onSelect: (d: Date) => setSelectedDate(d),
-                        // onConfirm will be called when DialogHost's Done is pressed
                         onConfirm: () => {
-                          // ensure final selection is applied (already via onSelect), then close
                           if (idHolder.id)
                             useDialogStore.getState().closeDialog(idHolder.id);
                         },
@@ -132,10 +118,6 @@ export default function Today() {
                   {(() => {
                     const includeTime =
                       selectedDate.toDateString() === new Date().toDateString();
-
-                    // Use displayDateTime to get a single formatted string. If
-                    // includeTime is false it returns just the date; otherwise it
-                    // returns "<date> <preposition> <time>".
                     const displayed = displayDateTime(
                       (selectedDate.toDateString() === new Date().toDateString()
                         ? currentTime
@@ -149,7 +131,6 @@ export default function Today() {
                         includeTime,
                       }
                     );
-
                     return (
                       <Text
                         style={{
@@ -200,21 +181,9 @@ export default function Today() {
                     </View>
                   </TouchableOpacity>
                 )}
-                {/* Calendar is opened via the central dialog store; DialogHost will render the
-          registered 'calendar' dialog (see shared/dialogs/registry.tsx). */}
-              </View>
-            </View>
-
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
-            >
-              <TouchableOpacity
-                onPress={() => showInfo(t("sage.unavailableMessage"))}
-              >
-                <SageIcon size={40} status={"pulsating"} auto={false} />
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
+              </>
+            }
+          />
 
           <ErrorBoundary>
             {/* Pass selected date into the timeline so it renders the chosen day */}

@@ -1,9 +1,14 @@
 import useNotesStore from "@/shared/stores/resources/useNotesStore";
 import useStatesStore from "@/shared/stores/resources/useStatesStore";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
+import type { Timeslice } from "@/shared/types/models/timeslice";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useCallback } from "react";
 import type { NoteItem, NoteOperations, UseNoteHandlersProps } from "../types";
+
+type TimesliceUpsertInput =
+  & Omit<Timeslice, "id">
+  & Partial<Pick<Timeslice, "state_id" | "note_ids">>;
 
 export const useNoteHandlers = ({
   notes,
@@ -54,16 +59,11 @@ export const useNoteHandlers = ({
     [setNotes],
   );
 
-  const deleteNoteLocal = useCallback(
-    (index: number) => {
+  const deleteNoteAsync = useCallback(
+    async (index: number) => {
       const noteToDelete = notes[index];
 
-      // If it's an existing note (not new), track its ID for deletion from database
-      if (!noteToDelete.isNew && noteToDelete.id) {
-        setDeletedNoteIds((prev) => [...prev, noteToDelete.id!]);
-      }
-
-      // Remove from local state
+      // Remove from local state first
       setNotes((prev) => prev.filter((_, i) => i !== index));
 
       // Reset active note index if the deleted note was active
@@ -157,7 +157,7 @@ export const useNoteHandlers = ({
             await upsertTimeslice({
               id: timeslice.id!,
               note_ids: updatedNoteIds,
-            } as any);
+            } as unknown as TimesliceUpsertInput);
           }
         }
       } catch (error) {
@@ -201,18 +201,6 @@ export const useNoteHandlers = ({
         (note) => (note.message?.trim()?.length ?? 0) > 0,
       );
       const updatedNoteIds = [...noteIds];
-
-      // Handle note deletions first
-      if (deletedNoteIds.length > 0) {
-        await deleteNotes(deletedNoteIds);
-        // Remove deleted IDs from timeslice
-        for (const deletedId of deletedNoteIds) {
-          const index = updatedNoteIds.indexOf(deletedId);
-          if (index > -1) {
-            updatedNoteIds.splice(index, 1);
-          }
-        }
-      }
 
       // Save all notes with content
       for (let i = 0; i < notesToSave.length; i++) {
@@ -266,39 +254,33 @@ export const useNoteHandlers = ({
             await upsertTimeslice({
               id: ts_id,
               state_id: createdState.id,
-            } as any);
+            } as unknown as TimesliceUpsertInput);
           }
         }
       }
 
       // Update timeslice with final note IDs if changed
-      if (
-        updatedNoteIds.length !== noteIds.length ||
-        deletedNoteIds.length > 0
-      ) {
+      if (updatedNoteIds.length !== noteIds.length) {
         await upsertTimeslice({
           id: ts_id,
           note_ids: updatedNoteIds,
-        } as any);
+        } as unknown as TimesliceUpsertInput);
       }
     } catch (error) {
       GlobalErrorHandler.logError(error, "saveAllNotes", {
         timesliceId: ts_id,
         notesCount: notes.length,
-        deletedCount: deletedNoteIds.length,
       });
       throw error;
     }
   }, [
     notes,
-    deletedNoteIds,
     energy,
     timeslice,
     noteIds,
     statesStore.states,
     insertNote,
     updateNote,
-    deleteNotes,
     insertState,
     updateState,
     upsertTimeslice,
@@ -333,7 +315,8 @@ export const useNoteHandlers = ({
   return {
     addNote,
     updateNote: updateNoteMessage,
-    deleteNote: deleteNoteLocal,
+    // Keep the external API key `deleteNote` while using a clearer internal name
+    deleteNote: deleteNoteAsync,
     saveNote,
     saveAllNotes,
     setActiveNote,

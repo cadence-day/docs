@@ -63,8 +63,8 @@
     "creating-account": "Creating Account..."
   },
   "welcome": "Welcome",
-  "already-have-an-account": "Har du allerede en konto?",
-  "sign-in-now": "Log ind nu.",
+  "already-have-an-account": "Already have an account?",
+  "sign-in-now": "Sign in now.",
   "dont-have-an-account": "Don't have an account?",
   "sign-up-now": "Sign up now.",
   "verification-code-sent-check-your-email": "Verification code sent! Check your email.",
@@ -96,7 +96,6 @@
   "close": "Close",
   "welcome-back": "Welcome back,",
   "app-features": "App Features",
-  "settings": "⚙️ Settings",
   "development-tools": "Development Tools",
   "test-sentry-integration": "🔧 Test Sentry Integration",
   "test-not-found-page": "🚫 Test Not Found Page",
@@ -108,11 +107,35 @@
   "feedback-button-enabled": "Feedback Button Enabled",
   "a-feedback-button-has-been-added-to-your-screen-you-can-hide-it-from-this-settings-page": "A feedback button has been added to your screen. You can hide it from this settings page.",
   "unable-to-show-feedback-button-please-try-again": "Unable to show feedback button. Please try again.",
-  "reflection": "REFLECTION",
-  "reflection-empty": "Empty Reflection",
+  "reflection": {
+    "weekly-cadence": "Weekly Cadence",
+    "title": "Reflection",
+    "empty": "Empty Reflection",
+    "noTimesliceInfo": "No timeslice information available",
+    "activityLabel": "Activity",
+    "unknownActivity": "Unknown Activity",
+    "energyLevel": "Energy Level",
+    "mood": "Mood",
+    "totalSessions": "Total Sessions",
+    "totalTime": "Total Time",
+    "avgEnergy": "Avg Energy",
+    "notesCount": "Notes Count",
+    "dailyTotal": "Daily Total",
+    "periodTotal": "Period Total",
+    "notesForSession": "Notes for this session:",
+    "periodSummary": "Period Summary:",
+    "totalActivities": "Total Activities",
+    "overallAvgEnergy": "Overall Avg Energy",
+    "timeslices": "timeslices",
+    "hours": "hours",
+    "notes": "notes",
+    "activities": "activities",
+    "note": "Note",
+    "details": "Details"
+  },
   "profile": {
+    "logout": "Log Out",
     "title": "PROFILE",
-    "edit-photo": "Edit Profile Photo",
     "name": "Name",
     "username": "Username",
     "email": "Email",
@@ -137,6 +160,37 @@
     "upgrade-now": "Upgrade now",
     "current-plan": "Current Plan",
     "subscription-footer": "Take control of your daily reflection and design the life you want to live.",
+    "delete-account": "Delete account",
+    "edit-photo": "Edit Photo",
+    "uploading": "Uploading...",
+    "image-upload": {
+      "select-option": "Select Photo",
+      "take-photo": "Take Photo",
+      "choose-from-library": "Choose from Library",
+      "success": "Photo Updated",
+      "success-message": "Your profile photo has been updated successfully!",
+      "error": "Upload Failed",
+      "error-message": "Unable to upload photo. Please try again."
+    },
+    "placeholders": {
+      "name": "Enter your name",
+      "email": "Enter your email",
+      "phone": "Enter your phone number",
+      "wake-time": "07:30",
+      "sleep-time": "23:30"
+    },
+    "fallbacks": {
+      "name": "Your Name",
+      "email": "email@example.com",
+      "user-id": "Unknown"
+    },
+    "debug-screen": "Debug Screen",
+    "error-messages": {
+      "time-required": "Please enter a time",
+      "time-format": "Please use format HH:MM (e.g., 07:30)",
+      "wake-time-range": "Wake time should be between 4:00 AM and 12:00 PM",
+      "sleep-time-range": "Sleep time should be between 8:00 PM and 2:00 AM"
+    },
     "support": {
       "category": "Category",
       "message": "Message",
@@ -179,9 +233,6 @@
   "failed-to-create-timeslices": "Failed to create timeslices. Please try again.",
   "create-activity": "Create Activity",
   "edit-activity": "Edit Activity",
-  "save": "Save",
-  "create": "Create",
-  "edit": "Edit",
   "activity": {
     "legend": {
       "activities": "Activities",
@@ -207,19 +258,8 @@
       "createFailed": "Failed to create activity"
     }
   },
-  "common": {
-    "ok": "OK",
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "error": "Error",
-    "submitting": "Submitting...",
-    "done": "Done",
-    "saving": "Saving"
-  },
   "select-activity": "Please select an activity first",
   "pick-activity-first": "Pick an activity first",
-  "confirm": "Confirm",
-  "delete": "Delete",
   "delete-timeslice-with-data-warning": "This timeslice has notes or state attached. Deleting it will also remove all associated data. This action cannot be undone.",
   "This activity is a child of another. Change its parent first before deleting.": "This activity is a child of another. Change its parent first before deleting.",
   "This activity has sub-activities. Reassign or remove their parent before deleting.": "This activity has sub-activities. Reassign or remove their parent before deleting.",
@@ -267,13 +307,78 @@
   "active-activities": "Active Activities",
   "no-active-activities": "There are sadly no active activities",
   "back-to-today": "Back to today",
-  "done": "Done",
   "back": "Back",
   "color": "Color",
-  "cancel": "Cancel",
   "validate": "Confirm",
   "choose_action": "Choose Action",
   "energyLabel": "ENERGY",
   "energyLow": "Low",
-  "energyHigh": "High"
+  "energyHigh": "High",
+  "home.todayTitle": "Today's Cadence",
+  "settings": {
+    "title": "Settings",
+    "back": "Back",
+    "notifications": {
+      "title": "Notifications",
+      "push": "Push Notifications",
+      "email": "Email Notifications",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "configure-email": "Configure email preferences",
+      "coming-soon": "Coming Soon",
+      "email-coming-soon": "Email notification settings will be available soon"
+    },
+    "health-data": {
+      "title": "Health & Data",
+      "access": "Health Data Access",
+      "export": "Data Export",
+      "export-value": "Export your data",
+      "privacy": "Privacy Settings",
+      "privacy-value": "Manage data privacy",
+      "coming-soon": "Coming Soon",
+      "export-coming-soon": "Data export feature will be available soon",
+      "privacy-coming-soon": "Privacy settings will be available soon"
+    },
+    "security": {
+      "title": "Security & Encryption",
+      "link-device": "Link Device (Encryption)",
+      "link-device-value": "Open linking dialog",
+      "link-device-title": "Link This Device"
+    },
+    "support": {
+      "title": "Support & Information",
+      "contact": "Contact Support",
+      "contact-value": "Get help and support",
+      "app-info": "App Information",
+      "app-info-value": "Version and build details",
+      "user-id": "User ID",
+      "user-id-fallback": "Not available",
+      "app-version": "App Version",
+      "version-unknown": "Unknown",
+      "support-subject": "Support Request",
+      "support-body-prefix": "Describe your issue here..."
+    },
+    "development": {
+      "title": "Development Tools",
+      "test-error": "Test Error Reporting",
+      "test-sentry": "Test Sentry integration"
+    },
+    "alerts": {
+      "app-info-title": "App Information",
+      "health-data-title": "Health Data"
+    }
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "error": "Error",
+    "submitting": "Submitting...",
+    "done": "Done",
+    "saving": "Saving",
+    "edit": "Edit",
+    "save": "Save",
+    "create": "Create",
+    "delete": "Delete"
+  }
 }

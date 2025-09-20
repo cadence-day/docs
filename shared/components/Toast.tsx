@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, Text } from "react-native";
 
-export type ToastType = "success" | "error" | "warning" | "info";
+import { ToastType } from "@/shared/types/toast.types";
 
 interface ToastProps {
   message: string;

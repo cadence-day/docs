@@ -96,7 +96,6 @@
   "close": "Luk",
   "welcome-back": "Velkommen tilbage,",
   "app-features": "App-funktioner",
-  "settings": "⚙️ Indstillinger",
   "development-tools": "Udviklingsværktøjer",
   "test-sentry-integration": "🔧 Test Sentry-integration",
   "test-not-found-page": "🚫 Test Ikke Fundet-side",
@@ -108,8 +107,32 @@
   "feedback-button-enabled": "Feedback-knap aktiveret",
   "a-feedback-button-has-been-added-to-your-screen-you-can-hide-it-from-this-settings-page": "En feedback-knap er blevet tilføjet til din skærm. Du kan skjule den fra denne indstillingsside.",
   "unable-to-show-feedback-button-please-try-again": "Kan ikke vise feedback-knap. Prøv igen.",
-  "reflection": "REFLEKSION",
-  "reflection-empty": "Tom refleksion",
+  "reflection": {
+    "weekly-cadence": "Ugentlig Cadence",
+    "title": "Refleksion",
+    "empty": "Tom refleksion",
+    "noTimesliceInfo": "Ingen tidsintervaler informationer tilgængelige",
+    "activityLabel": "Aktivitet",
+    "unknownActivity": "Ukendt aktivitet",
+    "energyLevel": "Energiniveau",
+    "mood": "Humør",
+    "totalSessions": "Samlede sessioner",
+    "totalTime": "Samlet tid",
+    "avgEnergy": "Gennemsn. energi",
+    "notesCount": "Antal noter",
+    "dailyTotal": "Daglig total",
+    "periodTotal": "Periode total",
+    "notesForSession": "Noter for denne session:",
+    "periodSummary": "Periode sammendrag:",
+    "totalActivities": "Samlede aktiviteter",
+    "overallAvgEnergy": "Samlet gennemsn. energi",
+    "timeslices": "tidsintervaler",
+    "hours": "timer",
+    "notes": "noter",
+    "activities": "aktiviteter",
+    "note": "Note",
+    "details": "Detaljer"
+  },
   "timeline.previousDay": "Vil du opdatere i går?",
   "home.title": "Daglig Cadence",
   "sage.title": "Sage",
@@ -138,9 +161,6 @@
   "failed-to-create-timeslices": "Kunne ikke oprette tidsintervaller. Prøv igen.",
   "create-activity": "Opret aktivitet",
   "edit-activity": "Rediger aktivitet",
-  "save": "Gem",
-  "create": "Opret",
-  "edit": "Rediger",
   "activity": {
     "legend": {
       "activities": "Aktiviteter",
@@ -167,19 +187,20 @@
     "preview": "Aktivitet"
   },
   "common": {
+    "ok": "OK",
+    "cancel": "Annuller",
+    "confirm": "Bekræft",
+    "error": "Fejl",
+    "submitting": "Indsender...",
+    "done": "Færdig",
+    "saving": "Gemmer",
+    "edit": "Rediger",
     "save": "Gem",
     "create": "Opret",
-    "edit": "Rediger",
-    "cancel": "Annuller",
-    "close": "Luk",
-    "done": "Færdig",
-    "error": "Fejl",
-    "saving": "Gemmer"
+    "delete": "Slet"
   },
   "select-activity": "Vælg venligst en aktivitet først",
   "pick-activity-first": "Vælg en aktivitet først",
-  "confirm": "Bekræft",
-  "delete": "Slet",
   "delete-timeslice-with-data-warning": "Dette tidsudsnit har noter eller tilstand tilknyttet. At slette det vil også fjerne alle tilknyttede data. Denne handling kan ikke fortrydes.",
   "This activity is a child of another. Change its parent first before deleting.": "Denne aktivitet er et barn af en anden. Skift dens overordnede først, før du sletter.",
   "This activity has sub-activities. Reassign or remove their parent before deleting.": "Denne aktivitet har underaktiviteter. Tildel en ny overordnet eller fjern den, før du sletter.",
@@ -227,18 +248,125 @@
   "active-activities": "Aktive aktiviteter",
   "no-active-activities": "Der er desværre ingen aktive aktiviteter",
   "back-to-today": "Tilbage til i dag",
-  "cancel": "Tilbage",
-  "validate": "Bekræft",
-  "Are you sure you want to delete this activity? You can't undo this": {
-    "": "Er du sikker på, at du vil slette denne aktivitet? Du kan ikke fortryde dette."
-  },
-  "back": "Tilbage",
   "choose_action": "Vælg handling",
   "color": "Farve",
-  "This activity is used by timeslices": {
-    " Pick a replacement:": "Denne aktivitet bruges af timeslices. Vælg en erstatning:"
-  },
   "profile": {
-    "title": "PROFIL"
+    "title": "PROFIL",
+    "logout": "Log ud",
+    "delete-account": "Slet konto",
+    "edit-photo": "Rediger profilbillede",
+    "name": "Navn",
+    "username": "Brugernavn",
+    "email": "Email",
+    "phone": "Telefonnummer",
+    "notifications": "Notifikationer",
+    "wake-time": "Vågn op kl.",
+    "sleep-time": "Gå i seng",
+    "subscription": "Abonnementsplan",
+    "security": "Sikkerhed",
+    "security-settings": "Sikkerhed og privatlivspolitik",
+    "customer-support": "Kundesupport",
+    "app-info": "App Information",
+    "app-version": "App Version",
+    "user-id": "Bruger ID",
+    "free": "Gratis",
+    "deep-cadence": "Deep Cadence",
+    "subscription-plan": "Abonnementsplan",
+    "set-wake-time": "Indstil vækningstid",
+    "set-sleep-time": "Indstil sengetid",
+    "deep-cadence-description": "Lås op for dybere indsigter og forbedret personalisering for at få mest muligt ud af din daglige refleksionsrejse.",
+    "whats-inside": "Hvad er inkluderet:",
+    "upgrade-now": "Opgradér nu",
+    "current-plan": "Nuværende plan",
+    "subscription-footer": "Tag kontrol over din daglige reflektion og design det liv, du ønsker at leve.",
+    "placeholders": {
+      "name": "Indtast dit navn",
+      "email": "Indtast din email",
+      "phone": "Indtast dit telefonnummer",
+      "wake-time": "07:30",
+      "sleep-time": "23:30"
+    },
+    "fallbacks": {
+      "name": "Dit navn",
+      "email": "email@eksempel.dk",
+      "user-id": "Ukendt"
+    },
+    "debug-screen": "Debug Skærm",
+    "error-messages": {
+      "time-required": "Indtast venligst en tid",
+      "time-format": "Brug venligst format TT:MM (f.eks. 07:30)",
+      "wake-time-range": "Vækningstid skal være mellem 04:00 og 12:00",
+      "sleep-time-range": "Sengetid skal være mellem 20:00 og 02:00"
+    },
+    "support": {
+      "category": "Kategori",
+      "message": "Besked",
+      "message-required": "Indtast venligst en besked",
+      "message-placeholder": "Fortæl os hvad der skete. Hvad forventede du? Nogen forslag til forbedringer?",
+      "general": "Generelt",
+      "bug": "Fejlrapport",
+      "feature": "Funktionsanmodning",
+      "submit": "Send feedback",
+      "success": "Feedback sendt!",
+      "success-message": "Tak for din feedback. Det hjælper os med at forbedre appen!",
+      "error-message": "Kunne ikke sende feedback. Prøv igen senere."
+    }
+  },
+  "home.todayTitle": "Dagens Cadence",
+  "energyLabel": "ENERGI",
+  "energyLow": "Lav",
+  "energyHigh": "Høj",
+  "settings": {
+    "title": "Indstillinger",
+    "back": "Tilbage",
+    "notifications": {
+      "title": "Notifikationer",
+      "push": "Push Notifikationer",
+      "email": "Email Notifikationer",
+      "enabled": "Aktiveret",
+      "disabled": "Deaktiveret",
+      "configure-email": "Konfigurer email præferencer",
+      "coming-soon": "Kommer snart",
+      "email-coming-soon": "Email notifikationsindstillinger vil være tilgængelige snart"
+    },
+    "health-data": {
+      "title": "Sundhed & Data",
+      "access": "Sundhedsdata Adgang",
+      "export": "Data Eksport",
+      "export-value": "Eksporter dine data",
+      "privacy": "Privatlivsindstillinger",
+      "privacy-value": "Administrer data privatliv",
+      "coming-soon": "Kommer snart",
+      "export-coming-soon": "Data eksport funktion vil være tilgængelig snart",
+      "privacy-coming-soon": "Privatlivsindstillinger vil være tilgængelige snart"
+    },
+    "security": {
+      "title": "Sikkerhed & Kryptering",
+      "link-device": "Link Enhed (Kryptering)",
+      "link-device-value": "Åbn linking dialog",
+      "link-device-title": "Link Denne Enhed"
+    },
+    "support": {
+      "title": "Support & Information",
+      "contact": "Kontakt Support",
+      "contact-value": "Få hjælp og support",
+      "app-info": "App Information",
+      "app-info-value": "Version og build detaljer",
+      "user-id": "Bruger ID",
+      "user-id-fallback": "Ikke tilgængelig",
+      "app-version": "App Version",
+      "version-unknown": "Ukendt",
+      "support-subject": "Support Forespørgsel",
+      "support-body-prefix": "Beskriv dit problem her..."
+    },
+    "development": {
+      "title": "Udviklingsværktøjer",
+      "test-error": "Test Fejlrapportering",
+      "test-sentry": "Test Sentry integration"
+    },
+    "alerts": {
+      "app-info-title": "App Information",
+      "health-data-title": "Sundhedsdata"
+    }
   }
 }
