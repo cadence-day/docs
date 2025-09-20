@@ -34,11 +34,12 @@ function TabLabel({
         style={{
           fontSize: 10,
           textTransform: "uppercase",
-          letterSpacing: 1,
+          letterSpacing: 1.2,
           color: COLORS.light.text,
           textAlign: "center",
           textDecorationLine: focused ? "underline" : "none",
-          fontWeight: focused ? "600" : "400",
+          fontWeight: focused ? "700" : "400",
+          verticalAlign: "middle",
         }}
       >
         {label}
@@ -63,7 +64,9 @@ export default function TabLayout() {
     const isHomeView =
       currentView === "index" ||
       segments.length === 1 ||
-      (segments.length === 2 && segments[0] === "(home)" && !segments[1]);
+      (segments.length === 2 &&
+        segments[0] === "(home)" &&
+        !segments.slice(1)[0]);
 
     // Update the current view in the store
     setCurrentView(currentView);
@@ -155,6 +158,7 @@ export default function TabLayout() {
               alignItems: "center",
               alignSelf: "stretch",
               alignContent: "center",
+              marginTop: 12,
             },
           }}
         >
@@ -190,7 +194,7 @@ export default function TabLayout() {
                 <TabLabel
                   focused={focused}
                   color={color}
-                  label={t("profile")}
+                  label={t("profile.title")}
                 />
               ),
             }}

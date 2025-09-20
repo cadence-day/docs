@@ -10,6 +10,8 @@ import { Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
+import { ActionSheetIOS, Alert, Platform } from "react-native";
+import { hasNotesOrStates } from "../utils";
 import usePendingTimeslicesStore from "./usePendingTimeslicesStore";
 /**
  * Custom hook to handle timeline actions (create, update, delete timeslices)
@@ -51,6 +53,8 @@ export const useTimelineActions = (opts?: {
     opts?.addPendingTimeslice ??
     usePendingTimeslicesStore((s) => s.addPendingTimeslice);
 
+  const addPendingUpdate = usePendingTimeslicesStore((s) => s.addPendingUpdate);
+
   const { t } = useI18n();
   const { showWarning } = useToast();
   const handleTimeslicePress = useCallback(
@@ -59,14 +63,22 @@ export const useTimelineActions = (opts?: {
 
       const isEmpty = timeslice.id == null;
 
-      // If no activity is selected, add empty timeslice to pending and open activity dialog
+      // If no activity is selected, add timeslice to appropriate pending list and open activity dialog
       if (!selectedActivityId) {
-        // Only add empty timeslices to pending list
         if (isEmpty) {
+          // Add empty timeslices to pending creation list
           addPendingTimeslice(timeslice);
           GlobalErrorHandler.logDebug(
             "Added empty timeslice to pending list",
             "PENDING_TIMESLICE_ADDITION",
+            { timeslice }
+          );
+        } else {
+          // Add existing timeslices to pending update list
+          addPendingUpdate(timeslice);
+          GlobalErrorHandler.logDebug(
+            "Added existing timeslice to pending updates list",
+            "PENDING_TIMESLICE_UPDATE",
             { timeslice }
           );
         }
@@ -118,12 +130,15 @@ export const useTimelineActions = (opts?: {
             );
           }
 
-          // Bring the dialog to front
+          // Don't bring activity legend dialogs to front - they should stay in the background
+          // Only expand them if collapsed
           try {
-            bringToFront(activityDialog.id);
+            if (activityDialog.collapsed) {
+              toggleCollapse(activityDialog.id);
+            }
           } catch (err) {
             GlobalErrorHandler.logWarning(
-              "bringToFront failed",
+              "toggleCollapse failed",
               "TIMELINE_DIALOGS",
               { id: activityDialog.id, error: err }
             );
@@ -222,22 +237,63 @@ export const useTimelineActions = (opts?: {
         return;
       }
 
-      try {
-        await deleteTimesliceInStore(timeslice.id ?? "");
-        GlobalErrorHandler.logDebug(
-          "Timeslice deleted successfully",
-          "DYNAMIC_TIMESLICE_DELETE",
-          { timesliceId: timeslice.id }
+      // Check if timeslice has notes or states attached
+      const hasAttachments = hasNotesOrStates(timeslice);
+
+      // Direct deletion handler
+      const performDelete = async () => {
+        try {
+          await deleteTimesliceInStore(timeslice.id ?? "");
+          GlobalErrorHandler.logDebug(
+            "Timeslice deleted successfully",
+            "DYNAMIC_TIMESLICE_DELETE",
+            { timesliceId: timeslice.id }
+          );
+        } catch (error) {
+          GlobalErrorHandler.logError(
+            error as Error,
+            "DYNAMIC_TIMESLICE_DELETE",
+            { timesliceId: timeslice.id }
+          );
+        }
+      };
+
+      // If no attachments, delete directly
+      if (!hasAttachments) {
+        await performDelete();
+        return;
+      }
+
+      // Show confirmation dialog for timeslices with notes or states
+      const deleteMessage = t("delete-timeslice-with-data-warning");
+
+      if (Platform.OS === "ios") {
+        ActionSheetIOS.showActionSheetWithOptions(
+          {
+            options: [t("cancel"), t("delete")],
+            destructiveButtonIndex: 1,
+            cancelButtonIndex: 0,
+            message: deleteMessage,
+          },
+          (buttonIndex) => {
+            if (buttonIndex === 1) {
+              void performDelete();
+            }
+          }
         );
-      } catch (error) {
-        GlobalErrorHandler.logError(
-          error as Error,
-          "DYNAMIC_TIMESLICE_DELETE",
-          { timesliceId: timeslice.id }
-        );
+      } else {
+        // Android fallback
+        Alert.alert(t("confirm"), deleteMessage, [
+          { text: t("cancel"), style: "cancel" },
+          {
+            text: t("delete"),
+            style: "destructive",
+            onPress: () => void performDelete(),
+          },
+        ]);
       }
     },
-    [deleteTimesliceInStore]
+    [deleteTimesliceInStore, t]
   );
 
   return {

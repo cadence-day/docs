@@ -15,6 +15,7 @@ interface ActivityBoxProps {
   boxWidth?: number | `${number}%`;
   showTitle?: boolean;
   marginBottom?: number;
+  showHighlight?: boolean; // Optional prop to indicate if the box is selected
 }
 
 export const ActivityBox: React.FC<ActivityBoxProps> = ({
@@ -22,6 +23,7 @@ export const ActivityBox: React.FC<ActivityBoxProps> = ({
   onPress,
   onLongPress,
   style,
+  showHighlight = true,
   boxHeight = 29,
   boxWidth = "100%",
   showTitle = true,
@@ -30,7 +32,7 @@ export const ActivityBox: React.FC<ActivityBoxProps> = ({
   const selectedActivityId = useSelectionStore(
     (state) => state.selectedActivityId
   );
-  const isSelected = selectedActivityId === activity.id;
+  const isSelected = showHighlight ? selectedActivityId === activity.id : false;
 
   return (
     <TouchableOpacity

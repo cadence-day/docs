@@ -183,7 +183,6 @@ export async function getAllActivities(): Promise<Activity[]> {
       const { data, error } = await supabaseClient
         .from("activities")
         .select("*");
-      console.log("Fetched all activities:", data);
       return { data: data ?? [], error };
     });
 

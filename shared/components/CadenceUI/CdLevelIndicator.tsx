@@ -33,7 +33,7 @@ export const CdLevelIndicator: React.FC<CdLevelIndicatorProps> = ({
 }) => {
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.labelText}>{label}</Text>
 
       <View style={styles.indicatorSection}>
         {/* First row: Circles and lines */}
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
   },
-  label: {
+  labelText: {
     color: "#bbb",
     fontSize: 10,
     fontWeight: "400",
@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     width: 60, // Fixed width for label
     marginRight: 18,
     flexShrink: 0, // Prevent label from shrinking
+    textTransform: "uppercase",
   },
   indicatorSection: {
     flex: 1,
@@ -149,5 +150,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textAlign: "center",
     flexShrink: 0, // Prevent text from shrinking
+    color: "#fff",
   },
 });

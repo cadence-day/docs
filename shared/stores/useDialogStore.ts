@@ -71,12 +71,19 @@ const useDialogStore = create<DialogStore>(
       set(() => ({ dialogs: preserved }));
 
       const id = spec.id ?? makeId();
+
+      // Activity legend dialogs should always have a low z-index to stay in the background
+      const zIndex =
+        spec.type === "activity-legend" || spec.type === "activity"
+          ? 1 // Always keep activity legend in the background
+          : Object.keys(get().dialogs).length + 10; // Other dialogs start at higher z-index
+
       const next: DialogSpec = {
         id,
         type: spec.type,
         props: spec.props ?? {},
         collapsed: spec.collapsed ?? false,
-        zIndex: Object.keys(get().dialogs).length + 1,
+        zIndex,
         position: spec.position ?? "dock",
         viewSpecific: spec.viewSpecific,
       };
@@ -125,12 +132,18 @@ const useDialogStore = create<DialogStore>(
 
     bringToFront: (id: DialogId) =>
       set((state: DialogStore) => {
+        const d = state.dialogs[id];
+        if (!d) return {} as any;
+
+        // Never bring activity legend dialogs to front - keep them in the background
+        if (d.type === "activity-legend" || d.type === "activity") {
+          return {} as any; // No state change
+        }
+
         const max = Math.max(
           0,
           ...Object.values(state.dialogs).map((d) => d?.zIndex ?? 0)
         );
-        const d = state.dialogs[id];
-        if (!d) return {} as any;
         return {
           dialogs: { ...state.dialogs, [id]: { ...d, zIndex: max + 1 } },
         };

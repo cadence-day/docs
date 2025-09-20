@@ -10,10 +10,13 @@ type Props = {
 
 const ActivityLegendDialog: React.FC<Props> = ({
   _dialogId,
-  isPickingMode,
+  isPickingMode: initialPickingMode,
 }) => {
   const { t } = useI18n();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isPickingMode, setIsPickingMode] = useState(
+    initialPickingMode || false
+  );
 
   const handleActivityLongPress = useCallback(() => {
     // Switch to edit mode when any activity is long pressed
@@ -24,6 +27,16 @@ const ActivityLegendDialog: React.FC<Props> = ({
     // Switch back to view mode
     setIsEditMode(false);
   }, []);
+
+  const handleExitPickingMode = useCallback(() => {
+    // Switch back to normal mode
+    setIsPickingMode(false);
+  }, []);
+
+  // Update internal picking mode state when prop changes
+  useEffect(() => {
+    setIsPickingMode(initialPickingMode || false);
+  }, [initialPickingMode]);
 
   const openEdit = useCallback(
     (activity: any) => {
@@ -65,14 +78,29 @@ const ActivityLegendDialog: React.FC<Props> = ({
             ? t("pick-activity-first")
             : t("activity.legend.activities"),
         // Do not show edit when in picking mode
-        rightActionElement: isEditMode || isPickingMode ? undefined : t("edit"),
-        onRightAction: isEditMode || isPickingMode ? undefined : openManage,
+        rightActionElement: isEditMode
+          ? undefined
+          : isPickingMode
+            ? t("common.done")
+            : t("edit"),
+        onRightAction: isEditMode
+          ? undefined
+          : isPickingMode
+            ? handleExitPickingMode
+            : openManage,
         leftActionElement: isEditMode ? t("common.done") : undefined,
         onLeftAction: isEditMode ? handleExitEditMode : undefined,
       },
       height: isPickingMode ? 50 : isEditMode ? 85 : 28,
     });
-  }, [_dialogId, isPickingMode, isEditMode, t, handleExitEditMode]);
+  }, [
+    _dialogId,
+    isPickingMode,
+    isEditMode,
+    t,
+    handleExitEditMode,
+    handleExitPickingMode,
+  ]);
 
   return (
     <Activities

@@ -1,3 +1,5 @@
+import { Timeslice } from "@/shared/types/models";
+
 export const getContrastColor = (backgroundColor: string): string => {
   // Handle null, undefined, or empty string
   if (!backgroundColor) {
@@ -45,4 +47,13 @@ export const getContrastColor = (backgroundColor: string): string => {
 
   // Return white for dark backgrounds, black for light backgrounds
   return luminance > 0.5 ? "#000000" : "#FFFFFF";
+};
+
+/**
+ * Check if a timeslice has notes or states attached to it
+ */
+export const hasNotesOrStates = (timeslice: Timeslice): boolean => {
+  const hasNotes = timeslice.note_ids && timeslice.note_ids.length > 0;
+  const hasState = timeslice.state_id !== null;
+  return !!(hasNotes || hasState);
 };

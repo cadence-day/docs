@@ -47,8 +47,6 @@ const CategoryPicker = React.memo<{
   onToggle: () => void;
   showPicker: boolean;
   disabled?: boolean;
-  fieldTouched: boolean;
-  error: string | null;
   t: (key: string) => string;
 }>(
   ({
@@ -57,8 +55,6 @@ const CategoryPicker = React.memo<{
     onToggle,
     showPicker,
     disabled = false,
-    fieldTouched,
-    error,
     t,
   }) => {
     const categories = useActivityCategoriesStore((state) => state.categories);
@@ -97,9 +93,7 @@ const CategoryPicker = React.memo<{
 
     return (
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>
-          {t("category")} <Text style={styles.required}>*</Text>
-        </Text>
+        <Text style={styles.label}>{t("category")}</Text>
 
         <TouchableOpacity
           style={[styles.inputContainer, styles.categoryInputContainer]}
@@ -132,41 +126,6 @@ const CategoryPicker = React.memo<{
               : t("select-a-category")}
           </Text>
         </TouchableOpacity>
-
-        {showPicker && !disabled && (
-          <View style={[styles.pickerContainer, styles.pickerContainerFull]}>
-            <FlatList
-              data={categories}
-              keyExtractor={(item) => item.id || ""}
-              renderItem={({ item }) => (
-                <Pressable
-                  style={styles.categoryTile}
-                  onPress={() => {
-                    onCategorySelect(item.id || null);
-                    onToggle();
-                  }}
-                >
-                  <View
-                    style={[
-                      styles.categoryTileSwatch,
-                      {
-                        backgroundColor: item.color || ACTIVITY_THEME.GRAY_DARK,
-                      },
-                    ]}
-                  />
-                  <Text style={styles.categoryTileText}>
-                    {getCategoryDisplayName(item.key ?? item.id ?? "")}
-                  </Text>
-                </Pressable>
-              )}
-              numColumns={2}
-              columnWrapperStyle={styles.categoryRow}
-              scrollEnabled={false}
-            />
-          </View>
-        )}
-
-        {fieldTouched && error && <Text style={styles.errorText}>{error}</Text>}
       </View>
     );
   }
@@ -304,7 +263,7 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
     const [showParentPicker, setShowParentPicker] = useState(false);
 
     // Validation hook - destructure stable callbacks to avoid unstable object identity
-    const validation = useActivityValidation(name, selectedCategoryId);
+    const validation = useActivityValidation(name);
     const {
       resetValidation,
       validateField,
@@ -380,7 +339,6 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
 
     const handleCategoryToggle = useCallback(() => {
       // Open full-screen category dialog using the centralized CdDialog registry
-      validateField("category", selectedCategoryId);
 
       // Mark current dialog as persistent if we have a dialog ID
       if (_dialogId) {
@@ -394,7 +352,6 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
         props: {
           onConfirm: (category: any) => {
             setSelectedCategoryId(category?.id ?? null);
-            validateField("category", category?.id ?? null);
 
             // Remove persistent flag from parent dialog after category selection
             if (_dialogId) {
@@ -406,7 +363,7 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
           activity: getActivityForDialogs(),
         },
       });
-    }, [validateField, selectedCategoryId, _dialogId]);
+    }, [_dialogId]);
 
     // Helper to create an Activity-like object to pass into picker dialogs
     const getActivityForDialogs = useCallback(() => {
@@ -418,13 +375,9 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
       } as Partial<Activity>;
     }, [activity, initialValues.id, initialValues.name, name, color]);
 
-    const handleCategorySelect = useCallback(
-      (categoryId: string | null) => {
-        setSelectedCategoryId(categoryId);
-        validateField("category", categoryId);
-      },
-      [validateField]
-    );
+    const handleCategorySelect = useCallback((categoryId: string | null) => {
+      setSelectedCategoryId(categoryId);
+    }, []);
 
     const handleParentToggle = useCallback(() => {
       setShowParentPicker((prev) => !prev);
@@ -519,8 +472,6 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
           onToggle={handleCategoryToggle}
           showPicker={showCategoryPicker}
           disabled={isDisabled}
-          fieldTouched={fieldTouched.category}
-          error={errors.category}
           t={t}
         />
 

@@ -15,6 +15,7 @@ import usePendingTimeslicesStore from "./usePendingTimeslicesStore";
  */
 export const useAutomaticTimesliceCreation = (opts?: {
   insertTimeslices?: (timeslices: Partial<any>[]) => Promise<any[]>;
+  updateTimeslice?: (timeslice: any) => Promise<any>;
 }) => {
   const selectedActivityId = useSelectionStore(
     (state) => state.selectedActivityId
@@ -22,26 +23,38 @@ export const useAutomaticTimesliceCreation = (opts?: {
   const pendingTimeslices = usePendingTimeslicesStore(
     (state) => state.pendingTimeslices
   );
+  const pendingUpdates = usePendingTimeslicesStore(
+    (state) => state.pendingUpdates
+  );
   const clearPendingTimeslices = usePendingTimeslicesStore(
     (state) => state.clearPendingTimeslices
+  );
+  const clearPendingUpdates = usePendingTimeslicesStore(
+    (state) => state.clearPendingUpdates
   );
   const insertTimeslicesInStore =
     opts?.insertTimeslices ??
     useTimeslicesStore((state) => state.insertTimeslices);
+  const updateTimesliceInStore =
+    opts?.updateTimeslice ??
+    useTimeslicesStore((state) => state.updateTimeslice);
   const { showSuccess, showError } = useToast();
   const { t } = useI18n();
 
   useEffect(() => {
-    const createPendingTimeslices = async () => {
-      // Only proceed if we have both a selected activity and pending timeslices
-      if (
-        !selectedActivityId ||
-        !pendingTimeslices ||
-        pendingTimeslices.length === 0
-      ) {
-        return;
+    const processPendingTimeslices = async () => {
+      // Process pending creations
+      if (selectedActivityId && pendingTimeslices?.length > 0) {
+        await createPendingTimeslices();
       }
 
+      // Process pending updates
+      if (selectedActivityId && pendingUpdates?.length > 0) {
+        await updatePendingTimeslices();
+      }
+    };
+
+    const createPendingTimeslices = async () => {
       try {
         // Convert pending timeslices to new timeslices with the selected activity
         const newTimeslices = pendingTimeslices.map((pendingTimeslice) => ({
@@ -100,32 +113,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
 
           showSuccess(message);
 
-          // Close any activity legend dialog that is in picking mode
-          try {
-            const dialogs = useDialogStore.getState().dialogs;
-            const pickingDialog = Object.entries(dialogs).find(
-              ([_, dialog]) =>
-                dialog.type === "activity-legend" &&
-                dialog.props?.isPickingMode === true
-            );
-
-            if (pickingDialog) {
-              const [dialogId] = pickingDialog;
-              useDialogStore.getState().closeDialog(dialogId);
-
-              GlobalErrorHandler.logDebug(
-                "Closed picking mode dialog after successful timeslice creation",
-                "AUTOMATIC_TIMESLICE_CREATION:CLOSE_DIALOG",
-                { dialogId, createdCount: createdTimeslices.length }
-              );
-            }
-          } catch (err) {
-            GlobalErrorHandler.logWarning(
-              "Failed to close picking mode dialog",
-              "AUTOMATIC_TIMESLICE_CREATION:CLOSE_DIALOG",
-              { error: err }
-            );
-          }
+          await resetPickingModeDialog(createdTimeslices.length);
 
           GlobalErrorHandler.logDebug(
             "Successfully created timeslices from pending selections",
@@ -161,12 +149,147 @@ export const useAutomaticTimesliceCreation = (opts?: {
       }
     };
 
-    createPendingTimeslices();
+    const updatePendingTimeslices = async () => {
+      try {
+        // Update existing timeslices with the selected activity
+        GlobalErrorHandler.logDebug(
+          "Updating timeslices from pending updates",
+          "AUTOMATIC_TIMESLICE_UPDATE",
+          {
+            count: pendingUpdates.length,
+            activityId: selectedActivityId,
+            timeslices: pendingUpdates,
+          }
+        );
+
+        let successCount = 0;
+        const errors: any[] = [];
+
+        // Update each timeslice individually
+        for (const pendingUpdate of pendingUpdates) {
+          try {
+            const updatedTimeslice = {
+              ...pendingUpdate,
+              activity_id: selectedActivityId,
+            };
+
+            await updateTimesliceInStore(updatedTimeslice);
+            successCount++;
+          } catch (err) {
+            errors.push({ timeslice: pendingUpdate, error: err });
+            GlobalErrorHandler.logError(
+              err as Error,
+              "AUTOMATIC_TIMESLICE_UPDATE:SINGLE",
+              {
+                activityId: selectedActivityId,
+                timeslice: pendingUpdate,
+              }
+            );
+          }
+        }
+
+        if (successCount > 0) {
+          // Clear pending updates since they've been processed
+          try {
+            clearPendingUpdates();
+          } catch (err) {
+            GlobalErrorHandler.logWarning(
+              "Failed to clear pending updates",
+              "AUTOMATIC_TIMESLICE_UPDATE:CLEAR_PENDING",
+              { error: err }
+            );
+          }
+
+          // Show success message
+          const message =
+            successCount === 1
+              ? t("timeslice-updated-successfully")
+              : t("timeslices-updated-successfully", {
+                  count: successCount,
+                });
+
+          showSuccess(message);
+
+          await resetPickingModeDialog(successCount);
+
+          GlobalErrorHandler.logDebug(
+            "Successfully updated timeslices from pending updates",
+            "AUTOMATIC_TIMESLICE_UPDATE",
+            {
+              updatedCount: successCount,
+              activityId: selectedActivityId,
+            }
+          );
+        }
+
+        if (errors.length > 0) {
+          GlobalErrorHandler.logError(
+            new Error(`Failed to update ${errors.length} timeslices`),
+            "AUTOMATIC_TIMESLICE_UPDATE",
+            {
+              errorCount: errors.length,
+              activityId: selectedActivityId,
+              errors,
+            }
+          );
+
+          showError(t("failed-to-update-some-timeslices"));
+        }
+      } catch (error) {
+        GlobalErrorHandler.logError(
+          error as Error,
+          "AUTOMATIC_TIMESLICE_UPDATE",
+          {
+            pendingCount: pendingUpdates?.length ?? 0,
+            activityId: selectedActivityId,
+          }
+        );
+
+        showError(t("failed-to-update-timeslices"));
+      }
+    };
+
+    const resetPickingModeDialog = async (processedCount: number) => {
+      // Reset picking mode on the activity legend dialog instead of closing it
+      try {
+        const dialogs = useDialogStore.getState().dialogs;
+        const pickingDialog = Object.entries(dialogs).find(
+          ([_, dialog]) =>
+            dialog.type === "activity-legend" &&
+            dialog.props?.isPickingMode === true
+        );
+
+        if (pickingDialog) {
+          const [dialogId] = pickingDialog;
+          // Reset picking mode to exit picking state and return to normal activity legend
+          useDialogStore.getState().setDialogProps(dialogId, {
+            isPickingMode: false,
+          });
+
+          GlobalErrorHandler.logDebug(
+            "Reset picking mode dialog after successful timeslice processing",
+            "AUTOMATIC_TIMESLICE_PROCESSING:RESET_PICKING_MODE",
+            { dialogId, processedCount }
+          );
+        }
+      } catch (err) {
+        GlobalErrorHandler.logWarning(
+          "Failed to reset picking mode dialog",
+          "AUTOMATIC_TIMESLICE_PROCESSING:RESET_PICKING_MODE",
+          { error: err }
+        );
+      }
+    };
+
+    processPendingTimeslices();
   }, [
     selectedActivityId,
     pendingTimeslices.length, // Use length to trigger when items are added/removed
+    pendingUpdates.length, // Use length to trigger when items are added/removed
     clearPendingTimeslices,
+    clearPendingUpdates,
     insertTimeslicesInStore,
+    updateTimesliceInStore,
     showSuccess,
     showError,
     t,

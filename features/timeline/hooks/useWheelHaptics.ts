@@ -6,12 +6,15 @@ import { useCallback, useEffect, useRef } from "react";
  * Hook that provides handlers for wheel-like haptics on horizontal scroll
  * Returns handlers that can be attached to a ScrollView: onScroll,
  * onScrollEndDrag, onMomentumScrollBegin, onMomentumScrollEnd.
+ *
+ * Enhanced: haptic intensity, pulse count and spacing fade as velocity decays
  */
 export const useWheelHaptics = () => {
   const lastOffsetXRef = useRef(0);
   const lastHapticTimeRef = useRef(0);
   const lastTimeRef = useRef<number>(Date.now());
   const momentumIntervalRef = useRef<number | null>(null);
+  const momentumTimeoutsRef = useRef<number[]>([]);
 
   const safeImpact = useCallback((style: Haptics.ImpactFeedbackStyle) => {
     Haptics.impactAsync(style).catch((err) => {
@@ -22,6 +25,52 @@ export const useWheelHaptics = () => {
       );
     });
   }, []);
+
+  const clearMomentumTimeouts = useCallback(() => {
+    try {
+      momentumTimeoutsRef.current.forEach((id) =>
+        clearTimeout(id as unknown as number)
+      );
+      momentumTimeoutsRef.current = [];
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const velocityToStyle = useCallback((absV: number) => {
+    if (absV < 350) return Haptics.ImpactFeedbackStyle.Light;
+    if (absV < 900) return Haptics.ImpactFeedbackStyle.Medium;
+    return Haptics.ImpactFeedbackStyle.Heavy;
+  }, []);
+
+  const velocityToPulses = useCallback((absV: number) => {
+    // More velocity => more pulses, up to 4
+    return Math.min(4, Math.max(1, Math.floor(absV / 500)));
+  }, []);
+
+  const velocityToSpacing = useCallback((absV: number) => {
+    // Higher velocity => tighter spacing (smaller ms)
+    // Range roughly between 20ms (very fast) and 200ms (very slow)
+    const computed = 200 - Math.min(180, Math.floor(absV / 6));
+    return Math.max(20, computed);
+  }, []);
+
+  const triggerPulses = useCallback(
+    (pulses: number, style: Haptics.ImpactFeedbackStyle, spacingMs: number) => {
+      try {
+        // Schedule pulses spaced out so they feel like fading when velocity reduces
+        for (let i = 0; i < pulses; i++) {
+          const timeoutId = setTimeout(() => {
+            safeImpact(style);
+          }, i * spacingMs) as unknown as number;
+          momentumTimeoutsRef.current.push(timeoutId);
+        }
+      } catch (err) {
+        // ignore
+      }
+    },
+    [safeImpact]
+  );
 
   const handleScroll = useCallback(
     (event: any) => {
@@ -35,19 +84,19 @@ export const useWheelHaptics = () => {
         lastTimeRef.current = now;
 
         const absDelta = Math.abs(delta);
-        const MIN_DELTA = 6; // pixels
-        const MIN_INTERVAL_MS = 32; // ms between haptic pulses
+        const MIN_DELTA = 2; // pixels
+        const MIN_INTERVAL_MS = 40; // ms between haptic pulses
 
         if (
           absDelta >= MIN_DELTA &&
           now - lastHapticTimeRef.current > MIN_INTERVAL_MS
         ) {
-          const pulses = Math.min(
-            3,
-            Math.max(1, Math.floor(Math.abs(velocityPxPerSec) / 700))
-          );
-          for (let i = 0; i < pulses; i++)
-            safeImpact(Haptics.ImpactFeedbackStyle.Light);
+          const absV = Math.abs(velocityPxPerSec);
+          const pulses = velocityToPulses(absV);
+          const style = velocityToStyle(absV);
+          const spacing = velocityToSpacing(absV);
+          // Fire pulses in a spaced manner to make intensity feel like a fade as speed changes
+          triggerPulses(pulses, style, spacing);
           lastHapticTimeRef.current = now;
         }
       } catch (err) {
@@ -58,16 +107,18 @@ export const useWheelHaptics = () => {
         );
       }
     },
-    [safeImpact]
+    [triggerPulses, velocityToPulses, velocityToSpacing, velocityToStyle]
   );
 
   const startMomentumHaptics = useCallback(
     (initialVelocityPxPerSec: number) => {
       try {
+        // clear existing interval & timeouts
         if (momentumIntervalRef.current) {
           clearInterval(momentumIntervalRef.current as unknown as number);
           momentumIntervalRef.current = null;
         }
+        clearMomentumTimeouts();
 
         let v = initialVelocityPxPerSec;
         const DECAY = 0.85;
@@ -78,16 +129,25 @@ export const useWheelHaptics = () => {
             v = v * DECAY;
             const absV = Math.abs(v);
             if (absV < 150) {
+              // fade out: schedule a very light final pulse and stop
+              if (absV > 40) {
+                const style = velocityToStyle(absV);
+                const pulses = 1;
+                const spacing = velocityToSpacing(absV);
+                triggerPulses(pulses, style, spacing);
+              }
               if (momentumIntervalRef.current) {
                 clearInterval(momentumIntervalRef.current as unknown as number);
                 momentumIntervalRef.current = null;
               }
+              clearMomentumTimeouts();
               return;
             }
 
-            const pulses = Math.min(4, Math.max(1, Math.floor(absV / 600)));
-            for (let i = 0; i < pulses; i++)
-              safeImpact(Haptics.ImpactFeedbackStyle.Light);
+            const pulses = velocityToPulses(absV);
+            const style = velocityToStyle(absV);
+            const spacing = velocityToSpacing(absV);
+            triggerPulses(pulses, style, spacing);
           } catch (err) {
             // ignore internal errors
           }
@@ -100,7 +160,13 @@ export const useWheelHaptics = () => {
         );
       }
     },
-    [safeImpact]
+    [
+      clearMomentumTimeouts,
+      triggerPulses,
+      velocityToPulses,
+      velocityToSpacing,
+      velocityToStyle,
+    ]
   );
 
   const stopMomentumHaptics = useCallback(() => {
@@ -109,10 +175,11 @@ export const useWheelHaptics = () => {
         clearInterval(momentumIntervalRef.current as unknown as number);
         momentumIntervalRef.current = null;
       }
+      clearMomentumTimeouts();
     } catch (err) {
       // ignore
     }
-  }, []);
+  }, [clearMomentumTimeouts]);
 
   const handleScrollEndDrag = useCallback(
     (event: any) => {
@@ -161,11 +228,12 @@ export const useWheelHaptics = () => {
           clearInterval(momentumIntervalRef.current as unknown as number);
           momentumIntervalRef.current = null;
         }
+        clearMomentumTimeouts();
       } catch (err) {
         // ignore
       }
     };
-  }, []);
+  }, [clearMomentumTimeouts]);
 
   return {
     handleScroll,
