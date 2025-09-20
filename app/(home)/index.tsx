@@ -1,3 +1,4 @@
+import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
@@ -92,6 +93,7 @@ export default function Today() {
               <>
                 {/* Tappable date: opens calendar modal */}
                 <TouchableOpacity
+                  hitSlop={HIT_SLOP_10}
                   onPress={() => {
                     const idHolder: { id?: string } = {};
                     const id = useDialogStore.getState().openDialog({

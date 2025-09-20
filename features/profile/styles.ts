@@ -37,6 +37,18 @@ export const profileStyles = StyleSheet.create({
     height: "100%",
   },
 
+  uploadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 60,
+  },
+
   editPhotoButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -339,5 +351,14 @@ export const profileStyles = StyleSheet.create({
     paddingVertical: 16,
     borderTopWidth: 1,
     borderTopColor: "#E5E5E5",
+  },
+
+  // Error text for form validation
+  errorText: {
+    fontSize: 12,
+    color: COLORS.error,
+    marginTop: 4,
+    marginBottom: 8,
+    paddingHorizontal: 4,
   },
 });

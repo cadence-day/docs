@@ -4,22 +4,35 @@ import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { useAuth, useUser } from "@clerk/clerk-expo";
-import { DateTimePicker, Host } from "@expo/ui/swift-ui";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
-import { Link, useRouter } from "expo-router";
+import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
+  ActionSheetIOS,
   Alert,
   Image,
+  Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { ProfileImageService } from "../services/ProfileImageService";
 import { useProfileStore } from "../stores/useProfileStore";
 import { profileStyles } from "../styles";
+import {
+  formatTimeInput,
+  formatTimeInputLive,
+  getTimeValidationError,
+} from "../utils";
+
+type ExpoConfig = {
+  ios?: { buildNumber?: string };
+  android?: { versionCode?: string | number };
+  version?: string;
+};
 
 export const ProfileScreen: React.FC = () => {
   const { user } = useUser();
@@ -30,69 +43,254 @@ export const ProfileScreen: React.FC = () => {
   const { profileData, settings, updateProfileData, updateSettings } =
     useProfileStore();
 
-  // Time picker state
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [timePickerMode, setTimePickerMode] = useState<"wake" | "sleep">(
-    "wake"
-  );
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  // Time input state for validation
+  const [timeInputErrors, setTimeInputErrors] = useState<{
+    wake?: string;
+    sleep?: string;
+  }>({});
+
+  // Profile image upload state
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const appVersion = Constants.expoConfig?.version || "Unknown";
+  const expoConfig = Constants.expoConfig as ExpoConfig | undefined;
   const buildNumber =
-    // @ts-ignore - optional
-    (Constants.expoConfig as any)?.ios?.buildNumber ||
-    // @ts-ignore - optional
-    (Constants.expoConfig as any)?.android?.versionCode ||
+    expoConfig?.ios?.buildNumber ||
+    expoConfig?.android?.versionCode?.toString() ||
     "Unknown";
 
-  // Helper function to convert time string to Date object
-  const timeStringToDate = (timeString: string): Date => {
-    const [hours, minutes] = timeString.split(":").map(Number);
-    const date = new Date();
-    date.setHours(hours);
-    date.setMinutes(minutes);
-    date.setSeconds(0);
-    date.setMilliseconds(0);
-    return date;
-  };
+  // Handle time input submission with validation
+  const handleTimeSubmit = (type: "wake" | "sleep", input: string) => {
+    const formattedTime = formatTimeInput(input);
 
-  // Helper function to convert Date object to time string with 30-minute rounding
-  const dateToTimeString = (date: Date): string => {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-
-    // Round to nearest 30 minutes
-    minutes = Math.round(minutes / 30) * 30;
-
-    // Handle minute overflow
-    if (minutes >= 60) {
-      minutes = 0;
-      hours = (hours + 1) % 24;
+    if (!formattedTime) {
+      const errorMessage = getTimeValidationError(input, type, t);
+      setTimeInputErrors((prev) => ({
+        ...prev,
+        [type]: errorMessage,
+      }));
+      return;
     }
 
-    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-  };
+    // Clear any existing errors
+    setTimeInputErrors((prev) => ({
+      ...prev,
+      [type]: undefined,
+    }));
 
-  const handleTimePress = (type: "wake" | "sleep") => {
-    const currentTime =
-      type === "wake" ? settings.wakeTime : settings.sleepTime;
-    setSelectedDate(timeStringToDate(currentTime));
-    setTimePickerMode(type);
-    setShowTimePicker(true);
-  };
-
-  // Handle date selection from Expo UI DateTimePicker
-  const handleDateSelected = (date: Date) => {
-    const timeString = dateToTimeString(date);
-
-    if (timePickerMode === "wake") {
-      updateSettings({ wakeTime: timeString });
+    // Save to settings store
+    if (type === "wake") {
+      updateSettings({ wakeTime: formattedTime });
     } else {
-      updateSettings({ sleepTime: timeString });
+      updateSettings({ sleepTime: formattedTime });
+    }
+  };
+
+  // Handle real-time time input formatting
+  const handleTimeChange = (type: "wake" | "sleep", input: string) => {
+    const formatted = formatTimeInputLive(input);
+
+    // Update the settings store immediately with the formatted input
+    if (type === "wake") {
+      updateSettings({ wakeTime: formatted });
+    } else {
+      updateSettings({ sleepTime: formatted });
     }
 
-    setSelectedDate(date);
-    setShowTimePicker(false);
+    // Clear errors when user starts typing again
+    if (timeInputErrors[type]) {
+      setTimeInputErrors((prev) => ({
+        ...prev,
+        [type]: undefined,
+      }));
+    }
+
+    return formatted;
+  };
+
+  const handleProfileImagePress = () => {
+    if (isUploadingImage) return;
+
+    const showImagePicker = async () => {
+      try {
+        setIsUploadingImage(true);
+
+        const result = await ProfileImageService.showImagePicker();
+
+        if (result && !result.canceled && result.assets?.[0]) {
+          const imageUri = result.assets[0].uri;
+
+          // Upload the image
+          const uploadResult = await ProfileImageService.uploadImage(imageUri);
+
+          if (uploadResult.success) {
+            // Update profile store with new avatar URL
+            updateProfileData({ avatarUrl: uploadResult.url });
+
+            // Haptic feedback for success
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+            Alert.alert(
+              t("profile.image-upload.success"),
+              t("profile.image-upload.success-message")
+            );
+          } else {
+            Alert.alert(t("profile.image-upload.error"), uploadResult.error);
+          }
+        }
+      } catch (error) {
+        console.log("Image picker error:", error);
+
+        // Check if it's a native module error
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        if (
+          errorMessage?.includes("Cannot find native module") ||
+          errorMessage?.includes("not available in this build")
+        ) {
+          Alert.alert(
+            t("profile.image-upload.error"),
+            "Image picker is not available in this development build. Please rebuild the app with the latest dependencies."
+          );
+        } else {
+          Alert.alert(
+            t("profile.image-upload.error"),
+            t("profile.image-upload.error-message")
+          );
+        }
+      } finally {
+        setIsUploadingImage(false);
+      }
+    };
+
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: [
+            t("common.cancel"),
+            t("profile.image-upload.take-photo"),
+            t("profile.image-upload.choose-from-library"),
+          ],
+          cancelButtonIndex: 0,
+        },
+        async (buttonIndex) => {
+          if (buttonIndex === 1) {
+            // Take photo
+            try {
+              setIsUploadingImage(true);
+              const result = await ProfileImageService.takePhoto();
+
+              if (result && !result.canceled && result.assets?.[0]) {
+                const imageUri = result.assets[0].uri;
+                const uploadResult =
+                  await ProfileImageService.uploadImage(imageUri);
+
+                if (uploadResult.success) {
+                  updateProfileData({ avatarUrl: uploadResult.url });
+                  Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Success
+                  );
+                  Alert.alert(
+                    t("profile.image-upload.success"),
+                    t("profile.image-upload.success-message")
+                  );
+                } else {
+                  Alert.alert(
+                    t("profile.image-upload.error"),
+                    uploadResult.error
+                  );
+                }
+              }
+            } catch (error) {
+              console.log("Camera error:", error);
+
+              const errorMessage =
+                error instanceof Error ? error.message : String(error);
+              if (
+                errorMessage?.includes("Cannot find native module") ||
+                errorMessage?.includes("not available in this build")
+              ) {
+                Alert.alert(
+                  t("profile.image-upload.error"),
+                  "Camera is not available in this development build. Please rebuild the app with the latest dependencies."
+                );
+              } else {
+                Alert.alert(
+                  t("profile.image-upload.error"),
+                  t("profile.image-upload.error-message")
+                );
+              }
+            } finally {
+              setIsUploadingImage(false);
+            }
+          } else if (buttonIndex === 2) {
+            // Choose from library
+            showImagePicker();
+          }
+        }
+      );
+    } else {
+      // For Android, show a simple alert for now
+      Alert.alert(t("profile.image-upload.select-option"), "", [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("profile.image-upload.take-photo"),
+          onPress: async () => {
+            try {
+              setIsUploadingImage(true);
+              const result = await ProfileImageService.takePhoto();
+
+              if (result && !result.canceled && result.assets?.[0]) {
+                const imageUri = result.assets[0].uri;
+                const uploadResult =
+                  await ProfileImageService.uploadImage(imageUri);
+
+                if (uploadResult.success) {
+                  updateProfileData({ avatarUrl: uploadResult.url });
+                  Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Success
+                  );
+                  Alert.alert(
+                    t("profile.image-upload.success"),
+                    t("profile.image-upload.success-message")
+                  );
+                } else {
+                  Alert.alert(
+                    t("profile.image-upload.error"),
+                    uploadResult.error
+                  );
+                }
+              }
+            } catch (error) {
+              console.log("Camera error:", error);
+
+              const errorMessage =
+                error instanceof Error ? error.message : String(error);
+              if (
+                errorMessage?.includes("Cannot find native module") ||
+                errorMessage?.includes("not available in this build")
+              ) {
+                Alert.alert(
+                  t("profile.image-upload.error"),
+                  "Camera is not available in this development build. Please rebuild the app with the latest dependencies."
+                );
+              } else {
+                Alert.alert(
+                  t("profile.image-upload.error"),
+                  t("profile.image-upload.error-message")
+                );
+              }
+            } finally {
+              setIsUploadingImage(false);
+            }
+          },
+        },
+        {
+          text: t("profile.image-upload.choose-from-library"),
+          onPress: showImagePicker,
+        },
+      ]);
+    }
   };
 
   const handleNotificationsPress = () => {
@@ -191,12 +389,17 @@ export const ProfileScreen: React.FC = () => {
         <TouchableOpacity
           style={profileStyles.profileImageContainer}
           activeOpacity={0.8}
+          onPress={handleProfileImagePress}
+          disabled={isUploadingImage}
         >
           <View style={profileStyles.profileImageInner}>
             {user?.imageUrl || profileData.avatarUrl ? (
               <Image
                 source={{ uri: user?.imageUrl || profileData.avatarUrl }}
-                style={profileStyles.profileImage}
+                style={[
+                  profileStyles.profileImage,
+                  isUploadingImage && { opacity: 0.5 },
+                ]}
               />
             ) : (
               <View
@@ -207,17 +410,29 @@ export const ProfileScreen: React.FC = () => {
                     justifyContent: "center",
                     alignItems: "center",
                   },
+                  isUploadingImage && { opacity: 0.5 },
                 ]}
               >
                 <Ionicons name="person" size={40} color={COLORS.textIcons} />
               </View>
             )}
+            {isUploadingImage && (
+              <View style={profileStyles.uploadingOverlay}>
+                <Ionicons name="cloud-upload" size={24} color={COLORS.white} />
+              </View>
+            )}
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={profileStyles.editPhotoButton}>
+        <TouchableOpacity
+          style={profileStyles.editPhotoButton}
+          onPress={handleProfileImagePress}
+          disabled={isUploadingImage}
+        >
           <Text style={profileStyles.editPhotoText}>
-            {t("profile.edit-photo")}
+            {isUploadingImage
+              ? t("profile.uploading")
+              : t("profile.edit-photo")}
           </Text>
         </TouchableOpacity>
       </View>
@@ -226,11 +441,13 @@ export const ProfileScreen: React.FC = () => {
       <View style={profileStyles.formSection}>
         <CdTextInputOneLine
           label={t("profile.name")}
-          value={profileData.name || user?.fullName || "Your Name"}
+          value={
+            profileData.name || user?.fullName || t("profile.fallbacks.name")
+          }
           onSubmit={(newName) => {
             updateProfileData({ name: newName });
           }}
-          placeholder="Enter your name"
+          placeholder={t("profile.placeholders.name")}
         />
 
         <CdTextInputOneLine
@@ -238,12 +455,12 @@ export const ProfileScreen: React.FC = () => {
           value={
             profileData.email ||
             user?.emailAddresses[0]?.emailAddress ||
-            "email@example.com"
+            t("profile.fallbacks.email")
           }
           onSubmit={(newEmail) => {
             updateProfileData({ email: newEmail });
           }}
-          placeholder="Enter your email"
+          placeholder={t("profile.placeholders.email")}
           keyboardType="email-address"
           autoCapitalize="none"
         />
@@ -259,7 +476,7 @@ export const ProfileScreen: React.FC = () => {
             onSubmit={(newPhone) => {
               updateProfileData({ phoneNumber: newPhone });
             }}
-            placeholder="Enter your phone number"
+            placeholder={t("profile.placeholders.phone")}
             keyboardType="phone-pad"
           />
         )}
@@ -277,16 +494,26 @@ export const ProfileScreen: React.FC = () => {
         <CdTextInputOneLine
           label={t("profile.wake-time")}
           value={settings.wakeTime}
-          isButton
-          onPress={() => handleTimePress("wake")}
+          onSubmit={(input) => handleTimeSubmit("wake", input)}
+          onChangeText={(input) => handleTimeChange("wake", input)}
+          placeholder={t("profile.placeholders.wake-time")}
+          keyboardType="numeric"
         />
+        {timeInputErrors.wake && (
+          <Text style={profileStyles.errorText}>{timeInputErrors.wake}</Text>
+        )}
 
         <CdTextInputOneLine
           label={t("profile.sleep-time")}
           value={settings.sleepTime}
-          isButton
-          onPress={() => handleTimePress("sleep")}
+          onSubmit={(input) => handleTimeSubmit("sleep", input)}
+          onChangeText={(input) => handleTimeChange("sleep", input)}
+          placeholder={t("profile.placeholders.sleep-time")}
+          keyboardType="numeric"
         />
+        {timeInputErrors.sleep && (
+          <Text style={profileStyles.errorText}>{timeInputErrors.sleep}</Text>
+        )}
 
         <CdTextInputOneLine
           label={t("profile.subscription")}
@@ -328,7 +555,9 @@ export const ProfileScreen: React.FC = () => {
 
       {/* Support Section */}
       <View style={profileStyles.settingsSection}>
-        <Text style={profileStyles.sectionTitle}>{t("profile.support")}</Text>
+        <Text style={profileStyles.sectionTitle}>
+          {t("profile.customer-support")}
+        </Text>
 
         <CdTextInputOneLine
           label={t("profile.customer-support")}
@@ -350,15 +579,9 @@ export const ProfileScreen: React.FC = () => {
 
         <CdTextInputOneLine
           label={t("profile.user-id")}
-          value={user?.id || "Unknown"}
+          value={user?.id || t("profile.fallbacks.user-id")}
           editable={false}
         />
-
-        <Link href="/(utils)/debug">
-          <Text style={{ color: "blue", textAlign: "center", padding: 10 }}>
-            Debug Screen
-          </Text>
-        </Link>
       </View>
 
       {/* Logout and Delete Account */}
@@ -367,8 +590,8 @@ export const ProfileScreen: React.FC = () => {
           title={t("profile.logout")}
           onPress={handleLogout}
           variant="outline"
-          style={{ marginBottom: 10, borderColor: "#OOO" }}
-          textStyle={{ color: "#OOO" }}
+          style={{ marginBottom: 10, borderColor: COLORS.textIcons }}
+          textStyle={{ color: COLORS.textIcons }}
         />
         <CdButton
           title={t("profile.delete-account")}
@@ -376,76 +599,8 @@ export const ProfileScreen: React.FC = () => {
           variant="destructive"
         />
       </View>
-
-      {/* Expo UI Time Picker */}
-      {showTimePicker && (
-        <View style={timePickerStyles.pickerOverlay}>
-          <View style={timePickerStyles.pickerContainer}>
-            <View style={timePickerStyles.pickerHeader}>
-              <TouchableOpacity
-                onPress={() => setShowTimePicker(false)}
-                style={timePickerStyles.pickerButton}
-              >
-                <Text style={timePickerStyles.pickerCancelText}>Cancel</Text>
-              </TouchableOpacity>
-              <Text style={timePickerStyles.pickerTitle}>
-                Set {timePickerMode === "wake" ? "Wake" : "Sleep"} Time
-              </Text>
-              <View style={timePickerStyles.pickerButton} />
-            </View>
-            <Host matchContents>
-              <DateTimePicker
-                onDateSelected={handleDateSelected}
-                displayedComponents="hourAndMinute"
-                initialDate={selectedDate.toISOString()}
-                variant="wheel"
-              />
-            </Host>
-          </View>
-        </View>
-      )}
     </ScrollView>
   );
 };
-
-// Time picker styles
-const timePickerStyles = StyleSheet.create({
-  pickerOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "flex-end",
-  },
-  pickerContainer: {
-    backgroundColor: COLORS.white,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    paddingBottom: 34, // Account for safe area
-  },
-  pickerHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E5E5",
-  },
-  pickerButton: {
-    minWidth: 60,
-  },
-  pickerCancelText: {
-    fontSize: 16,
-    color: COLORS.textIcons,
-  },
-  pickerTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: COLORS.light.text,
-  },
-});
 
 export default ProfileScreen;

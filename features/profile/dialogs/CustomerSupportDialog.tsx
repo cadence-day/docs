@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
-import * as Sentry from "@sentry/react-native";
-import useDialogStore from "@/shared/stores/useDialogStore";
 import useI18n from "@/shared/hooks/useI18n";
+import useDialogStore from "@/shared/stores/useDialogStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import * as Sentry from "@sentry/react-native";
+import * as Haptics from "expo-haptics";
+import React, { useState } from "react";
+import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { profileStyles } from "../styles";
 import { CustomerSupportDialogProps } from "../types";
 
@@ -33,42 +34,102 @@ export const CustomerSupportDialog: React.FC<
     setIsSubmitting(true);
 
     try {
-      // Create Sentry issue with support context
-      Sentry.withScope((scope) => {
+      // Generate a unique support ticket ID for tracking
+      const ticketId = `support_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      // Create comprehensive Sentry issue with enhanced context
+      const sentryEventId = Sentry.withScope((scope) => {
+        // Set user information
+        scope.setUser({
+          id: userId,
+          email: userEmail,
+        });
+
+        // Set tags for filtering and organization
         scope.setTag("support_request", true);
         scope.setTag("category", category);
-        scope.setContext("user_info", {
+        scope.setTag("ticket_id", ticketId);
+        scope.setTag("app_version", appVersion);
+        scope.setTag("build_number", buildNumber);
+
+        // Set level based on category
+        const level = category === "bug" ? "error" : "info";
+        scope.setLevel(level);
+
+        // Add comprehensive context
+        scope.setContext("app_info", {
+          version: appVersion,
+          buildNumber: buildNumber,
+          platform: "mobile",
+          environment: __DEV__ ? "development" : "production",
+        });
+
+        scope.setContext("support_request", {
+          ticketId,
+          category,
+          message: message.trim(),
+          timestamp: new Date().toISOString(),
+          userEmail,
+          userId,
+        });
+
+        scope.setContext("user_context", {
           userId,
           email: userEmail,
-          appVersion,
-          buildNumber,
+          submissionTime: new Date().toISOString(),
         });
-        scope.setLevel("info");
 
-        Sentry.captureMessage(`Support Request: ${category}`, "info");
+        // Capture the message with appropriate level
+        const eventId = Sentry.captureMessage(
+          `[${category.toUpperCase()}] Support Request: ${message.substring(0, 100)}${message.length > 100 ? "..." : ""}`,
+          level
+        );
+
+        return eventId;
       });
 
-      // Also log to our error handler for tracking
+      // Use Sentry User Feedback API for better integration
+      if (sentryEventId) {
+        Sentry.captureUserFeedback({
+          event_id: sentryEventId,
+          name: userEmail?.split("@")[0] || "User",
+          email: userEmail || "no-email@example.com",
+          comments: `[${category.toUpperCase()}] ${message.trim()}`,
+        });
+      }
+
+      // Also log to our internal error handler for tracking
       GlobalErrorHandler.logError(
-        new Error(`Support request: ${category}`),
+        new Error(`Support request: ${category} - ${ticketId}`),
         "CUSTOMER_SUPPORT_REQUEST",
         {
+          ticketId,
           userId,
           email: userEmail,
           message: message.trim(),
           category,
           appVersion,
           buildNumber,
+          sentryEventId,
+          timestamp: new Date().toISOString(),
         }
       );
 
+      // Provide haptic feedback
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      // Show success message with ticket ID for reference
       Alert.alert(
         t("profile.support.success"),
-        t("profile.support.success-message"),
+        `${t("profile.support.success-message")}\n\nTicket ID: ${ticketId}`,
         [
           {
             text: t("common.ok"),
             onPress: () => {
+              // Reset form
+              setMessage("");
+              setCategory("general");
+
               if (_dialogId) {
                 closeDialog(_dialogId);
               }
@@ -77,7 +138,19 @@ export const CustomerSupportDialog: React.FC<
         ]
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error, "SUPPORT_REQUEST_FAILED", { userId });
+      // Enhanced error logging
+      GlobalErrorHandler.logError(error, "SUPPORT_REQUEST_FAILED", {
+        userId,
+        category,
+        messageLength: message.length,
+        userEmail,
+        appVersion,
+        buildNumber,
+      });
+
+      // Provide haptic feedback for error
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
       Alert.alert(t("common.error"), t("profile.support.error-message"));
     } finally {
       setIsSubmitting(false);
@@ -129,15 +202,26 @@ export const CustomerSupportDialog: React.FC<
         value={message}
         onChangeText={setMessage}
         editable={!isSubmitting}
+        maxLength={1000}
       />
+
+      <Text
+        style={[
+          profileStyles.fieldLabel,
+          { textAlign: "right", fontSize: 12, marginBottom: 16 },
+        ]}
+      >
+        {message.length}/1000
+      </Text>
 
       <TouchableOpacity
         style={[
           profileStyles.submitButton,
-          isSubmitting && profileStyles.submitButtonDisabled,
+          (isSubmitting || !message.trim()) &&
+            profileStyles.submitButtonDisabled,
         ]}
         onPress={handleSubmit}
-        disabled={isSubmitting}
+        disabled={isSubmitting || !message.trim()}
       >
         <Text style={profileStyles.submitButtonText}>
           {isSubmitting ? t("common.submitting") : t("profile.support.submit")}
