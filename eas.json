@@ -18,7 +18,8 @@
       "env": {
         "NODE_ENV": "preview",
         "SENTRY_ORG": "cadenceday",
-        "SENTRY_PROJECT": "cadence-app"
+        "SENTRY_PROJECT": "cadence-app",
+        "SENTRY_ALLOW_FAILURE": "true"
       }
     },
     "production": {
@@ -27,7 +28,8 @@
       "env": {
         "NODE_ENV": "production",
         "SENTRY_ORG": "cadenceday",
-        "SENTRY_PROJECT": "cadence-app"
+        "SENTRY_PROJECT": "cadence-app",
+        "SENTRY_ALLOW_FAILURE": "true"
       }
     }
   }

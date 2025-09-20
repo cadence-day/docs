@@ -14,7 +14,7 @@ export const COLORS = {
   placeholderText: "#9CA3AF",
   bodyText: "#A1A1A1",
   black: "#151414",
-  textIcons: "#6B7280",
+  textIcons: "#000000",
   error: "#EF4444",
   white: "#FFFFFF",
   primary: "#6646EC", // Steel blue

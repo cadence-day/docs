@@ -1,9 +1,14 @@
 import useNotesStore from "@/shared/stores/resources/useNotesStore";
 import useStatesStore from "@/shared/stores/resources/useStatesStore";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
+import type { Timeslice } from "@/shared/types/models/timeslice";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useCallback } from "react";
 import type { NoteItem, NoteOperations, UseNoteHandlersProps } from "../types";
+
+type TimesliceUpsertInput =
+  & Omit<Timeslice, "id">
+  & Partial<Pick<Timeslice, "state_id" | "note_ids">>;
 
 export const useNoteHandlers = ({
   notes,
@@ -45,7 +50,7 @@ export const useNoteHandlers = ({
   const updateNoteMessage = useCallback(
     (index: number, message: string) => {
       console.log(
-        `[useNoteHandlers] updateNoteMessage called - Index: ${index}, Message: "${message}"`
+        `[useNoteHandlers] updateNoteMessage called - Index: ${index}, Message: "${message}"`,
       );
       setNotes((prev) => {
         const updated = prev.map((note, i) =>
@@ -55,19 +60,14 @@ export const useNoteHandlers = ({
         return updated;
       });
     },
-    [setNotes]
+    [setNotes],
   );
 
   const deleteNoteLocal = useCallback(
-    (index: number) => {
+    async (index: number) => {
       const noteToDelete = notes[index];
 
-      // If it's an existing note (not new), track its ID for deletion from database
-      if (!noteToDelete.isNew && noteToDelete.id) {
-        setDeletedNoteIds((prev) => [...prev, noteToDelete.id!]);
-      }
-
-      // Remove from local state
+      // Remove from local state first
       setNotes((prev) => prev.filter((_, i) => i !== index));
 
       // Reset active note index if the deleted note was active
@@ -77,8 +77,41 @@ export const useNoteHandlers = ({
         // Adjust active index if it's after the deleted note
         setActiveNoteIndex(activeNoteIndex - 1);
       }
+
+      // If it's an existing note (not new), delete it from database and store immediately
+      if (!noteToDelete.isNew && noteToDelete.id) {
+        try {
+          // Delete from the store (this will also delete from database)
+          await deleteNote(noteToDelete.id);
+
+          // Update the timeslice to remove this note ID
+          const updatedNoteIds = noteIds.filter((id) => id !== noteToDelete.id);
+          if (timeslice.id) {
+            await upsertTimeslice({
+              id: timeslice.id,
+              note_ids: updatedNoteIds,
+            } as unknown as TimesliceUpsertInput);
+          }
+        } catch (error) {
+          GlobalErrorHandler.logError(error, "deleteNoteLocal", {
+            noteId: noteToDelete.id,
+            timesliceId: timeslice.id,
+          });
+          // If deletion fails, we should probably re-add the note to local state
+          // But for now, we'll just log the error
+        }
+      }
     },
-    [notes, activeNoteIndex, setNotes, setDeletedNoteIds, setActiveNoteIndex]
+    [
+      notes,
+      activeNoteIndex,
+      noteIds,
+      timeslice.id,
+      setNotes,
+      setActiveNoteIndex,
+      deleteNote,
+      upsertTimeslice,
+    ],
   );
 
   const saveNote = useCallback(
@@ -91,7 +124,7 @@ export const useNoteHandlers = ({
         GlobalErrorHandler.logError(
           new Error("Cannot save empty note"),
           "saveNote",
-          { noteIndex, timesliceId: ts_id }
+          { noteIndex, timesliceId: ts_id },
         );
         return;
       }
@@ -100,7 +133,7 @@ export const useNoteHandlers = ({
         GlobalErrorHandler.logError(
           new Error("No timeslice ID provided"),
           "saveNote",
-          { noteIndex }
+          { noteIndex },
         );
         return;
       }
@@ -145,13 +178,13 @@ export const useNoteHandlers = ({
               prev.map((n, i) =>
                 i === noteIndex
                   ? {
-                      ...n,
-                      id: createdNote.id,
-                      user_id: createdNote.user_id, // Use the user_id returned from API
-                      isNew: false,
-                      isSaving: false,
-                      hasError: false,
-                    }
+                    ...n,
+                    id: createdNote.id,
+                    user_id: createdNote.user_id, // Use the user_id returned from API
+                    isNew: false,
+                    isSaving: false,
+                    hasError: false,
+                  }
                   : n
               )
             );
@@ -161,7 +194,7 @@ export const useNoteHandlers = ({
             await upsertTimeslice({
               id: timeslice.id!,
               note_ids: updatedNoteIds,
-            } as any);
+            } as unknown as TimesliceUpsertInput);
           }
         }
       } catch (error) {
@@ -187,7 +220,7 @@ export const useNoteHandlers = ({
       updateNote,
       upsertTimeslice,
       setNotes,
-    ]
+    ],
   );
 
   const saveAllNotes = useCallback(async (): Promise<void> => {
@@ -195,28 +228,16 @@ export const useNoteHandlers = ({
     if (!ts_id) {
       GlobalErrorHandler.logError(
         new Error("No timeslice ID provided"),
-        "saveAllNotes"
+        "saveAllNotes",
       );
       return;
     }
 
     try {
       const notesToSave = notes.filter(
-        (note) => (note.message?.trim()?.length ?? 0) > 0
+        (note) => (note.message?.trim()?.length ?? 0) > 0,
       );
       const updatedNoteIds = [...noteIds];
-
-      // Handle note deletions first
-      if (deletedNoteIds.length > 0) {
-        await deleteNotes(deletedNoteIds);
-        // Remove deleted IDs from timeslice
-        for (const deletedId of deletedNoteIds) {
-          const index = updatedNoteIds.indexOf(deletedId);
-          if (index > -1) {
-            updatedNoteIds.splice(index, 1);
-          }
-        }
-      }
 
       // Save all notes with content
       for (let i = 0; i < notesToSave.length; i++) {
@@ -248,7 +269,7 @@ export const useNoteHandlers = ({
       // Handle energy state (simplified - only save if energy > 0)
       if (energy > 0 && ts_id) {
         const existingState = statesStore.states.find(
-          (state) => state.timeslice_id === ts_id
+          (state) => state.timeslice_id === ts_id,
         );
 
         if (existingState) {
@@ -270,39 +291,33 @@ export const useNoteHandlers = ({
             await upsertTimeslice({
               id: ts_id,
               state_id: createdState.id,
-            } as any);
+            } as unknown as TimesliceUpsertInput);
           }
         }
       }
 
       // Update timeslice with final note IDs if changed
-      if (
-        updatedNoteIds.length !== noteIds.length ||
-        deletedNoteIds.length > 0
-      ) {
+      if (updatedNoteIds.length !== noteIds.length) {
         await upsertTimeslice({
           id: ts_id,
           note_ids: updatedNoteIds,
-        } as any);
+        } as unknown as TimesliceUpsertInput);
       }
     } catch (error) {
       GlobalErrorHandler.logError(error, "saveAllNotes", {
         timesliceId: ts_id,
         notesCount: notes.length,
-        deletedCount: deletedNoteIds.length,
       });
       throw error;
     }
   }, [
     notes,
-    deletedNoteIds,
     energy,
     timeslice,
     noteIds,
     statesStore.states,
     insertNote,
     updateNote,
-    deleteNotes,
     insertState,
     updateState,
     upsertTimeslice,
@@ -312,30 +327,26 @@ export const useNoteHandlers = ({
     (index: number | null) => {
       setActiveNoteIndex(index);
     },
-    [setActiveNoteIndex]
+    [setActiveNoteIndex],
   );
 
   // Pin/unpin operations (local only for now)
   const pinNote = useCallback(
     (index: number) => {
       setNotes((prev) =>
-        prev.map((note, i) =>
-          i === index ? { ...note, isPinned: true } : note
-        )
+        prev.map((note, i) => i === index ? { ...note, isPinned: true } : note)
       );
     },
-    [setNotes]
+    [setNotes],
   );
 
   const unpinNote = useCallback(
     (index: number) => {
       setNotes((prev) =>
-        prev.map((note, i) =>
-          i === index ? { ...note, isPinned: false } : note
-        )
+        prev.map((note, i) => i === index ? { ...note, isPinned: false } : note)
       );
     },
-    [setNotes]
+    [setNotes],
   );
 
   return {

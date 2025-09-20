@@ -12,6 +12,7 @@ import ChangePasswordDialog from "@/features/profile/dialogs/ChangePasswordDialo
 import { CustomerSupportDialog } from "@/features/profile/dialogs/CustomerSupportDialog";
 import { SubscriptionPlansDialog } from "@/features/profile/dialogs/SubscriptionPlansDialog";
 import { TimePickerDialog } from "@/features/profile/dialogs/TimePickerDialog";
+import { ReflectionTimesliceInfoDialog } from "@/features/reflection/dialogs";
 
 export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   // Legacy mapping for backward compatibility
@@ -33,6 +34,8 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   "customer-support": CustomerSupportDialog,
   "subscription-plans": SubscriptionPlansDialog,
   "change-password": ChangePasswordDialog,
+  // Reflection dialogs
+  "reflection-timeslice-info": ReflectionTimesliceInfoDialog,
 };
 
 export default DialogRegistry;

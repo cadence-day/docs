@@ -8,7 +8,7 @@
   "activity-categories.family": "Familia",
   "activity-categories.friends": "Amigos",
   "activity-categories.meal_time": "Tiempo de comida",
-  "activity-categories.rest": "Descansar",
+  "activity-categories.rest": "Descanso",
   "activity-categories.work": "Trabajar",
   "activity-category-is-required": "Se requiere categoría de actividad",
   "activity-created-successfully": "¡Actividad creada con éxito!",
@@ -234,19 +234,147 @@
     },
     "preview": "Actividad"
   },
-  "Are you sure you want to delete this activity? You can't undo this": {
-    "": "¿Estás seguro de que quieres eliminar esta actividad? No puedes deshacer esto."
-  },
-  "back": "Atrás",
-  "cancel": "Cancelar",
   "choose_action": "Elegir acción",
   "color": "Color",
   "common": {
+    "ok": "OK",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "error": "Error",
+    "submitting": "Enviando...",
     "done": "Hecho",
-    "saving": "Guardando"
+    "saving": "Guardando",
+    "edit": "Editar",
+    "save": "Guardar",
+    "create": "Crear",
+    "delete": "Eliminar"
   },
-  "This activity is used by timeslices": {
-    " Pick a replacement:": "Esta actividad es utilizada por timeslices. Elige un reemplazo:"
+  "energyLabel": "ENERGÍA",
+  "energyLow": "Baja",
+  "energyHigh": "Alta",
+  "settings": {
+    "title": "Configuración",
+    "back": "Atrás",
+    "notifications": {
+      "title": "Notificaciones",
+      "push": "Notificaciones Push",
+      "email": "Notificaciones por Email",
+      "enabled": "Activado",
+      "disabled": "Desactivado",
+      "configure-email": "Configurar preferencias de email",
+      "coming-soon": "Próximamente",
+      "email-coming-soon": "Las configuraciones de notificaciones por email estarán disponibles pronto"
+    },
+    "health-data": {
+      "title": "Salud y Datos",
+      "access": "Acceso a Datos de Salud",
+      "export": "Exportar Datos",
+      "export-value": "Exportar tus datos",
+      "privacy": "Configuración de Privacidad",
+      "privacy-value": "Gestionar privacidad de datos",
+      "coming-soon": "Próximamente",
+      "export-coming-soon": "La función de exportar datos estará disponible pronto",
+      "privacy-coming-soon": "Las configuraciones de privacidad estarán disponibles pronto"
+    },
+    "security": {
+      "title": "Seguridad y Encriptación",
+      "link-device": "Vincular Dispositivo (Encriptación)",
+      "link-device-value": "Abrir diálogo de vinculación",
+      "link-device-title": "Vincular Este Dispositivo"
+    },
+    "support": {
+      "title": "Soporte e Información",
+      "contact": "Contactar Soporte",
+      "contact-value": "Obtener ayuda y soporte",
+      "app-info": "Información de la App",
+      "app-info-value": "Detalles de versión y compilación",
+      "user-id": "ID de Usuario",
+      "user-id-fallback": "No disponible",
+      "app-version": "Versión de la App",
+      "version-unknown": "Desconocido",
+      "support-subject": "Solicitud de Soporte",
+      "support-body-prefix": "Describe tu problema aquí..."
+    },
+    "development": {
+      "title": "Herramientas de Desarrollo",
+      "test-error": "Probar Reporte de Errores",
+      "test-sentry": "Probar integración de Sentry"
+    },
+    "alerts": {
+      "app-info-title": "Información de la App",
+      "health-data-title": "Datos de Salud"
+    }
   },
-  "validate": "Confirmar"
+  "profile": {
+    "logout": "Cerrar Sesión",
+    "title": "PERFIL",
+    "name": "Nombre",
+    "username": "Nombre de Usuario",
+    "email": "Email",
+    "phone": "Número de Teléfono",
+    "notifications": "Notificaciones",
+    "wake-time": "Despertar a las",
+    "sleep-time": "Ir a dormir",
+    "subscription": "Plan de Suscripción",
+    "security": "Seguridad",
+    "security-settings": "Seguridad y Privacidad",
+    "customer-support": "Soporte al Cliente",
+    "app-info": "Información de la Aplicación",
+    "app-version": "Versión de la Aplicación",
+    "user-id": "ID de Usuario",
+    "free": "Gratis",
+    "deep-cadence": "Cadencia Profunda",
+    "subscription-plan": "Plan de Suscripción",
+    "set-wake-time": "Establecer Hora de Despertar",
+    "set-sleep-time": "Establecer Hora de Dormir",
+    "deep-cadence-description": "Desbloquee ideas más profundas y una mejor personalización para aprovechar al máximo su viaje de reflexión diaria.",
+    "whats-inside": "Qué incluye:",
+    "upgrade-now": "Actualizar ahora",
+    "current-plan": "Plan Actual",
+    "subscription-footer": "Toma el control de tu reflexión diaria y diseña la vida que quieres vivir.",
+    "delete-account": "Eliminar cuenta",
+    "edit-photo": "Editar foto",
+    "uploading": "Subiendo...",
+    "image-upload": {
+      "select-option": "Seleccionar Foto",
+      "take-photo": "Tomar Foto",
+      "choose-from-library": "Elegir de la Biblioteca",
+      "success": "Foto Actualizada",
+      "success-message": "¡Tu foto de perfil ha sido actualizada exitosamente!",
+      "error": "Error de Subida",
+      "error-message": "No se pudo subir la foto. Por favor intenta de nuevo."
+    },
+    "placeholders": {
+      "name": "Ingresa tu nombre",
+      "email": "Ingresa tu email",
+      "phone": "Ingresa tu número de teléfono",
+      "wake-time": "07:30",
+      "sleep-time": "23:30"
+    },
+    "fallbacks": {
+      "name": "Tu Nombre",
+      "email": "email@ejemplo.com",
+      "user-id": "Desconocido"
+    },
+    "debug-screen": "Pantalla de Depuración",
+    "error-messages": {
+      "time-required": "Por favor ingresa una hora",
+      "time-format": "Por favor usa el formato HH:MM (ej. 07:30)",
+      "wake-time-range": "La hora de despertar debe estar entre las 4:00 AM y 12:00 PM",
+      "sleep-time-range": "La hora de dormir debe estar entre las 8:00 PM y 2:00 AM"
+    },
+    "support": {
+      "category": "Categoría",
+      "message": "Mensaje",
+      "message-required": "Por favor ingresa un mensaje",
+      "message-placeholder": "Cuéntanos qué pasó. ¿Qué esperabas? ¿Alguna sugerencia de mejora?",
+      "general": "General",
+      "bug": "Reporte de Error",
+      "feature": "Solicitud de Función",
+      "submit": "Enviar Comentarios",
+      "success": "¡Comentarios Enviados!",
+      "success-message": "Gracias por tus comentarios. ¡Nos ayuda a mejorar la app!",
+      "error-message": "No se pudieron enviar los comentarios. Por favor intenta más tarde."
+    }
+  }
 }
