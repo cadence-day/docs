@@ -24,6 +24,12 @@ import {
   getTimeValidationError,
 } from "../utils";
 
+type ExpoConfig = {
+  ios?: { buildNumber?: string };
+  android?: { versionCode?: string | number };
+  version?: string;
+};
+
 export const ProfileScreen: React.FC = () => {
   const { user } = useUser();
   const { signOut } = useAuth();
@@ -40,11 +46,10 @@ export const ProfileScreen: React.FC = () => {
   }>({});
 
   const appVersion = Constants.expoConfig?.version || "Unknown";
+  const expoConfig = Constants.expoConfig as ExpoConfig | undefined;
   const buildNumber =
-    // @ts-ignore - optional
-    (Constants.expoConfig as any)?.ios?.buildNumber ||
-    // @ts-ignore - optional
-    (Constants.expoConfig as any)?.android?.versionCode ||
+    expoConfig?.ios?.buildNumber ||
+    expoConfig?.android?.versionCode?.toString() ||
     "Unknown";
 
   // Handle time input submission with validation
