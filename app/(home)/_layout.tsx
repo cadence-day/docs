@@ -175,12 +175,12 @@ export default function TabLayout() {
           <Tabs.Screen
             name="reflection"
             options={{
-              title: t("reflection"),
+              title: t("reflection.title"),
               tabBarIcon: ({ focused, color }: any) => (
                 <TabLabel
                   focused={focused}
                   color={color}
-                  label={t("reflection")}
+                  label={t("reflection.title")}
                 />
               ),
             }}
@@ -189,7 +189,7 @@ export default function TabLayout() {
           <Tabs.Screen
             name="profile"
             options={{
-              title: t("profile"),
+              title: t("profile.title"),
               tabBarIcon: ({ focused, color }: any) => (
                 <TabLabel
                   focused={focused}

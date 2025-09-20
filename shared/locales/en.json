@@ -20,16 +20,16 @@
     "preview": "Activity"
   },
   "activity-categories": {
-    "work": "Work",
-    "rest": "Rest",
+    "food": "Food",
     "health": "Health",
     "home": "Home",
     "learn": "Learn",
-    "social": "Social",
     "play": "Play",
-    "food": "Food",
+    "rest": "Rest",
     "service": "Service",
-    "travel": "Travel"
+    "social": "Social",
+    "travel": "Travel",
+    "work": "Work"
   },
   "add-new-activity": "Add New Activity",
   "already-have-an-account": "Already have an account?",
@@ -146,8 +146,8 @@
       "wake-time-range": "Wake time should be between 4:00 AM and 12:00 PM"
     },
     "fallbacks": {
-      "name": "Your Name",
       "email": "email@example.com",
+      "name": "Your Name",
       "user-id": "Unknown"
     },
     "free": "Free",
@@ -165,11 +165,11 @@
     "notifications": "Notifications",
     "phone": "Phone Number",
     "placeholders": {
-      "name": "Enter your name",
       "email": "Enter your email",
+      "name": "Enter your name",
       "phone": "Enter your phone number",
-      "wake-time": "07:30",
-      "sleep-time": "23:30"
+      "sleep-time": "23:30",
+      "wake-time": "07:30"
     },
     "security": "Security",
     "security-settings": "Security Settings",
@@ -317,6 +317,5 @@
   "we-are-working-on-improving-the-app-your-feedback-would-be-greatly-appreciated-you-can-find-the-link-to-feedback-page-under-the-profile": "We are working on improving the app. Your feedback would be greatly appreciated. You can find the link to the feedback page under the profile.",
   "welcome": "Welcome",
   "weve-sent-a-verification-code-to": "We've sent a verification code to",
-  "yesterday": "Yesterday",
-  "profile.current-plan": "Current Plan"
+  "yesterday": "Yesterday"
 }

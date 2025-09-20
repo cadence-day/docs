@@ -18,7 +18,7 @@ export default function ReflectionPage() {
       >
         <SafeAreaView style={styles.headerContainer}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.titleText}>{t("reflection")}</Text>
+            <Text style={styles.titleText}>{t("reflection.title")}</Text>
           </View>
         </SafeAreaView>
 
