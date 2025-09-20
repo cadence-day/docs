@@ -315,8 +315,8 @@ export const useNoteHandlers = ({
   return {
     addNote,
     updateNote: updateNoteMessage,
-  // Keep the external API key `deleteNote` while using a clearer internal name
-  deleteNote: deleteNoteAsync,
+    // Keep the external API key `deleteNote` while using a clearer internal name
+    deleteNote: deleteNoteAsync,
     saveNote,
     saveAllNotes,
     setActiveNote,
