@@ -5,7 +5,14 @@ import { useActivityCategoriesStore } from "@/shared/stores";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import ActivityCategory from "@/shared/types/models/activityCategory";
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View, Platform } from "react-native";
+import {
+  FlatList,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 type Props = {
   _dialogId?: string;
