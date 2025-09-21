@@ -37,6 +37,7 @@
   "actual-behavior": "Comportamiento real",
   "actual-behavior-optional": "Comportamiento real (opcional)",
   "add-new-activity": "Agregar nueva actividad",
+  "allow-notifications": "Permitir notificaciones",
   "already-have-an-account": "¿Ya tienes una cuenta?",
   "app-information": "Información de la aplicación",
   "app-version-and-platform": "• Versión y plataforma de la aplicación",
@@ -51,6 +52,7 @@
   "cadence-day-support-request": "Solicitud de soporte de Cadence.day",
   "cadence-is-in-beta": "Cadence está en beta.",
   "cadence-notification": "Notificación de Cadence",
+  "cadence-starts-with-universal": "La cadencia comienza con actividades universales (trabajo, descanso, movimiento), pero la vida es más que categorías. \n¿Amo el pájaro mirando? \nAgregue actividades personalizadas que hagan su ritmo exclusivamente suyo.",
   "calendarDialog": {
     "2-days": "Hace 2 días",
     "pick-a-date": "Elegir una fecha"
@@ -80,6 +82,7 @@
   "contain-one-lowercase-letter": "- contener una letra minúscula",
   "contain-one-special-character": "- contener un carácter especial",
   "contain-one-uppercase-letter": "- contener una letra mayúscula",
+  "continue": "Continuar",
   "current-password-is-required": "Se requiere la contraseña actual",
   "dateTime": {
     "preposition": "en"
@@ -108,6 +111,8 @@
   "enter-your-new-password": "Ingrese su nueva contraseña:",
   "evening-reflection": "Reflexión de la tarde",
   "evening-reminders": "Recordatorios vespertinos",
+  "ever-wonder-what-you-did-last": "¿Alguna vez se preguntó qué hiciste el martes pasado? \n¿O qué pensamientos tuviste durante una mañana tranquila? \nLas notas te ayudan a mantener los momentos que importan: notar o pequeños, profundos o fugaces.",
+  "expand-your-memory": "Expanda su memoria",
   "expected-behavior": "Comportamiento esperado",
   "expected-behavior-optional": "Comportamiento esperado (opcional)",
   "failed-to-change-password": "No se pudo cambiar la contraseña",
@@ -157,6 +162,8 @@
   "key-imported-successfully-fing": "¡Clave importada con éxito! Huella digital: {0}",
   "laid-back": "Relajado",
   "legal": "Legal",
+  "make-cadence-yours": "Haz Cadence tuyo",
+  "meet-sage": "Conoce a Sage",
   "midday-reflection": "Reflexión del mediodía",
   "mo": "Lun",
   "morning-reminders": "Recordatorios matutinos",
@@ -171,6 +178,11 @@
   "not-available-in-this-build": "no disponible en esta compilación",
   "notification-schedule": "Horario de notificaciones",
   "notification-types": "Tipos de notificación",
+  "onboarding": {
+    "missed-intro": "En caso de que te hayas perdido la introducción",
+    "title": "Bienvenido a Cadence",
+    "view-again": "Ver introducción de nuevo"
+  },
   "or-paste-encryption-key": "O pega la clave de cifrado:",
   "parent-activity": "Actividad principal",
   "password-changed": "Contraseña cambiada",
@@ -315,6 +327,7 @@
   "push-notifications-have-been-d": "Las notificaciones push han sido deshabilitadas. Puedes volver a habilitarlas en cualquier momento.",
   "push-notifications-have-been-e": "¡Las notificaciones push se han habilitado con éxito! Todos los tipos de notificación se han activado.",
   "react-native-device": "Dispositivo React Native",
+  "read-more-about-how-we-protect": "Lea más sobre cómo protegemos su privacidad →",
   "reflection": {
     "activityLabel": "Actividad",
     "details": "Detalles",
@@ -331,6 +344,7 @@
   "sage": {
     "unavailableMessage": "Cadence AI actualmente no está disponible."
   },
+  "sage-your-friendly-ai-guide-wi": "Sage Su amigable guía de IA lo ayudará a notar los patrones en su tiempo. \nCuanto más registre, más salvia puede ayudar.",
   "save": "Guardar",
   "scan-qr-code": "Escanear código QR",
   "scan-this-qr-code-with-your-ne": "Escanea este código QR con tu nuevo dispositivo para importar la clave de cifrado.",
@@ -423,6 +437,7 @@
   },
   "sign-up-now": "Registrarse ahora",
   "since-all-notification-types-a": "Dado que todos los tipos de notificación están deshabilitados, las notificaciones push se han apagado automáticamente.",
+  "stay-in-sync-nwith-your-time": "Manténgase sincronizado con su tiempo",
   "steps-to-reproduce": "Pasos para reproducir",
   "steps-to-reproduce-optional": "Pasos para reproducir (opcional)",
   "steps-to-reproduce-optional-0": "• Pasos para reproducir (opcional)",
@@ -449,6 +464,7 @@
   "the-password-should-be-at-least": "- La contraseña debe tener al menos",
   "this-action-cannot-be-undone-a": "Esta acción no se puede deshacer. ¿Estás seguro de que quieres eliminar tu cuenta de forma permanente?",
   "this-device-doesnt-have-an-enc": "Este dispositivo no tiene una clave de cifrado. Debes importar una clave desde tu dispositivo anterior para acceder a los datos cifrados.",
+  "time-moves-fast-cadence-helps": "El tiempo se mueve rápidamente: la dirección te ayuda a verlo más claramente. \nRegistre sus momentos, reflexione sobre sus ritmos y descubra patrones que dan forma a sus días. \nSin presión, sin perfección, solo conciencia.",
   "timeslice-created-successfully": "Período de tiempo creado con éxito.",
   "timeslice-updated-successfully": "Período de tiempo actualizado con éxito.",
   "timestamp-of-submission": "• Marca de tiempo de envío",
@@ -456,6 +472,7 @@
   "to-modify-notification-permiss": "Para modificar los permisos de notificación a nivel del sistema, ve a la aplicación Configuración de tu dispositivo y busca la configuración de notificaciones de esta aplicación.",
   "today": "Hoy",
   "tu": "Mar",
+  "turn-on-notifications-for-gent": "Active las notificaciones para recordatorios suaves para registrar sus actividades durante todo el día. \nSin presión, solo un empujón diario para ayudarlo a mantenerse al tanto de su tiempo. \n\n✨ Su futuro yo le agradecerá. \nTómese un momento para registrar su día.",
   "unable-to-open-email-app-pleas": "No se puede abrir la aplicación de correo electrónico. Envía tu solicitud de soporte a: dev@cadence.day",
   "unable-to-open-link": "No se puede abrir el enlace",
   "unable-to-submit-bug-report-pl": "No se puede enviar el informe de error. Inténtalo de nuevo o comunícate con el soporte.",
@@ -479,7 +496,9 @@
   "yesterday": "Ayer",
   "you-have-a-new-notification": "Tienes una nueva notificación",
   "your-account-security-is-impor": "La seguridad de tu cuenta es importante para nosotros. Los cambios de contraseña requieren verificación por correo electrónico para tu protección. Contáctanos para las solicitudes de eliminación de cuenta.",
+  "your-data-nyour-privacy": "Sus datos, \nsu privacidad",
   "your-email-address-for-follow": "• Tu dirección de correo electrónico (para seguimiento)",
   "your-encryption-key-protects-s": "Tu clave de cifrado protege los datos confidenciales. Manténla segura y no la compartas con otros. Necesitarás esta clave para acceder a tus datos cifrados en nuevos dispositivos.",
-  "your-password-has-been-changed": "Tu contraseña se ha cambiado correctamente. Por razones de seguridad, se cerrará tu sesión ahora."
+  "your-password-has-been-changed": "Tu contraseña se ha cambiado correctamente. Por razones de seguridad, se cerrará tu sesión ahora.",
+  "your-time-is-yours-alone-every": "Tu tiempo es solo tuyo. \nTodo lo que registra está encriptado y almacenado de forma segura. \nSin anuncios, sin seguimiento, sin compartir su información, solo un espacio seguro para la autorreflexión."
 }

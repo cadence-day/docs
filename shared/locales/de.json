@@ -37,6 +37,7 @@
   "actual-behavior": "Tatsächliches Verhalten",
   "actual-behavior-optional": "Tatsächliches Verhalten (optional)",
   "add-new-activity": "Neue Aktivität hinzufügen",
+  "allow-notifications": "Benachrichtigungen zulassen",
   "already-have-an-account": "Haben Sie bereits ein Konto?",
   "app-information": "App-Informationen",
   "app-version-and-platform": "• App-Version und Plattform",
@@ -51,6 +52,7 @@
   "cadence-day-support-request": "Cadence.Day Support-Anfrage",
   "cadence-is-in-beta": "Cadence befindet sich noch in der Beta-Phase.",
   "cadence-notification": "Cadence-Benachrichtigung",
+  "cadence-starts-with-universal": "Cadence beginnt mit universellen Aktivitäten - Arbeit, Ruhe, Bewegung -, aber das Leben ist mehr als Kategorien. \nLieben Sie Vogelbeobachtung? \nFügen Sie benutzerdefinierte Aktivitäten hinzu, die Ihren Rhythmus einzigartig machen.",
   "calendarDialog": {
     "2-days": "Vor 2 Tagen",
     "pick-a-date": "Datum auswählen"
@@ -80,6 +82,7 @@
   "contain-one-lowercase-letter": "- einen Kleinbuchstaben enthalten",
   "contain-one-special-character": "- ein Sonderzeichen enthalten",
   "contain-one-uppercase-letter": "- einen Großbuchstaben enthalten",
+  "continue": "Weitermachen",
   "current-password-is-required": "Aktuelles Passwort ist erforderlich.",
   "dateTime": {
     "preposition": "um"
@@ -108,6 +111,8 @@
   "enter-your-new-password": "Geben Sie Ihr neues Passwort ein:",
   "evening-reflection": "Abendreflexion",
   "evening-reminders": "Abenderinnerungen",
+  "ever-wonder-what-you-did-last": "Haben Sie sich jemals gefragt, was Sie letzten Dienstag gemacht haben? \nOder welche Gedanken Sie während eines ruhigen Morgens hatten? \nNotizen helfen Ihnen, sich an den wichtigen Momenten festzuhalten - große oder kleine, tiefe oder flüchtige.",
+  "expand-your-memory": "Erweitern Sie Ihr Gedächtnis",
   "expected-behavior": "Erwartetes Verhalten",
   "expected-behavior-optional": "Erwartetes Verhalten (optional)",
   "failed-to-change-password": "Passwort konnte nicht geändert werden",
@@ -157,6 +162,8 @@
   "key-imported-successfully-fing": "Key Importing erfolgreich! \nFingerabdruck: {0}",
   "laid-back": "Entspannt",
   "legal": "Legal",
+  "make-cadence-yours": "Machen Sie Cadence zu Ihrem",
+  "meet-sage": "Treffen Sie Sage",
   "midday-reflection": "Mittagsreflexion",
   "mo": "Mon",
   "morning-reminders": "Morgen -Erinnerungen",
@@ -171,6 +178,11 @@
   "not-available-in-this-build": "in diesem Build nicht verfügbar",
   "notification-schedule": "Benachrichtigungsplan",
   "notification-types": "Benachrichtigungstypen",
+  "onboarding": {
+    "missed-intro": "Falls Sie die Einführung verpasst haben",
+    "title": "Willkommen bei Cadence",
+    "view-again": "Zeigen Sie erneut ein Onboarding an"
+  },
   "or-paste-encryption-key": "Oder Einfügen der Verschlüsselungsschlüssel:",
   "parent-activity": "Elternaktivität",
   "password-changed": "Passwort geändert",
@@ -315,6 +327,7 @@
   "push-notifications-have-been-d": "Push-Benachrichtigungen wurden deaktiviert. Sie können sie jederzeit wieder aktivieren.",
   "push-notifications-have-been-e": "Push-Benachrichtigungen wurden erfolgreich aktiviert! Alle Benachrichtigungstypen wurden eingeschaltet.",
   "react-native-device": "React Native Gerät",
+  "read-more-about-how-we-protect": "Lesen Sie mehr darüber, wie wir Ihre Privatsphäre schützen →",
   "reflection": {
     "activityLabel": "Aktivität",
     "details": "Details",
@@ -331,6 +344,7 @@
   "sage": {
     "unavailableMessage": "Cadence AI ist derzeit nicht verfügbar."
   },
+  "sage-your-friendly-ai-guide-wi": "Sage, Ihr freundlicher KI-Leitfaden, hilft Ihnen, die Muster in Ihrer Zeit zu bemerken. \n\nFragen Sie Sage, Ihren Tag zusammenzufassen, sich an Ihre Ziele zu erinnern oder Ihre Zeitmuster zu bemerken. \nJe mehr Sie protokollieren, desto mehr kann Sage helfen.",
   "save": "Speichern",
   "scan-qr-code": "QR-Code scannen",
   "scan-this-qr-code-with-your-ne": "Scannen Sie diesen QR-Code mit Ihrem neuen Gerät, um den Verschlüsselungsschlüssel zu importieren.",
@@ -423,6 +437,7 @@
   },
   "sign-up-now": "Jetzt registrieren",
   "since-all-notification-types-a": "Da alle Benachrichtigungsarten deaktiviert sind, wurden die Push-Benachrichtigungen automatisch ausgeschaltet.",
+  "stay-in-sync-nwith-your-time": "Bleiben Sie synchron \nmit Ihrer Zeit",
   "steps-to-reproduce": "Schritte zur Reproduktion",
   "steps-to-reproduce-optional": "Schritte zur Reproduktion (optional)",
   "steps-to-reproduce-optional-0": "• Schritte zur Reproduktion (optional)",
@@ -449,6 +464,7 @@
   "the-password-should-be-at-least": "- Das Passwort sollte mindestens",
   "this-action-cannot-be-undone-a": "Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie Ihr Konto dauerhaft löschen möchten?",
   "this-device-doesnt-have-an-enc": "Dieses Gerät hat keinen Verschlüsselungsschlüssel. Sie müssen einen Schlüssel aus Ihrem vorherigen Gerät importieren, um auf verschlüsselte Daten zuzugreifen.",
+  "time-moves-fast-cadence-helps": "Die Zeit bewegt sich schnell - Cadence hilft Ihnen, es klarer zu sehen. \nNehmen Sie Ihre Momente auf, denken Sie über Ihre Rhythmen nach und entdecken Sie Muster, die Ihre Tage prägen. \nKein Druck, keine Perfektion - nur Bewusstsein.",
   "timeslice-created-successfully": "Zeitabschnitt erfolgreich erstellt.",
   "timeslice-updated-successfully": "Zeitabschnitt erfolgreich aktualisiert.",
   "timestamp-of-submission": "• Zeitstempel der Einreichung",
@@ -456,6 +472,7 @@
   "to-modify-notification-permiss": "Um die Benachrichtigungsberechtigungen zu ändern, gehen Sie bitte zu den Einstellungen Ihres Geräts und finden Sie die Benachrichtigungseinstellungen für diese App.",
   "today": "Heute",
   "tu": "Di",
+  "turn-on-notifications-for-gent": "Aktivieren Sie Benachrichtigungen für sanfte Erinnerungen, um Ihre Aktivitäten den ganzen Tag über zu protokollieren. \nKein Druck, nur ein täglicher Anstoß, der Ihnen hilft, sich Ihrer Zeit bewusst zu bleiben. \n\n✨ Ihr zukünftiges Selbst wird es Ihnen danken. \nNehmen Sie sich einen Moment Zeit, um Ihren Tag zu protokollieren.",
   "unable-to-open-email-app-pleas": "E-Mail-App kann nicht geöffnet werden. Bitte senden Sie Ihre Support-Anfrage an: dev@cadence.day",
   "unable-to-open-link": "Link kann nicht geöffnet werden",
   "unable-to-submit-bug-report-pl": "Fehlerbericht kann nicht eingereicht werden. Bitte versuchen Sie es erneut oder wenden Sie sich an den Support.",
@@ -479,7 +496,9 @@
   "yesterday": "Gestern",
   "you-have-a-new-notification": "Sie haben eine neue Benachrichtigung",
   "your-account-security-is-impor": "Ihre Kontosicherheit ist uns wichtig. Passwort-Änderungen erfordern eine E-Mail-Bestätigung zu Ihrem Schutz. Wenden Sie sich an den Support für Anfragen zur Kontolöschung.",
+  "your-data-nyour-privacy": "Ihre Daten, \nIhre Privatsphäre",
   "your-email-address-for-follow": "• Ihre E-Mail-Adresse (für Rückfragen)",
   "your-encryption-key-protects-s": "Ihr Verschlüsselungsschlüssel schützt sensible Daten. Bewahren Sie ihn sicher auf und teilen Sie ihn nicht mit anderen. Sie benötigen diesen Schlüssel, um auf Ihre verschlüsselten Daten auf neuen Geräten zugreifen zu können.",
-  "your-password-has-been-changed": "Ihr Passwort wurde erfolgreich geändert. Aus Sicherheitsgründen werden Sie jetzt abgemeldet."
+  "your-password-has-been-changed": "Ihr Passwort wurde erfolgreich geändert. Aus Sicherheitsgründen werden Sie jetzt abgemeldet.",
+  "your-time-is-yours-alone-every": "Deine Zeit gehört dir allein. \nAlles, was Sie protokollieren, ist verschlüsselt und sicher gespeichert. \nKeine Anzeigen, keine Nachverfolgung, kein Teilen Ihrer Informationen-nur einen sicheren Raum für die Selbstreflexion."
 }

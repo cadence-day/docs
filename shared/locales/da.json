@@ -37,6 +37,7 @@
   "actual-behavior": "Faktisk adfærd",
   "actual-behavior-optional": "Faktisk adfærd (valgfri)",
   "add-new-activity": "Tilføj ny aktivitet",
+  "allow-notifications": "Tillad meddelelser",
   "already-have-an-account": "Har du allerede en konto?",
   "app-information": "App-information",
   "app-version-and-platform": "• App-version og platform",
@@ -51,6 +52,7 @@
   "cadence-day-support-request": "Cadence.day supportanmodning",
   "cadence-is-in-beta": "Cadence er i beta.",
   "cadence-notification": "Cadence-notifikation",
+  "cadence-starts-with-universal": "Cadence starter med universelle aktiviteter - arbejde, hvile, bevægelse - men livet er mere end kategorier. \nElsker du fugl, der stirrer? \nTilføj brugerdefinerede aktiviteter, der gør din rytme unikt din.",
   "calendarDialog": {
     "2-days": "2 dage siden",
     "pick-a-date": "Vælg en dato"
@@ -80,6 +82,7 @@
   "contain-one-lowercase-letter": "- indeholder et lille bogstav",
   "contain-one-special-character": "- indeholder et specialtegn",
   "contain-one-uppercase-letter": "- indeholder et stort bogstav",
+  "continue": "Fortsætte",
   "current-password-is-required": "Nuværende adgangskode er påkrævet.",
   "dateTime": {
     "preposition": "kl."
@@ -108,6 +111,8 @@
   "enter-your-new-password": "Indtast din nye adgangskode:",
   "evening-reflection": "Aftenreflektion",
   "evening-reminders": "Aften-påmindelser",
+  "ever-wonder-what-you-did-last": "Har du nogensinde spekuleret på, hvad du gjorde sidste tirsdag? \nEller hvilke tanker du havde under en stille morgen? \nNoter hjælper dig med at holde fast i de øjeblikke, der betyder noget - store eller små, dybe eller flygtige.",
+  "expand-your-memory": "Udvid din hukommelse",
   "expected-behavior": "Forventet opførsel",
   "expected-behavior-optional": "Forventet adfærd (valgfrit)",
   "failed-to-change-password": "Kunne ikke ændre adgangskode.",
@@ -157,6 +162,8 @@
   "key-imported-successfully-fing": "Nøgle importeret med succes! Fingeraftryk: {0}",
   "laid-back": "Afslappet",
   "legal": "Legal",
+  "make-cadence-yours": "Gør Cadence din",
+  "meet-sage": "Mød Sage",
   "midday-reflection": "Middagsreflektion",
   "mo": "Man",
   "morning-reminders": "Morgen-påmindelser",
@@ -171,6 +178,11 @@
   "not-available-in-this-build": "Ikke tilgængelig i denne build",
   "notification-schedule": "Notifikationsplan",
   "notification-types": "Notifikationstyper",
+  "onboarding": {
+    "missed-intro": "I tilfælde af at du gik glip af introduktionen",
+    "title": "Velkommen til Cadence",
+    "view-again": "Se onboarding igen"
+  },
   "or-paste-encryption-key": "Eller indsæt krypteringsnøgle:",
   "parent-activity": "Forældreaktivitet",
   "password-changed": "Adgangskode ændret",
@@ -315,6 +327,7 @@
   "push-notifications-have-been-d": "Push-notifikationer er blevet deaktiveret. Du kan genaktivere dem når som helst.",
   "push-notifications-have-been-e": "Push-notifikationer er blevet aktiveret med succes! Alle notifikationstyper er blevet tændt.",
   "react-native-device": "React Native-enhed",
+  "read-more-about-how-we-protect": "Læs mere om, hvordan vi beskytter dit privatliv →",
   "reflection": {
     "activityLabel": "Aktivitet",
     "details": "Detaljer",
@@ -331,6 +344,7 @@
   "sage": {
     "unavailableMessage": "Cadence AI er i øjeblikket ikke tilgængelig."
   },
+  "sage-your-friendly-ai-guide-wi": "Sage, din venlige AI-guide, hjælper dig med at bemærke mønstrene i din tid. \n\nSpørg Sage om at opsummere din dag, hjælpe dig med at huske dine mål eller lægge mærke til dine tidsmønstre. \nJo mere du logger, jo mere kan Sage hjælpe.",
   "save": "Gem",
   "scan-qr-code": "Scan QR -kode",
   "scan-this-qr-code-with-your-ne": "Scan denne QR -kode med din nye enhed til at importere krypteringsnøglen.",
@@ -423,6 +437,7 @@
   },
   "sign-up-now": "Tilmeld dig nu",
   "since-all-notification-types-a": "Da alle notifikationstyper er deaktiveret, er push-notifikationer automatisk slukket.",
+  "stay-in-sync-nwith-your-time": "Bliv synkroniseret \nmed din tid",
   "steps-to-reproduce": "Trin til at gengive",
   "steps-to-reproduce-optional": "Trin til reproducer (valgfrit)",
   "steps-to-reproduce-optional-0": "• Trin til reproducer (valgfrit)",
@@ -449,6 +464,7 @@
   "the-password-should-be-at-least": "- Adgangskoden skal være i det mindste",
   "this-action-cannot-be-undone-a": "Denne handling kan ikke fortrydes. Er du sikker på, at du vil slette din konto permanent?",
   "this-device-doesnt-have-an-enc": "Denne enhed har ikke en krypteringsnøgle. Du skal importere en nøgle fra din tidligere enhed for at få adgang til krypterede data.",
+  "time-moves-fast-cadence-helps": "Tiden bevæger sig hurtigt - Cadence hjælper dig med at se det mere tydeligt. \nRegistrer dine øjeblikke, reflekter over dine rytmer og opdag mønstre, der former dine dage. \nIntet pres, ingen perfektion - bare opmærksomhed.",
   "timeslice-created-successfully": "Tidsinterval oprettet med succes.",
   "timeslice-updated-successfully": "Tidsinterval opdateret med succes.",
   "timestamp-of-submission": "• Tidsstempel for indsendelse",
@@ -456,6 +472,7 @@
   "to-modify-notification-permiss": "For at ændre notifikationstilladelser på systemniveau skal du gå til din enheds indstillingsapp og finde denne apps notifikationsindstillinger.",
   "today": "I dag",
   "tu": "Tir",
+  "turn-on-notifications-for-gent": "Tænd notifikationer for blide påmindelser om at logge dine aktiviteter hele dagen. \nInget pres, bare en daglig skubbe til at hjælpe dig med at holde dig opmærksom på din tid. \n\n✨ Dit fremtidige selv vil takke dig. \nTag et øjeblik til at logge din dag.",
   "unable-to-open-email-app-pleas": "Kan ikke åbne e-mail-app. Send din supportanmodning til: dev@cadence.day",
   "unable-to-open-link": "Kan ikke åbne link",
   "unable-to-submit-bug-report-pl": "Kan ikke indsende fejlrapport. Prøv igen eller kontakt support.",
@@ -479,7 +496,9 @@
   "yesterday": "I går",
   "you-have-a-new-notification": "Du har en ny notifikation",
   "your-account-security-is-impor": "Din kontosikkerhed er vigtig for os. Ændringer af adgangskode kræver e-mail-verifikation for din beskyttelse. Kontakt support til anmodninger om sletning af konto.",
+  "your-data-nyour-privacy": "Dine data, \ndit privatliv",
   "your-email-address-for-follow": "• Din e-mail-adresse (til opfølgning)",
   "your-encryption-key-protects-s": "Din krypteringsnøgle beskytter følsomme data. Hold det sikkert og del det ikke med andre. Du har brug for denne nøgle for at få adgang til dine krypterede data på nye enheder.",
-  "your-password-has-been-changed": "Din adgangskode er blevet ændret med succes. Af sikkerhedsmæssige årsager bliver du nu logget ud."
+  "your-password-has-been-changed": "Din adgangskode er blevet ændret med succes. Af sikkerhedsmæssige årsager bliver du nu logget ud.",
+  "your-time-is-yours-alone-every": "Din tid er din alene. \nAlt, hvad du logger, er krypteret og opbevaret sikkert. \nIngen annoncer, ingen sporing, ingen deling af dine oplysninger-bare et sikkert rum til selvreflektion."
 }
