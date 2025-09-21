@@ -168,7 +168,9 @@ export default function CustomerSupportSettings() {
 
           {/* App Information */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>t('app-information')</Text>
+            <Text style={profileStyles.sectionTitle}>
+              {t("app-information")}
+            </Text>
 
             <CdTextInputOneLine
               label={t("profile.app-version")}

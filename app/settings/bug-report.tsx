@@ -315,7 +315,7 @@ export default function BugReportScreen() {
               <View style={styles.noteContainerStyle}>
                 <TextInput
                   style={styles.noteInputStyle}
-                  value={t("actual-behavior-optional")}
+                  value={actualBehavior}
                   onChangeText={setActualBehavior}
                   placeholder={t("actual-behavior-optional")}
                   placeholderTextColor="#aaa"
