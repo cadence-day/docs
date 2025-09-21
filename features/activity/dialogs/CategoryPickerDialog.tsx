@@ -5,7 +5,7 @@ import { useActivityCategoriesStore } from "@/shared/stores";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import ActivityCategory from "@/shared/types/models/activityCategory";
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View, Platform } from "react-native";
 
 type Props = {
   _dialogId?: string;
@@ -154,12 +154,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: "transparent",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
     minHeight: 80,
+    // Platform specific shadowing to avoid heavy Android shadows
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 2 },
+      },
+      android: {
+        elevation: 2,
+      },
+      default: {},
+    }),
   },
   tilePressed: {
     transform: [{ scale: 0.95 }],
@@ -169,7 +177,11 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderWidth: 2,
     backgroundColor: `${COLORS.primary}20`,
-    shadowOpacity: 0.2,
+    ...Platform.select({
+      ios: { shadowOpacity: 0.14, shadowRadius: 8 },
+      android: { elevation: 4 },
+      default: {},
+    }),
   },
   swatch: {
     width: 32,
