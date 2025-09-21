@@ -1,6 +1,7 @@
 import type { Activity } from "@/shared/types/models/activity";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
+import { GlobalErrorHandler } from "../../../shared/utils/errorHandler";
 
 interface UseDragOperationsProps {
   activities: Activity[];
@@ -27,7 +28,7 @@ export const useDragOperations = ({
 }: UseDragOperationsProps): UseDragOperationsReturn => {
   const [activityOrder, setActivityOrder] = useState<Activity[]>(activities);
   const [draggedActivityId, setDraggedActivityId] = useState<string | null>(
-    null
+    null,
   );
   const [dragPlaceholderIndex, setDragPlaceholderIndex] = useState<
     number | null
@@ -48,7 +49,7 @@ export const useDragOperations = ({
       onDragStateChange?.(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     },
-    [onDragStateChange]
+    [onDragStateChange],
   );
 
   const handleDragEnd = useCallback(() => {
@@ -82,13 +83,17 @@ export const useDragOperations = ({
           await onOrderChange(newOrder);
         }
       } catch (error) {
-        console.error("Failed to reorder activities:", error);
+        GlobalErrorHandler.logError(
+          "Failed to reorder activities",
+          "REORDER_ACTIVITIES_ERROR",
+          { error },
+        );
         // Revert on error
         setActivityOrder(activities);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
     },
-    [activityOrder, onOrderChange, activities]
+    [activityOrder, onOrderChange, activities],
   );
 
   const handlePlaceholderChange = useCallback((index: number | null) => {

@@ -6,6 +6,7 @@ import { useDialogStore } from "@/shared/stores";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import * as Device from "expo-device";
 import { Stack, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
@@ -37,6 +38,11 @@ export default function CustomerSupportSettings() {
     expoConfig?.ios?.buildNumber ||
     expoConfig?.android?.versionCode?.toString() ||
     t("settings.support.version-unknown");
+  // Get the device OS version
+  const deviceOS = Device.osName || t("settings.support.version-unknown");
+  const osVersion = Device.osVersion || t("settings.support.version-unknown");
+  const deviceModel = Device.modelName || t("settings.support.version-unknown");
+  const fullDeviceInfo = `${deviceModel}, ${deviceOS} ${osVersion}`;
 
   const handleEmailSupport = () => {
     const subject = encodeURIComponent(t("cadence-day-support-request"));
@@ -46,16 +52,7 @@ export default function CustomerSupportSettings() {
         .replace("{1}", buildNumber)
         .replace("{2}", user?.id || "Unknown")
         .replace("{3}", user?.emailAddresses?.[0]?.emailAddress || "Unknown")
-        .replace(
-          "{4}",
-          Constants.platform?.web
-            ? "Web"
-            : Constants.platform?.ios
-              ? "iOS"
-              : Constants.platform?.android
-                ? "Android"
-                : "Unknown"
-        )
+        .replace("{4}", fullDeviceInfo)
     );
 
     const emailUrl = `mailto:dev@cadence.day?subject=${subject}&body=${body}`;
@@ -194,7 +191,9 @@ export default function CustomerSupportSettings() {
 
           {/* App Information */}
           <View style={profileStyles.settingsSection}>
-            <Text style={profileStyles.sectionTitle}>t('app-information')</Text>
+            <Text style={profileStyles.sectionTitle}>
+              {t("app-information")}
+            </Text>
 
             <CdTextInputOneLine
               label={t("profile.app-version")}

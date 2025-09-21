@@ -315,7 +315,7 @@ export default function BugReportScreen() {
               <View style={styles.noteContainerStyle}>
                 <TextInput
                   style={styles.noteInputStyle}
-                  value={t("actual-behavior-optional")}
+                  value={actualBehavior}
                   onChangeText={setActualBehavior}
                   placeholder={t("actual-behavior-optional")}
                   placeholderTextColor="#aaa"
@@ -350,7 +350,7 @@ export default function BugReportScreen() {
 
           <CdButton
             title={
-              isSubmitting ? "t('common.submitting')" : t("submit-bug-report")
+              isSubmitting ? t("common.submitting") : t("submit-bug-report")
             }
             onPress={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}

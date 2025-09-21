@@ -12,6 +12,7 @@ import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({
@@ -82,16 +83,9 @@ export default function TabLayout() {
         (d) => d.type === "activity-legend"
       );
 
-      console.log(
-        `[Dialog Manager] Segments: [${segments.join(", ")}], Current view: ${currentView}, Is Home: ${isHomeView}, Dialog exists: ${!!activityLegendDialog}`
-      );
-
       if (isHomeView) {
         // Always ensure dialog is open on home/index view
         if (!activityLegendDialog) {
-          console.log(
-            "[Dialog Manager] Opening activity legend dialog for home view"
-          );
           dialogStore.openDialog({
             type: "activity-legend",
             props: {
@@ -99,20 +93,11 @@ export default function TabLayout() {
             },
             position: "dock",
           });
-        } else {
-          console.log(
-            "[Dialog Manager] Activity legend dialog already exists on home view"
-          );
         }
       } else {
         // Always close dialog on other views
         if (activityLegendDialog) {
-          console.log(
-            "[Dialog Manager] Closing activity legend dialog (not on home view)"
-          );
           dialogStore.closeDialog(activityLegendDialog.id, true);
-        } else {
-          console.log("[Dialog Manager] No activity legend dialog to close");
         }
       }
     }, 100);
@@ -178,7 +163,11 @@ export default function TabLayout() {
         }
       } catch (err) {
         // Ignore errors here - non-fatal
-        console.log("Error checking timeslices for onboarding:", err);
+        GlobalErrorHandler.logWarning(
+          "Error checking timeslices for onboarding",
+          "ONBOARDING_CHECK",
+          { error: err, userId }
+        );
       }
     };
 
