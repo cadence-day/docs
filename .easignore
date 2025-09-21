@@ -3,3 +3,5 @@ supabase/
 .prettierrc
 README.md
 docs/
+ios/
+android/

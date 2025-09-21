@@ -115,7 +115,7 @@ export default function EncryptionSettings() {
       setIsLinking(true);
       const { fingerprint } = await importEncryptionKey(data);
 
-      showSuccess(t("t-key-imported-successfully-fi"));
+      showSuccess(t("key-imported-successfully-fing"));
       await checkEncryptionStatus();
     } catch (error) {
       GlobalErrorHandler.logError(error as Error, "ENCRYPTION_QR_IMPORT", {});
