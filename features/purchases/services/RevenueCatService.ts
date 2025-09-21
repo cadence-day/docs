@@ -1,16 +1,16 @@
+import { supabaseClient } from "@/shared/api/client/supabaseClient";
+import { SECRETS } from "@/shared/constants/SECRETS";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Platform } from "react-native";
 import Purchases, {
   CustomerInfo,
-  PurchasesOffering,
-  PurchasesPackage,
   LOG_LEVEL,
   PurchasesError,
+  PurchasesOffering,
+  PurchasesPackage,
 } from "react-native-purchases";
-import { Platform } from "react-native";
-import { SECRETS } from "@/shared/constants/SECRETS";
-import { supabaseClient } from "@/shared/api/client/supabaseClient";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
-import type { SubscriptionPlan, Product } from "../types";
+import type { SubscriptionPlan } from "../types";
 
 class RevenueCatService {
   private static instance: RevenueCatService;
@@ -30,13 +30,17 @@ class RevenueCatService {
     if (this.isConfigured) return;
 
     try {
-      const apiKey =
-        Platform.OS === "ios"
-          ? SECRETS.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY
-          : SECRETS.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
+      const apiKey = Platform.OS === "ios"
+        ? SECRETS.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY
+        : SECRETS.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
 
-      if (!apiKey) {
-        console.warn("RevenueCat API key not configured");
+      if (
+        !apiKey || apiKey === "your_ios_api_key_here" ||
+        apiKey === "your_android_api_key_here"
+      ) {
+        console.warn(
+          "RevenueCat API key not configured - skipping initialization",
+        );
         return;
       }
 
@@ -51,6 +55,7 @@ class RevenueCatService {
       });
 
       this.isConfigured = true;
+      console.log("RevenueCat configured successfully");
     } catch (error) {
       GlobalErrorHandler.logError(error, "Failed to configure RevenueCat");
     }
@@ -58,6 +63,7 @@ class RevenueCatService {
 
   async login(userId: string): Promise<void> {
     if (!this.isConfigured) await this.configure();
+    if (!this.isConfigured) return; // Still not configured, skip
 
     try {
       if (this.currentUserId === userId) return;
@@ -83,6 +89,7 @@ class RevenueCatService {
 
   async getOfferings(): Promise<PurchasesOffering | null> {
     if (!this.isConfigured) await this.configure();
+    if (!this.isConfigured) return null; // Still not configured, return null
 
     try {
       const offerings = await Purchases.getOfferings();
@@ -97,6 +104,7 @@ class RevenueCatService {
     pkg: PurchasesPackage,
   ): Promise<CustomerInfo | null> {
     if (!this.isConfigured) await this.configure();
+    if (!this.isConfigured) return null; // Still not configured, return null
 
     try {
       const { customerInfo } = await Purchases.purchasePackage(pkg);
@@ -113,6 +121,7 @@ class RevenueCatService {
 
   async restorePurchases(): Promise<CustomerInfo | null> {
     if (!this.isConfigured) await this.configure();
+    if (!this.isConfigured) return null; // Still not configured, return null
 
     try {
       const customerInfo = await Purchases.restorePurchases();
@@ -126,6 +135,7 @@ class RevenueCatService {
 
   async getCustomerInfo(): Promise<CustomerInfo | null> {
     if (!this.isConfigured) await this.configure();
+    if (!this.isConfigured) return null; // Still not configured, return null
 
     try {
       return await Purchases.getCustomerInfo();
@@ -137,6 +147,7 @@ class RevenueCatService {
 
   async checkSubscriptionStatus(): Promise<SubscriptionPlan> {
     if (!this.isConfigured) await this.configure();
+    if (!this.isConfigured) return "free"; // Still not configured, return free
 
     try {
       const customerInfo = await this.getCustomerInfo();
@@ -207,7 +218,10 @@ class RevenueCatService {
         .eq("id", userId);
 
       if (error) {
-        GlobalErrorHandler.logError(error, "Failed to sync subscription status");
+        GlobalErrorHandler.logError(
+          error,
+          "Failed to sync subscription status",
+        );
       }
     } catch (error) {
       GlobalErrorHandler.logError(error, "Failed to sync subscription status");
@@ -219,6 +233,10 @@ class RevenueCatService {
   ): () => void {
     if (!this.isConfigured) {
       this.configure();
+      if (!this.isConfigured) {
+        // Return a no-op function if not configured
+        return () => {};
+      }
     }
 
     Purchases.addCustomerInfoUpdateListener((info) => {

@@ -10,10 +10,12 @@ import {
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
+import { revenueCatService } from "@/features/purchases";
 import { SECRETS } from "@/shared/constants/SECRETS";
 import { ToastProvider } from "@/shared/context/ToastProvider";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
@@ -92,6 +94,23 @@ export default Sentry.wrap(function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  // Initialize RevenueCat on app startup
+  useEffect(() => {
+    const initializeRevenueCat = async () => {
+      try {
+        await revenueCatService.configure();
+        GlobalErrorHandler.logDebug(
+          "RevenueCat configured successfully",
+          "REVENUECAT_INIT"
+        );
+      } catch (error) {
+        GlobalErrorHandler.logError(error, "Failed to initialize RevenueCat");
+      }
+    };
+
+    initializeRevenueCat();
+  }, []);
 
   if (!loaded) {
     // Async font loading only occurs in development.
