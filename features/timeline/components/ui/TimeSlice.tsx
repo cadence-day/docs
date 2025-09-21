@@ -7,7 +7,7 @@ import { Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Platform, Text, TouchableOpacity, View } from "react-native";
 import { TIMESLICE_CURRENT_WIDTH } from "../../constants/dimensions";
 import { styles } from "../../styles";
 import { getContrastColor } from "../../utils";
@@ -42,15 +42,25 @@ const MODE_STYLES: Record<Mode, any> = {
   [Mode.Today]: { borderColor: COLORS.primary, borderWidth: 1 },
   [Mode.Past]: { borderColor: COLORS.secondary, borderWidth: 2 },
   [Mode.Selected]: { borderColor: COLORS.primary, borderWidth: 3 },
-  [Mode.Current]: {
-    borderColor: COLORS.primary,
-    borderWidth: 2,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2, // for Android
-  },
+  [Mode.Current]: Platform.select({
+    ios: {
+      borderColor: COLORS.primary,
+      borderWidth: 2,
+      shadowColor: COLORS.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.12,
+      shadowRadius: 4,
+    },
+    android: {
+      borderColor: COLORS.primary,
+      borderWidth: 2,
+      elevation: 3,
+    },
+    default: {
+      borderColor: COLORS.primary,
+      borderWidth: 2,
+    },
+  }),
 };
 
 const TimeSlice: React.FC<TimeSliceProps> = ({

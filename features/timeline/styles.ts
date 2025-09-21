@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import {
   TIMESLICE_BORDER_RADIUS,
   TIMESLICE_MARGIN_HORIZONTAL,
@@ -30,6 +30,8 @@ export const styles = StyleSheet.create({
     justifyContent: "flex-start",
     width: TIMESLICE_WIDTH,
     marginHorizontal: TIMESLICE_MARGIN_HORIZONTAL,
+    // Ensure shadows can render on Android (avoid overflow hidden in parents)
+    overflow: Platform.OS === "android" ? "visible" : "visible",
   },
   timeSliceText: {
     color: "#222",
@@ -50,6 +52,8 @@ export const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
     paddingBottom: 4,
+    // Use a small elevation baseline to prevent harsh Android shadow jumps
+    elevation: 1,
   },
   timeSliceIconContainer: {
     width: "100%",
