@@ -35,7 +35,7 @@ export const SubscriptionPlansDialog: React.FC<SubscriptionPlansDialogProps> = (
       if (offering?.availablePackages) {
         setPackages(offering.availablePackages);
         const monthly = offering.availablePackages.find(
-          (pkg) => pkg.packageType === "MONTHLY"
+          (pkg: any) => pkg.packageType === "MONTHLY"
         );
         if (monthly) setSelectedPackage(monthly);
       }

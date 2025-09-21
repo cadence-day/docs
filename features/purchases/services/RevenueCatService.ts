@@ -2,13 +2,28 @@ import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import { SECRETS } from "@/shared/constants/SECRETS";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { Platform } from "react-native";
-import Purchases, {
-  CustomerInfo,
-  LOG_LEVEL,
-  PurchasesError,
-  PurchasesOffering,
-  PurchasesPackage,
-} from "react-native-purchases";
+
+// Conditional import for RevenueCat to handle Expo Go compatibility
+let Purchases: any = null;
+let LOG_LEVEL: any = null;
+
+// Type definitions for when RevenueCat is available
+type CustomerInfo = any;
+type PurchasesError = any;
+type PurchasesOffering = any;
+type PurchasesPackage = any;
+
+try {
+  const RevenueCatModule = require("react-native-purchases");
+  Purchases = RevenueCatModule.default;
+  LOG_LEVEL = RevenueCatModule.LOG_LEVEL;
+} catch (error) {
+  GlobalErrorHandler.logWarning(
+    "RevenueCat not available - running in Expo Go or web",
+    "REVENUECAT_IMPORT",
+    { error }
+  );
+}
 
 import type { SubscriptionPlan } from "../types";
 
@@ -28,6 +43,15 @@ class RevenueCatService {
 
   async configure(): Promise<void> {
     if (this.isConfigured) return;
+
+    // Check if RevenueCat is available (not in Expo Go)
+    if (!Purchases) {
+      GlobalErrorHandler.logWarning(
+        "RevenueCat not available - skipping configuration",
+        "REVENUECAT_CONFIG"
+      );
+      return;
+    }
 
     try {
       const apiKey = Platform.OS === "ios"
@@ -239,7 +263,7 @@ class RevenueCatService {
       }
     }
 
-    Purchases.addCustomerInfoUpdateListener((info) => {
+    Purchases.addCustomerInfoUpdateListener((info: any) => {
       this.syncSubscriptionStatus(info);
       listener(info);
     });

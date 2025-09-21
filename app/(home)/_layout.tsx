@@ -1,4 +1,6 @@
+import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
+import { revenueCatService } from "@/features/purchases/services/RevenueCatService";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
@@ -13,7 +15,6 @@ import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
-import { revenueCatService } from "@/features/purchases/services/RevenueCatService";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({
@@ -118,7 +119,6 @@ export default function TabLayout() {
       await checkAndPromptEncryptionLinking(userId);
       setDidCheckEncryption(true);
     })();
-     
   }, [user, segments, didCheckEncryption]);
 
   // Initialize RevenueCat when user is signed in
@@ -206,10 +206,7 @@ export default function TabLayout() {
               borderTopWidth: 1,
               borderTopColor: COLORS.light.border,
               height: NAV_BAR_SIZE,
-              elevation: 10, // Android shadow
-              shadowOffset: { width: 0, height: -2 }, // iOS shadow
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
+              ...getShadowStyle(ShadowLevel.Low),
             },
             tabBarItemStyle: {
               flex: 1,
