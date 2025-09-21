@@ -1,0 +1,14 @@
+# Reviewer auto-assignment settings
+addReviewers: true
+# Set Assignee as Author
+addAssignees: author
+# List of users to add as Reviewers
+reviewers:
+  - bruadam
+  - OlegMoshkovich
+# Number of additional reviewers
+# Set to 0 to add all reviewers in a group (default: 0)
+numberOfReviewers: 0
+# Skip the reviewer addition process if the following keywords are included in the Pull Request
+skipKeywords:
+  - exclude-review # Keyword setting to exclude reviews

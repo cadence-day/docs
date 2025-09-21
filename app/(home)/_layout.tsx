@@ -117,7 +117,7 @@ export default function TabLayout() {
       await checkAndPromptEncryptionLinking(userId);
       setDidCheckEncryption(true);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [user, segments, didCheckEncryption]);
 
   // On initial mount when signed-in, open onboarding if the user has no timeslices

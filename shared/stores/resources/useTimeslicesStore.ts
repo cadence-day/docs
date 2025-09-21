@@ -138,7 +138,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       (upsertedTimeslices, currentState) => {
         if (!upsertedTimeslices || upsertedTimeslices.length === 0) return {};
 
-        let updatedTimeslices = [...currentState.timeslices];
+        const updatedTimeslices = [...currentState.timeslices];
 
         upsertedTimeslices.forEach((upsertedTimeslice) => {
           const existingIndex = updatedTimeslices.findIndex(

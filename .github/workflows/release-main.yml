@@ -1,0 +1,136 @@
+name: Main Release
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  update-only:
+    if: github.event.action != 'closed'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install -g eas-cli jq
+      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
+
+      - name: Bump version and build number (pre-merge)
+        run: |
+          node scripts/bump_version.js --mode=main --prTitle="${{ github.event.pull_request.title }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app.json
+          git commit -m "ci: bump version/build (main pre-merge)"
+          git push
+
+      - name: EAS Update (production)
+        run: |
+          eas update --branch main --profile production             --message "Automated update from PR #${{ github.event.pull_request.number }}"
+
+  release-on-merge:
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: macos-latest
+    env:
+      APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_APP_ID: ${{ secrets.APP_STORE_CONNECT_APP_ID }}
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install -g eas-cli jq
+      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
+
+      - name: Bump version and build number
+        run: |
+          node scripts/bump_version.js --mode=main --prTitle="${{ github.event.pull_request.title }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app.json
+          git commit -m "ci: bump version/build (main merged)"
+          git push --follow-tags
+
+      - name: EAS Build iOS
+        run: |
+          eas build --platform ios --profile production --non-interactive --wait
+
+      - name: Submit to App Store Connect
+        run: |
+          eas submit -p ios             --asc-app-id ${{ secrets.APP_STORE_CONNECT_APP_ID }}             --asc-api-key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }}             --asc-api-key-issuer-id ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }}             --asc-api-key ${{ secrets.APP_STORE_CONNECT_KEY }}
+
+      - name: Get group id
+        id: group
+        run: |
+          group_id=$(./scripts/asc_api_beta_groups.sh get-or-create "alpha-users")
+          echo "group_id=$group_id" >> $GITHUB_OUTPUT
+
+      - name: Add build to group
+        run: ./scripts/asc_api_add_build_to_group.sh $BUILD_ID ${{ steps.group.outputs.group_id }}
+
+      - name: Get public TestFlight link
+        id: link
+        run: |
+          link=$(./scripts/asc_api_get_public_link.sh ${{ steps.group.outputs.group_id }})
+          echo "link=$link" >> $GITHUB_OUTPUT
+
+      - name: Get App Version & Build Number
+        id: get_version
+        run: |
+          version=$(jq -r '.expo.version' app.json)
+          build=$(jq -r '.expo.ios.buildNumber' app.json)
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "build=$build" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Issue to Track AppStoreConnect Acceptance
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "AppStoreConnect acceptance for version ${{ steps.get_version.outputs.version }}"
+          content-filepath: .github/ISSUE_TEMPLATES/appstore_acceptance.md
+
+      - name: Comment on PR with TestFlight URL
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            🚀 TestFlight build uploaded for alpha-users  
+            **Version:** ${{ steps.get_version.outputs.version }}  
+            **Build:** ${{ steps.get_version.outputs.build }}  
+            [Open TestFlight](${{ steps.link.outputs.link }})
+
+      - name: Notify Discord
+        run: |
+          pr_title="${{ github.event.pull_request.title }}"
+          pr_body="${{ github.event.pull_request.body }}"
+          version="${{ steps.get_version.outputs.version }}"
+          build="${{ steps.get_version.outputs.build }}"
+          link="${{ steps.link.outputs.link }}"
+
+          payload=$(jq -n             --arg title "$pr_title"             --arg body "$pr_body"             --arg ver "$version"             --arg bld "$build"             --arg url "$link"             '{
+              username: "CI/CD Bot",
+              embeds: [
+                {
+                  title: "🚀 New Production TestFlight build",
+                  description: $body,
+                  fields: [
+                    {name: "Version", value: $ver, inline: true},
+                    {name: "Build", value: $bld, inline: true},
+                    {name: "TestFlight Link", value: $url, inline: false}
+                  ],
+                  color: 16744192
+                }
+              ]
+            }')
+
+          curl -H "Content-Type: application/json"             -X POST -d "$payload" $DISCORD_WEBHOOK
