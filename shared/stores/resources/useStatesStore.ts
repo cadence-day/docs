@@ -124,7 +124,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       (upsertedStates, currentState) => {
         if (!upsertedStates || upsertedStates.length === 0) return {};
 
-        let updatedStates = [...currentState.states];
+        const updatedStates = [...currentState.states];
 
         upsertedStates.forEach((upsertedState) => {
           const existingIndex = updatedStates.findIndex(

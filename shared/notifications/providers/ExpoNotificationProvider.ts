@@ -61,7 +61,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
       GlobalErrorHandler.logError(
         error,
         "ExpoNotificationProvider.sendNotification",
-        { notificationId: notification.id },
+        { notificationId: notification.id }
       );
       throw error;
     }
@@ -69,7 +69,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
 
   async scheduleNotification(
     notification: NotificationMessage,
-    scheduledFor: Date,
+    scheduledFor: Date
   ): Promise<void> {
     if (!this.isSupported()) {
       throw new Error("Push notifications are not supported on this device");
@@ -99,7 +99,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
         {
           notificationId: notification.id,
           scheduledFor: scheduledFor.toISOString(),
-        },
+        }
       );
       throw error;
     }
@@ -112,7 +112,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
       GlobalErrorHandler.logError(
         error,
         "ExpoNotificationProvider.cancelNotification",
-        { notificationId },
+        { notificationId }
       );
       throw error;
     }
@@ -124,15 +124,16 @@ export class ExpoNotificationProvider implements NotificationProvider {
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "ExpoNotificationProvider.cancelAllNotifications",
+        "ExpoNotificationProvider.cancelAllNotifications"
       );
       throw error;
     }
   }
 
   isSupported(): boolean {
-    return Device.isDevice &&
-      (Platform.OS === "ios" || Platform.OS === "android");
+    return (
+      Device.isDevice && (Platform.OS === "ios" || Platform.OS === "android")
+    );
   }
 
   async getPermissionStatus(): Promise<NotificationPermissionStatus> {
@@ -174,7 +175,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "ExpoNotificationProvider.getExpoPushToken",
+        "ExpoNotificationProvider.getExpoPushToken"
       );
       return null;
     }
@@ -188,7 +189,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "ExpoNotificationProvider.getScheduledNotifications",
+        "ExpoNotificationProvider.getScheduledNotifications"
       );
       return [];
     }
@@ -198,13 +199,13 @@ export class ExpoNotificationProvider implements NotificationProvider {
     if (!this.isSupported()) {
       GlobalErrorHandler.logWarning(
         "Push notifications are not supported on this device",
-        "ExpoNotificationProvider.registerForPushNotificationsAsync",
+        "ExpoNotificationProvider.registerForPushNotificationsAsync"
       );
       return null;
     }
 
-    const { status: existingStatus } = await Notifications
-      .getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
     if (existingStatus !== "granted") {
@@ -221,7 +222,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
     if (finalStatus !== "granted") {
       GlobalErrorHandler.logWarning(
         "Push notification permissions not granted",
-        "ExpoNotificationProvider.registerForPushNotificationsAsync",
+        "ExpoNotificationProvider.registerForPushNotificationsAsync"
       );
       return null;
     }
@@ -234,7 +235,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "ExpoNotificationProvider.registerForPushNotificationsAsync",
+        "ExpoNotificationProvider.registerForPushNotificationsAsync"
       );
       return null;
     }
@@ -243,7 +244,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
   // Helper method to schedule recurring notifications
   async scheduleRecurringNotification(
     notification: NotificationMessage,
-    trigger: Notifications.TimeIntervalTriggerInput,
+    trigger: Notifications.TimeIntervalTriggerInput
   ): Promise<void> {
     if (!this.isSupported()) {
       throw new Error("Push notifications are not supported on this device");
@@ -264,7 +265,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
       GlobalErrorHandler.logError(
         error,
         "ExpoNotificationProvider.scheduleRecurringNotification",
-        { notificationId: notification.id },
+        { notificationId: notification.id }
       );
       throw error;
     }
@@ -273,7 +274,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
   // Helper method to create daily trigger
   createDailyTrigger(
     hour: number,
-    minute: number,
+    minute: number
   ): Notifications.TimeIntervalTriggerInput {
     const now = new Date();
     const target = new Date();
@@ -296,7 +297,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
   createWeeklyTrigger(
     weekday: number,
     hour: number,
-    minute: number,
+    minute: number
   ): Notifications.TimeIntervalTriggerInput {
     const now = new Date();
     const target = new Date();

@@ -27,7 +27,7 @@ NotificationProvider (Context)
 Wrap your app with the NotificationProvider:
 
 ```tsx
-import { NotificationProvider } from '@/shared/notifications';
+import { NotificationProvider } from "@/shared/notifications";
 
 export default function App() {
   return (
@@ -41,18 +41,18 @@ export default function App() {
 ### Send a Notification
 
 ```tsx
-import { useNotifications } from '@/shared/notifications';
+import { useNotifications } from "@/shared/notifications";
 
 function MyComponent() {
   const { sendNotification } = useNotifications();
 
   const sendWelcomeNotification = async () => {
     await sendNotification({
-      id: 'welcome-123',
-      type: 'welcome',
-      title: 'Welcome to Cadence!',
-      body: 'Start your mindfulness journey today',
-      data: { userId: '123' }
+      id: "welcome-123",
+      type: "welcome",
+      title: "Welcome to Cadence!",
+      body: "Start your mindfulness journey today",
+      data: { userId: "123" },
     });
   };
 
@@ -73,10 +73,10 @@ const scheduleMorningReminder = async () => {
 
   await scheduleNotification(
     {
-      id: 'morning-reminder',
-      type: 'cadence_morning',
-      title: 'Morning Reflection',
-      body: 'Take a moment to set your intentions',
+      id: "morning-reminder",
+      type: "cadence_morning",
+      title: "Morning Reflection",
+      body: "Take a moment to set your intentions",
     },
     tomorrow
   );

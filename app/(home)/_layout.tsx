@@ -118,7 +118,7 @@ export default function TabLayout() {
       await checkAndPromptEncryptionLinking(userId);
       setDidCheckEncryption(true);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [user, segments, didCheckEncryption]);
 
   // Initialize RevenueCat when user is signed in

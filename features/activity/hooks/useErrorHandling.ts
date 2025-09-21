@@ -15,7 +15,7 @@ interface UseErrorHandlingReturn {
       successMessage?: string;
       errorPrefix?: string;
       showHapticFeedback?: boolean;
-    },
+    }
   ) => Promise<T | null>;
 }
 
@@ -34,7 +34,7 @@ export const useErrorHandling = (): UseErrorHandlingReturn => {
         successMessage?: string;
         errorPrefix?: string;
         showHapticFeedback?: boolean;
-      } = {},
+      } = {}
     ): Promise<T | null> => {
       const {
         successMessage,
@@ -78,7 +78,7 @@ export const useErrorHandling = (): UseErrorHandlingReturn => {
         return null;
       }
     },
-    [clearError],
+    [clearError]
   );
 
   return {

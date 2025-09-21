@@ -56,11 +56,11 @@ if (!i18n.isInitialized) {
     initI18n();
   } catch (err) {
     // Log initialization errors; components may still mount and use the provider.
-    // eslint-disable-next-line no-console
+     
     GlobalErrorHandler.logWarning(
       "i18n initialization failed",
       "I18N_INIT_ERROR",
-      { error: err },
+      { error: err }
     );
   }
 }
@@ -73,10 +73,10 @@ i18n.on("languageChanged", (lng) => {
   // Update exported locale variable
   // Note: This won't update existing imports; they need to re-import or use i18n directly.
   // This is a limitation of module exports in JavaScript/TypeScript.
-  // eslint-disable-next-line no-console
+   
   GlobalErrorHandler.logWarning(
     "i18n language changed",
     "I18N_LANGUAGE_CHANGE",
-    { language: lng },
+    { language: lng }
   );
 });

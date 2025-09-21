@@ -1,0 +1,17 @@
+name: Expo Go Preview (dev)
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install -g eas-cli
+      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
+      - run: eas update --branch development --message "Automated preview from GitHub Actions"
