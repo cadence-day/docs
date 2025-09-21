@@ -344,7 +344,7 @@
   "sage": {
     "unavailableMessage": "Cadence AI n'est actuellement pas disponible."
   },
-  "sage-your-friendly-ai-guide-wi": "Sage Votre guide d'IA amical vous aidera à remarquer les modèles de votre temps. \\ N \\ nask sage pour résumer votre journée, vous aider à vous souvenir de vos objectifs ou à remarquer vos modèles de temps. \nPlus vous vous connectez, plus la sauge peut vous aider.",
+  "sage-your-friendly-ai-guide-wi": "Sage, votre guide d'IA amical, vous aidera à remarquer les modèles de votre temps. \n\nDemandez à Sage de résumer votre journée, vous aider à vous souvenir de vos objectifs ou à remarquer vos modèles de temps. \nPlus vous vous connectez, plus Sage peut vous aider.",
   "save": "Sauvegarder",
   "scan-qr-code": "Scanner le code QR",
   "scan-this-qr-code-with-your-ne": "Scannez ce code QR avec votre nouvel appareil pour importer la clé de chiffrement.",
@@ -472,7 +472,7 @@
   "to-modify-notification-permiss": "Pour modifier les autorisations de notification au niveau du système, veuillez consulter l'application Paramètres de votre appareil et trouver les paramètres de notification de cette application.",
   "today": "Aujourd'hui",
   "tu": "Mar",
-  "turn-on-notifications-for-gent": "Allumez les notifications pour que de doux rappels enregistrent vos activités tout au long de la journée. \nPas de pression, juste un coup de pouce quotidien pour vous aider à rester conscient de votre temps. \\ N \\ n✨ Votre futur moi vous remerciera. \nPrenez un moment pour enregistrer votre journée.",
+  "turn-on-notifications-for-gent": "Activez les notifications pour de doux rappels d'enregistrer vos activités tout au long de la journée. \nPas de pression, juste un coup de pouce quotidien pour vous aider à rester conscient de votre temps. \n\n✨ Votre futur moi vous remerciera. \nPrenez un moment pour enregistrer votre journée.",
   "unable-to-open-email-app-pleas": "Impossible d'ouvrir l'application de messagerie. \nVeuillez envoyer votre demande d'assistance à: dev@cadence.Day",
   "unable-to-open-link": "Impossible d'ouvrir le lien",
   "unable-to-submit-bug-report-pl": "Impossible de soumettre un rapport de bogue. \nVeuillez réessayer ou contacter le support.",
@@ -496,7 +496,7 @@
   "yesterday": "Hier",
   "you-have-a-new-notification": "Vous avez une nouvelle notification",
   "your-account-security-is-impor": "La sécurité de votre compte est importante pour nous. \nLes modifications de mot de passe nécessitent une vérification par e-mail pour votre protection. \nContactez la prise en charge des demandes de suppression du compte.",
-  "your-data-nyour-privacy": "Vos données, \\ nyour confidentialité",
+  "your-data-nyour-privacy": "Vos données, \nvotre confidentialité",
   "your-email-address-for-follow": "• Votre adresse e-mail (pour le suivi)",
   "your-encryption-key-protects-s": "Votre clé de chiffrement protège les données sensibles. \nGardez-le en sécurité et ne le partagez pas avec les autres. \nVous aurez besoin de cette clé pour accéder à vos données cryptées sur de nouveaux appareils.",
   "your-password-has-been-changed": "Votre mot de passe a été modifié avec succès. \nPour des raisons de sécurité, vous serez déconnecté maintenant.",
