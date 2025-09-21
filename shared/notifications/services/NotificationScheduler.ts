@@ -28,7 +28,6 @@ export class NotificationScheduler {
   }
 
   async scheduleAllNotifications(): Promise<void> {
-    const { t } = useTranslation();
     try {
       // Cancel existing notifications first
       await this.engine.cancelAllNotifications();
