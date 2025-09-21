@@ -350,7 +350,7 @@ export default function BugReportScreen() {
 
           <CdButton
             title={
-              isSubmitting ? "t('common.submitting')" : t("submit-bug-report")
+              isSubmitting ? t("common.submitting") : t("submit-bug-report")
             }
             onPress={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}

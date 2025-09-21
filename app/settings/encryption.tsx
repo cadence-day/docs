@@ -338,7 +338,7 @@ export default function EncryptionSettings() {
                         styles.importButtonTextDisabled,
                     ]}
                   >
-                    {isLinking ? "t('importing')" : t("import-key")}
+                    {isLinking ? t("importing") : t("import-key")}
                   </Text>
                 </TouchableOpacity>
               </View>
