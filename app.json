@@ -79,7 +79,7 @@
       "edgeToEdgeEnabled": true,
       "icon": "./assets/images/icon.png",
       "package": "day.cadence.mobile",
-      "versionCode": 94,
+      "versionCode": 95,
       "permissions": [
         "android.permission.CAMERA"
       ],
