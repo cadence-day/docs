@@ -1,5 +1,5 @@
-import { NotificationProvider, NotificationMessage } from '../types';
-import { GlobalErrorHandler } from '@/shared/utils/errorHandler';
+import { NotificationProvider, NotificationMessage } from "../types";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
 export interface InAppNotificationDisplay {
   id: string;
@@ -16,9 +16,11 @@ export interface InAppNotificationOptions {
 }
 
 export class InAppNotificationProvider implements NotificationProvider {
-  name = 'InAppNotificationProvider';
+  name = "InAppNotificationProvider";
   private notifications: Map<string, InAppNotificationDisplay> = new Map();
-  private subscribers: Array<(notifications: InAppNotificationDisplay[]) => void> = [];
+  private subscribers: Array<
+    (notifications: InAppNotificationDisplay[]) => void
+  > = [];
   private options: InAppNotificationOptions;
 
   constructor(options: InAppNotificationOptions = {}) {
@@ -32,7 +34,10 @@ export class InAppNotificationProvider implements NotificationProvider {
 
   async initialize(): Promise<void> {
     // In-app notifications don't require initialization
-    GlobalErrorHandler.logDebug('In-app notification provider initialized', 'InAppNotificationProvider.initialize');
+    GlobalErrorHandler.logDebug(
+      "In-app notification provider initialized",
+      "InAppNotificationProvider.initialize"
+    );
   }
 
   async sendNotification(notification: NotificationMessage): Promise<void> {
@@ -62,18 +67,25 @@ export class InAppNotificationProvider implements NotificationProvider {
 
       GlobalErrorHandler.logDebug(
         `In-app notification sent: ${notification.title}`,
-        'InAppNotificationProvider.sendNotification',
+        "InAppNotificationProvider.sendNotification",
         { notificationId: notification.id }
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'InAppNotificationProvider.sendNotification', {
-        notificationId: notification.id,
-      });
+      GlobalErrorHandler.logError(
+        error,
+        "InAppNotificationProvider.sendNotification",
+        {
+          notificationId: notification.id,
+        }
+      );
       throw error;
     }
   }
 
-  async scheduleNotification(notification: NotificationMessage, scheduledFor: Date): Promise<void> {
+  async scheduleNotification(
+    notification: NotificationMessage,
+    scheduledFor: Date
+  ): Promise<void> {
     try {
       const delay = scheduledFor.getTime() - Date.now();
 
@@ -89,14 +101,18 @@ export class InAppNotificationProvider implements NotificationProvider {
 
       GlobalErrorHandler.logDebug(
         `In-app notification scheduled for: ${scheduledFor.toISOString()}`,
-        'InAppNotificationProvider.scheduleNotification',
+        "InAppNotificationProvider.scheduleNotification",
         { notificationId: notification.id, delay }
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'InAppNotificationProvider.scheduleNotification', {
-        notificationId: notification.id,
-        scheduledFor: scheduledFor.toISOString(),
-      });
+      GlobalErrorHandler.logError(
+        error,
+        "InAppNotificationProvider.scheduleNotification",
+        {
+          notificationId: notification.id,
+          scheduledFor: scheduledFor.toISOString(),
+        }
+      );
       throw error;
     }
   }
@@ -109,14 +125,18 @@ export class InAppNotificationProvider implements NotificationProvider {
 
         GlobalErrorHandler.logDebug(
           `In-app notification cancelled`,
-          'InAppNotificationProvider.cancelNotification',
+          "InAppNotificationProvider.cancelNotification",
           { notificationId }
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'InAppNotificationProvider.cancelNotification', {
-        notificationId,
-      });
+      GlobalErrorHandler.logError(
+        error,
+        "InAppNotificationProvider.cancelNotification",
+        {
+          notificationId,
+        }
+      );
       throw error;
     }
   }
@@ -127,11 +147,14 @@ export class InAppNotificationProvider implements NotificationProvider {
       this.notifySubscribers();
 
       GlobalErrorHandler.logDebug(
-        'All in-app notifications cancelled',
-        'InAppNotificationProvider.cancelAllNotifications'
+        "All in-app notifications cancelled",
+        "InAppNotificationProvider.cancelAllNotifications"
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error, 'InAppNotificationProvider.cancelAllNotifications');
+      GlobalErrorHandler.logError(
+        error,
+        "InAppNotificationProvider.cancelAllNotifications"
+      );
       throw error;
     }
   }
@@ -142,7 +165,9 @@ export class InAppNotificationProvider implements NotificationProvider {
 
   // In-app specific methods
 
-  subscribe(callback: (notifications: InAppNotificationDisplay[]) => void): () => void {
+  subscribe(
+    callback: (notifications: InAppNotificationDisplay[]) => void
+  ): () => void {
     this.subscribers.push(callback);
 
     // Immediately call with current notifications
@@ -159,13 +184,14 @@ export class InAppNotificationProvider implements NotificationProvider {
 
   getVisibleNotifications(): InAppNotificationDisplay[] {
     return Array.from(this.notifications.values())
-      .filter(notification => notification.isVisible)
+      .filter((notification) => notification.isVisible)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   getAllNotifications(): InAppNotificationDisplay[] {
-    return Array.from(this.notifications.values())
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    return Array.from(this.notifications.values()).sort(
+      (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
+    );
   }
 
   markAsRead(notificationId: string): void {
@@ -177,7 +203,7 @@ export class InAppNotificationProvider implements NotificationProvider {
   }
 
   markAllAsRead(): void {
-    this.notifications.forEach(notification => {
+    this.notifications.forEach((notification) => {
       notification.isRead = true;
     });
     this.notifySubscribers();
@@ -197,7 +223,7 @@ export class InAppNotificationProvider implements NotificationProvider {
   }
 
   hideAllNotifications(): void {
-    this.notifications.forEach(notification => {
+    this.notifications.forEach((notification) => {
       notification.isVisible = false;
     });
     this.notifySubscribers();
@@ -209,9 +235,9 @@ export class InAppNotificationProvider implements NotificationProvider {
   }
 
   getUnreadCount(): number {
-    return Array.from(this.notifications.values())
-      .filter(notification => !notification.isRead)
-      .length;
+    return Array.from(this.notifications.values()).filter(
+      (notification) => !notification.isRead
+    ).length;
   }
 
   clearHistory(): void {
@@ -221,11 +247,14 @@ export class InAppNotificationProvider implements NotificationProvider {
 
   private notifySubscribers(): void {
     const visibleNotifications = this.getVisibleNotifications();
-    this.subscribers.forEach(callback => {
+    this.subscribers.forEach((callback) => {
       try {
         callback(visibleNotifications);
       } catch (error) {
-        GlobalErrorHandler.logError(error, 'InAppNotificationProvider.notifySubscribers');
+        GlobalErrorHandler.logError(
+          error,
+          "InAppNotificationProvider.notifySubscribers"
+        );
       }
     });
   }
@@ -236,10 +265,11 @@ export class InAppNotificationProvider implements NotificationProvider {
     const visibleNotifications = this.getVisibleNotifications();
     if (visibleNotifications.length > this.options.maxDisplayedNotifications) {
       // Hide oldest notifications that exceed the limit
-      const notificationsToHide = visibleNotifications
-        .slice(this.options.maxDisplayedNotifications);
+      const notificationsToHide = visibleNotifications.slice(
+        this.options.maxDisplayedNotifications
+      );
 
-      notificationsToHide.forEach(notification => {
+      notificationsToHide.forEach((notification) => {
         this.hideNotification(notification.id);
       });
     }

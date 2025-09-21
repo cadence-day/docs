@@ -34,16 +34,16 @@ export type NotificationType =
   | "reminder"
   | "system";
 
-export type NotificationDeliveryMethod =
-  | "push"
-  | "local"
-  | "in-app";
+export type NotificationDeliveryMethod = "push" | "local" | "in-app";
 
 export interface NotificationProvider {
   name: string;
   initialize(): Promise<void>;
   sendNotification(notification: NotificationMessage): Promise<void>;
-  scheduleNotification(notification: NotificationMessage, scheduledFor: Date): Promise<void>;
+  scheduleNotification(
+    notification: NotificationMessage,
+    scheduledFor: Date
+  ): Promise<void>;
   cancelNotification(notificationId: string): Promise<void>;
   cancelAllNotifications(): Promise<void>;
   isSupported(): boolean;
@@ -76,6 +76,9 @@ export interface NotificationLog {
 export interface NotificationSubscriber {
   onNotificationReceived?: (notification: NotificationMessage) => void;
   onNotificationSent?: (notification: NotificationMessage) => void;
-  onNotificationFailed?: (notification: NotificationMessage, error: Error) => void;
+  onNotificationFailed?: (
+    notification: NotificationMessage,
+    error: Error
+  ) => void;
   onPermissionChanged?: (status: NotificationPermissionStatus) => void;
 }

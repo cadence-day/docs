@@ -9,7 +9,7 @@ import { handleApiError } from "../../utils/errorHandler";
  * @returns A promise that resolves to the deleted timeslice or null if not found.
  */
 export async function deleteTimeslice(
-  timesliceId: string,
+  timesliceId: string
 ): Promise<Timeslice | null> {
   try {
     const result = await apiCall(
@@ -27,7 +27,7 @@ export async function deleteTimeslice(
         maxRetries: 2,
         baseDelay: 1000,
         maxDelay: 5000,
-      },
+      }
     );
     return result;
   } catch (error) {
@@ -41,7 +41,7 @@ export async function deleteTimeslice(
  * @returns A promise that resolves to an array of deleted timeslices.
  */
 export async function deleteTimeslices(
-  timesliceIds: string[],
+  timesliceIds: string[]
 ): Promise<Timeslice[]> {
   try {
     const result = await apiCall(
@@ -58,7 +58,7 @@ export async function deleteTimeslices(
         maxRetries: 2,
         baseDelay: 1000,
         maxDelay: 5000,
-      },
+      }
     );
     return result;
   } catch (error) {

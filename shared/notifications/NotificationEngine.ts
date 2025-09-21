@@ -22,13 +22,13 @@ export class NotificationEngine {
 
   registerProvider(
     method: NotificationDeliveryMethod,
-    provider: NotificationProvider,
+    provider: NotificationProvider
   ): void {
     if (!this.config.enabledProviders.includes(method)) {
       if (this.config.enableLogging) {
         GlobalErrorHandler.logWarning(
           `Provider ${method} is not enabled in config`,
-          "NotificationEngine.registerProvider",
+          "NotificationEngine.registerProvider"
         );
       }
       return;
@@ -38,7 +38,7 @@ export class NotificationEngine {
     if (this.config.enableLogging) {
       GlobalErrorHandler.logDebug(
         `Registered provider: ${provider.name} for ${method}`,
-        "NotificationEngine.registerProvider",
+        "NotificationEngine.registerProvider"
       );
     }
   }
@@ -67,59 +67,58 @@ export class NotificationEngine {
     if (this.config.enableLogging) {
       GlobalErrorHandler.logDebug(
         `Initialized with ${this.providers.size} providers`,
-        "NotificationEngine.initialize",
+        "NotificationEngine.initialize"
       );
     }
   }
 
   async emit(event: NotificationEvent): Promise<void> {
-    const deliveryPromises = event.deliveryMethod
-      .map(async (method) => {
-        const provider = this.providers.get(method);
-        if (!provider) {
-          if (this.config.enableLogging) {
-            GlobalErrorHandler.logWarning(
-              `No provider found for method: ${method}`,
-              "NotificationEngine.emit",
-            );
-          }
-          return;
+    const deliveryPromises = event.deliveryMethod.map(async (method) => {
+      const provider = this.providers.get(method);
+      if (!provider) {
+        if (this.config.enableLogging) {
+          GlobalErrorHandler.logWarning(
+            `No provider found for method: ${method}`,
+            "NotificationEngine.emit"
+          );
         }
+        return;
+      }
 
-        if (!provider.isSupported()) {
-          if (this.config.enableLogging) {
-            GlobalErrorHandler.logWarning(
-              `Provider ${provider.name} is not supported`,
-              "NotificationEngine.emit",
-            );
-          }
-          return;
+      if (!provider.isSupported()) {
+        if (this.config.enableLogging) {
+          GlobalErrorHandler.logWarning(
+            `Provider ${provider.name} is not supported`,
+            "NotificationEngine.emit"
+          );
         }
+        return;
+      }
 
-        try {
-          await provider.sendNotification(event.message);
-          this.logNotification(
-            event.userId || "unknown",
-            event.type,
-            method,
-            "sent",
-          );
-          this.notifySubscribers("onNotificationSent", event.message);
-        } catch (error) {
-          this.logNotification(
-            event.userId || "unknown",
-            event.type,
-            method,
-            "failed",
-            error as Error,
-          );
-          this.notifySubscribers(
-            "onNotificationFailed",
-            event.message,
-            error as Error,
-          );
-        }
-      });
+      try {
+        await provider.sendNotification(event.message);
+        this.logNotification(
+          event.userId || "unknown",
+          event.type,
+          method,
+          "sent"
+        );
+        this.notifySubscribers("onNotificationSent", event.message);
+      } catch (error) {
+        this.logNotification(
+          event.userId || "unknown",
+          event.type,
+          method,
+          "failed",
+          error as Error
+        );
+        this.notifySubscribers(
+          "onNotificationFailed",
+          event.message,
+          error as Error
+        );
+      }
+    });
 
     await Promise.allSettled(deliveryPromises);
   }
@@ -127,35 +126,34 @@ export class NotificationEngine {
   async schedule(
     event: NotificationEvent,
     scheduledFor: Date,
-    userId?: string,
+    userId?: string
   ): Promise<void> {
-    const schedulePromises = event.deliveryMethod
-      .map(async (method) => {
-        const provider = this.providers.get(method);
-        if (!provider || !provider.isSupported()) {
-          return;
-        }
+    const schedulePromises = event.deliveryMethod.map(async (method) => {
+      const provider = this.providers.get(method);
+      if (!provider || !provider.isSupported()) {
+        return;
+      }
 
-        try {
-          await provider.scheduleNotification(event.message, scheduledFor);
-          this.logNotification(
-            userId || event.userId || "unknown",
-            event.type,
-            method,
-            "scheduled",
-            undefined,
-            scheduledFor,
-          );
-        } catch (error) {
-          this.logNotification(
-            userId || event.userId || "unknown",
-            event.type,
-            method,
-            "failed",
-            error as Error,
-          );
-        }
-      });
+      try {
+        await provider.scheduleNotification(event.message, scheduledFor);
+        this.logNotification(
+          userId || event.userId || "unknown",
+          event.type,
+          method,
+          "scheduled",
+          undefined,
+          scheduledFor
+        );
+      } catch (error) {
+        this.logNotification(
+          userId || event.userId || "unknown",
+          event.type,
+          method,
+          "failed",
+          error as Error
+        );
+      }
+    });
 
     await Promise.allSettled(schedulePromises);
   }
@@ -166,7 +164,7 @@ export class NotificationEngine {
         GlobalErrorHandler.logError(
           error,
           "NotificationEngine.cancelNotification",
-          { notificationId, providerName: provider.name },
+          { notificationId, providerName: provider.name }
         );
       })
     );
@@ -180,7 +178,7 @@ export class NotificationEngine {
         GlobalErrorHandler.logError(
           error,
           "NotificationEngine.cancelAllNotifications",
-          { providerName: provider.name },
+          { providerName: provider.name }
         );
       })
     );
@@ -189,7 +187,7 @@ export class NotificationEngine {
   }
 
   getProvider(
-    method: NotificationDeliveryMethod,
+    method: NotificationDeliveryMethod
   ): NotificationProvider | undefined {
     return this.providers.get(method);
   }
@@ -209,9 +207,10 @@ export class NotificationEngine {
       filteredLogs = filteredLogs.slice(-limit);
     }
 
-    return filteredLogs.sort((a, b) =>
-      (b.sentAt || b.scheduledFor || new Date()).getTime() -
-      (a.sentAt || a.scheduledFor || new Date()).getTime()
+    return filteredLogs.sort(
+      (a, b) =>
+        (b.sentAt || b.scheduledFor || new Date()).getTime() -
+        (a.sentAt || a.scheduledFor || new Date()).getTime()
     );
   }
 
@@ -229,7 +228,7 @@ export class NotificationEngine {
     deliveryMethod: NotificationDeliveryMethod,
     status: "scheduled" | "sent" | "failed" | "cancelled",
     error?: Error,
-    scheduledFor?: Date,
+    scheduledFor?: Date
   ): void {
     if (!this.config.enableLogging) return;
 
@@ -266,7 +265,7 @@ export class NotificationEngine {
           GlobalErrorHandler.logError(
             error,
             "NotificationEngine.notifySubscribers",
-            { event },
+            { event }
           );
         }
       }

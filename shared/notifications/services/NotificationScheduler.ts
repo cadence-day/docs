@@ -35,7 +35,7 @@ export class NotificationScheduler {
       if (this.config.preferences.rhythm === "disabled") {
         GlobalErrorHandler.logDebug(
           "Notifications disabled, skipping scheduling",
-          "NotificationScheduler.scheduleAllNotifications",
+          "NotificationScheduler.scheduleAllNotifications"
         );
         return;
       }
@@ -66,7 +66,7 @@ export class NotificationScheduler {
           userId: this.config.userId,
           rhythm: this.config.preferences.rhythm,
           streaksEnabled: this.config.preferences.streaksEnabled,
-        },
+        }
       );
     } catch (error) {
       GlobalErrorHandler.logError(
@@ -74,7 +74,7 @@ export class NotificationScheduler {
         "NotificationScheduler.scheduleAllNotifications",
         {
           userId: this.config.userId,
-        },
+        }
       );
       throw error;
     }
@@ -82,9 +82,9 @@ export class NotificationScheduler {
 
   async scheduleMiddayReflections(): Promise<void> {
     try {
-      const [hour, minute] = this.config.preferences.middayTime.split(":").map(
-        Number,
-      );
+      const [hour, minute] = this.config.preferences.middayTime
+        .split(":")
+        .map(Number);
 
       // Schedule for the next 7 days
       for (let day = 0; day < 7; day++) {
@@ -96,7 +96,7 @@ export class NotificationScheduler {
         }
 
         const notification = LocaleNotificationProvider.createMiddayReflection(
-          createNotificationId(),
+          createNotificationId()
         );
 
         const event: NotificationEvent = {
@@ -112,12 +112,12 @@ export class NotificationScheduler {
       GlobalErrorHandler.logDebug(
         "Midday reflections scheduled",
         "NotificationScheduler.scheduleMiddayReflections",
-        { time: this.config.preferences.middayTime },
+        { time: this.config.preferences.middayTime }
       );
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "NotificationScheduler.scheduleMiddayReflections",
+        "NotificationScheduler.scheduleMiddayReflections"
       );
       throw error;
     }
@@ -126,16 +126,18 @@ export class NotificationScheduler {
   async scheduleEveningReflections(): Promise<void> {
     try {
       const [startHour, startMinute] = this.config.preferences.eveningTimeStart
-        .split(":").map(Number);
-      const [endHour, endMinute] = this.config.preferences.eveningTimeEnd.split(
-        ":",
-      ).map(Number);
+        .split(":")
+        .map(Number);
+      const [endHour, endMinute] = this.config.preferences.eveningTimeEnd
+        .split(":")
+        .map(Number);
 
       // Schedule for the next 7 days
       for (let day = 0; day < 7; day++) {
         // Schedule within the evening window (randomly between start and end time)
-        const randomMinutes = Math.random() *
-          ((endHour * 60 + endMinute) - (startHour * 60 + startMinute));
+        const randomMinutes =
+          Math.random() *
+          (endHour * 60 + endMinute - (startHour * 60 + startMinute));
         const totalMinutes = startHour * 60 + startMinute + randomMinutes;
         const hour = Math.floor(totalMinutes / 60);
         const minute = Math.floor(totalMinutes % 60);
@@ -148,7 +150,7 @@ export class NotificationScheduler {
         }
 
         const notification = LocaleNotificationProvider.createEveningReflection(
-          createNotificationId(),
+          createNotificationId()
         );
 
         const event: NotificationEvent = {
@@ -167,12 +169,12 @@ export class NotificationScheduler {
         {
           startTime: this.config.preferences.eveningTimeStart,
           endTime: this.config.preferences.eveningTimeEnd,
-        },
+        }
       );
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "NotificationScheduler.scheduleEveningReflections",
+        "NotificationScheduler.scheduleEveningReflections"
       );
       throw error;
     }
@@ -188,7 +190,7 @@ export class NotificationScheduler {
 
       const notification = LocaleNotificationProvider.createStreakReminder(
         createNotificationId(),
-        streakCount,
+        streakCount
       );
 
       const event: NotificationEvent = {
@@ -206,12 +208,12 @@ export class NotificationScheduler {
         {
           scheduledDate: scheduledDate.toISOString(),
           streakCount,
-        },
+        }
       );
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "NotificationScheduler.scheduleStreakReminders",
+        "NotificationScheduler.scheduleStreakReminders"
       );
       throw error;
     }
@@ -223,12 +225,12 @@ export class NotificationScheduler {
       GlobalErrorHandler.logDebug(
         "All notifications cancelled",
         "NotificationScheduler.cancelAllNotifications",
-        { userId: this.config.userId },
+        { userId: this.config.userId }
       );
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "NotificationScheduler.cancelAllNotifications",
+        "NotificationScheduler.cancelAllNotifications"
       );
       throw error;
     }
@@ -239,13 +241,17 @@ export class NotificationScheduler {
   }
 
   private shouldScheduleMidday(): boolean {
-    return this.config.preferences.rhythm === "morning-only" ||
-      this.config.preferences.rhythm === "both";
+    return (
+      this.config.preferences.rhythm === "morning-only" ||
+      this.config.preferences.rhythm === "both"
+    );
   }
 
   private shouldScheduleEvening(): boolean {
-    return this.config.preferences.rhythm === "evening-only" ||
-      this.config.preferences.rhythm === "both";
+    return (
+      this.config.preferences.rhythm === "evening-only" ||
+      this.config.preferences.rhythm === "both"
+    );
   }
 
   private getDeliveryMethods(): ("push" | "local" | "in-app")[] {
@@ -263,7 +269,7 @@ export class NotificationScheduler {
     } catch (error) {
       GlobalErrorHandler.logWarning(
         "Failed to get user streak count, using default",
-        "NotificationScheduler.getUserStreakCount",
+        "NotificationScheduler.getUserStreakCount"
       );
       return 0;
     }
@@ -272,7 +278,7 @@ export class NotificationScheduler {
   // Static method to create a scheduler instance
   static create(
     engine: NotificationEngine,
-    config: SchedulerConfig,
+    config: SchedulerConfig
   ): NotificationScheduler {
     return new NotificationScheduler(engine, config);
   }
@@ -285,7 +291,7 @@ export class NotificationScheduler {
       | "achievement"
       | "reminder",
     scheduledFor: Date,
-    customMessage?: { title: string; body: string },
+    customMessage?: { title: string; body: string }
   ): Promise<void> {
     const { t } = useTranslation();
     try {
@@ -294,12 +300,12 @@ export class NotificationScheduler {
       switch (type) {
         case "midday-reflection":
           notification = LocaleNotificationProvider.createMiddayReflection(
-            createNotificationId(),
+            createNotificationId()
           );
           break;
         case "evening-reflection":
           notification = LocaleNotificationProvider.createEveningReflection(
-            createNotificationId(),
+            createNotificationId()
           );
           break;
         default:
@@ -327,12 +333,12 @@ export class NotificationScheduler {
           type,
           scheduledFor: scheduledFor.toISOString(),
           notificationId: notification.id,
-        },
+        }
       );
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "NotificationScheduler.scheduleOneTimeNotification",
+        "NotificationScheduler.scheduleOneTimeNotification"
       );
       throw error;
     }

@@ -65,8 +65,8 @@ export class ProfileImageService {
       const { ImagePicker } = modules;
 
       // Request permissions
-      const { status } = await ImagePicker
-        .requestMediaLibraryPermissionsAsync();
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
         throw new Error("Media library permission required");
       }
@@ -143,7 +143,7 @@ export class ProfileImageService {
         {
           compress: this.JPEG_QUALITY,
           format: ImageManipulator.SaveFormat.JPEG,
-        },
+        }
       );
 
       return result.uri;
@@ -269,9 +269,10 @@ export class ProfileImageService {
       });
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : "Unexpected error during image upload",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unexpected error during image upload",
       };
     }
   }

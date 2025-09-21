@@ -60,7 +60,7 @@ if (!i18n.isInitialized) {
     GlobalErrorHandler.logWarning(
       "i18n initialization failed",
       "I18N_INIT_ERROR",
-      { error: err },
+      { error: err }
     );
   }
 }
@@ -77,6 +77,6 @@ i18n.on("languageChanged", (lng) => {
   GlobalErrorHandler.logWarning(
     "i18n language changed",
     "I18N_LANGUAGE_CHANGE",
-    { language: lng },
+    { language: lng }
   );
 });

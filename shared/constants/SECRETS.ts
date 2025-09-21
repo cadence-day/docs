@@ -30,7 +30,7 @@ export const validateRequiredSecrets = () => {
 
   if (missing.length > 0) {
     throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`,
+      `Missing required environment variables: ${missing.join(", ")}`
     );
   }
 };
