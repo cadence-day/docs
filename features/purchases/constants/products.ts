@@ -1,41 +1,90 @@
 export const PRODUCT_IDS = {
-  MONTHLY_PREMIUM: "cadence_premium_monthly",
-  YEARLY_PREMIUM: "cadence_premium_yearly",
+  SUPPORTER_MONTHLY: "cadence_supporter_monthly",
+  SUPPORTER_YEARLY: "cadence_supporter_yearly",
+  PREMIUM_SUPPORTER_MONTHLY: "cadence_premium_supporter_monthly",
+  FEATURE_SPONSOR_ONETIME: "cadence_feature_sponsor_onetime",
 } as const;
 
 export const ENTITLEMENT_IDS = {
-  PREMIUM: "premium",
+  SUPPORTER: "supporter",
+  PREMIUM_SUPPORTER: "premium_supporter",
+  FEATURE_SPONSOR: "feature_sponsor",
 } as const;
 
-export const SUBSCRIPTION_FEATURES = {
+export const SUBSCRIPTION_TIERS = {
   free: {
-    name: "Free",
+    name: "Free Explorer",
+    tagline: "Discover your daily rhythm",
+    price: "Free",
     features: [
-      "Basic daily reminders",
-      "5 habit tracking",
-      "Basic statistics",
-      "Community support",
+      "Track time in 30-minute intervals",
+      "Add quick notes and mood tags",
+      "Basic daily visualizations",
+      "Community forum access",
     ],
     limits: {
-      maxHabits: 5,
-      maxReminders: 3,
+      maxTimeSlices: 48, // Full day tracking
+      aiInsights: false,
+      exportData: false,
+      betaAccess: false,
     },
   },
-  deep_cadence: {
-    name: "Deep Cadence Premium",
+  supporter: {
+    name: "Supporter",
+    tagline: "Support Cadence. Shape its future.",
+    price: "$4.99/month",
+    yearlyPrice: "$50/year",
     features: [
-      "Unlimited habit tracking",
-      "Advanced analytics & insights",
-      "Custom reminder schedules",
-      "Priority support",
-      "Export data to CSV",
-      "Theme customization",
-      "Backup & sync across devices",
-      "No ads",
+      "Everything in Free",
+      "Discord community access",
+      "See features being considered",
+      "Input & discussion on roadmap",
+      "Early look at in-development features",
+      "Supporter badge in community",
     ],
     limits: {
-      maxHabits: -1,
-      maxReminders: -1,
+      maxTimeSlices: -1,
+      aiInsights: true,
+      exportData: false,
+      betaAccess: false,
+    },
+  },
+  premium_supporter: {
+    name: "Premium Supporter",
+    tagline: "Join us in building Cadence—your time-tracker with meaning.",
+    price: "$9.99/month",
+    features: [
+      "Everything in Supporter",
+      "Beta/TestFlight access",
+      "Priority notice of updates",
+      "Full roadmap visibility",
+      "Feature prioritization influence",
+      "Direct feedback channel",
+      "Data export capabilities",
+    ],
+    limits: {
+      maxTimeSlices: -1,
+      aiInsights: true,
+      exportData: true,
+      betaAccess: true,
+    },
+  },
+  feature_sponsor: {
+    name: "Feature Sponsor",
+    tagline: "Support, influence, and be a part of Cadence's journey.",
+    price: "$50 one-time",
+    features: [
+      "Suggest one feature or integration",
+      "Direct engagement on implementation",
+      "Feature gets prioritized/built",
+      "Permanent sponsor recognition",
+      "Lifetime supporter community access",
+    ],
+    limits: {
+      maxTimeSlices: -1,
+      aiInsights: true,
+      exportData: true,
+      betaAccess: true,
     },
   },
 } as const;

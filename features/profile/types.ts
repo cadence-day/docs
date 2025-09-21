@@ -14,7 +14,7 @@ export interface ProfileSettings {
     eveningReminders: boolean;
     weeklyStreaks: boolean;
   };
-  subscriptionPlan: "free" | "deep_cadence";
+  subscriptionPlan: "free" | "supporter" | "premium_supporter" | "feature_sponsor";
 }
 
 export interface UserPersona {

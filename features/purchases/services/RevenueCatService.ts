@@ -10,19 +10,7 @@ import { SECRETS } from "@/shared/constants/SECRETS";
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
-export type SubscriptionPlan = "free" | "deep_cadence";
-
-export interface Product {
-  identifier: string;
-  priceString: string;
-  title: string;
-  description: string;
-  introPrice?: {
-    priceString: string;
-    periodUnit: string;
-    periodNumberOfUnits: number;
-  };
-}
+import type { SubscriptionPlan, Product } from "../types";
 
 class RevenueCatService {
   private static instance: RevenueCatService;
@@ -154,8 +142,18 @@ class RevenueCatService {
       const customerInfo = await this.getCustomerInfo();
       if (!customerInfo) return "free";
 
-      const isActive = customerInfo.entitlements.active["premium"] !== undefined;
-      return isActive ? "deep_cadence" : "free";
+      // Check entitlements in order of priority
+      if (customerInfo.entitlements.active["premium_supporter"]) {
+        return "premium_supporter";
+      }
+      if (customerInfo.entitlements.active["feature_sponsor"]) {
+        return "feature_sponsor";
+      }
+      if (customerInfo.entitlements.active["supporter"]) {
+        return "supporter";
+      }
+
+      return "free";
     } catch (error) {
       GlobalErrorHandler.logError(error, "Failed to check subscription status");
       return "free";
@@ -176,13 +174,34 @@ class RevenueCatService {
 
       if (!userId) return;
 
-      const isActive = customerInfo.entitlements.active["premium"] !== undefined;
-      const plan: SubscriptionPlan = isActive ? "deep_cadence" : "free";
+      // Determine subscription plan based on active entitlements
+      let plan: SubscriptionPlan = "free";
+      if (customerInfo.entitlements.active["premium_supporter"]) {
+        plan = "premium_supporter";
+      } else if (customerInfo.entitlements.active["feature_sponsor"]) {
+        plan = "feature_sponsor";
+      } else if (customerInfo.entitlements.active["supporter"]) {
+        plan = "supporter";
+      }
+
+      // Map to database enum values (using existing enum for now)
+      let dbPlan: "FREE" | "PREMIUM" | "ENTERPRISE";
+      switch (plan) {
+        case "premium_supporter":
+        case "feature_sponsor":
+          dbPlan = "PREMIUM";
+          break;
+        case "supporter":
+          dbPlan = "ENTERPRISE"; // Temporarily using ENTERPRISE for supporter tier
+          break;
+        default:
+          dbPlan = "FREE";
+      }
 
       const { error } = await supabaseClient
         .from("profiles")
         .update({
-          subscription_plan: plan === "deep_cadence" ? "PREMIUM" : "FREE",
+          subscription_plan: dbPlan,
           updated_at: new Date().toISOString(),
         })
         .eq("id", userId);

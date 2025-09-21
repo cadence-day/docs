@@ -1,15 +1,7 @@
 import { useEffect, useState } from "react";
-import { CustomerInfo } from "react-native-purchases";
-import { revenueCatService, SubscriptionPlan } from "../services/RevenueCatService";
+import { revenueCatService } from "../services/RevenueCatService";
 import { useProfileStore } from "@/features/profile/stores/useProfileStore";
-
-export interface UseSubscriptionReturn {
-  subscriptionPlan: SubscriptionPlan;
-  isLoading: boolean;
-  customerInfo: CustomerInfo | null;
-  checkSubscription: () => Promise<void>;
-  restorePurchases: () => Promise<void>;
-}
+import type { SubscriptionPlan, CustomerInfo, UseSubscriptionReturn } from "../types";
 
 export function useSubscription(): UseSubscriptionReturn {
   const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan>("free");

@@ -10,7 +10,7 @@ import EncryptionLinkDialog from "@/features/encryption/EncryptionLinkDialog";
 import { NoteDialog } from "@/features/notes/dialogs/NoteDialog";
 import OnboardingDialog from "@/features/onboarding/components/Onboarding";
 import { ReflectionTimesliceInfoDialog } from "@/features/reflection/dialogs";
-import { SubscriptionPlansDialog } from "@/features/purchases/components/SubscriptionPlansDialog";
+import { SubscriptionPlansDialog } from "@/features/purchases/dialogs";
 
 export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   // Legacy mapping for backward compatibility
