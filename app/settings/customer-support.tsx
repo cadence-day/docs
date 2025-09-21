@@ -140,7 +140,7 @@ export default function CustomerSupportSettings() {
 
             <CdTextInputOneLine
               label={t("email-support")}
-              value={t("t-contact-our-support-team")}
+              value={t("contact-our-support-team")}
               showValueText={true}
               isButton={true}
               onPress={handleEmailSupport}
