@@ -9,10 +9,6 @@ import CalendarDialog from "@/features/calendar/CalendarDialog";
 import EncryptionLinkDialog from "@/features/encryption/EncryptionLinkDialog";
 import { NoteDialog } from "@/features/notes/dialogs/NoteDialog";
 import OnboardingDialog from "@/features/onboarding/components/Onboarding";
-import ChangePasswordDialog from "@/features/profile/dialogs/ChangePasswordDialog";
-import { CustomerSupportDialog } from "@/features/profile/dialogs/CustomerSupportDialog";
-import { SubscriptionPlansDialog } from "@/features/profile/dialogs/SubscriptionPlansDialog";
-import { TimePickerDialog } from "@/features/profile/dialogs/TimePickerDialog";
 import { ReflectionTimesliceInfoDialog } from "@/features/reflection/dialogs";
 
 export const DialogRegistry: Record<string, React.ComponentType<any>> = {
@@ -30,11 +26,6 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   calendar: CalendarDialog,
   note: NoteDialog,
   "encryption-link": EncryptionLinkDialog,
-  // Profile and settings dialogs
-  "time-picker": TimePickerDialog,
-  "customer-support": CustomerSupportDialog,
-  "subscription-plans": SubscriptionPlansDialog,
-  "change-password": ChangePasswordDialog,
   // Reflection dialogs
   "reflection-timeslice-info": ReflectionTimesliceInfoDialog,
   // Onboarding

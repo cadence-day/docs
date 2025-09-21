@@ -1,8 +1,11 @@
-import ProfileScreen from "@/features/profile/components/ProfileScreen";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { SafeAreaView } from "react-native";
+
+const ProfileScreen = React.lazy(
+  () => import("@/features/profile/components/ProfileScreen")
+);
 
 export default function ProfileRoute() {
   return (

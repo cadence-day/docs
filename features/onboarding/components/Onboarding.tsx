@@ -1,9 +1,11 @@
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { useNotifications } from "@/shared/notifications";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
+import * as WebBrowser from "expo-web-browser";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Rect } from "react-native-svg";
+import { GlobalErrorHandler } from "../../../shared/utils/errorHandler";
 
 export type OnboardingDialogHandle = {
   confirm: () => void;
@@ -109,8 +111,18 @@ export const OnboardingDialog = forwardRef<
         });
       }
     } catch (error) {
-      console.error("Error setting up notifications in onboarding:", error);
+      GlobalErrorHandler.logError(
+        "Error setting up notifications in onboarding",
+        "ONBOARDING_NOTIFICATION_ERROR",
+        { error }
+      );
     }
+  };
+
+  const handlePrivacyPolicy = async () => {
+    await WebBrowser.openBrowserAsync("https://app.cadence.day/legal/privacy", {
+      presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
+    });
   };
 
   // Store the current page in dialog props so DialogHost can read it
@@ -173,7 +185,7 @@ export const OnboardingDialog = forwardRef<
         "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection.",
       linkText: {
         text: "Read more about how we protect your privacy →",
-        onPress: () => console.log("Navigate to privacy policy"),
+        onPress: () => handlePrivacyPolicy(),
       },
     },
     {

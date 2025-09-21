@@ -2,6 +2,7 @@ import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNew
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
+import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
 import useTranslation from "@/shared/hooks/useI18n";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
@@ -10,7 +11,8 @@ import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({
@@ -81,16 +83,9 @@ export default function TabLayout() {
         (d) => d.type === "activity-legend"
       );
 
-      console.log(
-        `[Dialog Manager] Segments: [${segments.join(", ")}], Current view: ${currentView}, Is Home: ${isHomeView}, Dialog exists: ${!!activityLegendDialog}`
-      );
-
       if (isHomeView) {
         // Always ensure dialog is open on home/index view
         if (!activityLegendDialog) {
-          console.log(
-            "[Dialog Manager] Opening activity legend dialog for home view"
-          );
           dialogStore.openDialog({
             type: "activity-legend",
             props: {
@@ -98,20 +93,11 @@ export default function TabLayout() {
             },
             position: "dock",
           });
-        } else {
-          console.log(
-            "[Dialog Manager] Activity legend dialog already exists on home view"
-          );
         }
       } else {
         // Always close dialog on other views
         if (activityLegendDialog) {
-          console.log(
-            "[Dialog Manager] Closing activity legend dialog (not on home view)"
-          );
           dialogStore.closeDialog(activityLegendDialog.id, true);
-        } else {
-          console.log("[Dialog Manager] No activity legend dialog to close");
         }
       }
     }, 100);
@@ -177,7 +163,11 @@ export default function TabLayout() {
         }
       } catch (err) {
         // Ignore errors here - non-fatal
-        console.log("Error checking timeslices for onboarding:", err);
+        GlobalErrorHandler.logWarning(
+          "Error checking timeslices for onboarding",
+          "ONBOARDING_CHECK",
+          { error: err, userId }
+        );
       }
     };
 
@@ -212,6 +202,20 @@ export default function TabLayout() {
               alignSelf: "stretch",
               alignContent: "center",
               marginTop: 12,
+            },
+            // Ensure each tab's touch target is larger via a custom tabBarButton
+            tabBarButton: (props: any) => {
+              // If the underlying component is provided we wrap it in a TouchableOpacity
+              const { children, onPress } = props;
+              return (
+                <TouchableOpacity
+                  onPress={onPress}
+                  hitSlop={HIT_SLOP_24}
+                  style={{ flex: 1 }}
+                >
+                  {children}
+                </TouchableOpacity>
+              );
             },
           }}
         >

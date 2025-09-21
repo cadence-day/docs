@@ -1,4 +1,9 @@
 import { supabaseClient } from "@/shared/api/client";
+import {
+  clearEncryptionKey,
+  exportEncryptionKey,
+  hasEncryptionKey,
+} from "@/shared/api/encryption/core";
 import useActivitiesStore from "@/shared/stores/resources/useActivitiesStore";
 import useActivityCategoriesStore from "@/shared/stores/resources/useActivityCategoriesStore";
 import useNotesStore from "@/shared/stores/resources/useNotesStore";
@@ -91,6 +96,66 @@ const DebugScreen = () => {
     }
   };
 
+  const handleEncryptionKeyInfo = async () => {
+    try {
+      const hasKey = await hasEncryptionKey();
+
+      if (!hasKey) {
+        Alert.alert(
+          "Encryption Key Info",
+          "No encryption key found on this device."
+        );
+        return;
+      }
+
+      const { key, fingerprint, source } = await exportEncryptionKey();
+
+      Alert.alert(
+        "Encryption Key Info",
+        `Fingerprint: ${fingerprint}\nSource: ${source}\nKey Length: ${key.length} characters\n\nFirst 16 chars: ${key.substring(0, 16)}...`,
+        [{ text: "OK" }]
+      );
+    } catch (error) {
+      Alert.alert("Error", `Failed to get encryption key info: ${error}`);
+    }
+  };
+
+  const handleRemoveEncryptionKey = async () => {
+    try {
+      const hasKey = await hasEncryptionKey();
+
+      if (!hasKey) {
+        Alert.alert("No Key Found", "No encryption key found on this device.");
+        return;
+      }
+
+      Alert.alert(
+        "Remove Encryption Key",
+        "⚠️ WARNING: This will remove the encryption key from this device. You will lose access to all encrypted data unless you have the key saved elsewhere.\n\nThis action cannot be undone.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Remove Key",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await clearEncryptionKey();
+                Alert.alert("Success", "Encryption key removed successfully.");
+              } catch (error) {
+                Alert.alert(
+                  "Error",
+                  `Failed to remove encryption key: ${error}`
+                );
+              }
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      Alert.alert("Error", `Failed to check encryption key: ${error}`);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Link href="/(home)">
@@ -99,6 +164,19 @@ const DebugScreen = () => {
       <Text style={styles.title}>Debug Screen</Text>
       <TouchableOpacity onPress={showSessionInfo} style={styles.button}>
         <Text style={styles.buttonText}>Show Supabase Session</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={handleEncryptionKeyInfo} style={styles.button}>
+        <Text style={styles.buttonText}>Show Encryption Key Info</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={handleRemoveEncryptionKey}
+        style={[styles.button, styles.dangerButton]}
+      >
+        <Text style={[styles.buttonText, styles.dangerButtonText]}>
+          Remove Encryption Key
+        </Text>
       </TouchableOpacity>
       <ScrollView style={styles.scrollView}>
         <StoreStateDisplay
@@ -133,9 +211,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
+  dangerButton: {
+    backgroundColor: "#DC3545",
+  },
   buttonText: {
     color: "#fff",
     fontSize: 16,
+  },
+  dangerButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
   link: {
     fontSize: 16,

@@ -38,7 +38,6 @@ export async function insertNote(note: Omit<Note, "id">): Promise<Note> {
         .insert(encryptedNote)
         .select("*")
         .single();
-      console.log(data);
       // data is guaranteed on success
       return { data, error };
     });
