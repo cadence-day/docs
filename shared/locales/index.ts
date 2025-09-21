@@ -7,6 +7,7 @@ import de from "./de.json";
 import en from "./en.json";
 import es from "./es.json";
 import fr from "./fr.json";
+import { GlobalErrorHandler } from "../utils/errorHandler";
 
 export const resources = {
   en: { translation: en },
@@ -56,7 +57,11 @@ if (!i18n.isInitialized) {
   } catch (err) {
     // Log initialization errors; components may still mount and use the provider.
     // eslint-disable-next-line no-console
-    console.warn("i18n initialization failed:", err);
+    GlobalErrorHandler.logWarning(
+      "i18n initialization failed",
+      "I18N_INIT_ERROR",
+      { error: err },
+    );
   }
 }
 
@@ -69,5 +74,9 @@ i18n.on("languageChanged", (lng) => {
   // Note: This won't update existing imports; they need to re-import or use i18n directly.
   // This is a limitation of module exports in JavaScript/TypeScript.
   // eslint-disable-next-line no-console
-  console.log(`i18n language changed to ${lng}`);
+  GlobalErrorHandler.logWarning(
+    "i18n language changed",
+    "I18N_LANGUAGE_CHANGE",
+    { language: lng },
+  );
 });

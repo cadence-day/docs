@@ -19,6 +19,7 @@ import { profileStyles } from "@/features/profile/styles";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
 import { CdButton } from "../../shared/components";
+import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 const FeatureRequestScreen = () => {
   const [title, setTitle] = useState("");
@@ -76,8 +77,11 @@ const FeatureRequestScreen = () => {
           email:
             user?.primaryEmailAddress?.emailAddress || "unknown@cadence.day",
         });
-
-        console.log("Feature request submitted:", feedback);
+        GlobalErrorHandler.logDebug(
+          "FEATURE_REQUEST_SUBMITTED",
+          "settings.feature-request",
+          { feedback }
+        );
       });
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -92,7 +96,11 @@ const FeatureRequestScreen = () => {
         ]
       );
     } catch (error) {
-      console.error("Failed to submit feature request:", error);
+      GlobalErrorHandler.logError(
+        "Failed to submit feature request",
+        "FEATURE_REQUEST_ERROR",
+        { error, userId: user?.id ?? null }
+      );
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t("submission-failed"), t("failed-to-submit-your-feature"));
     } finally {
@@ -190,13 +198,14 @@ const FeatureRequestScreen = () => {
                 {t("app-version-and-platform")}
                 {"\n"}
                 {t("feature-request-details")}
-                {"\n"}{t('timestamp-of-submission')}
+                {"\n"}
+                {t("timestamp-of-submission")}
               </Text>
             </View>
           </View>
 
           <CdButton
-            title={isSubmitting ? "Submitting..." : t('submit-feature-request')}
+            title={isSubmitting ? "Submitting..." : t("submit-feature-request")}
             onPress={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"

@@ -20,6 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { GlobalErrorHandler } from "../../../shared/utils/errorHandler";
 import { ProfileImageService } from "../services/ProfileImageService";
 import { ProfileUpdateService } from "../services/ProfileUpdateService";
 import { useProfileStore } from "../stores/useProfileStore";
@@ -130,7 +131,9 @@ export const ProfileScreen: React.FC = () => {
         );
       }
     } catch (error) {
-      console.error("Error updating name:", error);
+      GlobalErrorHandler.logError("Error updating name", "NAME_UPDATE_ERROR", {
+        error,
+      });
       ProfileUpdateService.showErrorMessage(
         t("profile.actions.update-name-failed-retry")
       );
@@ -190,7 +193,11 @@ export const ProfileScreen: React.FC = () => {
           }
         }
       } catch (error) {
-        console.log("Image picker error:", error);
+        GlobalErrorHandler.logError(
+          "Image picker error",
+          "IMAGE_PICKER_ERROR",
+          { error }
+        );
 
         // Check if it's a native module error
         const errorMessage =
@@ -253,8 +260,9 @@ export const ProfileScreen: React.FC = () => {
                 }
               }
             } catch (error) {
-              console.log("Camera error:", error);
-
+              GlobalErrorHandler.logError("Camera error", "CAMERA_ERROR", {
+                error,
+              });
               const errorMessage =
                 error instanceof Error ? error.message : String(error);
               if (
@@ -313,7 +321,9 @@ export const ProfileScreen: React.FC = () => {
                 }
               }
             } catch (error) {
-              console.log("Camera error:", error);
+              GlobalErrorHandler.logError("Camera error", "CAMERA_ERROR", {
+                error,
+              });
 
               const errorMessage =
                 error instanceof Error ? error.message : String(error);
@@ -383,7 +393,9 @@ export const ProfileScreen: React.FC = () => {
       await signOut();
       // The user will be redirected to the sign-in screen automatically
     } catch (error) {
-      console.error("Error signing out:", error);
+      GlobalErrorHandler.logError("Error signing out", "SIGN_OUT_ERROR", {
+        error,
+      });
       Alert.alert(
         t("profile.actions.logout-failed"),
         t("profile.actions.logout-failed-message")
@@ -405,7 +417,13 @@ export const ProfileScreen: React.FC = () => {
               await user?.delete();
               await signOut();
             } catch (error) {
-              console.error("Error deleting account:", error);
+              GlobalErrorHandler.logError(
+                "Error deleting account",
+                "ACCOUNT_DELETION_ERROR",
+                {
+                  error,
+                }
+              );
               Alert.alert(
                 t("profile.actions.delete-failed"),
                 t("profile.actions.delete-failed-message")
@@ -424,7 +442,11 @@ export const ProfileScreen: React.FC = () => {
       // Clear persisted flag so onboarding can be shown again
       await userOnboardingStorage.clearShown();
     } catch (e) {
-      console.log("Failed to clear onboarding storage:", e);
+      GlobalErrorHandler.logError(
+        "Failed to clear onboarding storage",
+        "ONBOARDING_STORAGE_ERROR",
+        { e }
+      );
     }
 
     // Open onboarding dialog
@@ -450,7 +472,11 @@ export const ProfileScreen: React.FC = () => {
     try {
       router.push("/debug");
     } catch (e) {
-      console.log("Failed to open debug page:", e);
+      GlobalErrorHandler.logError(
+        "Failed to open debug page",
+        "DEBUG_PAGE_ERROR",
+        { e }
+      );
     }
   };
 

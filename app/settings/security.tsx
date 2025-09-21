@@ -26,6 +26,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 export default function SecuritySettings() {
   const { t } = useTranslation();
@@ -60,8 +61,11 @@ export default function SecuritySettings() {
       resetDialogStore();
       resetSelectionStore();
     } catch (error) {
-      console.error("Error clearing stores:", error);
-      // Continue with sign out even if store clearing fails
+      GlobalErrorHandler.logError(
+        "Error clearing stores",
+        "CLEAR_STORES_ERROR",
+        { error }
+      );
     }
   };
 
@@ -142,14 +146,22 @@ export default function SecuritySettings() {
               await signOut();
               router.replace("/(auth)/sign-in");
             } catch (error) {
-              console.error("Error signing out:", error);
+              GlobalErrorHandler.logError(
+                "Error signing out",
+                "SIGN_OUT_ERROR",
+                { error }
+              );
               router.replace("/(auth)/sign-in");
             }
           },
         },
       ]);
     } catch (error: any) {
-      console.error("Password change error:", error);
+      GlobalErrorHandler.logError(
+        "Password change error",
+        "PASSWORD_CHANGE_ERROR",
+        { error }
+      );
 
       if (error?.errors) {
         const errorMessage =
@@ -206,7 +218,9 @@ export default function SecuritySettings() {
             await signOut();
             router.replace("/(auth)/sign-in");
           } catch (error) {
-            console.error("Error signing out:", error);
+            GlobalErrorHandler.logError("Error signing out", "SIGN_OUT_ERROR", {
+              error,
+            });
             showError(t("failed-to-sign-out-please-try"));
           }
         },

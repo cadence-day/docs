@@ -20,6 +20,7 @@ import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { getIsDev } from "@/shared/hooks/useDev";
 import { NotificationProvider } from "@/shared/notifications";
 import * as Sentry from "@sentry/react-native";
+import { GlobalErrorHandler } from "../shared/utils/errorHandler";
 
 // Initialize Sentry
 Sentry.init({
@@ -69,7 +70,11 @@ Sentry.init({
   beforeSend(event) {
     // In development, you might want to log to console as well
     if (getIsDev()) {
-      console.log("Sentry Event:", event);
+      GlobalErrorHandler.logDebug(
+        "Sentry Event Captured",
+        "SENTRY_EVENT",
+        event
+      );
     }
     return event;
   },
