@@ -37,6 +37,7 @@
   "actual-behavior": "Actual Behavior",
   "actual-behavior-optional": "Actual behavior (optional)",
   "add-new-activity": "Add New Activity",
+  "allow-notifications": "Allow notifications",
   "already-have-an-account": "Already have an account?",
   "app-information": "App Information",
   "app-version-and-platform": "• App version and platform",
@@ -51,6 +52,7 @@
   "cadence-day-support-request": "Cadence.day Support Request",
   "cadence-is-in-beta": "Cadence is in beta.",
   "cadence-notification": "Cadence Notification",
+  "cadence-starts-with-universal": "Cadence starts with universal activities—work, rest, movement—but life is more than categories. Love bird gazing? Add custom activities that make your rhythm uniquely yours.",
   "calendarDialog": {
     "2-days": "2 days ago",
     "pick-a-date": "Pick a Date"
@@ -80,6 +82,7 @@
   "contain-one-lowercase-letter": "- Contain one lowercase letter.",
   "contain-one-special-character": "- Contain one special character.",
   "contain-one-uppercase-letter": "- Contain one uppercase letter.",
+  "continue": "Continue",
   "current-password-is-required": "Current password is required.",
   "dateTime": {
     "preposition": "at"
@@ -108,6 +111,8 @@
   "enter-your-new-password": "Enter your new password:",
   "evening-reflection": "Evening Reflection",
   "evening-reminders": "Evening Reminders",
+  "ever-wonder-what-you-did-last": "Ever wonder what you did last Tuesday? Or what thoughts you had during a quiet morning? Notes help you hold onto the moments that matter—big or small, deep or fleeting.",
+  "expand-your-memory": "Expand Your Memory",
   "expected-behavior": "Expected Behavior",
   "expected-behavior-optional": "Expected behavior (optional)",
   "failed-to-change-password": "Failed to change password.",
@@ -157,6 +162,8 @@
   "key-imported-successfully-fing": "Key imported successfully! Fingerprint: {0}",
   "laid-back": "Laid Back",
   "legal": "Legal",
+  "make-cadence-yours": "Make Cadence Yours",
+  "meet-sage": "Meet Sage",
   "midday-reflection": "Midday Reflection",
   "mo": "Mon",
   "morning-reminders": "Morning Reminders",
@@ -171,6 +178,11 @@
   "not-available-in-this-build": "not available in this build",
   "notification-schedule": "Notification Schedule",
   "notification-types": "Notification Types",
+  "onboarding": {
+    "missed-intro": "In case you missed the introduction",
+    "title": "Welcome to Cadence",
+    "view-again": "View Onboarding Again"
+  },
   "or-paste-encryption-key": "Or paste encryption key:",
   "parent-activity": "Parent Activity",
   "password-changed": "Password Changed",
@@ -315,6 +327,7 @@
   "push-notifications-have-been-d": "Push notifications have been disabled. You can re-enable them anytime.",
   "push-notifications-have-been-e": "Push notifications have been enabled successfully! All notification types have been turned on.",
   "react-native-device": "React Native Device",
+  "read-more-about-how-we-protect": "Read more about how we protect your privacy →",
   "reflection": {
     "activityLabel": "Activity",
     "details": "Details",
@@ -331,6 +344,7 @@
   "sage": {
     "unavailableMessage": "Cadence AI is currently not available."
   },
+  "sage-your-friendly-ai-guide-wi": "Sage your friendly AI guide will help you notice the patterns in your time.\\n\\nAsk Sage to summarize your day, help you remember your goals, or notice your time patterns. The more you log, the more Sage can help.",
   "save": "Save",
   "scan-qr-code": "Scan QR Code",
   "scan-this-qr-code-with-your-ne": "Scan this QR code with your new device to import the encryption key.",
@@ -423,6 +437,7 @@
   },
   "sign-up-now": "Sign Up Now",
   "since-all-notification-types-a": "Since all notification types are disabled, push notifications have been turned off automatically.",
+  "stay-in-sync-nwith-your-time": "Stay in sync\\nwith your time",
   "steps-to-reproduce": "Steps to Reproduce",
   "steps-to-reproduce-optional": "Steps to reproduce (optional)",
   "steps-to-reproduce-optional-0": "• Steps to reproduce (optional)",
@@ -449,6 +464,7 @@
   "the-password-should-be-at-least": "- The password should be at least",
   "this-action-cannot-be-undone-a": "This action cannot be undone. Are you sure you want to delete your account permanently?",
   "this-device-doesnt-have-an-enc": "This device doesn't have an encryption key. You need to import a key from your previous device to access encrypted data.",
+  "time-moves-fast-cadence-helps": "Time moves fast—Cadence helps you see it more clearly. Record your moments, reflect on your rhythms, and discover patterns that shape your days. No pressure, no perfection—just awareness.",
   "timeslice-created-successfully": "Timeslice created successfully.",
   "timeslice-updated-successfully": "Timeslice updated successfully.",
   "timestamp-of-submission": "• Timestamp of submission",
@@ -456,6 +472,7 @@
   "to-modify-notification-permiss": "To modify notification permissions at the system level, please go to your device's Settings app and find this app's notification settings.",
   "today": "Today",
   "tu": "Tue",
+  "turn-on-notifications-for-gent": "Turn on notifications for gentle reminders to log your activities throughout the day. No pressure, just a daily nudge to help you stay aware of your time.\\n\\n✨ Your future self will thank you. Take a moment to log your day.",
   "unable-to-open-email-app-pleas": "Unable to open email app. Please send your support request to: dev@cadence.day",
   "unable-to-open-link": "Unable to Open Link",
   "unable-to-submit-bug-report-pl": "Unable to submit bug report. Please try again or contact support.",
@@ -479,7 +496,9 @@
   "yesterday": "Yesterday",
   "you-have-a-new-notification": "You have a new notification",
   "your-account-security-is-impor": "Your account security is important to us. Password changes require email verification for your protection. Contact support for account deletion requests.",
+  "your-data-nyour-privacy": "Your Data,\\nYour Privacy",
   "your-email-address-for-follow": "• Your email address (for follow-up)",
   "your-encryption-key-protects-s": "Your encryption key protects sensitive data. Keep it secure and don't share it with others. You'll need this key to access your encrypted data on new devices.",
-  "your-password-has-been-changed": "Your password has been changed successfully. For security reasons, you'll be signed out now."
+  "your-password-has-been-changed": "Your password has been changed successfully. For security reasons, you'll be signed out now.",
+  "your-time-is-yours-alone-every": "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection."
 }
