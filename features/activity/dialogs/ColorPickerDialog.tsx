@@ -11,6 +11,7 @@ import ColorPicker, {
   HueSlider,
   SaturationSlider,
 } from "reanimated-color-picker";
+import { getShadowStyle, ShadowLevel } from "../../../shared/utils/shadowUtils";
 
 export type ColorFormatsObject = Record<
   "hex" | "rgb" | "rgba" | "hsl" | "hsla" | "hsv" | "hsva" | "hwb" | "hwba",
@@ -229,13 +230,9 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     marginBottom: 12,
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: ACTIVITY_THEME.WHITE,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
+    ...getShadowStyle(ShadowLevel.Medium),
   },
   colorPreviewRect: {
     width: 220,
@@ -244,11 +241,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 2,
     borderColor: ACTIVITY_THEME.WHITE,
-    shadowColor: "#000",
-    shadowOpacity: 0.18,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
+    ...getShadowStyle(ShadowLevel.Medium),
     justifyContent: "center",
     alignItems: "center",
   },
@@ -276,11 +269,7 @@ const styles = StyleSheet.create({
   swatchSelected: {
     borderWidth: 3,
     borderColor: ACTIVITY_THEME.WHITE,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 6,
+    ...getShadowStyle(ShadowLevel.High),
   },
   colorText: {
     fontSize: 16,

@@ -4,15 +4,9 @@ import { useI18n } from "@/shared/hooks/useI18n";
 import { useActivityCategoriesStore } from "@/shared/stores";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import ActivityCategory from "@/shared/types/models/activityCategory";
+import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  FlatList,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   _dialogId?: string;
@@ -162,19 +156,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "transparent",
     minHeight: 80,
-    // Platform specific shadowing to avoid heavy Android shadows
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOpacity: 0.08,
-        shadowRadius: 6,
-        shadowOffset: { width: 0, height: 2 },
-      },
-      android: {
-        elevation: 2,
-      },
-      default: {},
-    }),
+    ...getShadowStyle(ShadowLevel.Low),
   },
   tilePressed: {
     transform: [{ scale: 0.95 }],
@@ -184,11 +166,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderWidth: 2,
     backgroundColor: `${COLORS.primary}20`,
-    ...Platform.select({
-      ios: { shadowOpacity: 0.14, shadowRadius: 8 },
-      android: { elevation: 4 },
-      default: {},
-    }),
+    ...getShadowStyle(ShadowLevel.High),
   },
   swatch: {
     width: 32,
@@ -240,6 +218,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
+  },
+  dialogContainer: {
+    backgroundColor: COLORS.white,
+    borderRadius: 8,
+    ...getShadowStyle(ShadowLevel.Medium),
   },
 });
 

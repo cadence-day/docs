@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, Text } from "react-native";
 
 import { ToastType } from "@/shared/types/toast.types";
+import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 
 interface ToastProps {
   message: string;
@@ -179,14 +180,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...getShadowStyle(ShadowLevel.Medium),
   },
   successToast: {
     backgroundColor: "#10B981",

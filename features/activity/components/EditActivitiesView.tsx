@@ -14,6 +14,7 @@ import {
   DraggableActivityItem,
 } from "./ui";
 import GridView from "./ui/GridView";
+import { getShadowStyle, ShadowLevel } from "../../../shared/utils/shadowUtils";
 
 const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
   onActivityPress,
@@ -284,11 +285,7 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
                     alignItems: "center",
                     borderWidth: 1,
                     borderColor: "#fff",
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 2,
-                    elevation: 3,
+                    ...getShadowStyle(ShadowLevel.Medium),
                     zIndex: 1001,
                   }}
                   onPress={async () => {

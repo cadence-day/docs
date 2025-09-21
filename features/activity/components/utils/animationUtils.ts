@@ -39,11 +39,6 @@ export const DRAG_ANIMATION_PROPS = {
   SPRING_TENSION: 300,
   SPRING_FRICTION: 12,
 
-  // Shadow and elevation settings
-  DRAG_SHADOW_OPACITY: 0.3,
-  DRAG_SHADOW_RADIUS: 15,
-  DRAG_ELEVATION: 15,
-
   // Opacity during drag
   DRAG_OPACITY: 0.9,
 };
@@ -54,44 +49,40 @@ export const DRAG_ANIMATION_PROPS = {
 export const startShakeAnimation = (
   shakeAnim: Animated.Value,
   rotationAnim: Animated.Value,
-  delay: number = 0
+  delay: number = 0,
 ) => {
   const shake = Animated.loop(
     Animated.sequence([
       Animated.timing(shakeAnim, {
         toValue: 2,
-        duration:
-          SHAKE_ANIMATION_PROPS.SHAKE_DURATION_BASE +
+        duration: SHAKE_ANIMATION_PROPS.SHAKE_DURATION_BASE +
           Math.random() * SHAKE_ANIMATION_PROPS.SHAKE_DURATION_RANDOM,
         useNativeDriver: true,
       }),
       Animated.timing(shakeAnim, {
         toValue: -2,
-        duration:
-          SHAKE_ANIMATION_PROPS.SHAKE_DURATION_BASE +
+        duration: SHAKE_ANIMATION_PROPS.SHAKE_DURATION_BASE +
           Math.random() * SHAKE_ANIMATION_PROPS.SHAKE_DURATION_RANDOM,
         useNativeDriver: true,
       }),
-    ])
+    ]),
   );
 
   const rotation = Animated.loop(
     Animated.sequence([
       Animated.timing(rotationAnim, {
         toValue: 1,
-        duration:
-          SHAKE_ANIMATION_PROPS.ROTATION_DURATION_BASE +
+        duration: SHAKE_ANIMATION_PROPS.ROTATION_DURATION_BASE +
           Math.random() * SHAKE_ANIMATION_PROPS.ROTATION_DURATION_RANDOM,
         useNativeDriver: true,
       }),
       Animated.timing(rotationAnim, {
         toValue: -1,
-        duration:
-          SHAKE_ANIMATION_PROPS.ROTATION_DURATION_BASE +
+        duration: SHAKE_ANIMATION_PROPS.ROTATION_DURATION_BASE +
           Math.random() * SHAKE_ANIMATION_PROPS.ROTATION_DURATION_RANDOM,
         useNativeDriver: true,
       }),
-    ])
+    ]),
   );
 
   setTimeout(() => {
@@ -107,7 +98,7 @@ export const startShakeAnimation = (
  */
 export const stopShakeAnimation = (
   shakeAnim: Animated.Value,
-  rotationAnim: Animated.Value
+  rotationAnim: Animated.Value,
 ) => {
   shakeAnim.stopAnimation();
   rotationAnim.stopAnimation();
@@ -131,7 +122,7 @@ export const stopShakeAnimation = (
  */
 export const createShakeTransform = (
   shakeAnim: Animated.Value,
-  rotationAnim: Animated.Value
+  rotationAnim: Animated.Value,
 ) => [
   {
     translateX: shakeAnim.interpolate({
@@ -172,7 +163,7 @@ export const createDragStartAnimation = (scaleAnim: Animated.Value) => {
  */
 export const createDragEndAnimation = (
   dragAnimation: Animated.ValueXY,
-  scaleAnim: Animated.Value
+  scaleAnim: Animated.Value,
 ) => {
   return Animated.parallel([
     Animated.spring(dragAnimation, {
@@ -195,7 +186,7 @@ export const createDragEndAnimation = (
  */
 export const calculateDragVelocity = (
   gestureState: any,
-  startTime: number
+  startTime: number,
 ): { velocityX: number; velocityY: number } => {
   const currentTime = Date.now();
   const deltaTime = Math.max(currentTime - startTime, 1); // Prevent division by zero
@@ -212,7 +203,7 @@ export const calculateDragVelocity = (
 export const createSnapAnimation = (
   dragAnimation: Animated.ValueXY,
   targetPosition: { x: number; y: number },
-  velocity?: { x: number; y: number }
+  velocity?: { x: number; y: number },
 ) => {
   return Animated.spring(dragAnimation, {
     toValue: targetPosition,
