@@ -21,7 +21,7 @@ try {
   GlobalErrorHandler.logWarning(
     "RevenueCat not available - running in Expo Go or web",
     "REVENUECAT_IMPORT",
-    { error }
+    { error },
   );
 }
 
@@ -48,7 +48,7 @@ class RevenueCatService {
     if (!Purchases) {
       GlobalErrorHandler.logWarning(
         "RevenueCat not available - skipping configuration",
-        "REVENUECAT_CONFIG"
+        "REVENUECAT_CONFIG",
       );
       return;
     }

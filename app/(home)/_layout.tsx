@@ -1,4 +1,3 @@
-import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
 import { revenueCatService } from "@/features/purchases/services/RevenueCatService";
 import { DialogHost } from "@/shared/components/DialogHost";
@@ -9,6 +8,7 @@ import useTranslation from "@/shared/hooks/useI18n";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
+import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
