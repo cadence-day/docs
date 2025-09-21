@@ -1,4 +1,5 @@
 import SageIcon from "@/shared/components/icons/SageIcon";
+import useTranslation from "@/shared/hooks/useI18n";
 import { useNotifications } from "@/shared/notifications";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
@@ -74,6 +75,7 @@ export const OnboardingDialog = forwardRef<
 >(({ confirm, headerProps, _dialogId }, ref) => {
   const [currentPage, setCurrentPage] = useState(0);
   const { requestPermissions, updatePreferences } = useNotifications();
+  const { t } = useTranslation();
 
   const handleConfirm = () => {
     // Persist that onboarding was shown to avoid re-prompting
@@ -130,29 +132,25 @@ export const OnboardingDialog = forwardRef<
 
   const pages: PageProps[] = [
     {
-      title: "Welcome to Cadence",
-      content:
-        "Time moves fast—Cadence helps you see it more clearly. Record your moments, reflect on your rhythms, and discover patterns that shape your days. No pressure, no perfection—just awareness.",
+      title: t("welcome-to-cadence"),
+      content: t("time-moves-fast-cadence-helps"),
       icon: <OnboardingIcon />,
     },
     {
-      title: "Expand Your Memory ",
-      content:
-        "Ever wonder what you did last Tuesday? Or what thoughts you had during a quiet morning? Notes help you hold onto the moments that matter—big or small, deep or fleeting.",
+      title: t("expand-your-memory"),
+      content: t("ever-wonder-what-you-did-last"),
     },
     {
-      title: "Stay in sync\nwith your time",
-      content:
-        "Turn on notifications for gentle reminders to log your activities throughout the day. No pressure, just a daily nudge to help you stay aware of your time.\n\n✨ Your future self will thank you. Take a moment to log your day.",
+      title: t("stay-in-sync-nwith-your-time"),
+      content: t("turn-on-notifications-for-gent"),
       actionButton: {
-        text: "Allow notifications",
+        text: t("allow-notifications"),
         onPress: handleNotificationPermission,
       },
     },
     {
-      title: "Meet Sage",
-      content:
-        "Sage your friendly AI guide will help you notice the patterns in your time.\n\nAsk Sage to summarize your day, help you remember your goals, or notice your time patterns. The more you log, the more Sage can help.",
+      title: t("meet-sage"),
+      content: t("sage-your-friendly-ai-guide-wi"),
       icon: (
         <View
           style={{
@@ -168,18 +166,16 @@ export const OnboardingDialog = forwardRef<
       ),
     },
     {
-      title: "Your Data,\nYour Privacy",
-      content:
-        "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection.",
+      title: t("your-data-nyour-privacy"),
+      content: t("your-time-is-yours-alone-every"),
       linkText: {
-        text: "Read more about how we protect your privacy →",
+        text: t("read-more-about-how-we-protect"),
         onPress: () => console.log("Navigate to privacy policy"),
       },
     },
     {
-      title: "Make Cadence Yours",
-      content:
-        "Cadence starts with universal activities—work, rest, movement—but life is more than categories. Love bird gazing? Add custom activities that make your rhythm uniquely yours.",
+      title: t("make-cadence-yours"),
+      content: t("cadence-starts-with-universal"),
     },
   ];
 
@@ -244,7 +240,7 @@ export const OnboardingDialog = forwardRef<
           }
         }}
       >
-        <Text style={styles.continueButtonText}>Continue</Text>
+        <Text style={styles.continueButtonText}>{t("continue")}</Text>
       </TouchableOpacity>
 
       <View style={styles.pageIndicatorContainer}>
