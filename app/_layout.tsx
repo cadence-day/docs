@@ -93,6 +93,11 @@ export default Sentry.wrap(function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    // Register FoundersGrotesk family used across the app
+    "FoundersGrotesk-Regular": require("../assets/fonts/FoundersGrotesk-Regular-BF66175e972ac1c.otf"),
+    "FoundersGrotesk-Medium": require("../assets/fonts/FoundersGrotesk-Medium-BF66175e972d694.otf"),
+    "FoundersGrotesk-Semibold": require("../assets/fonts/FoundersGrotesk-Semibold-BF66175e972c958.otf"),
+    "FoundersGrotesk-Bold": require("../assets/fonts/FoundersGrotesk-Bold-BF66175e9700615.otf"),
   });
 
   // Initialize RevenueCat on app startup
