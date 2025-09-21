@@ -13,6 +13,7 @@ import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
+import { revenueCatService } from "@/features/purchases/services/RevenueCatService";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({
@@ -119,6 +120,21 @@ export default function TabLayout() {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, segments, didCheckEncryption]);
+
+  // Initialize RevenueCat when user is signed in
+  useEffect(() => {
+    const userId = user?.id;
+    if (!userId) return;
+
+    (async () => {
+      try {
+        await revenueCatService.configure();
+        await revenueCatService.login(userId);
+      } catch (error) {
+        GlobalErrorHandler.logError(error, "Failed to initialize RevenueCat");
+      }
+    })();
+  }, [user?.id]);
 
   // On initial mount when signed-in, open onboarding if the user has no timeslices
   useEffect(() => {

@@ -496,5 +496,20 @@
   "your-email-address-for-follow": "• Your email address (for follow-up)",
   "your-encryption-key-protects-s": "Your encryption key protects sensitive data. Keep it secure and don't share it with others. You'll need this key to access your encrypted data on new devices.",
   "your-password-has-been-changed": "Your password has been changed successfully. For security reasons, you'll be signed out now.",
-  "your-time-is-yours-alone-every": "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection."
+  "your-time-is-yours-alone-every": "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection.",
+  "choose-your-plan": "Choose Your Plan",
+  "loading-plans": "Loading subscription plans...",
+  "already-subscribed-premium": "You are already subscribed to Premium!",
+  "select-billing-period": "Select Billing Period",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "save": "Save",
+  "start-free-trial": "Start Free Trial",
+  "change-plan": "Change Plan",
+  "restore-purchases": "Restore Purchases",
+  "subscription-terms": "Subscription auto-renews unless cancelled. Terms and conditions apply.",
+  "please-select-subscription-plan": "Please select a subscription plan",
+  "subscription-activated-successfully": "Your subscription has been activated successfully!",
+  "purchases-restored-successfully": "Your purchases have been restored successfully!",
+  "ok": "OK"
 }

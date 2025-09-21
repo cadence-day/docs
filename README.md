@@ -21,6 +21,42 @@ The **Cadence.day Mobile App** is a cross-platform application built with **Reac
 - **LangChain**: For AI interactions and thread management.
 - **Supabase**: For backend services and database management.
 - **Doppler**: For secure environment variable management.
+- **RevenueCat**: For in-app purchases and subscription management.
+
+---
+
+## 💰 Subscription Features
+
+Cadence offers a freemium model with **Deep Cadence Premium** subscriptions powered by RevenueCat:
+
+### Free Tier
+- Basic daily reminders
+- Track up to 5 habits
+- Basic statistics
+- Community support
+
+### Deep Cadence Premium
+- ✨ **Unlimited habit tracking**
+- 📊 **Advanced analytics & insights**
+- ⏰ **Custom reminder schedules**
+- 🎯 **Priority support**
+- 📄 **Export data to CSV**
+- 🎨 **Theme customization**
+- ☁️ **Backup & sync across devices**
+- 🚫 **No ads**
+
+**Billing Options:**
+- Monthly subscription
+- Yearly subscription (with savings)
+
+### Setup Required
+To enable in-app purchases, you'll need to configure:
+1. **RevenueCat Dashboard** - Create products and entitlements
+2. **App Store Connect** - Configure in-app purchase products
+3. **Google Play Console** - Set up subscription products
+4. **Environment Variables** - Add RevenueCat API keys
+
+📚 **For detailed setup**: See [Store Setup Guide](docs/STORE_SETUP_GUIDE.md) and [RevenueCat Setup Guide](docs/REVENUECAT_SETUP_GUIDE.md)
 
 ---
 
@@ -130,6 +166,8 @@ supabase start
 ```
 SUPABASE_URL=<your-supabase-url>
 SUPABASE_API_KEY=<your-supabase-anon-key>
+EXPO_PUBLIC_REVENUECAT_IOS_API_KEY=<your-revenuecat-ios-key>
+EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY=<your-revenuecat-android-key>
 ```
 
 ℹ️ You can find the API URL and API key (ANON KEY) by running the following command:
