@@ -1,4 +1,5 @@
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { AppState, AppStateStatus } from "react-native";
 import { BackgroundTaskManager } from "./services/BackgroundTaskManager";
 import {
   NotificationDeliveryMethod,
@@ -16,9 +17,71 @@ export class NotificationEngine {
   private subscribers: NotificationSubscriber[] = [];
   private config: NotificationEngineConfig;
   private logs: NotificationLog[] = [];
+  private appState: AppStateStatus = "active";
+  private appStateSubscription:
+    | ReturnType<typeof AppState.addEventListener>
+    | null = null;
 
   constructor(config: NotificationEngineConfig) {
     this.config = config;
+    this.setupAppStateMonitoring();
+  }
+
+  private setupAppStateMonitoring(): void {
+    // Get current app state
+    this.appState = AppState.currentState;
+
+    // Listen for app state changes
+    this.appStateSubscription = AppState.addEventListener(
+      "change",
+      this.handleAppStateChange.bind(this),
+    );
+
+    if (this.config.enableLogging) {
+      GlobalErrorHandler.logDebug(
+        `App state monitoring initialized. Current state: ${this.appState}`,
+        "NotificationEngine.setupAppStateMonitoring",
+      );
+    }
+  }
+
+  private handleAppStateChange(nextAppState: AppStateStatus): void {
+    const previousState = this.appState;
+    this.appState = nextAppState;
+
+    if (this.config.enableLogging) {
+      GlobalErrorHandler.logDebug(
+        `App state changed: ${previousState} → ${nextAppState}`,
+        "NotificationEngine.handleAppStateChange",
+      );
+    }
+  }
+
+  private isAppInForeground(): boolean {
+    return this.appState === "active";
+  }
+
+  private getSmartDeliveryMethods(
+    originalMethods: NotificationDeliveryMethod[],
+  ): NotificationDeliveryMethod[] {
+    // If specific delivery methods are provided, respect them
+    if (originalMethods && originalMethods.length > 0) {
+      return originalMethods;
+    }
+
+    // Otherwise, use smart routing based on app state
+    if (this.isAppInForeground()) {
+      return ["in-app"];
+    } else {
+      return ["push"];
+    }
+  }
+
+  public destroy(): void {
+    if (this.appStateSubscription) {
+      this.appStateSubscription.remove();
+      this.appStateSubscription = null;
+    }
   }
 
   registerProvider(
@@ -74,7 +137,23 @@ export class NotificationEngine {
   }
 
   async emit(event: NotificationEvent): Promise<void> {
-    const deliveryPromises = event.deliveryMethod.map(async (method) => {
+    // Use smart routing to determine delivery methods
+    const smartDeliveryMethods = this.getSmartDeliveryMethods(
+      event.deliveryMethod,
+    );
+
+    if (this.config.enableLogging) {
+      GlobalErrorHandler.logDebug(
+        `Smart routing: Original [${
+          event.deliveryMethod.join(", ")
+        }] → Smart [${
+          smartDeliveryMethods.join(", ")
+        }] (App state: ${this.appState})`,
+        "NotificationEngine.emit",
+      );
+    }
+
+    const deliveryPromises = smartDeliveryMethods.map(async (method) => {
       const provider = this.providers.get(method);
       if (!provider) {
         if (this.config.enableLogging) {
@@ -145,7 +224,7 @@ export class NotificationEngine {
       userId: userId || event.userId || "unknown",
       title: event.message.title,
       body: event.message.body,
-      data: event.message.metadata,
+      data: event.message.metadata || {},
     });
 
     const schedulePromises = event.deliveryMethod.map(async (method) => {

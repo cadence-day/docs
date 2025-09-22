@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ScreenHeader } from "@/shared/components/CadenceUI";
-import SageIcon from "@/shared/components/icons/SageIcon";
+import NotificationSageIcon from "@/shared/components/NotificationSageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { useI18n } from "@/shared/hooks/useI18n";
 
@@ -120,11 +120,11 @@ export default function Reflection() {
       <ScreenHeader
         title={t("reflection.weekly-cadence")}
         OnRightElement={() => (
-          <TouchableOpacity
-            onPress={() => showInfo(t("sage.unavailableMessage"))}
-          >
-            <SageIcon size={40} status={"pulsating"} auto={false} />
-          </TouchableOpacity>
+          <NotificationSageIcon
+            size={40}
+            onSagePress={() => showInfo(t("sage.unavailableMessage"))}
+            showFallbackMessage={false}
+          />
         )}
         subtitle={
           <View style={styles.dateNavigationContainer}>

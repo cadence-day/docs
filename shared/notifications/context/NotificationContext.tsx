@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import { DEFAULT_CADENCE_PREFERENCES } from "../cadenceMessages";
+import { useBackgroundNotifications } from "../hooks/useBackgroundNotifications";
 import { NotificationEngine } from "../NotificationEngine";
 import {
   getNotificationEngineSingleton,
@@ -24,7 +25,6 @@ import {
   NotificationPermissionStatus,
   NotificationPreferences,
 } from "../types";
-import { useBackgroundNotifications } from "../hooks/useBackgroundNotifications";
 
 interface NotificationContextType {
   // Engine instance
@@ -193,6 +193,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       if (unsubscribeFromInApp) {
         unsubscribeFromInApp();
       }
+      // Clean up engine resources
+      if (engine) {
+        engine.destroy();
+      }
     };
   }, [engineConfig]);
 
@@ -266,7 +270,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       const event: NotificationEvent = {
         type: notification.type,
         message: notification,
-        deliveryMethod: ["in-app", "push"],
+        deliveryMethod: [], // Empty array allows smart routing based on app state
       };
 
       await engine.emit(event);

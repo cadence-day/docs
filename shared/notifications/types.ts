@@ -18,7 +18,7 @@ export interface NotificationMessage {
   body: string;
   type: NotificationType;
   scheduledFor?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface NotificationEvent {
@@ -45,7 +45,7 @@ export interface NotificationProvider {
   sendNotification(notification: NotificationMessage): Promise<void>;
   scheduleNotification(
     notification: NotificationMessage,
-    scheduledFor: Date
+    scheduledFor: Date,
   ): Promise<void>;
   cancelNotification(notificationId: string): Promise<void>;
   cancelAllNotifications(): Promise<void>;
@@ -73,7 +73,7 @@ export interface NotificationLog {
   scheduledFor?: Date;
   deliveryMethod: NotificationDeliveryMethod;
   errorMessage?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface NotificationSubscriber {
@@ -81,7 +81,7 @@ export interface NotificationSubscriber {
   onNotificationSent?: (notification: NotificationMessage) => void;
   onNotificationFailed?: (
     notification: NotificationMessage,
-    error: Error
+    error: Error,
   ) => void;
   onPermissionChanged?: (status: NotificationPermissionStatus) => void;
 }

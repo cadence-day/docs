@@ -19,7 +19,7 @@ interface ScheduledNotification {
   userId: string;
   title: string;
   body: string;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export class BackgroundTaskManager {
@@ -171,7 +171,7 @@ export class BackgroundTaskManager {
           content: {
             title: notification.title,
             body: notification.body,
-            data: notification.data,
+            data: notification.data || {},
           },
           trigger: triggerInput,
         });
@@ -217,7 +217,7 @@ export class BackgroundTaskManager {
         content: {
           title: notification.title,
           body: notification.body,
-          data: notification.data,
+          data: notification.data || {},
         },
         trigger: null,
       });

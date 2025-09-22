@@ -283,6 +283,9 @@
       "show-onboarding": "Onboarding anzeigen (Debug)",
       "test-notification": ""
     },
+    "development": {
+      "test-notifications": ""
+    },
     "edit-photo": "Foto bearbeiten",
     "email": "E-Mail",
     "error-messages": {

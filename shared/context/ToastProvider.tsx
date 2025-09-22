@@ -19,6 +19,7 @@ interface ToastComponentState {
   isVisible: boolean;
   onHide: () => void;
   duration?: number;
+  dismissible?: boolean;
 }
 
 type ToastOptions = SharedToastOptions;
@@ -53,7 +54,12 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showToast = useCallback(
-    ({ message, type = "info", duration = 4000 }: ToastOptions) => {
+    ({
+      message,
+      type = "info",
+      duration = 4000,
+      dismissible = true,
+    }: ToastOptions) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -64,11 +70,14 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
         isVisible: true,
         onHide: () => setToast(null),
         duration,
+        dismissible,
       });
 
-      timeoutRef.current = setTimeout(() => {
-        setToast(null);
-      }, duration);
+      if (duration > 0) {
+        timeoutRef.current = setTimeout(() => {
+          setToast(null);
+        }, duration);
+      }
     },
     []
   );

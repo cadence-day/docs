@@ -283,6 +283,9 @@
       "show-onboarding": "Show Onboarding (debug)",
       "test-notification": "Test Notification BG Task"
     },
+    "development": {
+      "test-notifications": "Test Notifications"
+    },
     "edit-photo": "Edit Photo",
     "email": "Email",
     "error-messages": {

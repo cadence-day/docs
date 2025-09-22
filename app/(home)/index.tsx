@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
-import SageIcon from "@/shared/components/icons/SageIcon";
+import NotificationSageIcon from "@/shared/components/NotificationSageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
@@ -84,11 +84,11 @@ export default function Today() {
           <ScreenHeader
             title={title}
             OnRightElement={() => (
-              <TouchableOpacity
-                onPress={() => showInfo(t("sage.unavailableMessage"))}
-              >
-                <SageIcon size={40} status={"pulsating"} auto={false} />
-              </TouchableOpacity>
+              <NotificationSageIcon
+                size={40}
+                onSagePress={() => showInfo(t("sage.unavailableMessage"))}
+                showFallbackMessage={false}
+              />
             )}
             subtitle={
               <>
