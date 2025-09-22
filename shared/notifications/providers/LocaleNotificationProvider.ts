@@ -39,12 +39,12 @@ export class LocaleNotificationProvider implements NotificationProvider {
       await this.wrappedProvider.initialize();
       GlobalErrorHandler.logDebug(
         "Locale notification provider initialized",
-        "LocaleNotificationProvider.initialize"
+        "LocaleNotificationProvider.initialize",
       );
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "LocaleNotificationProvider.initialize"
+        "LocaleNotificationProvider.initialize",
       );
       throw error;
     }
@@ -60,7 +60,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
         "LocaleNotificationProvider.sendNotification",
         {
           notificationId: notification.id,
-        }
+        },
       );
       throw error;
     }
@@ -68,13 +68,13 @@ export class LocaleNotificationProvider implements NotificationProvider {
 
   async scheduleNotification(
     notification: NotificationMessage,
-    scheduledFor: Date
+    scheduledFor: Date,
   ): Promise<void> {
     try {
       const localizedNotification = this.localizeNotification(notification);
       await this.wrappedProvider.scheduleNotification(
         localizedNotification,
-        scheduledFor
+        scheduledFor,
       );
     } catch (error) {
       GlobalErrorHandler.logError(
@@ -83,7 +83,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
         {
           notificationId: notification.id,
           scheduledFor: scheduledFor.toISOString(),
-        }
+        },
       );
       throw error;
     }
@@ -98,7 +98,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
         "LocaleNotificationProvider.cancelNotification",
         {
           notificationId,
-        }
+        },
       );
       throw error;
     }
@@ -110,7 +110,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        "LocaleNotificationProvider.cancelAllNotifications"
+        "LocaleNotificationProvider.cancelAllNotifications",
       );
       throw error;
     }
@@ -123,7 +123,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
   // Locale-specific methods
 
   private localizeNotification(
-    notification: NotificationMessage
+    notification: NotificationMessage,
   ): NotificationMessage {
     try {
       // Get current language directly from i18n instance
@@ -134,7 +134,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
       const localizedContent = this.getLocalizedContent(
         notification.type,
         currentLanguage,
-        notification.metadata
+        notification.metadata,
       );
 
       return {
@@ -146,7 +146,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
       GlobalErrorHandler.logWarning(
         "Failed to localize notification, using original content",
         "LocaleNotificationProvider.localizeNotification",
-        { notificationId: notification.id, error }
+        { notificationId: notification.id, error },
       );
       return notification;
     }
@@ -155,14 +155,14 @@ export class LocaleNotificationProvider implements NotificationProvider {
   private getLocalizedContent(
     type: NotificationType,
     language: string,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ): LocalizedNotificationContent {
     // For cadence-specific notifications, use the existing message system
     if (type === "midday-reflection") {
       return {
         title: this.getLocalizedTitle(
           "notifications.midday_reflection.title",
-          language
+          language,
         ),
         body: getRandomMiddayReflection(),
       };
@@ -172,17 +172,20 @@ export class LocaleNotificationProvider implements NotificationProvider {
       return {
         title: this.getLocalizedTitle(
           "notifications.evening_reflection.title",
-          language
+          language,
         ),
         body: getRandomEveningReflection(),
       };
     }
 
-    if (type === "streak-reminder" && metadata?.streakCount && typeof metadata.streakCount === 'number') {
+    if (
+      type === "streak-reminder" && metadata?.streakCount &&
+      typeof metadata.streakCount === "number"
+    ) {
       return {
         title: this.getLocalizedTitle(
           "notifications.streak_reminder.title",
-          language
+          language,
         ),
         body: getRandomStreakMessage(metadata.streakCount),
       };
@@ -235,7 +238,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
 
   private interpolateTemplate(
     template: { title: string; body: string },
-    variables: Record<string, unknown>
+    variables: Record<string, unknown>,
   ): LocalizedNotificationContent {
     const interpolate = (text: string): string => {
       return text.replace(/\{\{(\w+)\}\}/g, (match, key) => {
@@ -363,7 +366,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
 
   static createStreakReminder(
     id: string,
-    streakCount: number
+    streakCount: number,
   ): NotificationMessage {
     return {
       id,
