@@ -14,12 +14,15 @@ import React, {
 
 // Local toast state shape passed to the Toast component
 interface ToastComponentState {
-  message: string;
+  title: string;
+  body: string;
   type: ToastType;
   isVisible: boolean;
   onHide: () => void;
   duration?: number;
   dismissible?: boolean;
+  href?: string;
+  onPress?: () => void;
 }
 
 type ToastOptions = SharedToastOptions;
@@ -44,8 +47,32 @@ export const ToastService = {
   show: (options: ToastOptions) => {
     toastService.showToast(options);
   },
-  showError: (message: string, duration?: number) => {
-    toastService.showToast({ message, type: "error", duration });
+  showError: (
+    title: string,
+    body: string,
+    duration?: number,
+    href?: string
+  ) => {
+    toastService.showToast({ title, body, type: "error", duration, href });
+  },
+  showSuccess: (
+    title: string,
+    body: string,
+    duration?: number,
+    href?: string
+  ) => {
+    toastService.showToast({ title, body, type: "success", duration, href });
+  },
+  showWarning: (
+    title: string,
+    body: string,
+    duration?: number,
+    href?: string
+  ) => {
+    toastService.showToast({ title, body, type: "warning", duration, href });
+  },
+  showInfo: (title: string, body: string, duration?: number, href?: string) => {
+    toastService.showToast({ title, body, type: "info", duration, href });
   },
 };
 
@@ -55,22 +82,28 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 
   const showToast = useCallback(
     ({
-      message,
+      title,
+      body,
       type = "info",
       duration = 4000,
       dismissible = true,
+      href,
+      onPress,
     }: ToastOptions) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
 
       setToast({
-        message,
+        title,
+        body,
         type,
         isVisible: true,
         onHide: () => setToast(null),
         duration,
         dismissible,
+        href,
+        onPress,
       });
 
       if (duration > 0) {

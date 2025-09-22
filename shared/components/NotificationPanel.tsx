@@ -14,12 +14,7 @@ import {
 
 import { COLORS } from "@/shared/constants/COLORS";
 import { useNotifications } from "@/shared/notifications";
-import type { InAppNotificationDisplay } from "@/shared/notificat  notificationTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: COLORS.text.header,
-    marginBottom: 4,
-  },roviders/InAppNotificationProvider";
+import type { InAppNotificationDisplay } from "@/shared/notifications/providers/InAppNotificationProvider";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 
 interface NotificationPanelProps {
@@ -31,9 +26,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
   isVisible,
   onClose,
 }) => {
-  const slideAnim = useRef(new Animated.Value(Dimensions.get("window").width)).current;
+  const slideAnim = useRef(
+    new Animated.Value(Dimensions.get("window").width)
+  ).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
-  const { inAppNotifications, markAsRead, markAllAsRead, clearNotificationHistory } = useNotifications();
+  const {
+    inAppNotifications,
+    markAsRead,
+    markAllAsRead,
+    clearNotificationHistory,
+  } = useNotifications();
 
   useEffect(() => {
     if (isVisible) {
@@ -166,7 +168,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
                 onMarkAllAsRead={handleMarkAllAsRead}
                 onClearAll={handleClearAll}
                 notificationCount={inAppNotifications.length}
-                unreadCount={inAppNotifications.filter(n => !n.isRead).length}
+                unreadCount={inAppNotifications.filter((n) => !n.isRead).length}
               />
               <NotificationList
                 notifications={inAppNotifications}
@@ -185,7 +187,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
                 onMarkAllAsRead={handleMarkAllAsRead}
                 onClearAll={handleClearAll}
                 notificationCount={inAppNotifications.length}
-                unreadCount={inAppNotifications.filter(n => !n.isRead).length}
+                unreadCount={inAppNotifications.filter((n) => !n.isRead).length}
               />
               <NotificationList
                 notifications={inAppNotifications}
@@ -224,7 +226,7 @@ const PanelHeader: React.FC<PanelHeaderProps> = ({
         <Ionicons name="close" size={24} color={COLORS.text.header} />
       </TouchableOpacity>
     </View>
-    
+
     <View style={styles.headerStats}>
       <Text style={styles.statsText}>
         {notificationCount} total, {unreadCount} unread
@@ -234,14 +236,19 @@ const PanelHeader: React.FC<PanelHeaderProps> = ({
     {notificationCount > 0 && (
       <View style={styles.headerActions}>
         {unreadCount > 0 && (
-          <TouchableOpacity onPress={onMarkAllAsRead} style={styles.actionButton}>
+          <TouchableOpacity
+            onPress={onMarkAllAsRead}
+            style={styles.actionButton}
+          >
             <Ionicons name="checkmark-done" size={16} color={COLORS.primary} />
             <Text style={styles.actionButtonText}>Mark all read</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity onPress={onClearAll} style={styles.actionButton}>
           <Ionicons name="trash-outline" size={16} color={COLORS.error} />
-          <Text style={[styles.actionButtonText, { color: COLORS.error }]}>Clear all</Text>
+          <Text style={[styles.actionButtonText, { color: COLORS.error }]}>
+            Clear all
+          </Text>
         </TouchableOpacity>
       </View>
     )}
@@ -263,13 +270,16 @@ const NotificationList: React.FC<NotificationListProps> = ({
   getNotificationColor,
   formatTimestamp,
 }) => (
-  <ScrollView style={styles.notificationList} showsVerticalScrollIndicator={false}>
+  <ScrollView
+    style={styles.notificationList}
+    showsVerticalScrollIndicator={false}
+  >
     {notifications.length === 0 ? (
       <View style={styles.emptyState}>
-        <Ionicons 
-          name="notifications-outline" 
-          size={48} 
-          color={COLORS.text.subheader} 
+        <Ionicons
+          name="notifications-outline"
+          size={48}
+          color={COLORS.text.subheader}
         />
         <Text style={styles.emptyStateTitle}>No notifications</Text>
         <Text style={styles.emptyStateText}>
@@ -295,10 +305,12 @@ const NotificationList: React.FC<NotificationListProps> = ({
               />
             </View>
             <View style={styles.notificationContent}>
-              <Text style={[
-                styles.notificationTitle,
-                !notification.isRead && styles.unreadTitle
-              ]}>
+              <Text
+                style={[
+                  styles.notificationTitle,
+                  !notification.isRead && styles.unreadTitle,
+                ]}
+              >
                 {notification.message.title}
               </Text>
               <Text style={styles.notificationTime}>

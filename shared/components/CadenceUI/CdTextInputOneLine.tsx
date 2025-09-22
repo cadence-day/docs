@@ -20,7 +20,6 @@ interface CdTextInputOneLineProps extends Omit<TextInputProps, "onChangeText"> {
   onSave?: (text: string) => void;
   isButton?: boolean;
   onPress?: () => void;
-  buttonIcon?: keyof typeof Ionicons.glyphMap;
   showValueText?: boolean; // New prop to control text visibility
   allowCopy?: boolean; // New prop to enable copy functionality
   showChevron?: boolean; // New prop to control chevron icon visibility
@@ -33,7 +32,6 @@ export const CdTextInputOneLine: React.FC<CdTextInputOneLineProps> = ({
   onSave,
   isButton = false,
   onPress,
-  buttonIcon,
   editable = true,
   showValueText = true, // Default to showing text
   allowCopy = false, // Default to no copy functionality

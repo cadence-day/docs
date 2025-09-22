@@ -259,7 +259,8 @@ export default function TestNotifications() {
   // Toast demonstration functions
   const handleTestToastSuccess = () => {
     ToastService.show({
-      message: "✅ This is a success toast message!",
+      title: "Success!",
+      body: "Operation completed successfully",
       type: "success",
       duration: 3000,
     });
@@ -267,7 +268,8 @@ export default function TestNotifications() {
 
   const handleTestToastError = () => {
     ToastService.show({
-      message: "❌ This is an error toast showing an issue!",
+      title: "Error",
+      body: "Something went wrong. Please try again.",
       type: "error",
       duration: 4000,
     });
@@ -275,7 +277,8 @@ export default function TestNotifications() {
 
   const handleTestToastWarning = () => {
     ToastService.show({
-      message: "⚠️ This is a warning toast!",
+      title: "Warning",
+      body: "Please check your settings before continuing",
       type: "warning",
       duration: 3500,
     });
@@ -283,9 +286,32 @@ export default function TestNotifications() {
 
   const handleTestToastInfo = () => {
     ToastService.show({
-      message: "ℹ️ This is an info toast with useful information!",
+      title: "Information",
+      body: "This is helpful information for you to know",
       type: "info",
       duration: 4000,
+    });
+  };
+
+  const handleTestToastNavigation = () => {
+    ToastService.show({
+      title: "Navigation Toast",
+      body: "Tap to navigate to notifications settings",
+      type: "info",
+      duration: 5000,
+      href: "/settings/notifications",
+    });
+  };
+
+  const handleTestToastCustomAction = () => {
+    ToastService.show({
+      title: "Custom Action",
+      body: "Tap for a custom action",
+      type: "success",
+      duration: 5000,
+      onPress: () => {
+        alert("Custom action triggered!");
+      },
     });
   };
 
@@ -504,6 +530,22 @@ export default function TestNotifications() {
               disabled={isLoading}
             >
               <Text style={styles.buttonText}>Test Info Toast</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, styles.buttonSecondary]}
+              onPress={handleTestToastNavigation}
+              disabled={isLoading}
+            >
+              <Text style={styles.buttonText}>Toast with Navigation</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, styles.buttonTertiary]}
+              onPress={handleTestToastCustomAction}
+              disabled={isLoading}
+            >
+              <Text style={styles.buttonText}>Toast with Custom Action</Text>
             </TouchableOpacity>
           </View>
 

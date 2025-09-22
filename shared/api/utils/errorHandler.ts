@@ -13,7 +13,7 @@ export class ApiError extends Error {
   constructor(
     public context: string,
     public originalError: any,
-    public isRetryable: boolean = false
+    public isRetryable: boolean = false,
   ) {
     super(`[${context}] ${getErrorMessage(originalError)}`);
     this.name = "ApiError";
@@ -113,7 +113,7 @@ async function delay(ms: number): Promise<void> {
 export async function handleApiErrorWithRetry<T>(
   context: string,
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const {
     maxRetries = 3,
@@ -138,18 +138,20 @@ export async function handleApiErrorWithRetry<T>(
       // Exponential backoff with jitter
       const delayMs = Math.min(
         baseDelay * Math.pow(2, attempt) + Math.random() * 1000,
-        maxDelay
+        maxDelay,
       );
 
       GlobalErrorHandler.logWarning(
-        `Attempt ${attempt + 1}/${maxRetries + 1} failed, retrying in ${delayMs}ms`,
+        `Attempt ${attempt + 1}/${
+          maxRetries + 1
+        } failed, retrying in ${delayMs}ms`,
         `API_RETRY_${context}`,
         {
           attempt: attempt + 1,
           maxRetries: maxRetries + 1,
           delayMs,
           error: getErrorMessage(error),
-        }
+        },
       );
       await delay(delayMs);
     }
@@ -158,7 +160,7 @@ export async function handleApiErrorWithRetry<T>(
   const apiError = new ApiError(
     context,
     lastError,
-    isRetryableError(lastError, retryableErrors)
+    isRetryableError(lastError, retryableErrors),
   );
 
   GlobalErrorHandler.logError(apiError, "API_ERROR", {
@@ -169,7 +171,7 @@ export async function handleApiErrorWithRetry<T>(
   });
 
   // Show a friendly message to the user while logging full details for developers
-  ToastService.showError(getUserFriendlyMessage(lastError));
+  ToastService.showError("Request Failed", getUserFriendlyMessage(lastError));
 
   throw apiError;
 }
@@ -195,7 +197,7 @@ export function handleApiError(context: string, error: any): never {
   });
 
   // Show a concise, user-friendly message instead of the raw technical message
-  ToastService.showError(getUserFriendlyMessage(error));
+  ToastService.showError("Error", getUserFriendlyMessage(error));
 
   throw apiError;
 }

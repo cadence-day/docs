@@ -219,11 +219,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center",
   },
-  dialogContainer: {
-    backgroundColor: COLORS.white,
-    borderRadius: 8,
-    ...getShadowStyle(ShadowLevel.Medium),
-  },
 });
 
 export default CategoryPickerDialog;
