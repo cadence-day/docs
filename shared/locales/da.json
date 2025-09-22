@@ -1,6 +1,7 @@
 {
   "about-encryption": "Om kryptering",
   "about-notifications": "Om notifikationer",
+  "about-subscription": "",
   "account-management": "Kontoadministration",
   "account-verified-successfully-welcome": "Konto bekræftet med succes! Velkommen!",
   "active-activities": "Aktive aktiviteter",
@@ -39,6 +40,7 @@
   "add-new-activity": "Tilføj ny aktivitet",
   "allow-notifications": "Tillad meddelelser",
   "already-have-an-account": "Har du allerede en konto?",
+  "already-subscribed-premium": "",
   "app-information": "App-information",
   "app-version-and-platform": "• App-version og platform",
   "are-you-sure-you-want-to-sign": "Er du sikker på, at du vil logge ud?",
@@ -62,7 +64,9 @@
   "cannot-find-native-module": "Kan ikke finde native modul",
   "category": "Kategori",
   "change-password": "Skift adgangskode",
+  "change-plan": "",
   "check-your-inbox-for-verification-email": "Tjek din indbakke for bekræftelses-email.",
+  "choose-your-plan": "",
   "choose_action": "Vælg handling",
   "close": "Luk",
   "color": "Farve",
@@ -74,6 +78,7 @@
     "error": "Fejl",
     "ok": "OK",
     "saving": "Gemmer...",
+    "select": "",
     "submitting": "Sender..."
   },
   "confirm": "Bekræft",
@@ -162,10 +167,12 @@
   "key-imported-successfully-fing": "Nøgle importeret med succes! Fingeraftryk: {0}",
   "laid-back": "Afslappet",
   "legal": "Legal",
+  "loading-plans": "",
   "make-cadence-yours": "Gør Cadence din",
   "meet-sage": "Mød Sage",
   "midday-reflection": "Middagsreflektion",
   "mo": "Man",
+  "monthly": "",
   "morning-reminders": "Morgen-påmindelser",
   "morning-reminders-are-sent-aft": "Morgen-påmindelser sendes efter din opvågningstid og aften-påmindelser før din sengetid. Ugentlige streak-opdateringer fejrer dine resultater hver søndag.",
   "name": "Navn",
@@ -178,6 +185,7 @@
   "not-available-in-this-build": "Ikke tilgængelig i denne build",
   "notification-schedule": "Notifikationsplan",
   "notification-types": "Notifikationstyper",
+  "ok": "",
   "onboarding": {
     "missed-intro": "I tilfælde af at du gik glip af introduktionen",
     "title": "Velkommen til Cadence",
@@ -220,6 +228,23 @@
   "permanently-delete-account": "Slet konto permanent",
   "permission-required": "Krævet tilladelse",
   "pick-activity-first": "Vælg først en aktivitet.",
+  "plan": {
+    "feature": {
+      "all_free": "",
+      "all_supporter": "",
+      "beta_access": "",
+      "community": "",
+      "free": "",
+      "premium_support": "",
+      "roadmap": ""
+    },
+    "free": "",
+    "free_price": "",
+    "premium": "",
+    "premium_price": "",
+    "supporter": "",
+    "supporter_price": ""
+  },
   "please-enable-camera-access-in": "Aktivér kameraadgang i dine enhedsindstillinger for at scanne QR -koder.",
   "please-enter-a-bug-description": "Indtast en fejlbeskrivelse.",
   "please-enter-a-bug-title": "Indtast en fejltitel.",
@@ -227,6 +252,7 @@
   "please-enter-time-in-hh-mm-for": "Indtast tid i HH: MM -format (f.eks. 12:00)",
   "please-enter-time-in-hh-mm-for-0": "Indtast tid i HH: MM -format (f.eks. 20:00)",
   "please-fill-in-both-title-and": "Udfyld venligst både titel og beskrivelse",
+  "please-select-subscription-plan": "",
   "please-visit-https-cadence-day": "Besøg https://cadence.day/faq i din browser",
   "point-your-camera-at-the-qr-co": "Peg dit kamera på QR -koden, der indeholder krypteringsnøglen",
   "privacy-policy": "Privatlivspolitik",
@@ -254,7 +280,8 @@
     "developer": {
       "open-debug-page": "Åbn debug-side",
       "section-title": "Udvikler",
-      "show-onboarding": "Vis velkomst (debug)"
+      "show-onboarding": "Vis velkomst (debug)",
+      "test-notification": ""
     },
     "edit-photo": "Rediger foto",
     "email": "E -mail",
@@ -322,6 +349,7 @@
     "wake-time": "Opvågningstid",
     "whats-inside": "Hvad du får:"
   },
+  "purchases-restored-successfully": "",
   "push-notification-permissions": "Push-notifikationstilladelser er påkrævet for at modtage notifikationer. Du kan aktivere dem i dine enhedsindstillinger.",
   "push-notifications-disabled": "Push-notifikationer deaktiveret",
   "push-notifications-have-been-d": "Push-notifikationer er blevet deaktiveret. Du kan genaktivere dem når som helst.",
@@ -340,6 +368,7 @@
   "requesting-camera-permission": "Anmoder om kameratilladelse...",
   "resend-code": "Send kode igen",
   "resend-in-resendcooldown-s": "Send igen om {0}s",
+  "restore-purchases": "",
   "sa": "Lør",
   "sage": {
     "unavailableMessage": "Cadence AI er i øjeblikket ikke tilgængelig."
@@ -351,6 +380,7 @@
   "security-information": "Sikkerhedsoplysninger",
   "select-a-category": "Vælg en kategori",
   "select-activity": "Vælg aktivitet",
+  "select-billing-period": "",
   "send-feedback": "Send feedback",
   "send-reset-email": "Send nulstilling e -mail",
   "sending": "Sender ...",
@@ -437,6 +467,7 @@
   },
   "sign-up-now": "Tilmeld dig nu",
   "since-all-notification-types-a": "Da alle notifikationstyper er deaktiveret, er push-notifikationer automatisk slukket.",
+  "start-free-trial": "",
   "stay-in-sync-nwith-your-time": "Bliv synkroniseret \nmed din tid",
   "steps-to-reproduce": "Trin til at gengive",
   "steps-to-reproduce-optional": "Trin til reproducer (valgfrit)",
@@ -447,6 +478,12 @@
   "submit-bug-reports": "Indsend bugrapporter",
   "submit-feature-request": "Indsend funktionsanmodning",
   "submit-feature-suggestions": "Indsend funktionsforslag",
+  "subscription": {
+    "choose_plan": ""
+  },
+  "subscription-activated-successfully": "",
+  "subscription-info-text": "",
+  "subscription-terms": "",
   "success": "Succes",
   "support-information": "Supportoplysninger",
   "system-settings": "Systemindstillinger",
@@ -489,6 +526,7 @@
   "welcome-to-cadence": "Velkommen til Cadence",
   "were-here-to-help-our-support": "Vi er her for at hjælpe! Vores supportteam reagerer typisk inden for 24 timer. For presserende problemer skal du medtage så mange detaljer som muligt i din besked.",
   "weve-sent-a-verification-code-to": "Vi har sendt en bekræftelseskode til",
+  "yearly": "",
   "yesterday": "I går",
   "you-have-a-new-notification": "Du har en ny notifikation",
   "your-account-security-is-impor": "Din kontosikkerhed er vigtig for os. Ændringer af adgangskode kræver e-mail-verifikation for din beskyttelse. Kontakt support til anmodninger om sletning af konto.",

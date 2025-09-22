@@ -24,6 +24,7 @@ import {
   NotificationPermissionStatus,
   NotificationPreferences,
 } from "../types";
+import { useBackgroundNotifications } from "../hooks/useBackgroundNotifications";
 
 interface NotificationContextType {
   // Engine instance
@@ -95,6 +96,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [isInitialized, setIsInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Initialize background notifications
+  const backgroundNotifications = useBackgroundNotifications();
 
   // Initialize notification engine
   // Memoize engine configuration to avoid creating a new object on every render

@@ -1,0 +1,372 @@
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import * as BackgroundTask from "expo-background-task";
+import * as Notifications from "expo-notifications";
+import * as TaskManager from "expo-task-manager";
+import { getNotificationEngineSingleton } from "../NotificationEngineSingleton";
+import { NotificationPreferences } from "../types";
+import {
+  NotificationScheduler,
+  SchedulerConfig,
+} from "./NotificationScheduler";
+
+const NOTIFICATION_TASK_NAME = "CADENCE_NOTIFICATION_TASK";
+const CHECK_INTERVAL_MINUTES = 15;
+
+interface ScheduledNotification {
+  id: string;
+  type: string;
+  scheduledFor: Date;
+  userId: string;
+  title: string;
+  body: string;
+  data?: any;
+}
+
+export class BackgroundTaskManager {
+  private static instance: BackgroundTaskManager;
+  private scheduler: NotificationScheduler | null = null;
+  private isRegistered = false;
+  private scheduledNotifications: ScheduledNotification[] = [];
+
+  private constructor() {}
+
+  static getInstance(): BackgroundTaskManager {
+    if (!BackgroundTaskManager.instance) {
+      BackgroundTaskManager.instance = new BackgroundTaskManager();
+    }
+    return BackgroundTaskManager.instance;
+  }
+
+  async initialize(config: SchedulerConfig): Promise<void> {
+    try {
+      const engine = await getNotificationEngineSingleton();
+      this.scheduler = new NotificationScheduler(engine, config);
+
+      await this.registerBackgroundTask();
+      await this.scheduleBackgroundTask();
+
+      GlobalErrorHandler.logDebug(
+        "Background task manager initialized",
+        "BackgroundTaskManager.initialize",
+      );
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.initialize",
+      );
+      throw error;
+    }
+  }
+
+  private async registerBackgroundTask(): Promise<void> {
+    try {
+      const isTaskDefined = await TaskManager.isTaskDefined(
+        NOTIFICATION_TASK_NAME,
+      );
+
+      if (!isTaskDefined) {
+        TaskManager.defineTask(NOTIFICATION_TASK_NAME, async () => {
+          try {
+            await this.processScheduledNotifications();
+            return BackgroundTask.BackgroundTaskResult.Success;
+          } catch (error) {
+            GlobalErrorHandler.logError(
+              error,
+              "BackgroundTaskManager.backgroundTask",
+            );
+            return BackgroundTask.BackgroundTaskResult.Failed;
+          }
+        });
+      }
+
+      this.isRegistered = true;
+
+      GlobalErrorHandler.logDebug(
+        "Background task registered successfully",
+        "BackgroundTaskManager.registerBackgroundTask",
+      );
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.registerBackgroundTask",
+      );
+      throw error;
+    }
+  }
+
+  private async scheduleBackgroundTask(): Promise<void> {
+    try {
+      await BackgroundTask.registerTaskAsync(NOTIFICATION_TASK_NAME, {
+        minimumInterval: CHECK_INTERVAL_MINUTES * 60, // in seconds
+      });
+
+      const status = await BackgroundTask.getStatusAsync();
+
+      GlobalErrorHandler.logDebug(
+        `Background fetch scheduled with status: ${status}`,
+        "BackgroundTaskManager.scheduleBackgroundTask",
+        {
+          minimumInterval: CHECK_INTERVAL_MINUTES,
+          status,
+        },
+      );
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.scheduleBackgroundTask",
+      );
+      throw error;
+    }
+  }
+
+  async processScheduledNotifications(): Promise<void> {
+    try {
+      const now = new Date();
+      const notifications = await this.getScheduledNotifications();
+
+      for (const notification of notifications) {
+        if (new Date(notification.scheduledFor) <= now) {
+          await this.sendNotification(notification);
+          await this.removeScheduledNotification(notification.id);
+        }
+      }
+
+      GlobalErrorHandler.logDebug(
+        `Processed ${notifications.length} scheduled notifications`,
+        "BackgroundTaskManager.processScheduledNotifications",
+      );
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.processScheduledNotifications",
+      );
+      throw error;
+    }
+  }
+
+  async scheduleNotification(
+    notification: ScheduledNotification,
+  ): Promise<void> {
+    try {
+      const scheduledFor = new Date(notification.scheduledFor);
+
+      if (scheduledFor <= new Date()) {
+        await this.sendNotification(notification);
+        return;
+      }
+
+      const timeDiff = scheduledFor.getTime() - Date.now();
+      const minutesUntilNotification = Math.floor(timeDiff / 60000);
+
+      if (minutesUntilNotification <= CHECK_INTERVAL_MINUTES * 2) {
+        const triggerInput: Notifications.TimeIntervalTriggerInput = {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: Math.max(
+            1,
+            Math.ceil((scheduledFor.getTime() - Date.now()) / 1000),
+          ),
+        };
+
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: notification.title,
+            body: notification.body,
+            data: notification.data,
+          },
+          trigger: triggerInput,
+        });
+
+        GlobalErrorHandler.logDebug(
+          "Notification scheduled using Expo Notifications",
+          "BackgroundTaskManager.scheduleNotification",
+          {
+            notificationId: notification.id,
+            scheduledFor: scheduledFor.toISOString(),
+            minutesUntilNotification,
+          },
+        );
+      } else {
+        this.scheduledNotifications.push(notification);
+        await this.persistScheduledNotifications();
+
+        GlobalErrorHandler.logDebug(
+          "Notification stored for background processing",
+          "BackgroundTaskManager.scheduleNotification",
+          {
+            notificationId: notification.id,
+            scheduledFor: scheduledFor.toISOString(),
+            minutesUntilNotification,
+          },
+        );
+      }
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.scheduleNotification",
+        { notificationId: notification.id },
+      );
+      throw error;
+    }
+  }
+
+  private async sendNotification(
+    notification: ScheduledNotification,
+  ): Promise<void> {
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: notification.title,
+          body: notification.body,
+          data: notification.data,
+        },
+        trigger: null,
+      });
+
+      GlobalErrorHandler.logDebug(
+        "Notification sent successfully",
+        "BackgroundTaskManager.sendNotification",
+        { notificationId: notification.id },
+      );
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.sendNotification",
+        { notificationId: notification.id },
+      );
+      throw error;
+    }
+  }
+
+  async updatePreferences(preferences: NotificationPreferences): Promise<void> {
+    try {
+      if (preferences.rhythm === "disabled") {
+        await this.cancelAllNotifications();
+        await this.unregisterBackgroundTask();
+      } else {
+        if (!this.isRegistered) {
+          await this.registerBackgroundTask();
+          await this.scheduleBackgroundTask();
+        }
+
+        if (this.scheduler) {
+          this.scheduler.updateConfig({ preferences });
+          await this.scheduler.scheduleAllNotifications();
+        }
+      }
+
+      GlobalErrorHandler.logDebug(
+        "Preferences updated successfully",
+        "BackgroundTaskManager.updatePreferences",
+        { rhythm: preferences.rhythm },
+      );
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.updatePreferences",
+      );
+      throw error;
+    }
+  }
+
+  async cancelAllNotifications(): Promise<void> {
+    try {
+      await Notifications.cancelAllScheduledNotificationsAsync();
+      this.scheduledNotifications = [];
+      await this.persistScheduledNotifications();
+
+      if (this.scheduler) {
+        await this.scheduler.cancelAllNotifications();
+      }
+
+      GlobalErrorHandler.logDebug(
+        "All notifications cancelled",
+        "BackgroundTaskManager.cancelAllNotifications",
+      );
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.cancelAllNotifications",
+      );
+      throw error;
+    }
+  }
+
+  private async unregisterBackgroundTask(): Promise<void> {
+    try {
+      await BackgroundTask.unregisterTaskAsync(NOTIFICATION_TASK_NAME);
+      this.isRegistered = false;
+
+      GlobalErrorHandler.logDebug(
+        "Background task unregistered",
+        "BackgroundTaskManager.unregisterBackgroundTask",
+      );
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.unregisterBackgroundTask",
+      );
+    }
+  }
+
+  private async getScheduledNotifications(): Promise<ScheduledNotification[]> {
+    return this.scheduledNotifications;
+  }
+
+  private async removeScheduledNotification(id: string): Promise<void> {
+    this.scheduledNotifications = this.scheduledNotifications.filter(
+      (n) => n.id !== id,
+    );
+    await this.persistScheduledNotifications();
+  }
+
+  private async persistScheduledNotifications(): Promise<void> {
+    try {
+      const AsyncStorage =
+        (await import("@react-native-async-storage/async-storage")).default;
+      await AsyncStorage.setItem(
+        "CADENCE_SCHEDULED_NOTIFICATIONS",
+        JSON.stringify(this.scheduledNotifications),
+      );
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.persistScheduledNotifications",
+      );
+    }
+  }
+
+  async loadScheduledNotifications(): Promise<void> {
+    try {
+      const AsyncStorage =
+        (await import("@react-native-async-storage/async-storage")).default;
+      const data = await AsyncStorage.getItem(
+        "CADENCE_SCHEDULED_NOTIFICATIONS",
+      );
+
+      if (data) {
+        this.scheduledNotifications = JSON.parse(data);
+        GlobalErrorHandler.logDebug(
+          `Loaded ${this.scheduledNotifications.length} scheduled notifications`,
+          "BackgroundTaskManager.loadScheduledNotifications",
+        );
+      }
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.loadScheduledNotifications",
+      );
+    }
+  }
+
+  async checkAndProcessNotifications(): Promise<void> {
+    try {
+      await this.loadScheduledNotifications();
+      await this.processScheduledNotifications();
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.checkAndProcessNotifications",
+      );
+    }
+  }
+}

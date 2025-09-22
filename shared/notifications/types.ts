@@ -5,6 +5,8 @@ export interface NotificationPreferences {
   eveningTimeEnd: string;
   streaksEnabled: boolean;
   lightTouch: boolean;
+  soundEnabled?: boolean;
+  vibrationEnabled?: boolean;
   locale?: string;
   timezone?: string;
   expoPushToken?: string;
@@ -32,7 +34,8 @@ export type NotificationType =
   | "streak-reminder"
   | "achievement"
   | "reminder"
-  | "system";
+  | "system"
+  | "test";
 
 export type NotificationDeliveryMethod = "push" | "local" | "in-app";
 

@@ -358,81 +358,12 @@ export const ProfileScreen: React.FC = () => {
     router.push("/settings/notifications");
   };
 
-  const handleSubscriptionPress = () => {
-    openDialog({
-      type: "subscription-plans",
-      props: {
-        currentPlan: settings.subscriptionPlan,
-        onPlanSelected: (plan: string) => {
-          updateSettings({ subscriptionPlan: plan as any });
-        },
-        height: 80,
-        headerProps: {
-          title: t("profile.subscription-plan"),
-          onLeftAction: () => {
-            // Close the dialog when back button is pressed
-            useDialogStore.getState().closeAll();
-          },
-        },
-      },
-      position: "dock",
-      viewSpecific: "profile",
-    });
-  };
-
   const handleSecurityPress = () => {
     router.push("/settings/security");
   };
 
   const handleSupportPress = () => {
     router.push("/settings/customer-support");
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      // The user will be redirected to the sign-in screen automatically
-    } catch (error) {
-      GlobalErrorHandler.logError("Error signing out", "SIGN_OUT_ERROR", {
-        error,
-      });
-      Alert.alert(
-        t("profile.actions.logout-failed"),
-        t("profile.actions.logout-failed-message")
-      );
-    }
-  };
-
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      t("profile.actions.delete-account"),
-      t("profile.actions.delete-account-confirmation"),
-      [
-        { text: t("common.cancel"), style: "cancel" },
-        {
-          text: t("delete"),
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await user?.delete();
-              await signOut();
-            } catch (error) {
-              GlobalErrorHandler.logError(
-                "Error deleting account",
-                "ACCOUNT_DELETION_ERROR",
-                {
-                  error,
-                }
-              );
-              Alert.alert(
-                t("profile.actions.delete-failed"),
-                t("profile.actions.delete-failed-message")
-              );
-            }
-          },
-        },
-      ]
-    );
   };
 
   // Developer debug utilities (hidden in production)
@@ -616,7 +547,7 @@ export const ProfileScreen: React.FC = () => {
               : t("profile.deep-cadence")
           }
           isButton
-          onPress={handleSubscriptionPress}
+          onPress={() => router.push("/settings/subscription")}
           showChevron={true}
         />
       </View>
@@ -676,6 +607,15 @@ export const ProfileScreen: React.FC = () => {
               onPress={handleOpenDebugPage}
               variant="outline"
               style={{ marginBottom: 8, borderColor: COLORS.primary }}
+              textStyle={{ color: COLORS.primary }}
+            />
+            <CdButton
+              title={t("profile.developer.test-notification")}
+              onPress={() => {
+                router.push("/settings/test-notifications");
+              }}
+              variant="outline"
+              style={{ borderColor: COLORS.primary }}
               textStyle={{ color: COLORS.primary }}
             />
           </View>

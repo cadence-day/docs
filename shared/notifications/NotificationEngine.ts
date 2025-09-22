@@ -1,4 +1,5 @@
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { BackgroundTaskManager } from "./services/BackgroundTaskManager";
 import {
   NotificationDeliveryMethod,
   NotificationEngineConfig,
@@ -22,13 +23,13 @@ export class NotificationEngine {
 
   registerProvider(
     method: NotificationDeliveryMethod,
-    provider: NotificationProvider
+    provider: NotificationProvider,
   ): void {
     if (!this.config.enabledProviders.includes(method)) {
       if (this.config.enableLogging) {
         GlobalErrorHandler.logWarning(
           `Provider ${method} is not enabled in config`,
-          "NotificationEngine.registerProvider"
+          "NotificationEngine.registerProvider",
         );
       }
       return;
@@ -38,7 +39,7 @@ export class NotificationEngine {
     if (this.config.enableLogging) {
       GlobalErrorHandler.logDebug(
         `Registered provider: ${provider.name} for ${method}`,
-        "NotificationEngine.registerProvider"
+        "NotificationEngine.registerProvider",
       );
     }
   }
@@ -67,7 +68,7 @@ export class NotificationEngine {
     if (this.config.enableLogging) {
       GlobalErrorHandler.logDebug(
         `Initialized with ${this.providers.size} providers`,
-        "NotificationEngine.initialize"
+        "NotificationEngine.initialize",
       );
     }
   }
@@ -79,7 +80,7 @@ export class NotificationEngine {
         if (this.config.enableLogging) {
           GlobalErrorHandler.logWarning(
             `No provider found for method: ${method}`,
-            "NotificationEngine.emit"
+            "NotificationEngine.emit",
           );
         }
         return;
@@ -87,10 +88,17 @@ export class NotificationEngine {
 
       if (!provider.isSupported()) {
         if (this.config.enableLogging) {
-          GlobalErrorHandler.logWarning(
-            `Provider ${provider.name} is not supported`,
-            "NotificationEngine.emit"
-          );
+          const isDev = typeof __DEV__ !== "undefined" ? __DEV__ : false;
+          const message =
+            `Provider ${provider.name} is not supported in current environment${
+              isDev ? " (this is normal in development/simulators)" : ""
+            }`;
+
+          if (isDev) {
+            GlobalErrorHandler.logDebug(message, "NotificationEngine.emit");
+          } else {
+            GlobalErrorHandler.logWarning(message, "NotificationEngine.emit");
+          }
         }
         return;
       }
@@ -101,7 +109,7 @@ export class NotificationEngine {
           event.userId || "unknown",
           event.type,
           method,
-          "sent"
+          "sent",
         );
         this.notifySubscribers("onNotificationSent", event.message);
       } catch (error) {
@@ -110,12 +118,12 @@ export class NotificationEngine {
           event.type,
           method,
           "failed",
-          error as Error
+          error as Error,
         );
         this.notifySubscribers(
           "onNotificationFailed",
           event.message,
-          error as Error
+          error as Error,
         );
       }
     });
@@ -126,8 +134,20 @@ export class NotificationEngine {
   async schedule(
     event: NotificationEvent,
     scheduledFor: Date,
-    userId?: string
+    userId?: string,
   ): Promise<void> {
+    const backgroundTaskManager = BackgroundTaskManager.getInstance();
+
+    await backgroundTaskManager.scheduleNotification({
+      id: event.message.id,
+      type: event.type,
+      scheduledFor,
+      userId: userId || event.userId || "unknown",
+      title: event.message.title,
+      body: event.message.body,
+      data: event.message.metadata,
+    });
+
     const schedulePromises = event.deliveryMethod.map(async (method) => {
       const provider = this.providers.get(method);
       if (!provider || !provider.isSupported()) {
@@ -142,7 +162,7 @@ export class NotificationEngine {
           method,
           "scheduled",
           undefined,
-          scheduledFor
+          scheduledFor,
         );
       } catch (error) {
         this.logNotification(
@@ -150,7 +170,7 @@ export class NotificationEngine {
           event.type,
           method,
           "failed",
-          error as Error
+          error as Error,
         );
       }
     });
@@ -164,7 +184,7 @@ export class NotificationEngine {
         GlobalErrorHandler.logError(
           error,
           "NotificationEngine.cancelNotification",
-          { notificationId, providerName: provider.name }
+          { notificationId, providerName: provider.name },
         );
       })
     );
@@ -178,7 +198,7 @@ export class NotificationEngine {
         GlobalErrorHandler.logError(
           error,
           "NotificationEngine.cancelAllNotifications",
-          { providerName: provider.name }
+          { providerName: provider.name },
         );
       })
     );
@@ -187,7 +207,7 @@ export class NotificationEngine {
   }
 
   getProvider(
-    method: NotificationDeliveryMethod
+    method: NotificationDeliveryMethod,
   ): NotificationProvider | undefined {
     return this.providers.get(method);
   }
@@ -210,7 +230,7 @@ export class NotificationEngine {
     return filteredLogs.sort(
       (a, b) =>
         (b.sentAt || b.scheduledFor || new Date()).getTime() -
-        (a.sentAt || a.scheduledFor || new Date()).getTime()
+        (a.sentAt || a.scheduledFor || new Date()).getTime(),
     );
   }
 
@@ -228,7 +248,7 @@ export class NotificationEngine {
     deliveryMethod: NotificationDeliveryMethod,
     status: "scheduled" | "sent" | "failed" | "cancelled",
     error?: Error,
-    scheduledFor?: Date
+    scheduledFor?: Date,
   ): void {
     if (!this.config.enableLogging) return;
 
@@ -254,7 +274,7 @@ export class NotificationEngine {
 
   private notifySubscribers(
     event: keyof NotificationSubscriber,
-    ...args: any[]
+    ...args: unknown[]
   ): void {
     this.subscribers.forEach((subscriber) => {
       const handler = subscriber[event];
@@ -265,7 +285,7 @@ export class NotificationEngine {
           GlobalErrorHandler.logError(
             error,
             "NotificationEngine.notifySubscribers",
-            { event }
+            { event },
           );
         }
       }

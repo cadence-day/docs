@@ -1,6 +1,7 @@
 {
   "about-encryption": "À propos du chiffrement",
   "about-notifications": "À propos des notifications",
+  "about-subscription": "",
   "account-management": "Gestion de compte",
   "account-verified-successfully-welcome": "Compte vérifié avec succès ! Bienvenue !",
   "active-activities": "Activités actives",
@@ -39,6 +40,7 @@
   "add-new-activity": "Ajouter une nouvelle activité",
   "allow-notifications": "Autoriser les notifications",
   "already-have-an-account": "Vous avez déjà un compte?",
+  "already-subscribed-premium": "",
   "app-information": "Informations sur l'application",
   "app-version-and-platform": "• Version et plateforme de l'application",
   "are-you-sure-you-want-to-sign": "Êtes-vous sûr de vouloir vous déconnecter ?",
@@ -62,7 +64,9 @@
   "cannot-find-native-module": "Module natif introuvable",
   "category": "Catégorie",
   "change-password": "Modifier le mot de passe",
+  "change-plan": "",
   "check-your-inbox-for-verification-email": "Vérifiez votre boîte de réception pour l'e-mail de vérification.",
+  "choose-your-plan": "",
   "choose_action": "Choisir une action",
   "close": "Fermer",
   "color": "Couleur",
@@ -74,6 +78,7 @@
     "error": "Erreur",
     "ok": "OK",
     "saving": "Sauvegarde...",
+    "select": "",
     "submitting": "Envoi en cours..."
   },
   "confirm": "Confirmer",
@@ -162,10 +167,12 @@
   "key-imported-successfully-fing": "Clé importée avec succès! \nEmpreinte digitale: {0}",
   "laid-back": "Décontracté",
   "legal": "Légal",
+  "loading-plans": "",
   "make-cadence-yours": "Faites la cadence la vôtre",
   "meet-sage": "Rencontrez Sage",
   "midday-reflection": "Réflexion de midi",
   "mo": "Lun",
+  "monthly": "",
   "morning-reminders": "Rappels du matin",
   "morning-reminders-are-sent-aft": "Les rappels du matin sont envoyés après votre heure de réveil et les rappels du soir avant votre temps de sommeil. \nLes mises à jour hebdomadaires de séquences célèbrent vos réalisations tous les dimanches.",
   "name": "Nom",
@@ -178,6 +185,7 @@
   "not-available-in-this-build": "Non disponible dans cette construction",
   "notification-schedule": "Calendrier de notification",
   "notification-types": "Types de notification",
+  "ok": "",
   "onboarding": {
     "missed-intro": "Au cas où vous auriez manqué l'introduction",
     "title": "Bienvenue dans Cadence",
@@ -220,6 +228,23 @@
   "permanently-delete-account": "Supprimer définitivement le compte",
   "permission-required": "Autorisation requise",
   "pick-activity-first": "Veuillez d'abord choisir une activité",
+  "plan": {
+    "feature": {
+      "all_free": "",
+      "all_supporter": "",
+      "beta_access": "",
+      "community": "",
+      "free": "",
+      "premium_support": "",
+      "roadmap": ""
+    },
+    "free": "",
+    "free_price": "",
+    "premium": "",
+    "premium_price": "",
+    "supporter": "",
+    "supporter_price": ""
+  },
   "please-enable-camera-access-in": "Veuillez activer l'accès à la caméra dans les paramètres de votre appareil pour scanner les codes QR.",
   "please-enter-a-bug-description": "Veuillez saisir une description du bug",
   "please-enter-a-bug-title": "Veuillez saisir un titre de bug",
@@ -227,6 +252,7 @@
   "please-enter-time-in-hh-mm-for": "Veuillez saisir l'heure au format HH:MM (ex. 12:00)",
   "please-enter-time-in-hh-mm-for-0": "Veuillez saisir l'heure au format HH:MM (ex. 20:00)",
   "please-fill-in-both-title-and": "Veuillez remplir le titre et la description",
+  "please-select-subscription-plan": "",
   "please-visit-https-cadence-day": "Veuillez visiter https://cadence.day/faq dans votre navigateur",
   "point-your-camera-at-the-qr-co": "Pointez votre appareil photo sur le code QR contenant la clé de chiffrement",
   "privacy-policy": "Politique de confidentialité",
@@ -254,7 +280,8 @@
     "developer": {
       "open-debug-page": "Ouvrir la page de debug",
       "section-title": "Développeur",
-      "show-onboarding": "Afficher l'accueil (debug)"
+      "show-onboarding": "Afficher l'accueil (debug)",
+      "test-notification": ""
     },
     "edit-photo": "Modifier la photo",
     "email": "E-mail",
@@ -322,6 +349,7 @@
     "wake-time": "Heure de réveil",
     "whats-inside": "Ce qui vous attend :"
   },
+  "purchases-restored-successfully": "",
   "push-notification-permissions": "Les autorisations de notification push sont nécessaires pour recevoir des notifications. Vous pouvez les activer dans les paramètres de votre appareil.",
   "push-notifications-disabled": "Notifications push désactivées",
   "push-notifications-have-been-d": "Les notifications push ont été désactivées. Vous pouvez les réactiver à tout moment.",
@@ -340,6 +368,7 @@
   "requesting-camera-permission": "Demande d'autorisation de la caméra...",
   "resend-code": "Renvoyer le code",
   "resend-in-resendcooldown-s": "Renvoyer dans {0}s",
+  "restore-purchases": "",
   "sa": "Sam",
   "sage": {
     "unavailableMessage": "Cadence AI n'est actuellement pas disponible."
@@ -351,6 +380,7 @@
   "security-information": "Informations de sécurité",
   "select-a-category": "Sélectionner une catégorie",
   "select-activity": "Sélectionner une activité",
+  "select-billing-period": "",
   "send-feedback": "Envoyer des commentaires",
   "send-reset-email": "Envoyer un e-mail de réinitialisation",
   "sending": "Envoi...",
@@ -437,6 +467,7 @@
   },
   "sign-up-now": "Inscrivez-vous maintenant",
   "since-all-notification-types-a": "Étant donné que tous les types de notification sont désactivés, les notifications push ont été désactivées automatiquement.",
+  "start-free-trial": "",
   "stay-in-sync-nwith-your-time": "Restez en synchronisation",
   "steps-to-reproduce": "Étapes pour reproduire",
   "steps-to-reproduce-optional": "Étapes à reproduire (facultative)",
@@ -447,6 +478,12 @@
   "submit-bug-reports": "Soumettre les rapports de bogues",
   "submit-feature-request": "Soumettre la demande de fonctionnalité",
   "submit-feature-suggestions": "Soumettre des suggestions de fonctionnalités",
+  "subscription": {
+    "choose_plan": ""
+  },
+  "subscription-activated-successfully": "",
+  "subscription-info-text": "",
+  "subscription-terms": "",
   "success": "Succès",
   "support-information": "Informations de soutien",
   "system-settings": "Paramètres du système",
@@ -489,6 +526,7 @@
   "welcome-to-cadence": "Bienvenue dans Cadence",
   "were-here-to-help-our-support": "Nous sommes là pour aider! \nNotre équipe d'assistance réagit généralement dans les 24 heures. \nPour les problèmes urgents, veuillez inclure autant de détails que possible dans votre message.",
   "weve-sent-a-verification-code-to": "Nous avons envoyé un code de vérification à",
+  "yearly": "",
   "yesterday": "Hier",
   "you-have-a-new-notification": "Vous avez une nouvelle notification",
   "your-account-security-is-impor": "La sécurité de votre compte est importante pour nous. \nLes modifications de mot de passe nécessitent une vérification par e-mail pour votre protection. \nContactez la prise en charge des demandes de suppression du compte.",

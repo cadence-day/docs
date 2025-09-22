@@ -1,5 +1,4 @@
 import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
-import { revenueCatService } from "@/features/purchases/services/RevenueCatService";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
@@ -120,21 +119,6 @@ export default function TabLayout() {
       setDidCheckEncryption(true);
     })();
   }, [user, segments, didCheckEncryption]);
-
-  // Initialize RevenueCat when user is signed in
-  useEffect(() => {
-    const userId = user?.id;
-    if (!userId) return;
-
-    (async () => {
-      try {
-        await revenueCatService.configure();
-        await revenueCatService.login(userId);
-      } catch (error) {
-        GlobalErrorHandler.logError(error, "Failed to initialize RevenueCat");
-      }
-    })();
-  }, [user?.id]);
 
   // On initial mount when signed-in, open onboarding if the user has no timeslices
   useEffect(() => {

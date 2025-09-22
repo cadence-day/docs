@@ -197,10 +197,14 @@ export class ExpoNotificationProvider implements NotificationProvider {
 
   private async registerForPushNotificationsAsync(): Promise<string | null> {
     if (!this.isSupported()) {
-      GlobalErrorHandler.logWarning(
-        "Push notifications are not supported on this device",
-        "ExpoNotificationProvider.registerForPushNotificationsAsync"
-      );
+      const isDev = typeof __DEV__ !== "undefined" ? __DEV__ : false;
+      const message = "Push notifications are not supported in current environment (requires physical device with iOS/Android)";
+      
+      if (isDev) {
+        GlobalErrorHandler.logDebug(message, "ExpoNotificationProvider.registerForPushNotificationsAsync");
+      } else {
+        GlobalErrorHandler.logWarning(message, "ExpoNotificationProvider.registerForPushNotificationsAsync");
+      }
       return null;
     }
 

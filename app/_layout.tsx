@@ -10,12 +10,10 @@ import {
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
-import { revenueCatService } from "@/features/purchases";
 import { SECRETS } from "@/shared/constants/SECRETS";
 import { ToastProvider } from "@/shared/context/ToastProvider";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
@@ -23,7 +21,6 @@ import { getIsDev } from "@/shared/hooks/useDev";
 import { NotificationProvider } from "@/shared/notifications";
 import * as Sentry from "@sentry/react-native";
 import { GlobalErrorHandler } from "../shared/utils/errorHandler";
-
 // Initialize Sentry
 Sentry.init({
   dsn:
@@ -99,23 +96,6 @@ export default Sentry.wrap(function RootLayout() {
     "FoundersGrotesk-Semibold": require("../assets/fonts/FoundersGrotesk-Semibold-BF66175e972c958.otf"),
     "FoundersGrotesk-Bold": require("../assets/fonts/FoundersGrotesk-Bold-BF66175e9700615.otf"),
   });
-
-  // Initialize RevenueCat on app startup
-  useEffect(() => {
-    const initializeRevenueCat = async () => {
-      try {
-        await revenueCatService.configure();
-        GlobalErrorHandler.logDebug(
-          "RevenueCat configured successfully",
-          "REVENUECAT_INIT"
-        );
-      } catch (error) {
-        GlobalErrorHandler.logError(error, "Failed to initialize RevenueCat");
-      }
-    };
-
-    initializeRevenueCat();
-  }, []);
 
   if (!loaded) {
     // Async font loading only occurs in development.

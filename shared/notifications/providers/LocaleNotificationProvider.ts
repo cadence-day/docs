@@ -24,12 +24,13 @@ export interface NotificationTemplates {
 }
 
 export class LocaleNotificationProvider implements NotificationProvider {
-  name = "LocaleNotificationProvider";
+  name: string;
   private wrappedProvider: NotificationProvider;
   private templates: Map<string, NotificationTemplates> = new Map();
 
   constructor(wrappedProvider: NotificationProvider) {
     this.wrappedProvider = wrappedProvider;
+    this.name = `LocaleNotificationProvider(${wrappedProvider.name})`;
     this.initializeTemplates();
   }
 
@@ -145,7 +146,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
       GlobalErrorHandler.logWarning(
         "Failed to localize notification, using original content",
         "LocaleNotificationProvider.localizeNotification",
-        { notificationId: notification.id }
+        { notificationId: notification.id, error }
       );
       return notification;
     }
@@ -154,7 +155,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
   private getLocalizedContent(
     type: NotificationType,
     language: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): LocalizedNotificationContent {
     // For cadence-specific notifications, use the existing message system
     if (type === "midday-reflection") {
@@ -177,7 +178,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
       };
     }
 
-    if (type === "streak-reminder" && metadata?.streakCount) {
+    if (type === "streak-reminder" && metadata?.streakCount && typeof metadata.streakCount === 'number') {
       return {
         title: this.getLocalizedTitle(
           "notifications.streak_reminder.title",
@@ -234,7 +235,7 @@ export class LocaleNotificationProvider implements NotificationProvider {
 
   private interpolateTemplate(
     template: { title: string; body: string },
-    variables: Record<string, any>
+    variables: Record<string, unknown>
   ): LocalizedNotificationContent {
     const interpolate = (text: string): string => {
       return text.replace(/\{\{(\w+)\}\}/g, (match, key) => {
