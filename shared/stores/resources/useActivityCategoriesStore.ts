@@ -29,12 +29,20 @@ const useActivityCategoriesStore = create<ActivityCategoriesStore>((set) => ({
 
   // Get operations
   getAllCategories: async () => {
-    return handleGetApiCall(
+    // Call the helper to perform the API request and capture the result
+    const categories = await handleGetApiCall(
       set,
       () => activitiesCategoriesApi.getAllActivityCategories(),
       "get all activity categories",
-      []
+      [],
     );
+
+    // Persist the returned categories into the store so callers can read from state
+    if (Array.isArray(categories)) {
+      set({ categories });
+    }
+
+    return categories;
   },
 
   // Refresh operation that updates local state
@@ -45,7 +53,7 @@ const useActivityCategoriesStore = create<ActivityCategoriesStore>((set) => ({
       "refresh activity categories",
       (categories) => ({
         categories,
-      })
+      }),
     );
   },
 
