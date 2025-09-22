@@ -274,6 +274,7 @@
     "app-version": "App Version",
     "current-plan": "Current Plan",
     "customer-support": "Customer Support",
+    "data": "Data",
     "deep-cadence": "Deep Cadence",
     "deep-cadence-description": "Deep Cadence Description",
     "delete-account": "Delete Account",
@@ -314,6 +315,7 @@
       "take-photo": "Take Photo"
     },
     "logout": "Log Out",
+    "migrate-data": "Migrate Data",
     "name": "Name",
     "notifications": "Notifications",
     "phone": "Phone Number",
@@ -537,5 +539,74 @@
   "your-email-address-for-follow": "• Your email address (for follow-up)",
   "your-encryption-key-protects-s": "Your encryption key protects sensitive data. Keep it secure and don't share it with others. You'll need this key to access your encrypted data on new devices.",
   "your-password-has-been-changed": "Your password has been changed successfully. For security reasons, you'll be signed out now.",
-  "your-time-is-yours-alone-every": "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection."
+  "your-time-is-yours-alone-every": "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection.",
+  "migration": {
+    "title": "Data Migration",
+    "auth": {
+      "subtitle": "Sign in to your legacy account to migrate your data to the new system",
+      "email": "Email",
+      "password": "Password",
+      "email-placeholder": "Enter your email",
+      "password-placeholder": "Enter your password",
+      "connect": "Connect & Migrate",
+      "fields-required": "Email and password are required",
+      "failed": "Authentication failed. Please check your credentials."
+    },
+    "encryption": {
+      "checking": "Checking encryption key...",
+      "key-found": "Encryption key found ✓",
+      "unable-to-decrypt": "Unable to decrypt encrypted notes"
+    },
+    "activities": {
+      "title": "Activity Mapping",
+      "name-required": "Activity name is required",
+      "select-mapping": "Select mapping...",
+      "new": "New",
+      "create-new": "Create new activity",
+      "create-new-activity": "Create New Activity",
+      "name": "Name",
+      "color": "Color",
+      "category": "Category",
+      "enter-name": "Enter activity name",
+      "select-category": "Select category...",
+      "no-mappings": "Please configure activity mappings first"
+    },
+    "actions": {
+      "title": "Migration Actions",
+      "dry-run": "Dry Run",
+      "migrate-activities": "Migrate Activities",
+      "migrate-timeslices": "Migrate Timeslices",
+      "migrate-notes": "Migrate Notes",
+      "migrate-states": "Migrate States",
+      "full-run": "Full Migration"
+    },
+    "progress": {
+      "title": "Progress",
+      "activities": "Activities",
+      "timeslices": "Timeslices",
+      "notes": "Notes",
+      "states": "States"
+    },
+    "errors": {
+      "title": "Errors"
+    },
+    "logs": {
+      "title": "Logs"
+    },
+    "full-run": {
+      "title": "Confirm Full Migration",
+      "confirm": "This will migrate all your data from the source database to the target database. This action cannot be undone. Are you sure?"
+    }
+  },
+  "activities": {
+    "categories": {
+      "work": "Work",
+      "personal": "Personal",
+      "health": "Health",
+      "learning": "Learning",
+      "social": "Social",
+      "creative": "Creative",
+      "other": "Other"
+    }
+  }
 }
