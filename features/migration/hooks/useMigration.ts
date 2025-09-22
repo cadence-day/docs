@@ -144,19 +144,19 @@ export function useMigration() {
     try {
       setIsLoading(true);
       addLog("Migrating timeslices...");
-      
+
       const result = await migrationApi.migrateTimeslices(
         timeslicesStore,
         (current: number, total?: number) => {
           // Update progress during migration
-          const progressMsg = total 
-            ? `Migrating timeslices: ${current}/${total}` 
+          const progressMsg = total
+            ? `Migrating timeslices: ${current}/${total}`
             : `Migrating timeslices: ${current}`;
           addLog(progressMsg);
-          
+
           // Update progress state for UI
           setProgress((prev) => ({ ...prev, timeslices: current }));
-        }
+        },
       );
 
       if (result.success) {
@@ -180,20 +180,20 @@ export function useMigration() {
     try {
       setIsLoading(true);
       addLog("Migrating notes...");
-      
+
       const result = await migrationApi.migrateNotes(
         notesStore,
         timeslicesStore,
         (current: number, total?: number) => {
           // Update progress during migration
-          const progressMsg = total 
-            ? `Migrating notes: ${current}/${total}` 
+          const progressMsg = total
+            ? `Migrating notes: ${current}/${total}`
             : `Migrating notes: ${current}`;
           addLog(progressMsg);
-          
+
           // Update progress state for UI
           setProgress((prev) => ({ ...prev, notes: current }));
-        }
+        },
       );
 
       if (result.success) {
@@ -223,20 +223,20 @@ export function useMigration() {
     try {
       setIsLoading(true);
       addLog("Migrating states...");
-      
+
       const result = await migrationApi.migrateStates(
         statesStore,
         timeslicesStore,
         (current: number, total?: number) => {
           // Update progress during migration
-          const progressMsg = total 
-            ? `Migrating states: ${current}/${total}` 
+          const progressMsg = total
+            ? `Migrating states: ${current}/${total}`
             : `Migrating states: ${current}`;
           addLog(progressMsg);
-          
+
           // Update progress state for UI
           setProgress((prev) => ({ ...prev, states: current }));
-        }
+        },
       );
 
       if (result.success) {
@@ -292,12 +292,12 @@ export function useMigration() {
         const timeslicesResult = await migrationApi.migrateTimeslices(
           timeslicesStore,
           (current: number, total?: number) => {
-            const progressMsg = total 
-              ? `Migrating timeslices: ${current}/${total}` 
+            const progressMsg = total
+              ? `Migrating timeslices: ${current}/${total}`
               : `Migrating timeslices: ${current}`;
             addLog(progressMsg);
             setProgress((prev) => ({ ...prev, timeslices: current }));
-          }
+          },
         );
         if (timeslicesResult.success) {
           setProgress((prev) => ({
@@ -316,12 +316,12 @@ export function useMigration() {
           notesStore,
           timeslicesStore,
           (current: number, total?: number) => {
-            const progressMsg = total 
-              ? `Migrating notes: ${current}/${total}` 
+            const progressMsg = total
+              ? `Migrating notes: ${current}/${total}`
               : `Migrating notes: ${current}`;
             addLog(progressMsg);
             setProgress((prev) => ({ ...prev, notes: current }));
-          }
+          },
         );
         if (notesResult.success) {
           setProgress((prev) => ({
@@ -343,12 +343,12 @@ export function useMigration() {
           statesStore,
           timeslicesStore,
           (current: number, total?: number) => {
-            const progressMsg = total 
-              ? `Migrating states: ${current}/${total}` 
+            const progressMsg = total
+              ? `Migrating states: ${current}/${total}`
               : `Migrating states: ${current}`;
             addLog(progressMsg);
             setProgress((prev) => ({ ...prev, states: current }));
-          }
+          },
         );
         if (statesResult.success) {
           setProgress((prev) => ({
