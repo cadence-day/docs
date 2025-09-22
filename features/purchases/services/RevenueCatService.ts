@@ -1,29 +1,13 @@
-import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import { SECRETS } from "@/shared/constants/SECRETS";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { Platform } from "react-native";
-
-// Conditional import for RevenueCat to handle Expo Go compatibility
-let Purchases: any = null;
-let LOG_LEVEL: any = null;
-
-// Type definitions for when RevenueCat is available
-type CustomerInfo = any;
-type PurchasesError = any;
-type PurchasesOffering = any;
-type PurchasesPackage = any;
-
-try {
-  const RevenueCatModule = require("react-native-purchases");
-  Purchases = RevenueCatModule.default;
-  LOG_LEVEL = RevenueCatModule.LOG_LEVEL;
-} catch (error) {
-  GlobalErrorHandler.logWarning(
-    "RevenueCat not available - running in Expo Go or web",
-    "REVENUECAT_IMPORT",
-    { error },
-  );
-}
+import Purchases, {
+  CustomerInfo,
+  LOG_LEVEL,
+  PurchasesError,
+  PurchasesOffering,
+  PurchasesPackage,
+} from "react-native-purchases";
 
 import type { SubscriptionPlan } from "../types";
 
@@ -62,24 +46,32 @@ class RevenueCatService {
         !apiKey || apiKey === "your_ios_api_key_here" ||
         apiKey === "your_android_api_key_here"
       ) {
-        console.warn(
-          "RevenueCat API key not configured - skipping initialization",
+        GlobalErrorHandler.logWarning(
+          "RevenueCat API key not set - skipping configuration",
+          "REVENUECAT_CONFIG",
         );
         return;
       }
 
       if (__DEV__) {
-        Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+        // Use WARN level instead of INFO to reduce console noise in development
+        // This will still show important warnings but reduce verbose logging
+        Purchases.setLogLevel(LOG_LEVEL.ERROR);
       }
 
+      // Configure the SDK FIRST before making any other calls
       await Purchases.configure({
         apiKey,
-        appUserID: null,
-        userDefaultsSuiteName: "cadence",
       });
 
       this.isConfigured = true;
-      console.log("RevenueCat configured successfully");
+      GlobalErrorHandler.logDebug(
+        "RevenueCat configured successfully",
+        "REVENUECAT_CONFIG",
+      );
+
+      // Don't sync subscription status during initial configuration
+      // This will be handled when login() is called with a user ID
     } catch (error) {
       GlobalErrorHandler.logError(error, "Failed to configure RevenueCat");
     }
@@ -117,9 +109,33 @@ class RevenueCatService {
 
     try {
       const offerings = await Purchases.getOfferings();
+      GlobalErrorHandler.logDebug(
+        "Fetched RevenueCat offerings",
+        "REVENUECAT_OFFERINGS",
+        { offerings },
+      );
       return offerings.current;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to get offerings");
+      // Check if this is the expected "no products configured" or App Store Connect error
+      const errorMessage = error?.toString() || "";
+      if (
+        errorMessage.includes("no products registered") ||
+        errorMessage.includes("no packages configured") ||
+        errorMessage.includes("MISSING_METADATA") ||
+        errorMessage.includes("couldn't be fetched from App Store Connect") ||
+        errorMessage.includes("RevenueCat.OfferingsManager.Error") ||
+        errorMessage.includes("None of the products registered")
+      ) {
+        // This is expected in development or when products aren't approved in App Store Connect
+        GlobalErrorHandler.logWarning(
+          "RevenueCat products not available - this is expected in development or when products aren't approved in App Store Connect",
+          "REVENUECAT_OFFERINGS",
+          { errorMessage: errorMessage.substring(0, 200) }, // Log first 200 chars of error for debugging
+        );
+      } else {
+        // Unexpected error - log as error
+        GlobalErrorHandler.logError(error, "Failed to get offerings");
+      }
       return null;
     }
   }
@@ -162,10 +178,33 @@ class RevenueCatService {
     if (!this.isConfigured) return null; // Still not configured, return null
 
     try {
+      GlobalErrorHandler.logDebug(
+        "Fetching RevenueCat customer info",
+        "REVENUECAT_CUSTOMER_INFO",
+        { userId: this.currentUserId },
+      );
       return await Purchases.getCustomerInfo();
     } catch (error) {
       GlobalErrorHandler.logError(error, "Failed to get customer info");
       return null;
+    }
+  }
+
+  async getActiveEntitlements(): Promise<string[]> {
+    if (!this.isConfigured) await this.configure();
+    if (!this.isConfigured) return []; // Still not configured, return empty array
+
+    try {
+      const customerInfo = await this.getCustomerInfo();
+      if (!customerInfo) return [];
+
+      const activeEntitlements = Object.keys(
+        customerInfo.entitlements.active || {},
+      );
+      return activeEntitlements;
+    } catch (error) {
+      GlobalErrorHandler.logError(error, "Failed to get active entitlements");
+      return [];
     }
   }
 
@@ -195,19 +234,39 @@ class RevenueCatService {
     }
   }
 
+  /**
+   * Check if RevenueCat is properly configured and has products available
+   * Useful for determining whether to show purchase options in the UI
+   */
+  async isProductsAvailable(): Promise<boolean> {
+    if (!this.isConfigured) await this.configure();
+    if (!this.isConfigured) return false;
+
+    try {
+      const offering = await this.getOfferings();
+      return (offering?.availablePackages?.length ?? 0) > 0;
+    } catch {
+      // getOfferings() already handles logging, so we just return false
+      return false;
+    }
+  }
+
   private async syncSubscriptionStatus(
     customerInfo: CustomerInfo,
   ): Promise<void> {
     try {
-      // Get current user ID from the stored value or from Supabase auth
-      let userId = this.currentUserId;
+      // Get current user ID from the stored value
+      const userId = this.currentUserId;
 
       if (!userId) {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        userId = user?.id || null;
+        // If no user ID is stored, skip syncing
+        // This method should only be called after login when userId is set
+        GlobalErrorHandler.logWarning(
+          "No user ID available for subscription sync",
+          "REVENUECAT_SYNC",
+        );
+        return;
       }
-
-      if (!userId) return;
 
       // Determine subscription plan based on active entitlements
       let plan: SubscriptionPlan = "free";
@@ -219,34 +278,19 @@ class RevenueCatService {
         plan = "supporter";
       }
 
-      // Map to database enum values (using existing enum for now)
-      let dbPlan: "FREE" | "PREMIUM" | "ENTERPRISE";
-      switch (plan) {
-        case "premium_supporter":
-        case "feature_sponsor":
-          dbPlan = "PREMIUM";
-          break;
-        case "supporter":
-          dbPlan = "ENTERPRISE"; // Temporarily using ENTERPRISE for supporter tier
-          break;
-        default:
-          dbPlan = "FREE";
-      }
+      // Log the subscription plan for debugging purposes
+      GlobalErrorHandler.logDebug(
+        `User subscription plan determined: ${plan}`,
+        "REVENUECAT_SYNC",
+        {
+          userId,
+          plan,
+          entitlements: Object.keys(customerInfo.entitlements.active || {}),
+        },
+      );
 
-      const { error } = await supabaseClient
-        .from("profiles")
-        .update({
-          subscription_plan: dbPlan,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", userId);
-
-      if (error) {
-        GlobalErrorHandler.logError(
-          error,
-          "Failed to sync subscription status",
-        );
-      }
+      // Note: Profile table updates are deprecated and removed
+      // Subscription status is now managed through RevenueCat directly
     } catch (error) {
       GlobalErrorHandler.logError(error, "Failed to sync subscription status");
     }
@@ -256,14 +300,16 @@ class RevenueCatService {
     listener: (customerInfo: CustomerInfo) => void,
   ): () => void {
     if (!this.isConfigured) {
-      this.configure();
-      if (!this.isConfigured) {
-        // Return a no-op function if not configured
-        return () => {};
-      }
+      // Return a no-op function if not configured
+      // The configure() call should happen elsewhere first
+      GlobalErrorHandler.logWarning(
+        "RevenueCat not configured when adding listener",
+        "REVENUECAT_LISTENER",
+      );
+      return () => {};
     }
 
-    Purchases.addCustomerInfoUpdateListener((info: any) => {
+    Purchases.addCustomerInfoUpdateListener((info: CustomerInfo) => {
       this.syncSubscriptionStatus(info);
       listener(info);
     });

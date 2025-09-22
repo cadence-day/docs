@@ -21,6 +21,7 @@ export interface UseSubscriptionReturn {
   subscriptionPlan: SubscriptionPlan;
   isLoading: boolean;
   customerInfo: import("react-native-purchases").CustomerInfo | null;
+  activeEntitlements: string[];
   checkSubscription: () => Promise<void>;
   restorePurchases: () => Promise<void>;
 }
