@@ -1,5 +1,6 @@
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
+import { useEncryption } from "@/shared/context/EncryptionProvider";
 import useTranslation from "@/shared/hooks/useI18n";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
@@ -34,6 +35,12 @@ export const ProfileScreen: React.FC = () => {
   const router = useRouter();
   const { profileData, settings, updateProfileData, updateSettings } =
     useProfileStore();
+  const {
+    isVisualizationMode,
+    showEncryptedAsStars,
+    toggleVisualizationMode,
+    toggleEncryptedDisplay,
+  } = useEncryption();
 
   // Time input state for validation
   const [timeInputErrors, setTimeInputErrors] = useState<{
@@ -505,6 +512,19 @@ export const ProfileScreen: React.FC = () => {
           onPress={() => router.push("/settings/encryption")}
           showChevron={true}
         />
+
+        {/* Encryption Visualization Toggle */}
+        {/* <CdTextInputOneLine
+          label="Encryption Visualization"
+          value={isVisualizationMode ? "ON" : "OFF"}
+          showValueText={true}
+          isButton={true}
+          onPress={() => {
+            toggleVisualizationMode();
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
+          showChevron={false}
+        /> */}
       </View>
 
       {/* Support Section */}
