@@ -1,12 +1,13 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ScreenHeader } from "@/shared/components/CadenceUI";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { useI18n } from "@/shared/hooks/useI18n";
 
+import SageIcon from "@/shared/components/icons/SageIcon";
 import LoadingScreen from "../(utils)/LoadingScreen";
 const ReflectionGrid = React.lazy(() =>
   import("@/features/reflection").then((m) => ({ default: m.ReflectionGrid }))
@@ -83,14 +84,6 @@ export default function Reflection() {
     return fromDate.getTime() === currentWeekStart.getTime();
   };
 
-  function showInfo(message: string): void {
-    Alert.alert(
-      "Sage",
-      message,
-      [{ text: t?.("common.ok") ?? "OK", style: "default" }],
-      { cancelable: true }
-    );
-  }
   return (
     <LinearGradient
       colors={[
@@ -102,10 +95,11 @@ export default function Reflection() {
       <ScreenHeader
         title={t("reflection.weekly-cadence")}
         OnRightElement={() => (
-          <NotificationSageIcon
+          <SageIcon
             size={40}
-            onSagePress={() => showInfo(t("sage.unavailableMessage"))}
-            showFallbackMessage={false}
+            status="pulsating"
+            auto={false}
+            isLoggedIn={true}
           />
         )}
         subtitle={

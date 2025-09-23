@@ -234,7 +234,7 @@ export const EncryptionProvider = ({ children }: { children: ReactNode }) => {
       // Re-check new device status
       await checkNewDevice();
 
-      GlobalErrorHandler.logWarning(
+      GlobalErrorHandler.logDebug(
         "Encrypted data detected and marked",
         "ENCRYPTION_DATA_DETECTED",
         {}
