@@ -20,7 +20,9 @@ export function getSupabaseErrorMessage(
   if (typeof error === "object" && error !== null) {
     const errObj = error as Record<string, unknown>;
     if (typeof errObj.message === "string") return errObj.message;
-    if (typeof errObj.error_description === "string") return errObj.error_description;
+    if (typeof errObj.error_description === "string") {
+      return errObj.error_description;
+    }
   }
   return defaultMsg;
 }

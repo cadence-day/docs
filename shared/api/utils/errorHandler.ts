@@ -82,7 +82,10 @@ function getErrorMessage(error: unknown): string {
   return String(error ?? "Unknown error");
 }
 
-function isRetryableError(error: unknown, retryableErrors: string[] = []): boolean {
+function isRetryableError(
+  error: unknown,
+  retryableErrors: string[] = [],
+): boolean {
   const message = getErrorMessage(error).toLowerCase();
   const defaultRetryableErrors = [
     "network error",
@@ -195,7 +198,8 @@ export function handleApiError(context: string, error: unknown): never {
     originalError: getErrorMessage(error),
     errorType:
       typeof error === "object" && error !== null && "constructor" in error
-        ? (error as { constructor: { name?: string } }).constructor.name || "Unknown"
+        ? (error as { constructor: { name?: string } }).constructor.name ||
+          "Unknown"
         : "Unknown",
   });
 
