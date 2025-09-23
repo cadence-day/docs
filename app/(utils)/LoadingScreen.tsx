@@ -8,7 +8,7 @@ export default function LoadingScreen() {
   return (
     <View style={styles.container} testID="loading-screen">
       <Stack.Screen options={{ headerShown: false }} />
-      <SageIcon size={150} status={"pulsating"} auto={true} />
+      <SageIcon size={150} status={"pulsating"} auto={false} />
     </View>
   );
 }

@@ -78,9 +78,11 @@ const DebugPanel: React.FC = () => {
           openDialog({
             type: "encryption-link",
             props: {
-              title: "Link this New Device.",
-              height: 80,
-              enableDragging: true,
+              headerProps: {
+                title: "Link This Device",
+              },
+              height: 85,
+              enableDragging: false,
             },
             position: "dock",
           })

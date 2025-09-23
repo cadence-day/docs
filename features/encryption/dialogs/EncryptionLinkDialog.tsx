@@ -23,16 +23,19 @@ export type EncryptionLinkDialogProps = {
 export const EncryptionLinkDialog = forwardRef<
   EncryptionLinkDialogHandle,
   EncryptionLinkDialogProps
->(({ _dialogId, onConfirm, headerProps }, ref) => {
+>(({ _dialogId, onConfirm }, ref) => {
+  const dialogStore = useDialogStore();
+
   const closeSelf = () => {
-    if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
+    if (_dialogId) dialogStore.closeDialog(_dialogId);
   };
 
   const [pasteValue, setPasteValue] = useState("");
   const [pasteError, setPasteError] = useState<string | null>(null);
   const [permission, requestPermission] = useCameraPermissions();
-  const [submitting, setSubmitting] = useState(false);
+  const [, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [isScanning, setIsScanning] = useState(true);
 
   // Input mode state: 'camera' or 'text'
   const [inputMode, setInputMode] = useState<"camera" | "text">("camera");
@@ -64,16 +67,9 @@ export const EncryptionLinkDialog = forwardRef<
     } catch (err) {
       GlobalErrorHandler.logError(err as Error, "ENCRYPTION_LINK_IMPORT", {});
       setPasteError("Failed to save key. Try again.");
+      setIsScanning(true); // Re-enable scanning on error
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const handleConfirm = () => {
-    try {
-      onConfirm?.();
-    } catch {
-      // ignore
     }
   };
 
@@ -83,7 +79,7 @@ export const EncryptionLinkDialog = forwardRef<
   };
 
   useImperativeHandle(ref, () => ({
-    confirm: handleConfirm,
+    confirm: handleHeaderRightAction, // Use the same handler for imperative calls
   }));
 
   // Success state for "key is set" screen
@@ -101,29 +97,6 @@ export const EncryptionLinkDialog = forwardRef<
 
   return (
     <View style={styles.container}>
-      {/* Header with rightActionElement and onRightAction */}
-      <View>
-        {/* If headerProps is provided, merge with our right action */}
-        {/* You may want to use your own CdDialogHeader here, this is a placeholder */}
-        {headerProps ? (
-          React.cloneElement(
-            // @ts-ignore
-            headerProps.element || <></>,
-            {
-              ...headerProps,
-              rightActionElement:
-                headerProps.rightActionElement ??
-                (submitting ? "Linking…" : "Link Device"),
-              onRightAction:
-                headerProps.onRightAction ?? handleHeaderRightAction,
-              isRightActionButton: true,
-            }
-          )
-        ) : (
-          <></>
-        )}
-      </View>
-
       <View style={styles.banner}>
         <CdText variant="body" size="medium" style={{ color: COLORS.white }}>
           Encrypted data detected. Import your existing key to read it on this
@@ -149,13 +122,16 @@ export const EncryptionLinkDialog = forwardRef<
                       barcodeTypes: ["qr"],
                     }}
                     onBarcodeScanned={({ data }) => {
+                      if (!isScanning) return;
+
                       try {
+                        setIsScanning(false); // Prevent multiple scans
                         const match = (data || "").match(/([0-9a-f]{64})/i);
                         const key = match ? match[1] : (data?.trim() ?? "");
                         // Auto-submit the key without filling text input
                         onLinkPress(key);
                       } catch {
-                        // ignore
+                        setIsScanning(true); // Re-enable scanning on error
                       }
                     }}
                   />
@@ -168,6 +144,8 @@ export const EncryptionLinkDialog = forwardRef<
                       const result = await requestPermission();
                       if (!result.granted) {
                         setInputMode("text");
+                      } else {
+                        setIsScanning(true); // Re-enable scanning when permission is granted
                       }
                     }}
                     style={localStyles.closeButton}
@@ -177,7 +155,10 @@ export const EncryptionLinkDialog = forwardRef<
                     </Text>
                   </Pressable>
                   <Pressable
-                    onPress={() => setInputMode("text")}
+                    onPress={() => {
+                      setInputMode("text");
+                      setIsScanning(true); // Reset scanning when switching modes
+                    }}
                     style={localStyles.secondaryButton}
                   >
                     <Text style={localStyles.closeButtonText}>
@@ -189,7 +170,10 @@ export const EncryptionLinkDialog = forwardRef<
             </View>
             <CdButton
               title="Paste Key Instead"
-              onPress={() => setInputMode("text")}
+              onPress={() => {
+                setInputMode("text");
+                setIsScanning(true); // Reset scanning when switching modes
+              }}
               variant="secondary"
             />
           </>
@@ -197,7 +181,10 @@ export const EncryptionLinkDialog = forwardRef<
           <>
             <CdButton
               title="Scan QR Instead"
-              onPress={() => setInputMode("camera")}
+              onPress={() => {
+                setInputMode("camera");
+                setIsScanning(true); // Reset scanning when switching modes
+              }}
               variant="secondary"
             />
             <CdTextInput
@@ -216,13 +203,6 @@ export const EncryptionLinkDialog = forwardRef<
           </>
         )}
       </View>
-
-      <CdButton
-        title="Confirm"
-        onPress={handleConfirm}
-        variant="primary"
-        style={localStyles.confirmButton}
-      />
     </View>
   );
 });
@@ -276,10 +256,6 @@ const localStyles = StyleSheet.create({
     borderRadius: 8,
   },
   scannerClose: { position: "absolute", top: 24, right: 16 },
-  confirmButton: {
-    marginTop: 24,
-    marginBottom: 16,
-  },
   // Success state styles
   successContainer: {
     justifyContent: "center",
