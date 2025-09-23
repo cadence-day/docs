@@ -1,20 +1,21 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import {
-  CdDialog,
-  CdText,
-  CdTextInput,
-  CdButton,
-} from "@/shared/components/CadenceUI";
-import { COLORS } from "@/shared/constants/COLORS";
 import {
   exportEncryptionKey,
-  getKeyFingerprint,
   hasEncryptionKey,
   importEncryptionKey,
 } from "@/shared/api/encryption/core";
+import {
+  CdButton,
+  CdDialog,
+  CdText,
+  CdTextInput,
+} from "@/shared/components/CadenceUI";
+import { COLORS } from "@/shared/constants/COLORS";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import React, { useEffect, useMemo, useState } from "react";
+import { Text, View } from "react-native";
+import { CdDialogHeaderProps } from "../../../shared/components/CadenceUI/CdDialogHeader";
+import { styles } from "../styles";
 
 type Props = {
   _dialogId?: string; // injected by DialogHost
@@ -22,7 +23,7 @@ type Props = {
   height?: number;
   maxHeight?: number;
   enableDragging?: boolean;
-  headerProps?: any;
+  headerProps?: CdDialogHeaderProps;
 };
 
 const EncryptionLinkDialog: React.FC<Props> = ({
@@ -187,51 +188,5 @@ const EncryptionLinkDialog: React.FC<Props> = ({
     </CdDialog>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    gap: 16,
-  },
-  banner: {
-    backgroundColor: "rgba(255,255,255,0.08)",
-    padding: 12,
-    borderRadius: 8,
-  },
-  section: {
-    gap: 10,
-  },
-  sectionTitle: {
-    color: COLORS.white,
-    fontWeight: "600",
-  },
-  helpText: {
-    color: COLORS.bodyText,
-  },
-  keyBox: {
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
-    borderRadius: 6,
-    padding: 10,
-    backgroundColor: "rgba(0,0,0,0.1)",
-  },
-  keyText: {
-    color: COLORS.white,
-    fontFamily: "Courier",
-    fontSize: 13,
-    letterSpacing: 0.7,
-  },
-  warning: {
-    color: "#ffad33",
-  },
-  success: {
-    color: "#6EE7B7",
-    marginTop: 8,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: "rgba(255,255,255,0.12)",
-    marginVertical: 4,
-  },
-});
 
 export default EncryptionLinkDialog;
