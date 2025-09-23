@@ -375,7 +375,7 @@ export const EncryptionProvider = ({ children }: { children: ReactNode }) => {
         props: {
           onConfirm: onKeyImported,
           headerProps: {
-            title: "Link Device",
+            title: "Link This Device",
             subtitle: "Import your encryption key to access encrypted data",
           },
         },

@@ -1,3 +1,4 @@
+import { BaseStorage } from "@/shared/storage/base";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as CryptoJS from "crypto-js";
 import * as Crypto from "expo-crypto";
@@ -7,8 +8,23 @@ import * as SecureStore from "expo-secure-store";
 const ENCRYPTION_KEY_NAME = "cadence_app_encryption_key";
 const ENCRYPTED_PREFIX = "enc:"; // Prefix to identify encrypted strings
 
-// Export the prefix for external use if needed
-export { ENCRYPTED_PREFIX };
+// Storage for checking encryption state
+class EncryptionCoreStorage extends BaseStorage {
+  constructor() {
+    super("encryption");
+  }
+
+  async getEncryptedDataDetected(): Promise<boolean> {
+    const result = await this.get("encrypted_data_detected", false);
+    return result.data || false;
+  }
+
+  async setEncryptedDataDetected(detected: boolean): Promise<void> {
+    await this.set("encrypted_data_detected", detected);
+  }
+}
+
+const encryptionStorage = new EncryptionCoreStorage();
 
 // Global callback for encrypted data detection
 let onEncryptedDataDetected: (() => void) | null = null;
@@ -41,6 +57,15 @@ export function setEncryptionKeyChangedCallback(
  * This should be called when encrypted data is found in the API responses
  */
 export function triggerEncryptedDataDetected(): void {
+  // Mark encrypted data as detected in storage
+  encryptionStorage.setEncryptedDataDetected(true).catch((error) => {
+    GlobalErrorHandler.logError(
+      error,
+      "ENCRYPTION_SET_DATA_DETECTED_FAILED",
+      {},
+    );
+  });
+
   if (onEncryptedDataDetected) {
     try {
       onEncryptedDataDetected();
@@ -265,13 +290,32 @@ export async function getEncryptionKey(): Promise<string> {
     // Try to get existing key
     let key = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
 
-    // If no key found, generate one and attempt to persist to SecureStore.
+    // If no key found, check if encrypted data has been detected
     if (!key) {
+      const encryptedDataDetected = await encryptionStorage
+        .getEncryptedDataDetected();
+
+      if (encryptedDataDetected) {
+        // User has encrypted data but no key - don't generate a new key
+        throw new EncryptionError(
+          "Encrypted data detected but no encryption key found. Please import your encryption key to access your data.",
+        );
+      }
+
+      // No encrypted data detected, safe to generate a new key
       key = await generateAndStoreKey();
     }
 
     return key;
   } catch (error) {
+    // If this is our specific error about encrypted data detection, re-throw it
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      throw error;
+    }
+
     GlobalErrorHandler.logError(error, "ENCRYPTION_GET_KEY_FAILED", {});
     // As a last resort, return an ephemeral key
     return await generateRandomKey();
@@ -290,8 +334,20 @@ export async function getEncryptionKeyWithSource(): Promise<{
     const secureKey = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
     if (secureKey) return { key: secureKey, source: "securestore" };
 
-    // No key stored yet; generate and persist using SecureStore path. If
-    // persistence fails, generateAndStoreKey will return an ephemeral key.
+    // Check if encrypted data has been detected
+    const encryptedDataDetected = await encryptionStorage
+      .getEncryptedDataDetected();
+
+    if (encryptedDataDetected) {
+      // User has encrypted data but no key - don't generate a new key
+      // This prevents data loss by forcing the user to import their existing key
+      throw new EncryptionError(
+        "Encrypted data detected but no encryption key found. Please import your encryption key to access your data.",
+      );
+    }
+
+    // No key stored yet and no encrypted data detected; generate and persist using SecureStore path.
+    // If persistence fails, generateAndStoreKey will return an ephemeral key.
     const generated = await generateAndStoreKey();
 
     // Check SecureStore again to see if persistence succeeded.
@@ -301,7 +357,15 @@ export async function getEncryptionKeyWithSource(): Promise<{
     // Return ephemeral
     return { key: generated, source: "ephemeral" };
   } catch (error) {
-    // On any error, try AsyncStorage then return ephemeral
+    // If this is our specific error about encrypted data detection, re-throw it
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      throw error;
+    }
+
+    // On any other error, try AsyncStorage then return ephemeral
     GlobalErrorHandler.logError(
       error,
       "ENCRYPTION_GET_KEY_WITH_SOURCE_FAILED",
@@ -321,9 +385,22 @@ export async function exportEncryptionKey(): Promise<{
   fingerprint: string;
   source: "securestore" | "ephemeral" | "asyncstorage";
 }> {
-  const { key, source } = await getEncryptionKeyWithSource();
-  const fingerprint = getKeyFingerprint(key);
-  return { key, fingerprint, source };
+  try {
+    const { key, source } = await getEncryptionKeyWithSource();
+    const fingerprint = getKeyFingerprint(key);
+    return { key, fingerprint, source };
+  } catch (error) {
+    // If this is our specific error about encrypted data detection, provide a clearer message
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      throw new EncryptionError(
+        "Cannot export encryption key: No key available on this device. Please import your encryption key first.",
+      );
+    }
+    throw error;
+  }
 }
 
 /**
@@ -399,6 +476,25 @@ export async function encryptString(
     const encrypted = xorEncrypt(plaintext, keyHex);
     return ENCRYPTED_PREFIX + encrypted;
   } catch (error) {
+    // If this is our specific error about encrypted data detection, handle it appropriately
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      GlobalErrorHandler.logWarning(
+        "Cannot encrypt new data: encryption key not available due to existing encrypted data",
+        "ENCRYPTION_KEY_NOT_AVAILABLE_FOR_NEW_DATA",
+        { plaintextLength: plaintext?.length },
+      );
+
+      if (allowFallback) {
+        return plaintext; // Return plaintext when encryption not possible
+      }
+
+      // Re-throw the error to let the caller handle it
+      throw error;
+    }
+
     GlobalErrorHandler.logError(error, "ENCRYPTION_ENCRYPT_FAILED", {
       plaintextLength: plaintext?.length,
       plaintextSample: plaintext?.substring(0, 20),
@@ -450,6 +546,20 @@ export async function decryptString(encryptedData: string): Promise<string> {
 
     return plaintext;
   } catch (error) {
+    // If this is our specific error about encrypted data detection, handle it gracefully
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      GlobalErrorHandler.logWarning(
+        "Cannot decrypt data: encryption key not available",
+        "ENCRYPTION_KEY_NOT_AVAILABLE",
+        { hasPrefix: encryptedData.startsWith(ENCRYPTED_PREFIX) },
+      );
+      // Return the encrypted data as-is with a visual indicator
+      return `🔒 [Encrypted data - key required]`;
+    }
+
     GlobalErrorHandler.logError(error, "ENCRYPTION_DECRYPT_FAILED", {});
     throw new EncryptionError("Failed to decrypt string", error);
   }
