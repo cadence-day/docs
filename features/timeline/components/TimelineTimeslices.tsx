@@ -38,6 +38,8 @@ export const TimelineTimeslices: React.FC<TimelineTimeslicesProps> = ({
 
   // Get disabled activities to check if timeslice activities are disabled
   const disabledActivities = useActivitiesStore((s) => s.disabledActivities);
+  // Get states from store at top-level to satisfy React Hooks rules
+  const states = useStatesStore((s) => s.states);
 
   const visibleTimeslices = timeslices.filter((ts) => {
     // keep timeslices that don't have a start_time (defensive)
@@ -75,7 +77,6 @@ export const TimelineTimeslices: React.FC<TimelineTimeslicesProps> = ({
           : "plus"; // Show plus icon if there are no notes
 
         // compute state number from the states store if available
-        const states = useStatesStore((s) => s.states);
         const stateObj = ts.state_id
           ? states?.find((s) => s.id === ts.state_id)
           : undefined;

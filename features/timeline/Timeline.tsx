@@ -107,14 +107,6 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
   // Ref to the horizontal ScrollView so we can programmatically scroll
   const horizontalScrollRef = useRef<ScrollView | null>(null);
 
-  // Build a lightweight "components" array (used by the scrolling hook to
-  // compute widths/length). The hook only needs a length-like array, so we
-  // reuse the timeslice arrays.
-  const timesliceComponents = React.useMemo(
-    () => dateTimeslices,
-    [dateTimeslices]
-  );
-
   // Expose a scrollToCurrentTime method via the forwarded ref.
   useImperativeHandle(ref, () => ({
     scrollToCurrentTime: () => {
@@ -141,11 +133,35 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
             TIMESLICE_MARGIN_HORIZONTAL
           );
         }
-      } catch (err) {
+      } catch {
         // swallow errors
       }
     },
   }));
+
+  // If there are no timeslices for today (rare), generate empty placeholders
+  // so the timeline still shows the empty timeslice containers (48 slots)
+  const generatePlaceholders = React.useCallback((date: Date) => {
+    const slots: Timeslice[] = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const localStartTime = new Date(date);
+        localStartTime.setHours(hour, minute, 0, 0);
+        const localEndTime = new Date(localStartTime);
+        localEndTime.setMinutes(localEndTime.getMinutes() + 30);
+        slots.push({
+          id: null,
+          start_time: localStartTime.toISOString(),
+          end_time: localEndTime.toISOString(),
+          activity_id: null,
+          state_id: null,
+          user_id: null,
+          note_ids: null,
+        } as Timeslice);
+      }
+    }
+    return slots;
+  }, []);
 
   // Auto-scroll to current timeslice whenever the displayed date or
   // timeslices change — this covers opening today's screen and date
@@ -193,7 +209,7 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
               TIMESLICE_MARGIN_HORIZONTAL
             );
           }
-        } catch (err) {
+        } catch {
           // swallow
         }
       };
@@ -201,9 +217,9 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
       // Wait for interactions/layout
       interactionHandle = InteractionManager.runAfterInteractions(() => {
         // small delay to let layout settle on some devices
-        timeoutId = setTimeout(runScroll, 50) as unknown as number;
+        timeoutId = setTimeout(runScroll, 50) as any;
       });
-    } catch (err) {
+    } catch {
       // swallow
     }
 
@@ -216,31 +232,7 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
       }
       if (timeoutId) clearTimeout(timeoutId as any);
     };
-  }, [dateForDisplay, dateTimeslices, date]);
-
-  // If there are no timeslices for today (rare), generate empty placeholders
-  // so the timeline still shows the empty timeslice containers (48 slots)
-  const generatePlaceholders = React.useCallback((date: Date) => {
-    const slots: Timeslice[] = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const localStartTime = new Date(date);
-        localStartTime.setHours(hour, minute, 0, 0);
-        const localEndTime = new Date(localStartTime);
-        localEndTime.setMinutes(localEndTime.getMinutes() + 30);
-        slots.push({
-          id: null,
-          start_time: localStartTime.toISOString(),
-          end_time: localEndTime.toISOString(),
-          activity_id: null,
-          state_id: null,
-          user_id: null,
-          note_ids: null,
-        } as Timeslice);
-      }
-    }
-    return slots;
-  }, []);
+  }, [dateForDisplay, dateTimeslices, date, generatePlaceholders, targetDate]);
 
   const displayDateTimeslices =
     dateTimeslices && dateTimeslices.length > 0
@@ -350,7 +342,7 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
         clearTimeout(fetchTimeoutId);
       }
     };
-  }, [date]);
+  }, [date, targetDate]);
 
   // Handle note dialog - ensure only one container is expanded at a time
   const handleIconPress = (timeslice: Timeslice) => {

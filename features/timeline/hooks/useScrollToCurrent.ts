@@ -7,10 +7,12 @@ import { Dimensions } from "react-native";
  * roughly 1/3 of the screen width.
  */
 export const scrollToIndexAtOneThird = (
-  scrollRef: RefObject<any>,
+  scrollRef: RefObject<
+    { scrollTo: (options: { x: number; animated: boolean }) => void }
+  >,
   itemIndex: number,
   itemWidth: number,
-  itemMarginHorizontal: number
+  itemMarginHorizontal: number,
 ) => {
   if (!scrollRef?.current || typeof itemIndex !== "number") return;
 
@@ -30,7 +32,7 @@ export const scrollToIndexAtOneThird = (
     GlobalErrorHandler.logWarning(
       "scrollToIndexAtOneThird failed",
       "Timeline:scroll",
-      { error: err }
+      { error: err },
     );
   }
 };
