@@ -228,7 +228,7 @@ async function generateRandomKey(): Promise<string> {
 export class EncryptionError extends Error {
   constructor(
     message: string,
-    public originalError?: any,
+    public originalError?: Error | null,
   ) {
     super(`[Encryption] ${message}`);
     this.name = "EncryptionError";
@@ -248,7 +248,7 @@ export function getKeyFingerprint(key: string, length: number = 8): string {
     GlobalErrorHandler.logWarning(
       "Failed to compute key fingerprint",
       "encryption.getKeyFingerprint",
-      {},
+      { error },
     );
     return "";
   }
@@ -433,8 +433,13 @@ export async function importEncryptionKey(key: string): Promise<{
 
     return { fingerprint: fp };
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_IMPORT_KEY_FAILED", {});
-    throw new EncryptionError("Failed to import encryption key", error);
+    GlobalErrorHandler.logError(error, "ENCRYPTION_IMPORT_KEY_FAILED", {
+      error,
+    });
+    throw new EncryptionError(
+      "Failed to import encryption key",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 
@@ -509,7 +514,10 @@ export async function encryptString(
       return plaintext;
     }
 
-    throw new EncryptionError("Failed to encrypt string", error);
+    throw new EncryptionError(
+      "Failed to encrypt string",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 /**
@@ -561,7 +569,10 @@ export async function decryptString(encryptedData: string): Promise<string> {
     }
 
     GlobalErrorHandler.logError(error, "ENCRYPTION_DECRYPT_FAILED", {});
-    throw new EncryptionError("Failed to decrypt string", error);
+    throw new EncryptionError(
+      "Failed to decrypt string",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 
@@ -575,7 +586,10 @@ async function _clearEncryptionKey(): Promise<void> {
     await SecureStore.deleteItemAsync(ENCRYPTION_KEY_NAME);
   } catch (error) {
     GlobalErrorHandler.logError(error, "ENCRYPTION_CLEAR_KEY_FAILED", {});
-    throw new EncryptionError("Failed to clear encryption key", error);
+    throw new EncryptionError(
+      "Failed to clear encryption key",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 
@@ -597,7 +611,10 @@ export async function clearEncryptionKey(): Promise<void> {
     }
     // We purposely removed AsyncStorage cleanup — the key should only be in SecureStore.
   } catch (err) {
-    throw new EncryptionError("Failed to clear encryption key", err);
+    throw new EncryptionError(
+      "Failed to clear encryption key",
+      err instanceof Error ? err : new Error(String(err)),
+    );
   }
 }
 
@@ -612,7 +629,10 @@ async function _rotateEncryptionKey(): Promise<string> {
     await _clearEncryptionKey();
     return await generateAndStoreKey();
   } catch (error) {
-    throw new EncryptionError("Failed to rotate encryption key", error);
+    throw new EncryptionError(
+      "Failed to rotate encryption key",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 
@@ -710,7 +730,7 @@ export async function rotateEncryptionKeyAndReEncryptData(
     });
     throw new EncryptionError(
       "Failed to rotate encryption key and re-encrypt data",
-      error,
+      error instanceof Error ? error : new Error(String(error)),
     );
   }
 }
