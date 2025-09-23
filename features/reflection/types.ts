@@ -1,4 +1,5 @@
 import { Activity, Note, State, Timeslice } from "@/shared/types/models";
+import { ScrollView } from "react-native-gesture-handler";
 
 export interface ReflectionGridProps {
   fromDate: Date;
@@ -84,7 +85,7 @@ export interface ReflectionDateAxisProps {
 
 export interface ReflectionTimeAxisProps {
   hours: string[];
-  hoursScrollViewRef?: React.RefObject<any>;
+  hoursScrollViewRef?: React.RefObject<ScrollView>;
   toggleRow: (hour: string) => void;
   resetSelectedRows: (hour: string) => void;
 }
