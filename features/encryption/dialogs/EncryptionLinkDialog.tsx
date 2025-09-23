@@ -98,7 +98,7 @@ export const EncryptionLinkDialog = forwardRef<
   return (
     <View style={styles.container}>
       <View style={styles.banner}>
-        <CdText variant="body" size="medium" style={{ color: COLORS.white }}>
+        <CdText variant="body" size="medium" style={localStyles.bannerText}>
           Encrypted data detected. Import your existing key to read it on this
           device.
         </CdText>
@@ -284,6 +284,7 @@ const localStyles = StyleSheet.create({
     marginHorizontal: 24,
     marginTop: 4,
   },
+  bannerText: { color: COLORS.white },
 });
 
 export default EncryptionLinkDialog;
