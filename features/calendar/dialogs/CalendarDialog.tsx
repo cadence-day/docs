@@ -3,7 +3,9 @@ import useTranslation from "@/shared/hooks/useI18n";
 import { locale } from "@/shared/locales";
 import { Ionicons } from "@expo/vector-icons";
 import React, { forwardRef, useImperativeHandle } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { CdDialogHeaderProps } from "../../../shared/components/CadenceUI/CdDialogHeader";
+import { styles } from "../styles";
 
 export type CalendarDialogHandle = {
   confirm: () => void;
@@ -17,11 +19,11 @@ export const CalendarDialog = forwardRef<
     // optional confirm callback that DialogHost will call when Done is pressed
     confirm?: () => void;
     // optional headerProps to display custom title
-    headerProps?: any;
+    headerProps?: CdDialogHeaderProps;
     // internal: dialog id when rendered via DialogHost
     _dialogId?: string;
   }
->(({ selectedDate, onSelect, confirm, headerProps, _dialogId }, ref) => {
+>(({ selectedDate, onSelect, confirm, _dialogId }, ref) => {
   const { t } = useTranslation();
   const strip = (d: Date) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -87,7 +89,7 @@ export const CalendarDialog = forwardRef<
         useDialogStore
           .getState()
           .setDialogProps(_dialogId, { tempSelected: temp });
-    } catch (e) {
+    } catch {
       // ignore
     }
   }, [temp, _dialogId]);
@@ -98,7 +100,7 @@ export const CalendarDialog = forwardRef<
     try {
       const useDialogStore = require("@/shared/stores/useDialogStore").default;
       if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
-    } catch (e) {
+    } catch {
       // ignore
     }
   };
@@ -221,14 +223,15 @@ export const CalendarDialog = forwardRef<
                     isFuture && styles.dateCellDisabled,
                   ]}
                 >
+                  {
+                    // avoid nested ternary by computing style beforehand
+                  }
                   <Text
-                    style={
-                      isFuture
-                        ? styles.dateTextDisabled
-                        : isSelected
-                          ? styles.dateTextSelected
-                          : styles.dateText
-                    }
+                    style={(() => {
+                      if (isFuture) return styles.dateTextDisabled;
+                      if (isSelected) return styles.dateTextSelected;
+                      return styles.dateText;
+                    })()}
                   >
                     {dt ? dt.getDate() : ""}
                   </Text>
@@ -240,80 +243,6 @@ export const CalendarDialog = forwardRef<
       </View>
     </View>
   );
-});
-
-const styles = StyleSheet.create({
-  container: { marginTop: 20, alignItems: "center" },
-  headerRow: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
-    marginBottom: 8,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 12,
-    color: "#fff",
-    textAlign: "center",
-  },
-  shortcuts: { flexDirection: "row", gap: 12 },
-  shortcutsRow: { flexDirection: "row", gap: 24, marginBottom: 12 },
-  link: {
-    color: COLORS.primary,
-    fontWeight: "800",
-    textTransform: "uppercase",
-  },
-  note: { marginTop: 12, color: "#666" },
-  calendarGrid: {
-    flexDirection: "row",
-    width: "100%",
-    flexWrap: "wrap",
-    paddingHorizontal: 10,
-    gap: 6,
-    justifyContent: "center",
-    marginTop: 15,
-  },
-  weekRow: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 6,
-  },
-  weekdayLabel: {
-    width: 36,
-    height: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 6,
-  },
-  weekdayLabelText: {
-    color: "#fff",
-    textAlign: "center",
-  },
-  dateCell: {
-    width: 36,
-    height: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 18,
-  },
-  dateCellSelected: { backgroundColor: COLORS.primary },
-  dateCellDisabled: { opacity: 0.35 },
-  dateText: { color: "#fff" },
-  dateTextSelected: { color: "white", fontWeight: "700" },
-  dateTextDisabled: { color: "#fff" },
-  actionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 12,
-    width: "100%",
-  },
-  pickerButton: { color: COLORS.primary, fontSize: 20 },
-  pickerButtonDisabled: { color: "#666" },
 });
 
 export default CalendarDialog;
