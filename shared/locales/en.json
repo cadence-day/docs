@@ -363,6 +363,7 @@
   "read-more-about-how-we-protect": "Read more about how we protect your privacy →",
   "reflection": {
     "activityLabel": "Activity",
+    "daily-cadence": "Daily Cadence",
     "details": "Details",
     "noTimesliceInfo": "No additional info for this timeslice.",
     "title": "Reflection",
@@ -376,6 +377,7 @@
   "restore-purchases": "Restore Purchases",
   "sa": "Sat",
   "sage": {
+    "title": "Sage Notifications",
     "unavailableMessage": "Cadence AI is currently not available."
   },
   "sage-your-friendly-ai-guide-wi": "Sage your friendly AI guide will help you notice the patterns in your time.\\n\\nAsk Sage to summarize your day, help you remember your goals, or notice your time patterns. The more you log, the more Sage can help.",

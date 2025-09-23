@@ -1,10 +1,10 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ScreenHeader } from "@/shared/components/CadenceUI";
-import NotificationSageIcon from "@/shared/components/NotificationSageIcon";
+import SageIcon from "@/shared/components/icons/SageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { useI18n } from "@/shared/hooks/useI18n";
 
@@ -14,148 +14,94 @@ const ReflectionGrid = React.lazy(() =>
 );
 
 export default function Reflection() {
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
-  const [isWeeklyView, setIsWeeklyView] = useState(true);
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useI18n();
 
-  const getStartOfWeek = (date: Date) => {
-    const localDate = new Date(date);
-    const day = localDate.getDay();
-    const diff = localDate.getDate() - day + (day === 0 ? -6 : 1);
-    const monday = new Date(localDate);
-    monday.setDate(diff);
-    monday.setHours(0, 0, 0, 0); // Set to start of day in local time
-    return monday;
-  };
-
-  const getLast7Days = (endDate: Date) => {
-    const start = new Date(endDate);
-    start.setDate(endDate.getDate() - 6);
-    start.setHours(0, 0, 0, 0); // Set to start of day in local time
-    return start;
-  };
-
-  useEffect(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize to start of day
-
-    if (isWeeklyView) {
-      const startOfWeek = getStartOfWeek(today);
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      endOfWeek.setHours(23, 59, 59, 999);
-
-      setFromDate(startOfWeek);
-      setToDate(endOfWeek);
-    } else {
-      const last7DaysStart = getLast7Days(today);
-      const last7DaysEnd = new Date(today);
-      last7DaysEnd.setHours(23, 59, 59, 999);
-
-      setFromDate(last7DaysStart);
-      setToDate(last7DaysEnd);
+  // Generate date range for horizontal scrolling (show 7 days: 3 before + current + 3 after)
+  const getDatesForHorizontalView = (centerDate: Date) => {
+    const dates = [];
+    for (let i = -3; i <= 3; i++) {
+      const date = new Date(centerDate);
+      date.setDate(centerDate.getDate() + i);
+      date.setHours(0, 0, 0, 0);
+      dates.push(date);
     }
-  }, [isWeeklyView]);
-
-  const handlePreviousWeek = () => {
-    const newFromDate = new Date(fromDate);
-    newFromDate.setDate(newFromDate.getDate() - 7);
-    newFromDate.setHours(0, 0, 0, 0);
-
-    const newToDate = new Date(newFromDate);
-    newToDate.setDate(newToDate.getDate() + 6);
-    newToDate.setHours(23, 59, 59, 999);
-
-    setFromDate(newFromDate);
-    setToDate(newToDate);
+    return dates;
   };
 
-  const handleNextWeek = () => {
-    const newFromDate = new Date(fromDate);
-    newFromDate.setDate(newFromDate.getDate() + 7);
-    newFromDate.setHours(0, 0, 0, 0);
+  const dates = getDatesForHorizontalView(currentDate);
+  const fromDate = dates[0];
+  const toDate = new Date(dates[dates.length - 1]);
+  toDate.setHours(23, 59, 59, 999);
 
-    // Check if the new week would be in the future
+  const handlePreviousDay = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(currentDate.getDate() - 1);
+    setCurrentDate(newDate);
+  };
+
+  const handleNextDay = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(currentDate.getDate() + 1);
+
+    // Check if the new date would be in the future
     const today = new Date();
-    const currentWeekStart = getStartOfWeek(today);
+    today.setHours(0, 0, 0, 0);
 
-    // Prevent navigation beyond the current week
-    if (newFromDate > currentWeekStart) {
-      return; // Don't allow navigation to future weeks
+    // Prevent navigation beyond today
+    if (newDate > today) {
+      return; // Don't allow navigation to future dates
     }
 
-    const newToDate = new Date(newFromDate);
-    newToDate.setDate(newToDate.getDate() + 6);
-    newToDate.setHours(23, 59, 59, 999);
-
-    setFromDate(newFromDate);
-    setToDate(newToDate);
+    setCurrentDate(newDate);
   };
 
-  // Check if we're at the current week to disable next week navigation
-  const isAtCurrentWeek = () => {
+  // Check if we're at today to disable next day navigation
+  const isAtToday = () => {
     const today = new Date();
-    const currentWeekStart = getStartOfWeek(today);
-    return fromDate.getTime() === currentWeekStart.getTime();
+    today.setHours(0, 0, 0, 0);
+    const current = new Date(currentDate);
+    current.setHours(0, 0, 0, 0);
+    return current.getTime() === today.getTime();
   };
-
-  function showInfo(message: string): void {
-    Alert.alert(
-      "Sage",
-      message,
-      [{ text: t?.("common.ok") ?? "OK", style: "default" }],
-      { cancelable: true }
-    );
-  }
   return (
     <LinearGradient
       colors={[
         backgroundLinearColors.primary.start,
         backgroundLinearColors.primary.end,
       ]}
-      style={{ flex: 1 }}
+      style={styles.container}
     >
       <ScreenHeader
-        title={t("reflection.weekly-cadence")}
+        title={t("reflection.daily-cadence") || "Daily Cadence"}
         OnRightElement={() => (
-          <NotificationSageIcon
-            size={40}
-            onSagePress={() => showInfo(t("sage.unavailableMessage"))}
-            showFallbackMessage={false}
-          />
+          <SageIcon size={28} status="pulsating" auto={false} />
         )}
         subtitle={
           <View style={styles.dateNavigationContainer}>
-            <TouchableOpacity
-              onPress={handlePreviousWeek}
-              hitSlop={HIT_SLOP_10}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: "#444",
-                }}
-              >
-                ←
-              </Text>
+            <TouchableOpacity onPress={handlePreviousDay} hitSlop={HIT_SLOP_10}>
+              <Text style={styles.arrowText}>←</Text>
             </TouchableOpacity>
 
             <Text style={styles.dateRangeText}>
-              {fromDate.toLocaleDateString()} to {toDate.toLocaleDateString()}
+              {currentDate.toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </Text>
 
             <TouchableOpacity
-              onPress={handleNextWeek}
-              disabled={isAtCurrentWeek()}
+              onPress={handleNextDay}
+              disabled={isAtToday()}
               hitSlop={HIT_SLOP_10}
             >
               <Text
-                style={{
-                  fontSize: 14,
-                  color: isAtCurrentWeek() ? "#ccc" : "#444",
-                }}
+                style={
+                  isAtToday() ? styles.arrowTextDisabled : styles.arrowText
+                }
               >
                 →
               </Text>
@@ -182,12 +128,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerOverride: {
-    margin: 0,
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginBottom: 10,
+  arrowText: {
+    fontSize: 14,
+    color: "#444",
+  },
+  arrowTextDisabled: {
+    fontSize: 14,
+    color: "#ccc",
   },
   gridContainer: {
     flex: 1,

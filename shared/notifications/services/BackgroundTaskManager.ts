@@ -2,7 +2,7 @@ import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import * as TaskManager from "expo-task-manager";
-import { getNotificationEngineSingleton } from "../NotificationEngineSingleton";
+// Removed import to avoid circular dependency - engine will be passed as parameter
 import { NotificationPreferences } from "../types";
 import {
   NotificationScheduler,
@@ -37,9 +37,13 @@ export class BackgroundTaskManager {
     return BackgroundTaskManager.instance;
   }
 
-  async initialize(config: SchedulerConfig): Promise<void> {
+  async initialize(config: SchedulerConfig, engine?: any): Promise<void> {
     try {
-      const engine = await getNotificationEngineSingleton();
+      if (!engine) {
+        // Lazy load to avoid circular dependency
+        const { getNotificationEngineSingleton } = await import("../NotificationEngineSingleton");
+        engine = await getNotificationEngineSingleton();
+      }
       this.scheduler = new NotificationScheduler(engine, config);
 
       await this.registerBackgroundTask();

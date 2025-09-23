@@ -8,8 +8,8 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { DEFAULT_CADENCE_PREFERENCES } from "../cadenceMessages";
 import { useBackgroundNotifications } from "../hooks/useBackgroundNotifications";
+import { DEFAULT_CADENCE_PREFERENCES } from "../cadenceMessages";
 import { NotificationEngine } from "../NotificationEngine";
 import {
   getNotificationEngineSingleton,
@@ -17,6 +17,7 @@ import {
 } from "../NotificationEngineSingleton";
 import { InAppNotificationDisplay } from "../providers/InAppNotificationProvider";
 import { LocaleNotificationProvider } from "../providers/LocaleNotificationProvider";
+import { mapProfileSettingsToNotificationPreferences } from "../services/NotificationScheduler";
 import {
   NotificationEngineConfig,
   NotificationEvent,
@@ -98,7 +99,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   // Initialize background notifications
-  const backgroundNotifications = useBackgroundNotifications();
+  useBackgroundNotifications();
 
   // Initialize notification engine
   // Memoize engine configuration to avoid creating a new object on every render
@@ -202,19 +203,22 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   // Sync preferences with profile store
   useEffect(() => {
+    // Map profile settings to notification preferences
+    const mappedPreferences =
+      mapProfileSettingsToNotificationPreferences(settings);
     const newPreferences = {
       ...DEFAULT_CADENCE_PREFERENCES,
-      ...settings.notifications,
+      ...mappedPreferences,
     };
     setPreferences(newPreferences);
-  }, [settings.notifications]);
+  }, [settings]);
 
   const updatePreferences = useCallback(
     (newPreferences: Partial<NotificationPreferences>) => {
       const updatedPreferences = { ...preferences, ...newPreferences };
       setPreferences(updatedPreferences);
 
-      // Update profile store
+      // Update profile store with reverse mapping
       updateSettings({
         notifications: {
           morningReminders:

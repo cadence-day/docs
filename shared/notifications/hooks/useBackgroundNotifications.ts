@@ -1,58 +1,71 @@
-import { useEffect, useState } from 'react';
-import { AppState, AppStateStatus } from 'react-native';
-import { GlobalErrorHandler } from '@/shared/utils/errorHandler';
-import { BackgroundTaskManager } from '../services/BackgroundTaskManager';
-import { NotificationScheduler, SchedulerConfig } from '../services/NotificationScheduler';
-import { getNotificationEngineSingleton } from '../NotificationEngineSingleton';
-import { NotificationPreferences } from '../types';
-import { useNotificationPreferences } from './useNotificationPreferences';
-import { useUser } from '@clerk/clerk-expo';
+import { useProfileStore } from "@/features/profile/stores/useProfileStore";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { useUser } from "@clerk/clerk-expo";
+import { useCallback, useEffect, useState } from "react";
+import { AppState, AppStateStatus } from "react-native";
+import { getNotificationEngineSingleton } from "../NotificationEngineSingleton";
+import { DEFAULT_CADENCE_PREFERENCES } from "../cadenceMessages";
+import { BackgroundTaskManager } from "../services/BackgroundTaskManager";
+import {
+  mapProfileSettingsToNotificationPreferences,
+  NotificationScheduler,
+  SchedulerConfig,
+} from "../services/NotificationScheduler";
 
 export function useBackgroundNotifications() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { user } = useUser();
-  const { preferences, loading: preferencesLoading } = useNotificationPreferences();
+  const { settings } = useProfileStore();
 
   useEffect(() => {
-    if (!user || preferencesLoading || !preferences) return;
+    if (!user || !settings) return;
 
     const initializeBackgroundTasks = async () => {
       try {
         setIsProcessing(true);
 
+        // Map profile settings to notification preferences
+        const mappedPreferences = mapProfileSettingsToNotificationPreferences(
+          settings,
+        );
+        const preferences = {
+          ...DEFAULT_CADENCE_PREFERENCES,
+          ...mappedPreferences,
+        };
+
         const taskManager = BackgroundTaskManager.getInstance();
         const config: SchedulerConfig = {
           userId: user.id,
           preferences,
+          profileSettings: settings,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         };
 
-        await taskManager.initialize(config);
-        await taskManager.loadScheduledNotifications();
-
         const engine = await getNotificationEngineSingleton();
+        await taskManager.initialize(config, engine);
+        await taskManager.loadScheduledNotifications();
         const scheduler = NotificationScheduler.create(engine, config);
 
-        if (preferences.rhythm !== 'disabled') {
+        if (preferences.rhythm !== "disabled") {
           await scheduler.scheduleAllNotifications();
         }
 
         setIsInitialized(true);
 
         GlobalErrorHandler.logDebug(
-          'Background notifications initialized',
-          'useBackgroundNotifications',
+          "Background notifications initialized",
+          "useBackgroundNotifications",
           {
             userId: user.id,
             rhythm: preferences.rhythm,
             streaksEnabled: preferences.streaksEnabled,
-          }
+          },
         );
       } catch (error) {
         GlobalErrorHandler.logError(
           error,
-          'useBackgroundNotifications.initialize'
+          "useBackgroundNotifications.initialize",
         );
       } finally {
         setIsProcessing(false);
@@ -60,23 +73,9 @@ export function useBackgroundNotifications() {
     };
 
     initializeBackgroundTasks();
-  }, [user, preferences, preferencesLoading]);
+  }, [user, settings]);
 
-  useEffect(() => {
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'active' && isInitialized) {
-        checkAndProcessNotifications();
-      }
-    };
-
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
-
-    return () => {
-      subscription.remove();
-    };
-  }, [isInitialized]);
-
-  const checkAndProcessNotifications = async () => {
+  const checkAndProcessNotifications = useCallback(async () => {
     if (isProcessing) return;
 
     try {
@@ -86,35 +85,29 @@ export function useBackgroundNotifications() {
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        'useBackgroundNotifications.checkAndProcessNotifications'
+        "useBackgroundNotifications.checkAndProcessNotifications",
       );
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [isProcessing]);
 
-  const updatePreferences = async (newPreferences: NotificationPreferences) => {
-    if (!isInitialized || isProcessing) return;
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (nextAppState === "active" && isInitialized) {
+        checkAndProcessNotifications();
+      }
+    };
 
-    try {
-      setIsProcessing(true);
-      const taskManager = BackgroundTaskManager.getInstance();
-      await taskManager.updatePreferences(newPreferences);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange,
+    );
 
-      GlobalErrorHandler.logDebug(
-        'Notification preferences updated',
-        'useBackgroundNotifications.updatePreferences',
-        { rhythm: newPreferences.rhythm }
-      );
-    } catch (error) {
-      GlobalErrorHandler.logError(
-        error,
-        'useBackgroundNotifications.updatePreferences'
-      );
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+    return () => {
+      subscription.remove();
+    };
+  }, [isInitialized, checkAndProcessNotifications]);
 
   const scheduleTestNotification = async () => {
     if (!isInitialized || !user) return;
@@ -128,23 +121,23 @@ export function useBackgroundNotifications() {
 
       await taskManager.scheduleNotification({
         id: `test-${Date.now()}`,
-        type: 'test',
+        type: "test",
         scheduledFor: testDate,
         userId: user.id,
-        title: '🎯 Test Notification',
-        body: 'This is a test notification scheduled for 10 seconds from now.',
+        title: "🎯 Test Notification",
+        body: "This is a test notification scheduled for 10 seconds from now.",
         data: { test: true },
       });
 
       GlobalErrorHandler.logDebug(
-        'Test notification scheduled',
-        'useBackgroundNotifications.scheduleTestNotification',
-        { scheduledFor: testDate.toISOString() }
+        "Test notification scheduled",
+        "useBackgroundNotifications.scheduleTestNotification",
+        { scheduledFor: testDate.toISOString() },
       );
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        'useBackgroundNotifications.scheduleTestNotification'
+        "useBackgroundNotifications.scheduleTestNotification",
       );
     } finally {
       setIsProcessing(false);
@@ -160,13 +153,13 @@ export function useBackgroundNotifications() {
       await taskManager.cancelAllNotifications();
 
       GlobalErrorHandler.logDebug(
-        'All notifications cancelled',
-        'useBackgroundNotifications.cancelAllNotifications'
+        "All notifications cancelled",
+        "useBackgroundNotifications.cancelAllNotifications",
       );
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
-        'useBackgroundNotifications.cancelAllNotifications'
+        "useBackgroundNotifications.cancelAllNotifications",
       );
     } finally {
       setIsProcessing(false);
@@ -176,7 +169,6 @@ export function useBackgroundNotifications() {
   return {
     isInitialized,
     isProcessing,
-    updatePreferences,
     scheduleTestNotification,
     cancelAllNotifications,
     checkAndProcessNotifications,

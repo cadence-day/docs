@@ -1,7 +1,7 @@
 import { COLORS } from "@/shared/constants/COLORS";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
+import { RelativePathString, router } from "expo-router";
 import React, { useCallback, useEffect, useRef } from "react";
 import {
   Animated,
@@ -147,7 +147,7 @@ const Toast: React.FC<ToastProps> = ({
     if (onPress) {
       onPress();
     } else if (href) {
-      router.push(href);
+      router.push(href as RelativePathString);
     }
     // Optionally dismiss toast after navigation
     if (href || onPress) {

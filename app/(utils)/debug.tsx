@@ -48,6 +48,11 @@ const StoreStateDisplay = ({
 };
 
 const DebugScreen = () => {
+  const activityCategoriesState = useActivityCategoriesStore();
+  const activitiesState = useActivitiesStore();
+  const notesState = useNotesStore();
+  const statesState = useStatesStore();
+  const timeslicesState = useTimeslicesStore();
   const isDev = typeof __DEV__ !== "undefined" ? __DEV__ : false;
 
   if (!isDev) {
@@ -64,11 +69,6 @@ const DebugScreen = () => {
       </View>
     );
   }
-  const activityCategoriesState = useActivityCategoriesStore();
-  const activitiesState = useActivitiesStore();
-  const notesState = useNotesStore();
-  const statesState = useStatesStore();
-  const timeslicesState = useTimeslicesStore();
 
   const showSessionInfo = async () => {
     const {
