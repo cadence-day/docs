@@ -1,4 +1,4 @@
-import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
+import { checkAndPromptEncryptionLinking } from "@/features/encryption/utils/detectNewDevice";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";

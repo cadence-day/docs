@@ -230,10 +230,7 @@ export default function BugReportScreen() {
             >
               <View style={styles.noteContainerStyle}>
                 <TextInput
-                  style={[
-                    styles.noteInputStyle,
-                    { minHeight: 120, paddingRight: 16 },
-                  ]}
+                  style={[styles.noteInputStyle, styles.descriptionInputStyle]}
                   value={description}
                   onChangeText={setDescription}
                   placeholder={t("describe-what-happened-in-deta")}
@@ -260,7 +257,7 @@ export default function BugReportScreen() {
             >
               <View style={styles.noteContainerStyle}>
                 <TextInput
-                  style={[styles.noteInputStyle, { minHeight: 80 }]}
+                  style={[styles.noteInputStyle, styles.stepsInputStyle]}
                   value={stepsToReproduce}
                   onChangeText={setStepsToReproduce}
                   placeholder={t("steps-to-reproduce-optional")}
@@ -355,11 +352,7 @@ export default function BugReportScreen() {
             onPress={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"
-            style={{
-              borderColor: COLORS.primary,
-              marginHorizontal: 24,
-              marginBottom: 32,
-            }}
+            style={styles.SubmitButtonStyle}
             textStyle={{ color: COLORS.primary }}
           />
         </ScrollView>
@@ -431,26 +424,17 @@ const styles = StyleSheet.create({
     minHeight: 60,
     textAlignVertical: "top" as const,
   },
+  descriptionInputStyle: {
+    minHeight: 120,
+    paddingRight: 16,
+  },
+  stepsInputStyle: {
+    minHeight: 80,
+  },
   infoTextStyle: {
     fontSize: 14,
     color: "#000000",
     lineHeight: 20,
-  },
-  submitButtonStyle: {
-    marginTop: 32,
-    marginHorizontal: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    backgroundColor: "#6366F1",
-    borderRadius: 8,
-    alignItems: "center" as const,
-  },
-  submitButtonDisabledStyle: {
-    backgroundColor: "#AAAAAA",
-  },
-  submitButtonTextStyle: {
-    color: "#FFFFFF",
-    fontSize: 16,
   },
   backButton: {
     flexDirection: "row",
@@ -461,6 +445,11 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontSize: 16,
     marginLeft: 4,
+  },
+  SubmitButtonStyle: {
+    borderColor: COLORS.primary,
+    marginHorizontal: 24,
+    marginBottom: 32,
   },
   infoContainer: {
     flexDirection: "row",

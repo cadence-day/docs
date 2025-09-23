@@ -8,25 +8,24 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { useToast } from "../../shared/hooks";
 
 export default function NotificationsSettings() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { showError, showSuccess, showInfo } = useToast();
   const { settings, updateSettings } = useProfileStore();
   const {
     preferences,
     updatePreferences,
     permissionStatus,
     requestPermissions,
-    isInitialized,
-    isLoading,
   } = useNotifications();
 
   const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(
@@ -60,9 +59,11 @@ export default function NotificationsSettings() {
     // If all notifications are disabled, disable push notifications too
     if (allDisabled && pushNotificationsEnabled) {
       setPushNotificationsEnabled(false);
-      Alert.alert(
-        t("push-notifications-disabled"),
-        t("since-all-notification-types-a")
+      // Inform the user via toast instead of blocking alert
+      showInfo?.(
+        t("push-notifications-disabled") +
+          "\n" +
+          t("since-all-notification-types-a")
       );
     }
 
@@ -128,26 +129,19 @@ export default function NotificationsSettings() {
             streaksEnabled: true,
           });
 
-          Alert.alert(t("success"), t("push-notifications-have-been-e"));
+          showSuccess?.(t("push-notifications-have-been-e"));
         } else {
-          Alert.alert(
-            t("permission-required"),
-            t("push-notification-permissions")
+          showInfo?.(
+            t("permission-required") + "\n" + t("push-notification-permissions")
           );
         }
       } catch (error) {
-        Alert.alert(t("common.error"), t("failed-to-enable-push-notifica"));
+        showError(error instanceof Error ? error.message : String(error)); // Show error toast
       }
     } else {
       setPushNotificationsEnabled(false);
-      Alert.alert(t("disabled"), t("push-notifications-have-been-d"));
+      showInfo?.(t("push-notifications-have-been-d"));
     }
-  };
-
-  const openSystemSettings = () => {
-    Alert.alert(t("system-settings"), t("to-modify-notification-permiss"), [
-      { text: "OK", style: "default" },
-    ]);
   };
 
   return (
@@ -275,9 +269,10 @@ export default function NotificationsSettings() {
                         if (timeRegex.test(newTime)) {
                           updatePreferences({ middayTime: newTime });
                         } else {
-                          Alert.alert(
-                            t("invalid-time"),
-                            t("please-enter-time-in-hh-mm-for")
+                          showInfo?.(
+                            t("invalid-time") +
+                              "\n" +
+                              t("please-enter-time-in-hh-mm-for")
                           );
                         }
                       }}
@@ -296,9 +291,10 @@ export default function NotificationsSettings() {
                         if (timeRegex.test(newTime)) {
                           updatePreferences({ eveningTimeStart: newTime });
                         } else {
-                          Alert.alert(
-                            t("invalid-time"),
-                            t("please-enter-time-in-hh-mm-for-0")
+                          showInfo?.(
+                            t("invalid-time") +
+                              "\n" +
+                              t("please-enter-time-in-hh-mm-for-0")
                           );
                         }
                       }}

@@ -1,4 +1,3 @@
-import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Camera, CameraView } from "expo-camera";
 import { Stack, useRouter } from "expo-router";
@@ -31,7 +30,6 @@ import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 export default function EncryptionSettings() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { user } = useUser();
   const { toast, showError, showSuccess, hideToast } = useToast();
 
   const [hasKeyOnDevice, setHasKeyOnDevice] = useState<boolean>(false);
@@ -43,17 +41,12 @@ export default function EncryptionSettings() {
   const [isLinking, setIsLinking] = useState(false);
   const [scanned, setScanned] = useState(false);
 
-  useEffect(() => {
-    checkEncryptionStatus();
-    requestCameraPermission();
-  }, []);
-
-  const requestCameraPermission = async () => {
+  const requestCameraPermission = React.useCallback(async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     setHasPermission(status === "granted");
-  };
+  }, []);
 
-  const checkEncryptionStatus = async () => {
+  const checkEncryptionStatus = React.useCallback(async () => {
     try {
       const hasKey = await hasEncryptionKey();
       setHasKeyOnDevice(hasKey);
@@ -74,7 +67,12 @@ export default function EncryptionSettings() {
       );
       showError(t("failed-to-check-encryption-sta"));
     }
-  };
+  }, [showError, t]);
+
+  useEffect(() => {
+    checkEncryptionStatus();
+    requestCameraPermission();
+  }, [checkEncryptionStatus, requestCameraPermission]);
 
   const handleScanQRCode = () => {
     if (hasPermission === null) {
@@ -92,13 +90,7 @@ export default function EncryptionSettings() {
     setShowScanner(true);
   };
 
-  const handleBarCodeScanned = async ({
-    type,
-    data,
-  }: {
-    type: string;
-    data: string;
-  }) => {
+  const handleBarCodeScanned = async ({ data }: { data: string }) => {
     if (scanned) return;
 
     setScanned(true);
@@ -113,7 +105,6 @@ export default function EncryptionSettings() {
       }
 
       setIsLinking(true);
-      const { fingerprint } = await importEncryptionKey(data);
 
       showSuccess(t("key-imported-successfully-fing"));
       await checkEncryptionStatus();
