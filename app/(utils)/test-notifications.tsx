@@ -6,8 +6,7 @@ import { notificationEngineSingleton } from "@/shared/notifications/Notification
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
-import { Ionicons } from "@expo/vector-icons";
-import { Stack, router } from "expo-router";
+import { router, Stack } from "expo-router";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -319,19 +318,17 @@ export default function TestNotifications() {
     <>
       <Stack.Screen
         options={{
-          title: t("profile.development.test-notifications"),
           headerShown: true,
+          title: t("profile.development.test-notifications"),
           headerStyle: {
-            backgroundColor: COLORS.light.background,
+            backgroundColor: "transparent",
           },
-          headerShadowVisible: true,
           headerLeft: () => (
             <TouchableOpacity
-              onPress={() => router.push("/profile")}
               style={styles.backButton}
+              onPress={() => router.push("/profile")}
             >
-              <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
-              <Text style={styles.backText}>{t("settings.back")}</Text>
+              <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
           ),
         }}
@@ -587,16 +584,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 20,
   },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-  },
-  backText: {
-    color: COLORS.primary,
-    fontSize: 16,
-    marginLeft: 4,
-  },
   statusCard: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -638,6 +625,16 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 12,
     color: "#333",
+  },
+  backButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    marginRight: 12,
+    borderRadius: 6,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: "#007AFF",
   },
   button: {
     backgroundColor: "#007bff",

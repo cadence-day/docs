@@ -9,7 +9,6 @@ export default function UtilsLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        headerTransparent: true,
       }}
     />
   );

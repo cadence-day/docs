@@ -1,4 +1,3 @@
-import { CdButton } from "@/shared/components/CadenceUI/CdButton";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
@@ -21,6 +20,7 @@ import {
   View,
 } from "react-native";
 import { GlobalErrorHandler } from "../../../shared/utils/errorHandler";
+import DebugPanel from "../../debug/components/DebugPanel";
 import { ProfileImageService } from "../services/ProfileImageService";
 import { ProfileUpdateService } from "../services/ProfileUpdateService";
 import { useProfileStore } from "../stores/useProfileStore";
@@ -588,39 +588,13 @@ export const ProfileScreen: React.FC = () => {
         />
       </View>
 
-      {/* Developer Section */}
-      <View style={profileStyles.developerSection}>
-        {isDev && (
-          <View style={[profileStyles.settingsSection, { marginTop: 12 }]}>
-            <Text style={profileStyles.sectionTitle}>
-              {t("profile.developer.section-title")}
-            </Text>
-            <CdButton
-              title={t("profile.developer.show-onboarding")}
-              onPress={handleShowOnboardingDebug}
-              variant="outline"
-              style={{ marginBottom: 8, borderColor: COLORS.primary }}
-              textStyle={{ color: COLORS.primary }}
-            />
-            <CdButton
-              title={t("profile.developer.open-debug-page")}
-              onPress={handleOpenDebugPage}
-              variant="outline"
-              style={{ marginBottom: 8, borderColor: COLORS.primary }}
-              textStyle={{ color: COLORS.primary }}
-            />
-            <CdButton
-              title={t("profile.developer.test-notification")}
-              onPress={() => {
-                router.push("/settings/test-notifications");
-              }}
-              variant="outline"
-              style={{ borderColor: COLORS.primary }}
-              textStyle={{ color: COLORS.primary }}
-            />
-          </View>
-        )}
-      </View>
+      {/* Debug Section */}
+      {isDev && (
+        <View style={profileStyles.settingsSection}>
+          <Text style={profileStyles.sectionTitle}>Debug</Text>
+          <DebugPanel />
+        </View>
+      )}
     </ScrollView>
   );
 };
