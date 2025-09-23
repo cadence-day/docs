@@ -1,17 +1,118 @@
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import * as CryptoJS from "crypto-js";
 import * as Crypto from "expo-crypto";
 import * as SecureStore from "expo-secure-store";
-import * as CryptoJS from "crypto-js";
 
 // Constants for encryption
 const ENCRYPTION_KEY_NAME = "cadence_app_encryption_key";
-const KEY_SIZE = 256; // AES-256
-const ALGORITHM = "AES";
-const IV_BYTES = 16; // AES block size in bytes (128 bits)
 const ENCRYPTED_PREFIX = "enc:"; // Prefix to identify encrypted strings
 
 // Export the prefix for external use if needed
 export { ENCRYPTED_PREFIX };
+
+// Global callback for encrypted data detection
+let onEncryptedDataDetected: (() => void) | null = null;
+
+// Global callback for encryption key changes
+let onEncryptionKeyChanged: (() => Promise<void>) | null = null;
+
+/**
+ * Set a callback to be called when encrypted data is detected
+ * This is used by the EncryptionProvider to be notified when encrypted data is found
+ */
+export function setEncryptedDataDetectedCallback(
+  callback: (() => void) | null,
+): void {
+  onEncryptedDataDetected = callback;
+}
+
+/**
+ * Set a callback to be called when encryption key changes
+ * This is used by the EncryptionProvider to refresh stores when keys change
+ */
+export function setEncryptionKeyChangedCallback(
+  callback: (() => Promise<void>) | null,
+): void {
+  onEncryptionKeyChanged = callback;
+}
+
+/**
+ * Trigger the encrypted data detected callback
+ * This should be called when encrypted data is found in the API responses
+ */
+export function triggerEncryptedDataDetected(): void {
+  if (onEncryptedDataDetected) {
+    try {
+      onEncryptedDataDetected();
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "ENCRYPTION_DATA_DETECTED_CALLBACK_FAILED",
+        {},
+      );
+    }
+  }
+}
+
+/**
+ * Trigger the encryption key changed callback
+ * This should be called when encryption key is imported or changes
+ */
+export async function triggerEncryptionKeyChanged(): Promise<void> {
+  if (onEncryptionKeyChanged) {
+    try {
+      await onEncryptionKeyChanged();
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "ENCRYPTION_KEY_CHANGED_CALLBACK_FAILED",
+        {},
+      );
+    }
+  }
+}
+
+/**
+ * Function to refresh all stores when encryption key changes
+ * This is called automatically from the core when keys are imported or changed
+ */
+export async function refreshAllStoresFromCore(): Promise<void> {
+  try {
+    GlobalErrorHandler.logWarning(
+      "Refreshing all stores due to encryption key change (from core)",
+      "ENCRYPTION_CORE_STORE_REFRESH",
+      {},
+    );
+
+    // Dynamic import to avoid circular dependencies
+    const stores = await import("@/shared/stores/resources");
+
+    // Get all store instances and call their refresh methods
+    const storeRefreshPromises = [
+      stores.useActivitiesStore.getState().refresh(),
+      stores.useActivityCategoriesStore.getState().refresh(),
+      // Note: For notes and other user-specific stores, we'll refresh them too
+      // The stores should handle the case where user context isn't available
+    ];
+
+    await Promise.allSettled(storeRefreshPromises);
+
+    GlobalErrorHandler.logWarning(
+      "All stores refreshed successfully (from core)",
+      "ENCRYPTION_CORE_STORE_REFRESH_COMPLETE",
+      {},
+    );
+
+    // Also trigger the callback if set
+    await triggerEncryptionKeyChanged();
+  } catch (error) {
+    GlobalErrorHandler.logError(
+      error,
+      "ENCRYPTION_CORE_STORE_REFRESH_FAILED",
+      {},
+    );
+  }
+}
 
 /**
  * Simple XOR encryption with base64 encoding
@@ -22,7 +123,7 @@ export { ENCRYPTED_PREFIX };
 function xorEncrypt(text: string, key: string): string {
   const textBytes = new TextEncoder().encode(text);
   const keyBytes = new Uint8Array(
-    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)),
   );
 
   const encrypted = new Uint8Array(textBytes.length);
@@ -45,11 +146,11 @@ function xorDecrypt(encryptedBase64: string, key: string): string {
   const encrypted = new Uint8Array(
     atob(encryptedBase64)
       .split("")
-      .map((char) => char.charCodeAt(0))
+      .map((char) => char.charCodeAt(0)),
   );
 
   const keyBytes = new Uint8Array(
-    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)),
   );
 
   const decrypted = new Uint8Array(encrypted.length);
@@ -89,7 +190,7 @@ async function generateRandomKey(): Promise<string> {
     GlobalErrorHandler.logWarning(
       "Expo crypto random failed, using fallback generator",
       "encryption.generateRandomKey",
-      { error }
+      { error },
     );
     // Fallback to pseudo-random generation when native crypto is unavailable
     return generateFallbackRandomString(64); // 64 chars = 256 bits in hex
@@ -102,7 +203,7 @@ async function generateRandomKey(): Promise<string> {
 export class EncryptionError extends Error {
   constructor(
     message: string,
-    public originalError?: any
+    public originalError?: any,
   ) {
     super(`[Encryption] ${message}`);
     this.name = "EncryptionError";
@@ -122,7 +223,7 @@ export function getKeyFingerprint(key: string, length: number = 8): string {
     GlobalErrorHandler.logWarning(
       "Failed to compute key fingerprint",
       "encryption.getKeyFingerprint",
-      {}
+      {},
     );
     return "";
   }
@@ -204,7 +305,7 @@ export async function getEncryptionKeyWithSource(): Promise<{
     GlobalErrorHandler.logError(
       error,
       "ENCRYPTION_GET_KEY_WITH_SOURCE_FAILED",
-      {}
+      {},
     );
     const ephemeral = await generateRandomKey();
     return { key: ephemeral, source: "ephemeral" };
@@ -238,7 +339,7 @@ export async function importEncryptionKey(key: string): Promise<{
     const isValid = /^[0-9a-f]{64}$/.test(normalized);
     if (!isValid) {
       throw new EncryptionError(
-        "Invalid key format. Expected 64 hex characters"
+        "Invalid key format. Expected 64 hex characters",
       );
     }
 
@@ -247,8 +348,12 @@ export async function importEncryptionKey(key: string): Promise<{
     GlobalErrorHandler.logWarning(
       `Encryption key imported (fp=${fp})`,
       "encryption.importEncryptionKey",
-      { fp }
+      { fp },
     );
+
+    // Automatically refresh all stores when a new key is imported
+    await refreshAllStoresFromCore();
+
     return { fingerprint: fp };
   } catch (error) {
     GlobalErrorHandler.logError(error, "ENCRYPTION_IMPORT_KEY_FAILED", {});
@@ -269,7 +374,7 @@ export async function importEncryptionKey(key: string): Promise<{
  */
 export async function encryptString(
   plaintext: string,
-  allowFallback: boolean = false
+  allowFallback: boolean = false,
 ): Promise<string> {
   if (!plaintext || typeof plaintext !== "string") {
     return plaintext; // Return as-is if invalid input
@@ -287,7 +392,7 @@ export async function encryptString(
       "encryption.encryptString",
       {
         length: keyHex?.length,
-      }
+      },
     );
 
     // Use simple XOR encryption with base64 encoding
@@ -303,7 +408,7 @@ export async function encryptString(
       GlobalErrorHandler.logWarning(
         "Encryption fallback: returning plaintext due to error",
         "encryption.encryptString",
-        {}
+        {},
       );
       return plaintext;
     }
@@ -326,12 +431,15 @@ export async function decryptString(encryptedData: string): Promise<string> {
     return encryptedData; // Not encrypted, return as-is
   }
 
+  // Trigger encrypted data detection callback
+  triggerEncryptedDataDetected();
+
   try {
     const keyHex = await getEncryptionKey();
 
     // Remove the prefix before decrypting
     const encryptedDataWithoutPrefix = encryptedData.substring(
-      ENCRYPTED_PREFIX.length
+      ENCRYPTED_PREFIX.length,
     );
 
     // Use simple XOR decryption
@@ -374,7 +482,7 @@ export async function clearEncryptionKey(): Promise<void> {
       GlobalErrorHandler.logError(
         secureErr,
         "ENCRYPTION_CLEAR_SECURESTORE_FAILED",
-        {}
+        {},
       );
     }
     // We purposely removed AsyncStorage cleanup — the key should only be in SecureStore.
@@ -408,6 +516,36 @@ export function isEncrypted(value: string): boolean {
 }
 
 /**
+ * Format encrypted text for display purposes
+ * @param value The text to format
+ * @param showAsStars Whether to show as stars (*) or truncated binary
+ * @param isVisualizationMode Whether visualization mode is enabled
+ * @returns The formatted text for display
+ */
+export function formatEncryptedText(
+  value: string,
+  showAsStars: boolean = true,
+  isVisualizationMode: boolean = false,
+): string {
+  if (!isVisualizationMode || !isEncrypted(value)) {
+    return value;
+  }
+
+  if (showAsStars) {
+    // Show as asterisks - create a reasonable length based on content
+    const baseLength = Math.min(Math.max(8, Math.floor(value.length / 4)), 20);
+    return "*".repeat(baseLength);
+  } else {
+    // Show truncated encrypted content with prefix
+    const encryptedContent = value.substring(ENCRYPTED_PREFIX.length);
+    const truncated = encryptedContent.length > 16
+      ? `${encryptedContent.substring(0, 16)}...`
+      : encryptedContent;
+    return `${ENCRYPTED_PREFIX}${truncated}`;
+  }
+}
+
+/**
  * Check if encryption key exists
  * @returns Promise<boolean> True if key exists, false otherwise
  */
@@ -415,7 +553,7 @@ export async function hasEncryptionKey(): Promise<boolean> {
   try {
     const key = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
     return !!key;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -432,7 +570,7 @@ export async function hasEncryptionKey(): Promise<boolean> {
  * both the encryption utilities and the API resources.
  */
 export async function rotateEncryptionKeyAndReEncryptData(
-  userId: string
+  userId: string,
 ): Promise<void> {
   try {
     // Dynamic import to avoid circular dependency at module load time.
@@ -462,7 +600,7 @@ export async function rotateEncryptionKeyAndReEncryptData(
     });
     throw new EncryptionError(
       "Failed to rotate encryption key and re-encrypt data",
-      error
+      error,
     );
   }
 }

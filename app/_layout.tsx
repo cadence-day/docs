@@ -1,4 +1,4 @@
-import { NetworkProvider } from "@/shared/context";
+import { EncryptionProvider, NetworkProvider } from "@/shared/context";
 import i18n from "@/shared/locales";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
@@ -119,16 +119,18 @@ const RootLayout = function RootLayout() {
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <I18nextProvider i18n={i18n}>
           <NetworkProvider>
-            <ToastProvider>
-              <ClerkProvider
-                publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-                tokenCache={tokenCache}
-              >
-                <NotificationProvider>
-                  <Slot />
-                </NotificationProvider>
-              </ClerkProvider>
-            </ToastProvider>
+            <EncryptionProvider>
+              <ToastProvider>
+                <ClerkProvider
+                  publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+                  tokenCache={tokenCache}
+                >
+                  <NotificationProvider>
+                    <Slot />
+                  </NotificationProvider>
+                </ClerkProvider>
+              </ToastProvider>
+            </EncryptionProvider>
           </NetworkProvider>
           <StatusBar style="auto" />
         </I18nextProvider>
