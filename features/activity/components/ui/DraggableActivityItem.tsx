@@ -1,8 +1,15 @@
 import { DraggableActivityItemProps } from "@/features/activity/types";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import React, { useEffect, useRef } from "react";
-import { Animated, PanResponder, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useMemo, useRef } from "react";
+import {
+  Animated,
+  PanResponder,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 import {
   createShakeTransform,
   startShakeAnimation,
@@ -58,29 +65,71 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
     return () => {
       stopShakeAnimation(shakeAnim, rotationAnim);
     };
-  }, [isShakeMode, isBeingDragged, index]);
+  }, [isShakeMode, isBeingDragged, index, shakeAnim, rotationAnim]);
 
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: (evt, gestureState) => {
-      return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
-    },
-    onPanResponderGrant: () => {
-      if (activity.id) {
-        onDragStart(activity.id);
-      }
-      onPlaceholderChange(null);
+  // Memoize PanResponder so it's not recreated every render
+  const panResponder = useMemo(() => {
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
+      },
+      onPanResponderGrant: () => {
+        if (activity.id) {
+          onDragStart(activity.id);
+        }
+        onPlaceholderChange(null);
 
-      // Stop shake animation for dragged item
-      stopShakeAnimation(shakeAnim, rotationAnim);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    },
-    onPanResponderMove: (evt, gestureState) => {
-      // Update drag animation smoothly
-      dragAnimation.setValue({ x: gestureState.dx, y: gestureState.dy });
+        // Stop shake animation for dragged item
+        stopShakeAnimation(shakeAnim, rotationAnim);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        // Update drag animation smoothly
+        dragAnimation.setValue({ x: gestureState.dx, y: gestureState.dy });
 
-      // Only update placeholder position if dragged far enough to avoid jitter
-      if (Math.abs(gestureState.dx) > 20 || Math.abs(gestureState.dy) > 20) {
+        // Only update placeholder position if dragged far enough to avoid jitter
+        if (Math.abs(gestureState.dx) > 20 || Math.abs(gestureState.dy) > 20) {
+          if (arrayIndex !== -1) {
+            // Use the visual index for drag calculations
+            // The total grid size should include all positions including the "Add Activity" button if present
+            const totalGridPositions =
+              activityOrder.length + (index > arrayIndex ? 1 : 0);
+
+            const newVisualIndex = calculateGridPositionFromDrag(
+              gestureState.dx,
+              gestureState.dy,
+              index, // Use visual index
+              containerWidth,
+              resolvedGridConfig,
+              totalGridPositions
+            );
+
+            // Throttle placeholder updates to reduce jitter
+            const now = Date.now();
+            if (
+              newVisualIndex !== index &&
+              newVisualIndex !== dragPlaceholderIndex &&
+              now - lastUpdateTimeRef.current > 100
+            ) {
+              onPlaceholderChange(newVisualIndex);
+              lastUpdateTimeRef.current = now;
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }
+          }
+        }
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        const wasBeingDragged = draggedActivityId === activity.id;
+        onDragEnd();
+        onPlaceholderChange(null);
+
+        // Restart shake animation for the item that was being dragged
+        if (wasBeingDragged && isShakeMode) {
+          startShakeAnimation(shakeAnim, rotationAnim);
+        }
+
+        // Apply reordering if position changed
         if (arrayIndex !== -1) {
           // Use the visual index for drag calculations
           // The total grid size should include all positions including the "Add Activity" button if present
@@ -96,150 +145,128 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
             totalGridPositions
           );
 
-          // Throttle placeholder updates to reduce jitter
-          const now = Date.now();
+          // Convert visual index back to array index for reordering
+          // If there's an offset (Add Activity button), subtract 1 from positions > 0
+          const newArrayIndex =
+            index > arrayIndex
+              ? Math.max(0, newVisualIndex - 1)
+              : newVisualIndex;
+
           if (
-            newVisualIndex !== index &&
-            newVisualIndex !== dragPlaceholderIndex &&
-            now - lastUpdateTimeRef.current > 100
+            newArrayIndex !== arrayIndex &&
+            newArrayIndex < activityOrder.length
           ) {
-            onPlaceholderChange(newVisualIndex);
-            lastUpdateTimeRef.current = now;
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            onReorder(arrayIndex, newArrayIndex);
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           }
         }
-      }
-    },
-    onPanResponderRelease: (evt, gestureState) => {
-      const wasBeingDragged = draggedActivityId === activity.id;
-      onDragEnd();
-      onPlaceholderChange(null);
 
-      // Restart shake animation for the item that was being dragged
-      if (wasBeingDragged && isShakeMode) {
-        startShakeAnimation(shakeAnim, rotationAnim);
-      }
+        // Smooth reset animation
+        Animated.spring(dragAnimation, {
+          toValue: { x: 0, y: 0 },
+          useNativeDriver: false,
+          tension: 300,
+          friction: 10,
+          velocity: { x: 0, y: 0 },
+        }).start();
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    activity.id,
+    arrayIndex,
+    activityOrder.length,
+    containerWidth,
+    index,
+    dragPlaceholderIndex,
+    draggedActivityId,
+    isShakeMode,
+    onDisableActivity,
+    onDragEnd,
+    onDragStart,
+    onPlaceholderChange,
+    onReorder,
+    resolvedGridConfig,
+    // shakeAnim, rotationAnim, dragAnimation refs don't need to be in deps
+  ]);
 
-      // Apply reordering if position changed
-      if (arrayIndex !== -1) {
-        // Use the visual index for drag calculations
-        // The total grid size should include all positions including the "Add Activity" button if present
-        const totalGridPositions =
-          activityOrder.length + (index > arrayIndex ? 1 : 0);
+  // Memoized style objects to avoid inline style warnings
+  const containerStyle: Animated.AnimatedStyleProp<ViewStyle> = useMemo(
+    () => ({
+      position: "absolute",
+      top:
+        position.row * (GRID_CONSTANTS.ITEM_HEIGHT + GRID_CONSTANTS.GRID_GAP),
+      left: `${position.col * (100 / columns)}%`,
+      width: itemWidth,
+      height: GRID_CONSTANTS.ITEM_HEIGHT,
+      opacity: isBeingDragged ? 0.1 : 1,
+      zIndex: isBeingDragged ? 1000 : 10,
+    }),
+    [position.row, position.col, columns, itemWidth, isBeingDragged]
+  );
 
-        const newVisualIndex = calculateGridPositionFromDrag(
-          gestureState.dx,
-          gestureState.dy,
-          index, // Use visual index
-          containerWidth,
-          resolvedGridConfig,
-          totalGridPositions
-        );
+  const shakeWrapperStyle: Animated.AnimatedStyleProp<ViewStyle> = useMemo(
+    () => ({
+      flex: 1,
+      transform: isBeingDragged
+        ? []
+        : (createShakeTransform(shakeAnim, rotationAnim) as any),
+    }),
+    [isBeingDragged, shakeAnim, rotationAnim]
+  );
 
-        // Convert visual index back to array index for reordering
-        // If there's an offset (Add Activity button), subtract 1 from positions > 0
-        const newArrayIndex =
-          index > arrayIndex ? Math.max(0, newVisualIndex - 1) : newVisualIndex;
+  const dragInnerStyle: Animated.AnimatedStyleProp<ViewStyle> = useMemo(
+    () => ({
+      flex: 1,
+      transform: isBeingDragged
+        ? ([...dragAnimation.getTranslateTransform(), { scale: 1.1 }] as any)
+        : [],
+      opacity: 1,
+      zIndex: isBeingDragged ? 2000 : 1,
+      elevation: isBeingDragged ? 10 : 0,
+      shadowColor: isBeingDragged ? "#000" : "transparent",
+      shadowOffset: isBeingDragged
+        ? { width: 0, height: 8 }
+        : { width: 0, height: 0 },
+      shadowOpacity: isBeingDragged ? 0.4 : 0,
+      shadowRadius: isBeingDragged ? 12 : 0,
+      justifyContent: "center",
+      alignItems: "center",
+    }),
+    [isBeingDragged, dragAnimation]
+  );
 
-        if (
-          newArrayIndex !== arrayIndex &&
-          newArrayIndex < activityOrder.length
-        ) {
-          onReorder(arrayIndex, newArrayIndex);
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        }
-      }
-
-      // Smooth reset animation
-      Animated.spring(dragAnimation, {
-        toValue: { x: 0, y: 0 },
-        useNativeDriver: false,
-        tension: 300,
-        friction: 10,
-        velocity: { x: 0, y: 0 },
-      }).start();
-    },
-  });
+  const deleteButtonStyle: Animated.AnimatedStyleProp<ViewStyle> = useMemo(
+    () => ({
+      position: "absolute",
+      top: -8,
+      left: -8,
+      zIndex: 1001,
+      transform: isBeingDragged
+        ? ([...dragAnimation.getTranslateTransform(), { scale: 1.05 }] as any)
+        : [],
+    }),
+    [isBeingDragged, dragAnimation]
+  );
 
   return (
-    <View
-      style={{
-        position: "absolute",
-        top:
-          position.row * (GRID_CONSTANTS.ITEM_HEIGHT + GRID_CONSTANTS.GRID_GAP),
-        left: `${position.col * (100 / columns)}%`,
-        width: itemWidth as any,
-        height: GRID_CONSTANTS.ITEM_HEIGHT,
-        opacity: isBeingDragged ? 0.1 : 1,
-        zIndex: isBeingDragged ? 1000 : 10,
-      }}
-    >
-      <Animated.View
-        style={{
-          flex: 1,
-          transform: isBeingDragged
-            ? []
-            : createShakeTransform(shakeAnim, rotationAnim),
-        }}
-      >
-        <Animated.View
-          {...panResponder.panHandlers}
-          style={{
-            flex: 1,
-            transform: isBeingDragged
-              ? [...dragAnimation.getTranslateTransform(), { scale: 1.1 }]
-              : [],
-            opacity: isBeingDragged ? 1 : 1,
-            zIndex: isBeingDragged ? 2000 : 1,
-            elevation: isBeingDragged ? 10 : 0,
-            shadowColor: isBeingDragged ? "#000" : "transparent",
-            shadowOffset: isBeingDragged
-              ? { width: 0, height: 8 }
-              : { width: 0, height: 0 },
-            shadowOpacity: isBeingDragged ? 0.4 : 0,
-            shadowRadius: isBeingDragged ? 12 : 0,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+    <View style={containerStyle}>
+      <Animated.View style={shakeWrapperStyle}>
+        <Animated.View {...panResponder.panHandlers} style={dragInnerStyle}>
           <ActivityBox
             activity={activity}
             onPress={() => onActivityPress(activity)}
             boxWidth="100%"
-            style={{ paddingHorizontal: 4 }}
+            style={styles.activityBoxPadding}
           />
         </Animated.View>
       </Animated.View>
 
       {/* Delete button */}
       {isShakeMode && (
-        <Animated.View
-          style={{
-            position: "absolute",
-            top: -8,
-            left: -8,
-            zIndex: 1001,
-            transform: isBeingDragged
-              ? [...dragAnimation.getTranslateTransform(), { scale: 1.05 }]
-              : [],
-          }}
-        >
+        <Animated.View style={deleteButtonStyle}>
           <TouchableOpacity
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: 12,
-              width: 20,
-              height: 20,
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-              borderColor: "#ddd",
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.2,
-              shadowRadius: 2,
-              elevation: 3,
-            }}
+            style={styles.deleteButton}
             onPress={() => activity.id && onDisableActivity(activity.id)}
             activeOpacity={0.7}
           >
@@ -250,3 +277,22 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  activityBoxPadding: { paddingHorizontal: 4 },
+  deleteButton: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    width: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+});

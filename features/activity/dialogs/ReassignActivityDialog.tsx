@@ -5,8 +5,8 @@ import { useI18n } from "@/shared/hooks/useI18n";
 import { useActivitiesStore, useDialogStore } from "@/shared/stores";
 import type { Activity } from "@/shared/types/models/activity";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
-import React, { useEffect, useMemo, useState } from "react";
-import { Text, View } from "react-native";
+import React, { useEffect, useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 type Props = {
   _dialogId?: string;
@@ -22,13 +22,14 @@ const ReassignActivityDialog: React.FC<Props> = ({
   parentDialogId,
 }) => {
   const { t } = useI18n();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const softDeleteActivity = useActivitiesStore((s) => s.softDeleteActivity);
-  const enabled = useActivitiesStore((s) => s.activities) || [];
-  const disabled = useActivitiesStore((s) => s.disabledActivities) || [];
+  const enabled = useActivitiesStore((s) => s.activities);
+  const disabled = useActivitiesStore((s) => s.disabledActivities);
 
   const candidates = useMemo(() => {
-    const combined = [...enabled, ...disabled];
+    const safeEnabled = enabled || [];
+    const safeDisabled = disabled || [];
+    const combined = [...safeEnabled, ...safeDisabled];
     return combined.filter((a) => a.id && a.id !== activity.id) as Activity[];
   }, [enabled, disabled, activity.id]);
 
@@ -74,15 +75,15 @@ const ReassignActivityDialog: React.FC<Props> = ({
           useDialogStore.getState().setDialogProps(_dialogId, {
             headerProps: {},
           });
-      } catch (e) {
+      } catch {
         // ignore
       }
     };
-  }, [_dialogId, selectedId, t]);
+  }, [_dialogId, t]);
 
   return (
-    <View style={{ flex: 1, paddingHorizontal: 8, paddingTop: 8 }}>
-      <Text style={{ marginBottom: 20, color: "#fff" }}>
+    <View style={localStyles.container}>
+      <Text style={localStyles.subtitleText}>
         {"This activity is used by timeslices. Pick a replacement:"}
       </Text>
       <GridView
@@ -93,16 +94,8 @@ const ReassignActivityDialog: React.FC<Props> = ({
         itemWidth={"25%"}
         itemHeight={96}
         gridGap={8}
-        renderItem={(a: Activity, index: number) => (
-          <View
-            key={a.id}
-            style={{
-              width: "25%",
-              height: 96,
-              marginBottom: 8,
-              paddingHorizontal: 6,
-            }}
-          >
+        renderItem={(a: Activity) => (
+          <View key={a.id} style={localStyles.gridItem}>
             <ActivityBox
               activity={a}
               onPress={() => void performReassign(a.id!)}
@@ -115,5 +108,11 @@ const ReassignActivityDialog: React.FC<Props> = ({
     </View>
   );
 };
+
+const localStyles = StyleSheet.create({
+  container: { flex: 1, paddingHorizontal: 8, paddingTop: 8 },
+  subtitleText: { marginBottom: 20, color: "#fff" },
+  gridItem: { width: "25%", height: 96, marginBottom: 8, paddingHorizontal: 6 },
+});
 
 export default ReassignActivityDialog;

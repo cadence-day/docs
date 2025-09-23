@@ -1,11 +1,11 @@
 import { styles } from "@/features/activity/styles";
 import React from "react";
-import { View, ViewStyle } from "react-native";
+import { DimensionValue, View, ViewStyle } from "react-native";
 
 interface ActivityLegendPlaceholderBoxProps {
   style?: ViewStyle;
   boxHeight?: number;
-  boxWidth?: number | `${number}%`;
+  boxWidth?: DimensionValue;
   showTitle?: boolean;
   marginBottom?: number;
 }
@@ -19,41 +19,32 @@ export const ActivityLegendPlaceholderBox: React.FC<
   showTitle = true,
   marginBottom = 8,
 }) => {
+  const boxStyle: ViewStyle = {
+    backgroundColor: "#666",
+    height: boxHeight,
+    width: boxWidth,
+    marginBottom,
+  };
+
+  const placeholderLarge: ViewStyle = {
+    width: "75%",
+    height: 10,
+    marginBottom: 4,
+  };
+
+  const placeholderSmall: ViewStyle = {
+    width: "45%",
+    height: 10,
+  };
+
   return (
     <View style={[styles.activityBoxContainer, style]}>
-      <View
-        style={[
-          styles.activityBox,
-          {
-            backgroundColor: "#666",
-            height: boxHeight,
-            width: boxWidth,
-            marginBottom: marginBottom,
-          } as ViewStyle,
-        ]}
-      />
+      <View style={[styles.activityBox, boxStyle]} />
 
       {showTitle && (
         <View style={styles.placeholderTextContainer}>
-          <View
-            style={[
-              styles.placeholderBlock,
-              {
-                width: "75%",
-                height: 10,
-                marginBottom: 4,
-              },
-            ]}
-          />
-          <View
-            style={[
-              styles.placeholderBlock,
-              {
-                width: "45%",
-                height: 10,
-              },
-            ]}
-          />
+          <View style={[styles.placeholderBlock, placeholderLarge]} />
+          <View style={[styles.placeholderBlock, placeholderSmall]} />
         </View>
       )}
     </View>
