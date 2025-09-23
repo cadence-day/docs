@@ -16,8 +16,13 @@ import {
 import { ToastType } from "@/shared/types/toast.types";
 
 interface ToastProps {
-  title: string; // Required title
-  body: string; // Required body
+  // Backwards compatible: some callers provide a single `message` string
+  message?: string;
+
+  // Preferred shape: explicit title and body
+  title?: string;
+  body?: string;
+
   type: ToastType;
   isVisible: boolean;
   onHide: () => void;
@@ -31,6 +36,8 @@ interface ToastProps {
 const { width: screenWidth } = Dimensions.get("window");
 
 const Toast: React.FC<ToastProps> = ({
+  // Accept either `message` or `title`/`body`. Prefer explicit title/body.
+  message,
   title,
   body,
   type,
@@ -41,6 +48,9 @@ const Toast: React.FC<ToastProps> = ({
   href,
   onPress,
 }) => {
+  // Resolve display values: if explicit title/body are missing, use `message` as the body.
+  const resolvedTitle = title ?? "";
+  const resolvedBody = body ?? message ?? "";
   const translateY = useRef(new Animated.Value(100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -217,10 +227,10 @@ const Toast: React.FC<ToastProps> = ({
             activeOpacity={href || onPress ? 0.7 : 1}
           >
             <Text style={styles.title} numberOfLines={1}>
-              {title}
+              {resolvedTitle}
             </Text>
             <Text style={styles.body} numberOfLines={2}>
-              {body}
+              {resolvedBody}
             </Text>
           </TouchableOpacity>
 

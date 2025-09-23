@@ -40,7 +40,7 @@ export const DialogHost: React.FC = () => {
                       useDialogStore.getState().getDialog(d.id)?.props ?? {};
                     if (typeof props.onConfirm === "function")
                       props.onConfirm();
-                  } catch (e) {
+                  } catch {
                     // ignore
                   }
                   useDialogStore.getState().closeDialog(d.id);

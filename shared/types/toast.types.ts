@@ -1,4 +1,9 @@
-export type ToastType = "success" | "error" | "warning" | "info";
+export type ToastType =
+  | "success"
+  | "error"
+  | "warning"
+  | "info"
+  | "notification"; // 'notification' is a neutral type without specific icon/color
 
 export interface ToastOptions {
   title: string; // Required title (header)
