@@ -1,6 +1,6 @@
 import type { Activity } from "@/shared/types/models/activity";
 import { useMemo } from "react";
-import type {
+import {
   calculateGridProperties,
   createDefaultGridConfig,
   GridCalculationResult,

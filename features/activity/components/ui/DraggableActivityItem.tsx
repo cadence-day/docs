@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   PanResponder,
+  StyleProp,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -48,7 +49,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
   const resolvedGridConfig = createDefaultGridConfig(gridConfig || {});
   const columns = resolvedGridConfig.columns;
   const position = getGridPosition(index, columns);
-  const itemWidth = `${100 / columns}%`;
+  const itemWidth = containerWidth / columns;
 
   // Calculate array index - this will be used for actual reordering operations
   const arrayIndex = activityOrder.findIndex((a) => a.id === activity.id);
@@ -191,21 +192,21 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
   ]);
 
   // Memoized style objects to avoid inline style warnings
-  const containerStyle: Animated.AnimatedStyleProp<ViewStyle> = useMemo(
+  const containerStyle: StyleProp<ViewStyle> = useMemo(
     () => ({
       position: "absolute",
       top:
         position.row * (GRID_CONSTANTS.ITEM_HEIGHT + GRID_CONSTANTS.GRID_GAP),
-      left: `${position.col * (100 / columns)}%`,
+      left: position.col * itemWidth,
       width: itemWidth,
       height: GRID_CONSTANTS.ITEM_HEIGHT,
       opacity: isBeingDragged ? 0.1 : 1,
       zIndex: isBeingDragged ? 1000 : 10,
     }),
-    [position.row, position.col, columns, itemWidth, isBeingDragged]
+    [position.row, position.col, itemWidth, isBeingDragged]
   );
 
-  const shakeWrapperStyle: Animated.AnimatedStyleProp<ViewStyle> = useMemo(
+  const shakeWrapperStyle: StyleProp<ViewStyle> = useMemo(
     () => ({
       flex: 1,
       transform: isBeingDragged
@@ -215,7 +216,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
     [isBeingDragged, shakeAnim, rotationAnim]
   );
 
-  const dragInnerStyle: Animated.AnimatedStyleProp<ViewStyle> = useMemo(
+  const dragInnerStyle: StyleProp<ViewStyle> = useMemo(
     () => ({
       flex: 1,
       transform: isBeingDragged
@@ -236,7 +237,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
     [isBeingDragged, dragAnimation]
   );
 
-  const deleteButtonStyle: Animated.AnimatedStyleProp<ViewStyle> = useMemo(
+  const deleteButtonStyle: StyleProp<ViewStyle> = useMemo(
     () => ({
       position: "absolute",
       top: -8,
