@@ -1,11 +1,8 @@
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
-import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
-import useDialogStore from "@/shared/stores/useDialogStore";
-import { useAuth, useUser } from "@clerk/clerk-expo";
+import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
-import Constants from "expo-constants";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -31,18 +28,10 @@ import {
   getTimeValidationError,
 } from "../utils";
 
-type ExpoConfig = {
-  ios?: { buildNumber?: string };
-  android?: { versionCode?: string | number };
-  version?: string;
-};
-
 export const ProfileScreen: React.FC = () => {
   const { user } = useUser();
-  const { signOut } = useAuth();
   const { t } = useTranslation();
   const router = useRouter();
-  const openDialog = useDialogStore((s) => s.openDialog);
   const { profileData, settings, updateProfileData, updateSettings } =
     useProfileStore();
 
@@ -73,14 +62,6 @@ export const ProfileScreen: React.FC = () => {
       syncUserData();
     }
   }, [user, updateProfileData]);
-
-  const appVersion =
-    Constants.expoConfig?.version || t("settings.support.version-unknown");
-  const expoConfig = Constants.expoConfig as ExpoConfig | undefined;
-  const buildNumber =
-    expoConfig?.ios?.buildNumber ||
-    expoConfig?.android?.versionCode?.toString() ||
-    t("settings.support.version-unknown");
 
   // Handle time input submission with validation
   const handleTimeSubmit = (type: "wake" | "sleep", input: string) => {
@@ -368,48 +349,6 @@ export const ProfileScreen: React.FC = () => {
 
   // Developer debug utilities (hidden in production)
   const isDev = __DEV__;
-  const handleShowOnboardingDebug = async () => {
-    try {
-      // Clear persisted flag so onboarding can be shown again
-      await userOnboardingStorage.clearShown();
-    } catch (e) {
-      GlobalErrorHandler.logError(
-        "Failed to clear onboarding storage",
-        "ONBOARDING_STORAGE_ERROR",
-        { e }
-      );
-    }
-
-    // Open onboarding dialog
-    openDialog({
-      type: "onboarding",
-      props: {
-        height: 85,
-        enableDragging: false,
-        headerProps: {
-          title: t("welcome-to-cadence"),
-          rightActionElement: t("common.close"),
-          onRightAction: () => {
-            useDialogStore.getState().closeAll();
-          },
-        },
-      },
-      position: "dock",
-      viewSpecific: "profile",
-    });
-  };
-
-  const handleOpenDebugPage = () => {
-    try {
-      router.push("/debug");
-    } catch (e) {
-      GlobalErrorHandler.logError(
-        "Failed to open debug page",
-        "DEBUG_PAGE_ERROR",
-        { e }
-      );
-    }
-  };
 
   return (
     <ScrollView style={profileStyles.container}>
@@ -427,19 +366,14 @@ export const ProfileScreen: React.FC = () => {
                 source={{ uri: user?.imageUrl || profileData.avatarUrl }}
                 style={[
                   profileStyles.profileImage,
-                  isUploadingImage && { opacity: 0.5 },
+                  isUploadingImage && profileStyles.uploadingImageOpacity,
                 ]}
               />
             ) : (
               <View
                 style={[
                   profileStyles.profileImage,
-                  {
-                    backgroundColor: "#F0F0F0",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  },
-                  isUploadingImage && { opacity: 0.5 },
+                  isUploadingImage && profileStyles.uploadingImageOpacity,
                 ]}
               >
                 <Ionicons name="person" size={40} color={COLORS.textIcons} />

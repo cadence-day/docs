@@ -35,7 +35,7 @@ const initialSettings: ProfileSettings = {
   subscriptionPlan: "free",
 };
 
-export const useProfileStore = create<ProfileStore>((set, get) => ({
+export const useProfileStore = create<ProfileStore>((set) => ({
   // Initial state
   profileData: initialProfileData,
   settings: initialSettings,
