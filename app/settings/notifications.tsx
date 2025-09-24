@@ -1,5 +1,9 @@
 import { useProfileStore } from "@/features/profile/stores/useProfileStore";
 import { profileStyles } from "@/features/profile/styles";
+import {
+  formatTimeInput,
+  getTimeValidationError,
+} from "@/features/profile/utils";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
@@ -265,15 +269,18 @@ export default function NotificationsSettings() {
                       value={preferences.middayTime}
                       showValueText={true}
                       onSave={(newTime) => {
-                        const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-                        if (timeRegex.test(newTime)) {
-                          updatePreferences({ middayTime: newTime });
+                        // Normalize and validate time using shared profile utils
+                        const formatted = formatTimeInput(newTime);
+                        if (formatted) {
+                          updatePreferences({ middayTime: formatted });
                         } else {
-                          showInfo?.(
+                          // Use the profile validation helper to get a friendly message when possible
+                          const msg =
+                            getTimeValidationError(newTime, "wake", t) ||
                             t("invalid-time") +
                               "\n" +
-                              t("please-enter-time-in-hh-mm-for")
-                          );
+                              t("please-enter-time-in-hh-mm-for");
+                          showInfo?.(msg);
                         }
                       }}
                       placeholder="12:00"
@@ -284,18 +291,25 @@ export default function NotificationsSettings() {
                   {settings.notifications.eveningReminders && (
                     <CdTextInputOneLine
                       label={t("evening-reflection")}
-                      value={preferences.eveningTimeStart}
+                      value={
+                        preferences.eveningTime || preferences.eveningTimeStart
+                      }
                       showValueText={true}
                       onSave={(newTime) => {
-                        const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-                        if (timeRegex.test(newTime)) {
-                          updatePreferences({ eveningTimeStart: newTime });
+                        // Normalize and validate time using shared profile utils
+                        const formatted = formatTimeInput(newTime);
+                        if (formatted) {
+                          updatePreferences({
+                            eveningTime: formatted,
+                            eveningTimeStart: formatted, // For backward compatibility
+                          });
                         } else {
-                          showInfo?.(
+                          const msg =
+                            getTimeValidationError(newTime, "sleep", t) ||
                             t("invalid-time") +
                               "\n" +
-                              t("please-enter-time-in-hh-mm-for-0")
-                          );
+                              t("please-enter-time-in-hh-mm-for-0");
+                          showInfo?.(msg);
                         }
                       }}
                       placeholder="20:00"
