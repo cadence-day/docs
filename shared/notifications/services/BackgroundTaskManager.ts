@@ -2,11 +2,7 @@ import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import * as TaskManager from "expo-task-manager";
-import { useNotificationStore } from "@/shared/stores/resources/useNotificationStore";
-import {
-  NotificationScheduler,
-  SchedulerConfig,
-} from "./NotificationScheduler";
+import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
 
 const NOTIFICATION_TASK_NAME = "CADENCE_NOTIFICATION_TASK";
 const CHECK_INTERVAL_MINUTES = 15;
@@ -23,7 +19,6 @@ interface ScheduledNotification {
 
 export class BackgroundTaskManager {
   private static instance: BackgroundTaskManager;
-  private scheduler: NotificationScheduler | null = null;
   private isRegistered = false;
   private scheduledNotifications: ScheduledNotification[] = [];
 
@@ -36,16 +31,8 @@ export class BackgroundTaskManager {
     return BackgroundTaskManager.instance;
   }
 
-  async initialize(config: SchedulerConfig, engine?: any): Promise<void> {
+  async initialize(): Promise<void> {
     try {
-      if (!engine) {
-        // Lazy load to avoid circular dependency
-        const { getNotificationEngineSingleton } = await import(
-          "../NotificationEngineSingleton"
-        );
-        engine = await getNotificationEngineSingleton();
-      }
-      this.scheduler = new NotificationScheduler(engine, config);
 
       await this.registerBackgroundTask();
       await this.scheduleBackgroundTask();

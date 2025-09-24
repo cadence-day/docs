@@ -1,10 +1,15 @@
 import type {
     NotificationPreferences,
-    NotificationScheduleStatus,
     NotificationTiming,
-} from "@/shared/stores/resources/useNotificationStore";
+} from "@/shared/notifications/stores/notificationsStore";
 import { BaseStorage } from "../base";
 import type { StorageResult } from "../types";
+
+export interface NotificationScheduleStatus {
+    lastScheduled: string | null;
+    isScheduled: boolean;
+    pendingCount: number;
+}
 
 export interface NotificationStorageData {
     timing: NotificationTiming;
@@ -25,11 +30,9 @@ class NotificationStorage extends BaseStorage {
      */
     async getTiming(): Promise<StorageResult<NotificationTiming>> {
         return this.get<NotificationTiming>("timing", {
+            morningTime: "07:00",
             middayTime: "12:00",
-            eveningTime: "20:00",
-            eveningTimeStart: "20:00",
-            eveningTimeEnd: "21:30",
-            isAutomatic: true,
+            eveningTime: "19:00",
         });
     }
 

@@ -1,8 +1,7 @@
 import { COLORS } from "@/shared/constants/COLORS";
 import { ToastService } from "@/shared/context/ToastProvider";
-import { useNotifications } from "@/shared/notifications/context/NotificationContext";
-import { useBackgroundNotifications } from "@/shared/notifications/hooks/useBackgroundNotifications";
-import { notificationEngineSingleton } from "@/shared/notifications/NotificationEngineSingleton";
+import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
+import { notificationEngine } from "@/shared/notifications/NotificationEngine";
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
@@ -24,26 +23,33 @@ export default function TestNotifications() {
   const { user } = useUser();
   const { t } = useTranslation();
   const {
-    sendNotification,
-    scheduleNotification,
-    cancelAllNotifications,
     requestPermissions,
     permissionStatus,
-    inAppNotifications,
-    unreadCount,
-    markAllAsRead,
-    clearNotificationHistory,
-  } = useNotifications();
-  const { scheduleTestNotification, isInitialized, isProcessing } =
-    useBackgroundNotifications();
+    isPermissionLoading,
+    scheduleNotifications,
+  } = useNotificationStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize the notification engine on mount
+  React.useEffect(() => {
+    const initialize = async () => {
+      try {
+        await notificationEngine.initialize();
+        setIsInitialized(true);
+      } catch (error) {
+        GlobalErrorHandler.logError(error as Error, "NotificationEngine.initialize");
+      }
+    };
+    initialize();
+  }, []);
 
   const handleRequestPermissions = async () => {
     try {
-      const status = await requestPermissions();
+      const granted = await requestPermissions();
       Alert.alert(
         "Permission Status",
-        `Granted: ${status.granted}\nStatus: ${status.status}`
+        `Granted: ${granted ? "Yes" : "No"}\nStatus: ${permissionStatus}`
       );
     } catch (error) {
       GlobalErrorHandler.logError(error as Error, "handleRequestPermissions");
@@ -54,12 +60,7 @@ export default function TestNotifications() {
   const handleSendImmediate = async () => {
     try {
       setIsLoading(true);
-      await sendNotification({
-        id: `immediate-${Date.now()}`,
-        title: "🎯 Immediate Notification",
-        body: "This notification was sent immediately!",
-        type: "test",
-      });
+      await notificationEngine.deliverNotificationNow("midday-reflection");
       Alert.alert("Success", "Immediate notification sent!");
     } catch (error) {
       GlobalErrorHandler.logError(error as Error, "handleSendImmediate");
@@ -75,15 +76,7 @@ export default function TestNotifications() {
       const scheduledFor = new Date();
       scheduledFor.setSeconds(scheduledFor.getSeconds() + 10);
 
-      await scheduleNotification(
-        {
-          id: `scheduled-${Date.now()}`,
-          title: "⏰ Scheduled Notification",
-          body: "This was scheduled 10 seconds ago!",
-          type: "test",
-        },
-        scheduledFor
-      );
+      await notificationEngine.scheduleQuoteNotification(scheduledFor, "evening-reflection");
       Alert.alert("Success", "Notification scheduled for 10 seconds from now!");
     } catch (error) {
       GlobalErrorHandler.logError(error as Error, "handleSchedule10Seconds");
@@ -96,11 +89,11 @@ export default function TestNotifications() {
   const handleBackgroundTest = async () => {
     try {
       setIsLoading(true);
-      await scheduleTestNotification();
-      Alert.alert("Success", "Background test notification scheduled!");
+      await notificationEngine.scheduleAllNotifications();
+      Alert.alert("Success", "All notifications scheduled!");
     } catch (error) {
       GlobalErrorHandler.logError(error as Error, "handleBackgroundTest");
-      Alert.alert("Error", "Failed to schedule background notification");
+      Alert.alert("Error", "Failed to schedule notifications");
     } finally {
       setIsLoading(false);
     }
@@ -141,7 +134,7 @@ export default function TestNotifications() {
   const handleCancelAll = async () => {
     try {
       setIsLoading(true);
-      await cancelAllNotifications();
+      await notificationEngine.cancelAllNotifications();
       Alert.alert("Success", "All notifications cancelled!");
     } catch (error) {
       GlobalErrorHandler.logError(error as Error, "handleCancelAll");
@@ -154,27 +147,10 @@ export default function TestNotifications() {
   const handleSendInAppNotification = async () => {
     try {
       setIsLoading(true);
-      const engine = await notificationEngineSingleton.getInstance();
-
-      await engine.emit({
-        type: "system",
-        deliveryMethod: ["in-app"],
-        message: {
-          id: `in-app-${Date.now()}`,
-          title: "📱 In-App Notification",
-          body: "This is a test in-app notification that appears directly in the app!",
-          type: "system",
-          metadata: { testType: "in-app" },
-        },
-        userId: user?.id || "test",
-      });
-
+      await notificationEngine.deliverNotificationNow("weekly-streaks");
       Alert.alert("Success", "In-app notification sent!");
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "handleSendInAppNotification"
-      );
+      GlobalErrorHandler.logError(error as Error, "handleSendInAppNotification");
       Alert.alert("Error", "Failed to send in-app notification");
     } finally {
       setIsLoading(false);
@@ -184,74 +160,31 @@ export default function TestNotifications() {
   const handleSendMultipleInApp = async () => {
     try {
       setIsLoading(true);
-      const engine = await notificationEngineSingleton.getInstance();
 
-      const notifications = [
-        {
-          title: "🎯 Success Notification",
-          body: "This is a success notification with auto-hide",
-          type: "achievement" as const,
-        },
-        {
-          title: "⚠️ Warning Notification",
-          body: "This is a warning notification",
-          type: "reminder" as const,
-        },
-        {
-          title: "ℹ️ Info Notification",
-          body: "This is an info notification that persists",
-          type: "system" as const,
-        },
-      ];
+      // Send three different types of notifications
+      await notificationEngine.deliverNotificationNow("midday-reflection");
+      await notificationEngine.deliverNotificationNow("evening-reflection");
+      await notificationEngine.deliverNotificationNow("weekly-streaks");
 
-      for (let i = 0; i < notifications.length; i++) {
-        const notification = notifications[i];
-        await engine.emit({
-          type: notification.type,
-          deliveryMethod: ["in-app"],
-          message: {
-            id: `in-app-multi-${Date.now()}-${i}`,
-            title: notification.title,
-            body: notification.body,
-            type: notification.type,
-            metadata: { testType: "multi-in-app", sequence: i + 1 },
-          },
-          userId: user?.id || "test",
-        });
-
-        // Small delay between notifications
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      }
-
-      Alert.alert("Success", "Multiple in-app notifications sent!");
+      Alert.alert("Success", "Multiple notifications sent!");
     } catch (error) {
       GlobalErrorHandler.logError(error as Error, "handleSendMultipleInApp");
-      Alert.alert("Error", "Failed to send multiple in-app notifications");
+      Alert.alert("Error", "Failed to send multiple notifications");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleClearInAppHistory = async () => {
+  const handleTestScheduleAll = async () => {
     try {
       setIsLoading(true);
-      clearNotificationHistory();
-      Alert.alert("Success", "In-app notification history cleared!");
+      await scheduleNotifications();
+      Alert.alert("Success", "All notification preferences scheduled!");
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleClearInAppHistory");
-      Alert.alert("Error", "Failed to clear notification history");
+      GlobalErrorHandler.logError(error as Error, "handleTestScheduleAll");
+      Alert.alert("Error", "Failed to schedule notifications");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    try {
-      markAllAsRead();
-      Alert.alert("Success", "All in-app notifications marked as read!");
-    } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleMarkAllAsRead");
-      Alert.alert("Error", "Failed to mark notifications as read");
     }
   };
 
@@ -340,11 +273,11 @@ export default function TestNotifications() {
             <View style={styles.statusItem}>
               <Text style={styles.statusLabel}>Permissions:</Text>
               <Text style={styles.statusValue}>
-                {permissionStatus.granted ? "✅ Granted" : "❌ Not Granted"}
+                {permissionStatus === "granted" ? "✅ Granted" : "❌ Not Granted"}
               </Text>
             </View>
             <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>Background Tasks:</Text>
+              <Text style={styles.statusLabel}>Notification Engine:</Text>
               <Text style={styles.statusValue}>
                 {isInitialized ? "✅ Ready" : "⏳ Initializing"}
               </Text>
@@ -356,11 +289,9 @@ export default function TestNotifications() {
               </Text>
             </View>
             <View style={styles.statusItem}>
-              <Text style={styles.statusLabel}>In-App Notifications:</Text>
+              <Text style={styles.statusLabel}>Permission Status:</Text>
               <Text style={styles.statusValue}>
-                {inAppNotifications.length > 0
-                  ? `${inAppNotifications.length} total, ${unreadCount} unread`
-                  : "None"}
+                {permissionStatus}
               </Text>
             </View>
           </View>
@@ -370,13 +301,13 @@ export default function TestNotifications() {
             <TouchableOpacity
               style={styles.button}
               onPress={handleRequestPermissions}
-              disabled={isLoading || permissionStatus.granted}
+              disabled={isLoading || permissionStatus === "granted"}
             >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
                 <Text style={styles.buttonText}>
-                  {permissionStatus.granted
+                  {permissionStatus === "granted"
                     ? "Permissions Granted"
                     : "Request Permissions"}
                 </Text>
@@ -390,7 +321,7 @@ export default function TestNotifications() {
             <TouchableOpacity
               style={[styles.button, styles.buttonPrimary]}
               onPress={handleSendImmediate}
-              disabled={isLoading || !permissionStatus.granted}
+              disabled={isLoading || permissionStatus !== "granted"}
             >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
@@ -402,7 +333,7 @@ export default function TestNotifications() {
             <TouchableOpacity
               style={[styles.button, styles.buttonPrimary]}
               onPress={handleSchedule10Seconds}
-              disabled={isLoading || !permissionStatus.granted}
+              disabled={isLoading || permissionStatus !== "granted"}
             >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
@@ -413,7 +344,7 @@ export default function TestNotifications() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>In-App Notifications</Text>
+            <Text style={styles.sectionTitle}>Notification Testing</Text>
 
             <TouchableOpacity
               style={[styles.button, styles.buttonTertiary]}
@@ -423,7 +354,7 @@ export default function TestNotifications() {
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Send In-App Notification</Text>
+                <Text style={styles.buttonText}>Test Weekly Streak Quote</Text>
               )}
             </TouchableOpacity>
 
@@ -435,47 +366,33 @@ export default function TestNotifications() {
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Send Multiple In-App</Text>
+                <Text style={styles.buttonText}>Test All Quote Types</Text>
               )}
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, styles.buttonQuaternary]}
-              onPress={handleMarkAllAsRead}
-              disabled={isLoading || unreadCount === 0}
+              onPress={handleTestScheduleAll}
+              disabled={isLoading}
             >
-              <Text style={styles.buttonText}>
-                {unreadCount > 0 ? `Mark ${unreadCount} as Read` : "All Read"}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, styles.buttonQuaternary]}
-              onPress={handleClearInAppHistory}
-              disabled={isLoading || inAppNotifications.length === 0}
-            >
-              <Text style={styles.buttonText}>
-                {inAppNotifications.length > 0
-                  ? `Clear History (${inAppNotifications.length})`
-                  : "No History"}
-              </Text>
+              <Text style={styles.buttonText}>Schedule All Notifications</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Background Task Tests</Text>
+            <Text style={styles.sectionTitle}>Engine Tests</Text>
 
             <TouchableOpacity
               style={[styles.button, styles.buttonSecondary]}
               onPress={handleBackgroundTest}
               disabled={
-                isLoading || !isInitialized || !permissionStatus.granted
+                isLoading || !isInitialized || permissionStatus !== "granted"
               }
             >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Test Background Task</Text>
+                <Text style={styles.buttonText}>Test Engine Schedule All</Text>
               )}
             </TouchableOpacity>
 
@@ -483,13 +400,13 @@ export default function TestNotifications() {
               style={[styles.button, styles.buttonSecondary]}
               onPress={handleScheduleMultiple}
               disabled={
-                isLoading || !isInitialized || !permissionStatus.granted
+                isLoading || !isInitialized || permissionStatus !== "granted"
               }
             >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Schedule 3 Notifications</Text>
+                <Text style={styles.buttonText}>Schedule 3 Test Notifications</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -562,11 +479,11 @@ export default function TestNotifications() {
             </TouchableOpacity>
           </View>
 
-          {isProcessing && (
+          {isLoading && (
             <View style={styles.processingIndicator}>
               <ActivityIndicator color="#007bff" />
               <Text style={styles.processingText}>
-                Processing background tasks...
+                Processing...
               </Text>
             </View>
           )}
