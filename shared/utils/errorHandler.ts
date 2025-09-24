@@ -33,7 +33,7 @@ export class GlobalErrorHandler {
     message: string,
     category?: string,
     level: "fatal" | "error" | "warning" | "info" | "debug" = "info",
-    data?: Record<string, any>
+    data?: Record<string, any>,
   ): void {
     const isDev = getIsDev();
 
@@ -59,11 +59,9 @@ export class GlobalErrorHandler {
   static logError(
     error: Error | string | unknown,
     context?: string,
-    extra?: Record<string, any>
+    extra?: Record<string, any>,
   ): void {
     const isDev = getIsDev();
-    const errorMessage = this.formatError(error);
-    const fullContext = context ? `[${context}] ${errorMessage}` : errorMessage;
 
     if (isDev) {
       // Development: Log to console with detailed information
@@ -91,10 +89,9 @@ export class GlobalErrorHandler {
   static logWarning(
     message: string,
     context?: string,
-    extra?: Record<string, any>
+    extra?: Record<string, any>,
   ): void {
     const isDev = getIsDev();
-    const fullContext = context ? `[${context}] ${message}` : message;
 
     if (isDev) {
       console.group(`⚠️  Warning${context ? ` in ${context}` : ""}`);
@@ -118,7 +115,7 @@ export class GlobalErrorHandler {
   static logDebug(
     message: string,
     context?: string,
-    data?: Record<string, any>
+    data?: Record<string, any>,
   ): void {
     const isDev = getIsDev();
 
@@ -157,7 +154,7 @@ export class GlobalErrorHandler {
   private static sendToSentry(
     error: Error | string | unknown,
     context?: string,
-    extra?: Record<string, any>
+    extra?: Record<string, any>,
   ): void {
     try {
       Sentry.withScope((scope) => {
@@ -178,7 +175,7 @@ export class GlobalErrorHandler {
       // Fallback to console in production if Sentry fails
       console.error(
         `[Production Error]${context ? ` ${context}:` : ""}`,
-        error
+        error,
       );
       if (extra) {
         console.error("Extra context:", extra);
@@ -195,7 +192,7 @@ export class GlobalErrorHandler {
   private static sendWarningToSentry(
     message: string,
     context?: string,
-    extra?: Record<string, any>
+    extra?: Record<string, any>,
   ): void {
     try {
       Sentry.withScope((scope) => {
@@ -212,7 +209,7 @@ export class GlobalErrorHandler {
       // Fallback to console in production if Sentry fails
       console.warn(
         `[Production Warning]${context ? ` ${context}:` : ""}`,
-        message
+        message,
       );
       if (extra) {
         console.warn("Extra context:", extra);

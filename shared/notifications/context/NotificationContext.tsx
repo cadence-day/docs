@@ -1,4 +1,5 @@
 import { useProfileStore } from "@/features/profile/stores/useProfileStore";
+import { useNotificationStore } from "@/shared/stores/resources/useNotificationStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import React, {
   createContext,
@@ -17,7 +18,7 @@ import {
 } from "../NotificationEngineSingleton";
 import { InAppNotificationDisplay } from "../providers/InAppNotificationProvider";
 import { LocaleNotificationProvider } from "../providers/LocaleNotificationProvider";
-import { mapProfileSettingsToNotificationPreferences } from "../services/NotificationScheduler";
+import { mapProfileSettingsToNotificationPreferences, updateTimingFromProfileSettings } from "../services/NotificationScheduler";
 import {
   NotificationEngineConfig,
   NotificationEvent,
@@ -81,10 +82,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 }) => {
   const { settings, updateSettings } = useProfileStore();
   const [engine, setEngine] = useState<NotificationEngine | null>(null);
-  const [preferences, setPreferences] = useState<NotificationPreferences>({
-    ...DEFAULT_CADENCE_PREFERENCES,
-    ...settings.notifications,
-  });
   const [permissionStatus, setPermissionStatus] =
     useState<NotificationPermissionStatus>({
       granted: false,
@@ -199,39 +196,62 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
         engine.destroy();
       }
     };
-  }, [engineConfig]);
+  }, [engineConfig, engine]);
 
-  // Sync preferences with profile store
+  // Initialize notification store on mount
   useEffect(() => {
-    // Map profile settings to notification preferences
-    const mappedPreferences =
-      mapProfileSettingsToNotificationPreferences(settings);
-    const newPreferences = {
-      ...DEFAULT_CADENCE_PREFERENCES,
-      ...mappedPreferences,
-    };
-    setPreferences(newPreferences);
+    useNotificationStore.getState().loadFromStorage();
+  }, []);
+
+  // One-time sync on initialization only
+  const hasInitialized = React.useRef(false);
+
+  useEffect(() => {
+    if (!hasInitialized.current) {
+      hasInitialized.current = true;
+
+      // Do initial sync from profile settings to notification store
+      const mappedPreferences = mapProfileSettingsToNotificationPreferences(settings);
+
+      const store = useNotificationStore.getState();
+      const newPreferences = {
+        morningReminders: mappedPreferences.rhythm === "morning-only" || mappedPreferences.rhythm === "both",
+        eveningReminders: mappedPreferences.rhythm === "evening-only" || mappedPreferences.rhythm === "both",
+        weeklyStreaks: mappedPreferences.streaksEnabled || false,
+        middayReflection: true,
+      };
+
+      // Initial sync without triggering re-renders
+      store.updatePreferences(newPreferences);
+
+      // Update timing once on initialization
+      updateTimingFromProfileSettings(settings);
+    }
   }, [settings]);
 
   const updatePreferences = useCallback(
     (newPreferences: Partial<NotificationPreferences>) => {
-      const updatedPreferences = { ...preferences, ...newPreferences };
-      setPreferences(updatedPreferences);
+      // Update the Zustand store
+      const store = useNotificationStore.getState();
+      const updatedPrefs = {
+        morningReminders: newPreferences.rhythm === "morning-only" || newPreferences.rhythm === "both",
+        eveningReminders: newPreferences.rhythm === "evening-only" || newPreferences.rhythm === "both",
+        weeklyStreaks: newPreferences.streaksEnabled || false,
+        middayReflection: store.preferences.middayReflection,
+      };
+
+      store.updatePreferences(updatedPrefs);
 
       // Update profile store with reverse mapping
       updateSettings({
         notifications: {
-          morningReminders:
-            updatedPreferences.rhythm === "morning-only" ||
-            updatedPreferences.rhythm === "both",
-          eveningReminders:
-            updatedPreferences.rhythm === "evening-only" ||
-            updatedPreferences.rhythm === "both",
-          weeklyStreaks: updatedPreferences.streaksEnabled,
+          morningReminders: updatedPrefs.morningReminders,
+          eveningReminders: updatedPrefs.eveningReminders,
+          weeklyStreaks: updatedPrefs.weeklyStreaks,
         },
       });
     },
-    [preferences, updateSettings]
+    [updateSettings]
   );
 
   const requestPermissions =
@@ -383,6 +403,29 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   }, [engine]);
 
   const unreadCount = inAppNotifications.filter((n) => !n.isRead).length;
+
+  // Use the hook selectively to avoid re-renders
+  const storePreferences = useNotificationStore((state) => state.preferences);
+  const storeTiming = useNotificationStore((state) => state.timing);
+
+  // Create a combined preferences object that matches the expected interface
+  const preferences: NotificationPreferences = {
+    rhythm: storePreferences.morningReminders && storePreferences.eveningReminders
+      ? "both"
+      : storePreferences.morningReminders
+        ? "morning-only"
+        : storePreferences.eveningReminders
+          ? "evening-only"
+          : "disabled",
+    middayTime: storeTiming.middayTime,
+    eveningTime: storeTiming.eveningTime,
+    eveningTimeStart: storeTiming.eveningTimeStart,
+    eveningTimeEnd: storeTiming.eveningTimeEnd,
+    streaksEnabled: storePreferences.weeklyStreaks,
+    lightTouch: true,
+    soundEnabled: true,
+    vibrationEnabled: true,
+  };
 
   const contextValue: NotificationContextType = {
     engine,

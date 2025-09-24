@@ -174,7 +174,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   );
 
   // expose showConfirm on the runtime service object
-  toastService = { showToast, showConfirm } as any;
+  toastService = { showToast, showConfirm } as ToastContextType;
 
   return (
     <ToastContext.Provider value={{ showToast }}>

@@ -40,10 +40,10 @@ interface ActivitiesStore extends BaseStoreState {
 
   // Upsert operations
   upsertActivity: (
-    activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>
+    activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>,
   ) => Promise<Activity | null>;
   upsertActivities: (
-    activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[]
+    activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[],
   ) => Promise<Activity[]>;
   refresh: () => Promise<void>;
 
@@ -84,9 +84,9 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (newActivity, state) =>
         newActivity
           ? {
-              activities: [...state.activities, newActivity],
-            }
-          : {}
+            activities: [...state.activities, newActivity],
+          }
+          : {},
     );
   },
 
@@ -99,9 +99,9 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (newActivities, state) =>
         newActivities.length > 0
           ? {
-              activities: [...state.activities, ...newActivities],
-            }
-          : {}
+            activities: [...state.activities, ...newActivities],
+          }
+          : {},
     );
   },
 
@@ -114,11 +114,11 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (updatedActivity, state) =>
         updatedActivity
           ? {
-              activities: state.activities.map((a) =>
-                a.id === updatedActivity.id ? updatedActivity : a
-              ),
-            }
-          : {}
+            activities: state.activities.map((a) =>
+              a.id === updatedActivity.id ? updatedActivity : a
+            ),
+          }
+          : {},
     );
   },
 
@@ -131,12 +131,12 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (updatedActivities, state) =>
         updatedActivities && updatedActivities.length > 0
           ? {
-              activities: state.activities.map((a) => {
-                const updated = updatedActivities.find((ua) => ua.id === a.id);
-                return updated || a;
-              }),
-            }
-          : {}
+            activities: state.activities.map((a) => {
+              const updated = updatedActivities.find((ua) => ua.id === a.id);
+              return updated || a;
+            }),
+          }
+          : {},
     );
   },
 
@@ -154,7 +154,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         await activityOrderStorage.updateActivityStatus(
           allActivities,
           id,
-          "DISABLED"
+          "DISABLED",
         );
       },
       "disable activity",
@@ -171,7 +171,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
           };
         }
         return {};
-      }
+      },
     );
   },
 
@@ -182,10 +182,10 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       "disable activities",
       (state) => {
         const activitiesToDisable = state.activities.filter(
-          (a) => a.id !== undefined && a.id !== null && ids.includes(a.id)
+          (a) => a.id !== undefined && a.id !== null && ids.includes(a.id),
         );
         const disabledActivities = activitiesToDisable.map(
-          (a) => ({ ...a, status: "DISABLED" }) as Activity
+          (a) => ({ ...a, status: "DISABLED" }) as Activity,
         );
 
         return {
@@ -193,14 +193,14 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
             (a) =>
               a.id !== undefined &&
               a.id !== null &&
-              !ids.includes(a.id as string)
+              !ids.includes(a.id as string),
           ),
           disabledActivities: [
             ...state.disabledActivities,
             ...disabledActivities,
           ],
         };
-      }
+      },
     );
   },
 
@@ -223,14 +223,14 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
           await activityOrderStorage.updateActivityStatus(
             allActivities,
             id,
-            "ENABLED"
+            "ENABLED",
           );
         }
       },
       "enable activity",
       (state) => {
         const activityToEnable = state.disabledActivities.find(
-          (a) => a.id === id
+          (a) => a.id === id,
         );
         if (activityToEnable) {
           const enabledActivity = {
@@ -239,13 +239,13 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
           } as Activity;
           return {
             disabledActivities: state.disabledActivities.filter(
-              (a) => a.id !== id
+              (a) => a.id !== id,
             ),
             activities: [...state.activities, enabledActivity],
           };
         }
         return {};
-      }
+      },
     );
   },
 
@@ -254,10 +254,10 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       async () => {
         const activities = get().disabledActivities.filter(
-          (a) => a.id !== undefined && a.id !== null && ids.includes(a.id)
+          (a) => a.id !== undefined && a.id !== null && ids.includes(a.id),
         );
         const enabledActivities = activities.map(
-          (a) => ({ ...a, status: "ENABLED" }) as Activity
+          (a) => ({ ...a, status: "ENABLED" }) as Activity,
         );
         await activitiesApi.updateActivities(enabledActivities);
       },
@@ -265,10 +265,10 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       (state) => {
         const activitiesToEnable = state.disabledActivities.filter(
           (a) =>
-            a.id !== undefined && a.id !== null && ids.includes(a.id as string)
+            a.id !== undefined && a.id !== null && ids.includes(a.id as string),
         );
         const enabledActivities = activitiesToEnable.map(
-          (a) => ({ ...a, status: "ENABLED" }) as Activity
+          (a) => ({ ...a, status: "ENABLED" }) as Activity,
         );
 
         return {
@@ -276,11 +276,11 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
             (a) =>
               a.id !== undefined &&
               a.id !== null &&
-              !ids.includes(a.id as string)
+              !ids.includes(a.id as string),
           ),
           activities: [...state.activities, ...enabledActivities],
         };
-      }
+      },
     );
   },
 
@@ -294,8 +294,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       },
       "delete activity",
       (state) => {
-        const activityToDelete =
-          state.activities.find((a) => a.id === id) ||
+        const activityToDelete = state.activities.find((a) => a.id === id) ||
           state.disabledActivities.find((a) => a.id === id);
         if (activityToDelete) {
           const deletedActivity = {
@@ -305,13 +304,13 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
           return {
             activities: state.activities.filter((a) => a.id !== id),
             disabledActivities: state.disabledActivities.filter(
-              (a) => a.id !== id
+              (a) => a.id !== id,
             ),
             deletedActivities: [...state.deletedActivities, deletedActivity],
           };
         }
         return {};
-      }
+      },
     );
   },
 
@@ -326,17 +325,17 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
             (a) =>
               a.id !== undefined &&
               a.id !== null &&
-              ids.includes(a.id as string)
+              ids.includes(a.id as string),
           ),
           ...state.disabledActivities.filter(
             (a) =>
               a.id !== undefined &&
               a.id !== null &&
-              ids.includes(a.id as string)
+              ids.includes(a.id as string),
           ),
         ];
         const deletedActivities = activitiesToDelete.map(
-          (a) => ({ ...a, status: "DELETED" }) as Activity
+          (a) => ({ ...a, status: "DELETED" }) as Activity,
         );
 
         return {
@@ -344,22 +343,22 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
             (a) =>
               a.id !== undefined &&
               a.id !== null &&
-              !ids.includes(a.id as string)
+              !ids.includes(a.id as string),
           ),
           disabledActivities: state.disabledActivities.filter(
             (a) =>
               a.id !== undefined &&
               a.id !== null &&
-              !ids.includes(a.id as string)
+              !ids.includes(a.id as string),
           ),
           deletedActivities: [...state.deletedActivities, ...deletedActivities],
         };
-      }
+      },
     );
   },
 
   upsertActivity: async (
-    activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>
+    activity: Omit<Activity, "id"> & Partial<Pick<Activity, "id">>,
   ) => {
     return handleApiCall(
       set,
@@ -370,7 +369,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         if (!upsertedActivity) return {};
 
         const existingIndex = state.activities.findIndex(
-          (a) => a.id === upsertedActivity.id
+          (a) => a.id === upsertedActivity.id,
         );
 
         if (existingIndex >= 0) {
@@ -382,12 +381,12 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
           // Add new activity
           return { activities: [...state.activities, upsertedActivity] };
         }
-      }
+      },
     );
   },
 
   upsertActivities: async (
-    activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[]
+    activities: (Omit<Activity, "id"> & Partial<Pick<Activity, "id">>)[],
   ) => {
     return handleApiCall(
       set,
@@ -401,7 +400,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
 
         upsertedActivities.forEach((upserted) => {
           const existingIndex = updatedActivities.findIndex(
-            (a) => a.id === upserted.id
+            (a) => a.id === upserted.id,
           );
           if (existingIndex >= 0) {
             // Update existing activity
@@ -413,7 +412,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         });
 
         return { activities: updatedActivities };
-      }
+      },
     );
   },
 
@@ -428,13 +427,13 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         const orderResult = await activityOrderStorage.getOrder();
         return activityOrderStorage.sortActivitiesByStoredOrder(
           activities,
-          orderResult.data
+          orderResult.data,
         );
       },
       "refresh activities",
       (sortedActivities) => ({
         activities: sortedActivities,
-      })
+      }),
     );
   },
 
@@ -444,7 +443,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getActivity(id),
       "get activity",
-      null
+      null,
     );
   },
 
@@ -453,7 +452,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getActivities(ids),
       "get activities",
-      []
+      [],
     );
   },
 
@@ -462,7 +461,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getEnabledUserActivities(userId),
       "get user activities",
-      []
+      [],
     );
   },
 
@@ -472,7 +471,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       () => activitiesApi.getAllActivities(),
       "get all activities",
       [],
-      (allActivities, state) => {
+      (allActivities) => {
         // Separate activities by status to prevent duplicates
         const enabledActivities =
           allActivities?.filter((a) => a.status === "ENABLED") || [];
@@ -486,7 +485,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
           disabledActivities: disabledActivities,
           deletedActivities: deletedActivities,
         };
-      }
+      },
     );
   },
 
@@ -496,9 +495,9 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       () => activitiesApi.getAllDisabledActivities(),
       "get disabled activities",
       [],
-      (disabledActivities, state) => ({
+      (disabledActivities) => ({
         disabledActivities: disabledActivities || [],
-      })
+      }),
     );
   },
 
@@ -508,9 +507,9 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       () => activitiesApi.getAllDeletedActivities(),
       "get deleted activities",
       [],
-      (deletedActivities, state) => ({
+      (deletedActivities) => ({
         deletedActivities: deletedActivities || [],
-      })
+      }),
     );
   },
 
@@ -519,7 +518,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
       set,
       () => activitiesApi.getEnabledActivitiesByCategory(categoryId),
       "get activities by category",
-      []
+      [],
     );
   },
 
@@ -535,7 +534,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         GlobalErrorHandler.logError(
           new Error("Failed to save activity order"),
           "updateActivityOrder",
-          { activitiesCount: reorderedActivities.length }
+          { activitiesCount: reorderedActivities.length },
         );
       }
     } catch (error) {
@@ -561,13 +560,13 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
           ...get().disabledActivities,
           ...get().deletedActivities,
         ];
-        const sortedActivities =
-          activityOrderStorage.sortActivitiesByStoredOrder(
+        const sortedActivities = activityOrderStorage
+          .sortActivitiesByStoredOrder(
             allActivities,
-            orderResult.data
+            orderResult.data,
           );
         const enabledActivities = sortedActivities.filter(
-          (a) => a.status === "ENABLED"
+          (a) => a.status === "ENABLED",
         );
         set({ activities: enabledActivities });
       }

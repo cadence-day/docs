@@ -38,21 +38,16 @@ interface CdDialogProps {
 
 export const CdDialog: React.FC<CdDialogProps> = ({
   visible = false,
-  onClose,
   children,
   height = 100,
   maxHeight = 100,
-  showCloseButton = true,
   headerProps,
-  enableCloseOnBackgroundPress = true,
   onHeightChange,
   enableDragging = true,
   onDoubleTapResize,
-  collapsed = false,
   allowedViews = [],
   currentView = "",
   isGlobal = false,
-  id,
   zIndex,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -98,7 +93,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       );
       return Math.max(minHeightPercent, Math.min(effectiveMax, newHeight));
     },
-    [enableDragging, screenHeight, maxHeight]
+    [enableDragging, screenHeight, maxHeight, insets.top]
   );
 
   const updateHeight = useCallback(
@@ -137,7 +132,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   const panResponder = React.useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: (evt) => {
+        onStartShouldSetPanResponder: (_evt) => {
           if (!enableDragging) return false;
 
           // Check for potential double tap
@@ -158,7 +153,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         onMoveShouldSetPanResponder: (evt, gestureState) => {
           return enableDragging && Math.abs(gestureState.dy) > 3;
         },
-        onPanResponderGrant: (evt) => {
+        onPanResponderGrant: (_evt) => {
           if (!enableDragging) return;
 
           // Light haptic feedback when drag starts
@@ -193,7 +188,14 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         },
         onPanResponderTerminationRequest: () => false,
       }),
-    [enableDragging, clampHeight, screenHeight, handleDoubleTap]
+    [
+      enableDragging,
+      clampHeight,
+      screenHeight,
+      handleDoubleTap,
+      animatedHeight,
+      updateHeight,
+    ]
   );
 
   if (!shouldRender) return null;
@@ -327,25 +329,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-  },
-  closeButton: {
-    position: "absolute",
-    top: 16,
-    right: 16,
-    width: 24,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  closeButtonLine: {
-    position: "absolute",
-    width: 20,
-    height: 2,
-    borderRadius: 1,
-  },
-  closeButtonLineRotated: {
-    transform: [{ rotate: "45deg" }],
   },
   content: {
     flex: 1,

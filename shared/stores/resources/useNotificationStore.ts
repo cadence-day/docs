@@ -7,9 +7,11 @@ import type { BaseStoreState } from "../utils/utils";
 export interface NotificationTiming {
     /** Time string in HH:MM format for midday reflection */
     middayTime: string;
-    /** Start time string in HH:MM format for evening reflection window */
+    /** Time string in HH:MM format for evening reflection */
+    eveningTime: string;
+    /** Start time string in HH:MM format for evening reflection window (deprecated) */
     eveningTimeStart: string;
-    /** End time string in HH:MM format for evening reflection window */
+    /** End time string in HH:MM format for evening reflection window (deprecated) */
     eveningTimeEnd: string;
     /** Whether timing is automatically calculated or manually set */
     isAutomatic: boolean;
@@ -44,6 +46,7 @@ interface NotificationStore extends BaseStoreState {
     // Timing operations
     updateTiming: (timing: Partial<NotificationTiming>) => void;
     setMiddayTime: (time: string) => void;
+    setEveningTime: (time: string) => void;
     setEveningWindow: (startTime: string, endTime: string) => void;
     setAutomaticTiming: (isAutomatic: boolean) => void;
 
@@ -76,6 +79,7 @@ interface NotificationStore extends BaseStoreState {
 
 const initialTiming: NotificationTiming = {
     middayTime: "12:00",
+    eveningTime: "20:00",
     eveningTimeStart: "20:00",
     eveningTimeEnd: "21:30",
     isAutomatic: true,
@@ -132,6 +136,7 @@ function calculateAutomaticTiming(
 
         return {
             middayTime: formatTime(middayDate),
+            eveningTime: formatTime(eveningEndDate),
             eveningTimeStart: formatTime(eveningStartDate),
             eveningTimeEnd: formatTime(eveningEndDate),
             isAutomatic: true,
@@ -145,6 +150,7 @@ function calculateAutomaticTiming(
         // Return safe defaults
         return {
             middayTime: "12:00",
+            eveningTime: "20:00",
             eveningTimeStart: "20:00",
             eveningTimeEnd: "21:30",
             isAutomatic: true,
@@ -175,6 +181,18 @@ export const useNotificationStore = create<NotificationStore>()(
                 timing: {
                     ...state.timing,
                     middayTime: time,
+                    isAutomatic: false,
+                },
+            }));
+            get().saveTimingToStorage();
+        },
+
+        setEveningTime: (time: string) => {
+            set((state) => ({
+                timing: {
+                    ...state.timing,
+                    eveningTime: time,
+                    eveningTimeStart: time, // Keep for backward compatibility
                     isAutomatic: false,
                 },
             }));

@@ -1,43 +1,32 @@
 import { useProfileStore } from "@/features/profile/stores/useProfileStore";
 import { useNotificationStore } from "@/shared/stores/resources/useNotificationStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
-import { useCallback, useEffect } from "react";
-import { useNotificationScheduler } from "./useNotificationScheduler";
+import { useCallback, useEffect, useState } from "react";
+import { useNotifications } from "../context/NotificationContext";
+
+// Use ReturnType to infer the store state type
+type NotificationStoreState = ReturnType<typeof useNotificationStore.getState>;
 
 export interface UseNotificationStoreIntegrationReturn {
     // Store state
-    timing: ReturnType<typeof useNotificationStore>["timing"];
-    preferences: ReturnType<typeof useNotificationStore>["preferences"];
-    scheduleStatus: ReturnType<typeof useNotificationStore>["scheduleStatus"];
+    timing: NotificationStoreState["timing"];
+    preferences: NotificationStoreState["preferences"];
+    scheduleStatus: NotificationStoreState["scheduleStatus"];
     isLoading: boolean;
     error: string | null;
 
     // Store operations
-    updateTiming: ReturnType<typeof useNotificationStore>["updateTiming"];
-    updatePreferences: ReturnType<
-        typeof useNotificationStore
-    >["updatePreferences"];
-    setMiddayTime: ReturnType<typeof useNotificationStore>["setMiddayTime"];
-    setEveningWindow: ReturnType<
-        typeof useNotificationStore
-    >["setEveningWindow"];
-    setAutomaticTiming: ReturnType<
-        typeof useNotificationStore
-    >["setAutomaticTiming"];
+    updateTiming: NotificationStoreState["updateTiming"];
+    updatePreferences: NotificationStoreState["updatePreferences"];
+    setMiddayTime: NotificationStoreState["setMiddayTime"];
+    setEveningWindow: NotificationStoreState["setEveningWindow"];
+    setAutomaticTiming: NotificationStoreState["setAutomaticTiming"];
 
     // Toggle operations
-    toggleMorningReminders: ReturnType<
-        typeof useNotificationStore
-    >["toggleMorningReminders"];
-    toggleEveningReminders: ReturnType<
-        typeof useNotificationStore
-    >["toggleEveningReminders"];
-    toggleWeeklyStreaks: ReturnType<
-        typeof useNotificationStore
-    >["toggleWeeklyStreaks"];
-    toggleMiddayReflection: ReturnType<
-        typeof useNotificationStore
-    >["toggleMiddayReflection"];
+    toggleMorningReminders: NotificationStoreState["toggleMorningReminders"];
+    toggleEveningReminders: NotificationStoreState["toggleEveningReminders"];
+    toggleWeeklyStreaks: NotificationStoreState["toggleWeeklyStreaks"];
+    toggleMiddayReflection: NotificationStoreState["toggleMiddayReflection"];
 
     // Integrated operations that affect both store and scheduler
     rescheduleNotifications: () => Promise<void>;
@@ -75,12 +64,10 @@ export const useNotificationStoreIntegration = (
     // Get profile store for automatic timing calculation
     const { settings: profileSettings } = useProfileStore();
 
-    // Get notification scheduler
-    const {
-        scheduleAllNotifications,
-        error: schedulerError,
-        isScheduling,
-    } = useNotificationScheduler(userId);
+    // Get notification context for scheduling
+    const { engine } = useNotifications();
+    const [isScheduling, setIsScheduling] = useState(false);
+    const [schedulerError, setSchedulerError] = useState<string | null>(null);
 
     // Combined loading and error states
     const isLoading = storeLoading || isScheduling;
@@ -124,14 +111,32 @@ export const useNotificationStoreIntegration = (
             }
         }
     }, [
-        profileSettings.wakeTime,
-        profileSettings.sleepTime,
-        timing.isAutomatic,
-        timing.middayTime,
-        timing.eveningTimeStart,
-        timing.eveningTimeEnd,
+        profileSettings,
+        timing,
         updateTiming,
     ]);
+
+    // Schedule all notifications function
+    const scheduleAllNotifications = useCallback(async (): Promise<void> => {
+        if (!engine || !userId) {
+            throw new Error("Engine not initialized or user ID missing");
+        }
+
+        setIsScheduling(true);
+        setSchedulerError(null);
+
+        try {
+            const { NotificationScheduler } = await import("../services/NotificationScheduler");
+            const scheduler = NotificationScheduler.create(engine, { userId });
+            await scheduler.scheduleAllNotifications();
+        } catch (error) {
+            const errorMessage = "Failed to schedule notifications";
+            setSchedulerError(errorMessage);
+            throw error;
+        } finally {
+            setIsScheduling(false);
+        }
+    }, [engine, userId]);
 
     // Auto-reschedule notifications when notification preferences change
     useEffect(() => {
@@ -156,10 +161,7 @@ export const useNotificationStoreIntegration = (
 
         return () => clearTimeout(timeoutId);
     }, [
-        preferences.morningReminders,
-        preferences.eveningReminders,
-        preferences.weeklyStreaks,
-        preferences.middayReflection,
+        preferences,
         userId,
         scheduleAllNotifications,
     ]);
@@ -187,9 +189,7 @@ export const useNotificationStoreIntegration = (
 
         return () => clearTimeout(timeoutId);
     }, [
-        timing.middayTime,
-        timing.eveningTimeStart,
-        timing.eveningTimeEnd,
+        timing,
         userId,
         scheduleAllNotifications,
     ]);

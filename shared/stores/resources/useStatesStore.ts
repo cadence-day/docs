@@ -18,10 +18,10 @@ interface StatesStore extends BaseStoreState {
   insertState: (state: Omit<State, "id">) => Promise<State | null>;
   insertStates: (states: Omit<State, "id">[]) => Promise<State[]>;
   upsertState: (
-    state: Omit<State, "id"> & Partial<Pick<State, "id">>
+    state: Omit<State, "id"> & Partial<Pick<State, "id">>,
   ) => Promise<State | null>;
   upsertStates: (
-    states: (Omit<State, "id"> & Partial<Pick<State, "id">>)[]
+    states: (Omit<State, "id"> & Partial<Pick<State, "id">>)[],
   ) => Promise<State[]>;
 
   // Update operations
@@ -45,7 +45,7 @@ interface StatesStore extends BaseStoreState {
   reset: () => void;
 }
 
-const useStatesStore = create<StatesStore>((set, get) => ({
+const useStatesStore = create<StatesStore>((set) => ({
   // Initial state
   states: [],
   isLoading: false,
@@ -61,9 +61,9 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       (newState, currentState) =>
         newState
           ? {
-              states: [...currentState.states, newState],
-            }
-          : {}
+            states: [...currentState.states, newState],
+          }
+          : {},
     );
   },
 
@@ -76,14 +76,14 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       (newStates, currentState) =>
         newStates.length > 0
           ? {
-              states: [...currentState.states, ...newStates],
-            }
-          : {}
+            states: [...currentState.states, ...newStates],
+          }
+          : {},
     );
   },
 
   upsertState: async (
-    state: Omit<State, "id"> & Partial<Pick<State, "id">>
+    state: Omit<State, "id"> & Partial<Pick<State, "id">>,
   ) => {
     return handleApiCall(
       set,
@@ -94,7 +94,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
         if (!upsertedState) return {};
 
         const existingIndex = currentState.states.findIndex(
-          (s) => s.id === upsertedState.id
+          (s) => s.id === upsertedState.id,
         );
         if (existingIndex >= 0) {
           // Update existing
@@ -109,12 +109,12 @@ const useStatesStore = create<StatesStore>((set, get) => ({
             states: [...currentState.states, upsertedState],
           };
         }
-      }
+      },
     );
   },
 
   upsertStates: async (
-    states: (Omit<State, "id"> & Partial<Pick<State, "id">>)[]
+    states: (Omit<State, "id"> & Partial<Pick<State, "id">>)[],
   ) => {
     return handleApiCall(
       set,
@@ -128,7 +128,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
 
         upsertedStates.forEach((upsertedState) => {
           const existingIndex = updatedStates.findIndex(
-            (s) => s.id === upsertedState.id
+            (s) => s.id === upsertedState.id,
           );
           if (existingIndex >= 0) {
             // Update existing
@@ -140,7 +140,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
         });
 
         return { states: updatedStates };
-      }
+      },
     );
   },
 
@@ -153,11 +153,11 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       (updatedState, currentState) =>
         updatedState
           ? {
-              states: currentState.states.map((s) =>
-                s.id === updatedState.id ? updatedState : s
-              ),
-            }
-          : {}
+            states: currentState.states.map((s) =>
+              s.id === updatedState.id ? updatedState : s
+            ),
+          }
+          : {},
     );
   },
 
@@ -168,7 +168,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       "delete state",
       (currentState) => ({
         states: currentState.states.filter((s) => s.id !== id),
-      })
+      }),
     );
   },
 
@@ -179,7 +179,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       "delete states",
       (currentState) => ({
         states: currentState.states.filter((s) => s.id && !ids.includes(s.id)),
-      })
+      }),
     );
   },
 
@@ -194,7 +194,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       "refresh states",
       (fetchedStates, currentState) => ({
         states: currentState.states.concat(fetchedStates),
-      })
+      }),
     );
   },
 
@@ -204,7 +204,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       set,
       () => statesApi.getState(id),
       "get state",
-      null
+      null,
     );
   },
 
@@ -213,7 +213,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       set,
       () => statesApi.getStates(ids),
       "get states",
-      []
+      [],
     );
   },
 
@@ -222,7 +222,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       set,
       () => statesApi.getUserStates(userId),
       "get user states",
-      []
+      [],
     );
   },
 
@@ -231,7 +231,7 @@ const useStatesStore = create<StatesStore>((set, get) => ({
       set,
       () => statesApi.getAllStates(),
       "get all states",
-      []
+      [],
     );
   },
 

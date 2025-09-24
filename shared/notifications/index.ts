@@ -20,10 +20,7 @@ export {
   NotificationProvider,
   useNotifications,
 } from "./context/NotificationContext";
-export {
-  useAutoNotificationScheduler,
-  useNotificationScheduler,
-} from "./hooks/useNotificationScheduler";
+export { useNotificationStoreIntegration } from "./hooks/useNotificationStoreIntegration";
 
 // Services
 export { NotificationScheduler } from "./services/NotificationScheduler";

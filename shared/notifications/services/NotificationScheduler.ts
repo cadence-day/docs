@@ -1,27 +1,27 @@
 import { ProfileSettings } from "@/features/profile/types";
 import { useNotificationStore } from "@/shared/stores/resources/useNotificationStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { useTimeslicesStore } from "../../stores";
+import { Timeslice } from "../../types/models";
 import {
   getRandomEveningReflection,
   getRandomMiddayReflection,
   getRandomStreakMessage,
 } from "../cadenceMessages";
-import {
-  createNotificationId,
-  createScheduledDate,
-  createWeeklyScheduledDate,
-} from "../utils";
 import { NotificationEngine } from "../NotificationEngine";
 import {
   NotificationEvent,
   NotificationMessage,
   NotificationPreferences,
 } from "../types";
+import {
+  createNotificationId,
+  createScheduledDate,
+  createWeeklyScheduledDate,
+} from "../utils";
 
 export interface SchedulerConfig {
   userId: string;
-  preferences: NotificationPreferences;
-  profileSettings?: ProfileSettings;
   timezone?: string;
 }
 
@@ -41,18 +41,14 @@ export function mapProfileSettingsToNotificationPreferences(
     rhythm = "evening-only";
   }
 
-  // Get timing from notification store
+  // Get timing from notification store without updating it
   const notificationStore = useNotificationStore.getState();
   const timing = notificationStore.getTimingForDate(wakeTime, sleepTime);
-
-  // Update store timing if it's set to automatic
-  if (timing.isAutomatic) {
-    notificationStore.updateTiming(timing);
-  }
 
   return {
     rhythm,
     middayTime: timing.middayTime,
+    eveningTime: timing.eveningTime || timing.eveningTimeStart,
     eveningTimeStart: timing.eveningTimeStart,
     eveningTimeEnd: timing.eveningTimeEnd,
     streaksEnabled: notifications.weeklyStreaks,
@@ -60,6 +56,20 @@ export function mapProfileSettingsToNotificationPreferences(
     soundEnabled: true,
     vibrationEnabled: true,
   };
+}
+
+// Helper function to update timing based on profile settings
+export function updateTimingFromProfileSettings(
+  profileSettings: ProfileSettings,
+): void {
+  const { wakeTime, sleepTime } = profileSettings;
+  const notificationStore = useNotificationStore.getState();
+  const timing = notificationStore.getTimingForDate(wakeTime, sleepTime);
+
+  // Update store timing if it's set to automatic
+  if (timing.isAutomatic) {
+    notificationStore.updateTiming(timing);
+  }
 }
 
 export class NotificationScheduler {
@@ -73,61 +83,68 @@ export class NotificationScheduler {
 
   async scheduleAllNotifications(): Promise<void> {
     try {
+      // Get preferences and timing from store
+      const { preferences } = useNotificationStore.getState();
+
       // Cancel existing notifications first
       await this.engine.cancelAllNotifications();
 
-      if (this.config.preferences.rhythm === "disabled") {
+      // Clear scheduled notification tracking when rescheduling
+      await this.clearScheduledNotificationTracking();
+
+      // Clean up old tracking data
+      await this.cleanupOldScheduledNotifications();
+
+      // Check if notifications are disabled
+      if (!preferences.morningReminders && !preferences.eveningReminders) {
         GlobalErrorHandler.logDebug(
           "Notifications disabled, skipping scheduling",
           "NotificationScheduler.scheduleAllNotifications",
         );
 
-        // Update notification store status
-        const notificationStore = useNotificationStore.getState();
-        notificationStore.markAsUnscheduled();
+        useNotificationStore.getState().markAsUnscheduled();
         return;
       }
 
       const schedulingPromises: Promise<boolean>[] = [];
 
       // Schedule midday reflections
-      if (this.shouldScheduleMidday()) {
+      if (preferences.middayReflection) {
         schedulingPromises.push(this.scheduleMiddayReflections());
       }
 
       // Schedule evening reflections
-      if (this.shouldScheduleEvening()) {
+      if (preferences.eveningReminders) {
         schedulingPromises.push(this.scheduleEveningReflections());
       }
 
       // Schedule streak reminders
-      if (this.config.preferences.streaksEnabled) {
+      if (preferences.weeklyStreaks) {
         schedulingPromises.push(this.scheduleStreakReminders());
       }
 
       const results = await Promise.allSettled(schedulingPromises);
-      const totalScheduled = results.filter(result =>
-        result.status === 'fulfilled' && result.value === true
+      const totalScheduled = results.filter((result) =>
+        result.status === "fulfilled" && result.value === true
       ).length;
 
       // Update notification store status
-      const notificationStore = useNotificationStore.getState();
-      notificationStore.markAsScheduled(totalScheduled);
+      useNotificationStore.getState().markAsScheduled(totalScheduled);
 
       GlobalErrorHandler.logDebug(
         "All notifications scheduled successfully",
         "NotificationScheduler.scheduleAllNotifications",
         {
           userId: this.config.userId,
-          rhythm: this.config.preferences.rhythm,
-          streaksEnabled: this.config.preferences.streaksEnabled,
+          middayReflection: preferences.middayReflection,
+          eveningReminders: preferences.eveningReminders,
+          weeklyStreaks: preferences.weeklyStreaks,
           totalScheduled,
         },
       );
     } catch (error) {
       // Mark as unscheduled on error
-      const notificationStore = useNotificationStore.getState();
-      notificationStore.markAsUnscheduled();
+      useNotificationStore.getState().markAsUnscheduled();
 
       GlobalErrorHandler.logError(
         error,
@@ -142,46 +159,70 @@ export class NotificationScheduler {
 
   async scheduleMiddayReflections(): Promise<boolean> {
     try {
-      const [hour, minute] = this.config.preferences.middayTime
+      const { timing } = useNotificationStore.getState();
+      const [hour, minute] = timing.middayTime
         .split(":")
         .map(Number);
 
-      // Schedule only for today
-      const scheduledDate = createScheduledDate(hour, minute, 0);
+      let scheduledCount = 0;
 
-      // Skip if the time has already passed today
-      if (scheduledDate < new Date()) {
-        GlobalErrorHandler.logDebug(
-          "Midday reflection time has already passed today, skipping",
-          "NotificationScheduler.scheduleMiddayReflections",
-          { time: this.config.preferences.middayTime },
-        );
-        return false;
+      // Schedule for the next 3 days
+      for (let day = 0; day < 3; day++) {
+        const scheduledDate = createScheduledDate(hour, minute, day);
+
+        // Skip if the time has already passed (only for today)
+        if (day === 0 && scheduledDate < new Date()) {
+          GlobalErrorHandler.logDebug(
+            "Midday reflection time has already passed today, skipping today",
+            "NotificationScheduler.scheduleMiddayReflections",
+            { time: timing.middayTime },
+          );
+          continue;
+        }
+
+        // Check for double scheduling using simple tracking
+        const scheduledDateKey =
+          `midday-${scheduledDate.toDateString()}-${hour}:${minute}`;
+
+        if (await this.isNotificationAlreadyScheduled(scheduledDateKey)) {
+          GlobalErrorHandler.logDebug(
+            "Midday reflection already scheduled for this date/time, skipping",
+            "NotificationScheduler.scheduleMiddayReflections",
+            { scheduledDate: scheduledDate.toISOString() },
+          );
+          continue;
+        }
+
+        // Create notification with a single random message
+        const notification: NotificationMessage = {
+          id: createNotificationId(),
+          title: "Midday Reflection",
+          body: getRandomMiddayReflection(), // Single random message
+          type: "midday-reflection",
+        };
+
+        const event: NotificationEvent = {
+          type: "midday-reflection",
+          message: notification,
+          deliveryMethod: this.getDeliveryMethods(),
+          userId: this.config.userId,
+        };
+
+        await this.engine.schedule(event, scheduledDate);
+        await this.markNotificationAsScheduled(scheduledDateKey);
+        scheduledCount++;
       }
-
-      // Create notification with a single random message
-      const notification: NotificationMessage = {
-        id: createNotificationId(),
-        title: "Midday Reflection",
-        body: getRandomMiddayReflection(), // Single random message
-        type: "midday-reflection",
-      };
-
-      const event: NotificationEvent = {
-        type: "midday-reflection",
-        message: notification,
-        deliveryMethod: this.getDeliveryMethods(),
-        userId: this.config.userId,
-      };
-
-      await this.engine.schedule(event, scheduledDate);
 
       GlobalErrorHandler.logDebug(
         "Midday reflections scheduled",
         "NotificationScheduler.scheduleMiddayReflections",
-        { time: this.config.preferences.middayTime },
+        {
+          time: timing.middayTime,
+          scheduledCount,
+          daysAhead: 3,
+        },
       );
-      return true;
+      return scheduledCount > 0;
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
@@ -193,61 +234,71 @@ export class NotificationScheduler {
 
   async scheduleEveningReflections(): Promise<boolean> {
     try {
-      const [startHour, startMinute] = this.config.preferences.eveningTimeStart
-        .split(":")
-        .map(Number);
-      const [endHour, endMinute] = this.config.preferences.eveningTimeEnd
-        .split(":")
-        .map(Number);
+      const { timing } = useNotificationStore.getState();
+      // Use the specific evening time from store
+      const eveningTime = timing.eveningTime;
+      const [hour, minute] = eveningTime.split(":").map(Number);
 
-      // Schedule only for today within the evening window (randomly between start and end time)
-      const randomMinutes = Math.random() *
-        (endHour * 60 + endMinute - (startHour * 60 + startMinute));
-      const totalMinutes = startHour * 60 + startMinute + randomMinutes;
-      const hour = Math.floor(totalMinutes / 60);
-      const minute = Math.floor(totalMinutes % 60);
+      let scheduledCount = 0;
 
-      const scheduledDate = createScheduledDate(hour, minute, 0);
+      // Schedule for the next 3 days
+      for (let day = 0; day < 3; day++) {
+        const scheduledDate = createScheduledDate(hour, minute, day);
 
-      // Skip if the time has already passed today
-      if (scheduledDate < new Date()) {
-        GlobalErrorHandler.logDebug(
-          "Evening reflection time has already passed today, skipping",
-          "NotificationScheduler.scheduleEveningReflections",
-          {
-            startTime: this.config.preferences.eveningTimeStart,
-            endTime: this.config.preferences.eveningTimeEnd,
-          },
-        );
-        return false;
+        // Skip if the time has already passed (only for today)
+        if (day === 0 && scheduledDate < new Date()) {
+          GlobalErrorHandler.logDebug(
+            "Evening reflection time has already passed today, skipping today",
+            "NotificationScheduler.scheduleEveningReflections",
+            {
+              eveningTime: eveningTime,
+            },
+          );
+          continue;
+        }
+
+        // Check for double scheduling using simple tracking
+        const scheduledDateKey = `evening-${scheduledDate.toDateString()}`;
+
+        if (await this.isNotificationAlreadyScheduled(scheduledDateKey)) {
+          GlobalErrorHandler.logDebug(
+            "Evening reflection already scheduled for this date, skipping",
+            "NotificationScheduler.scheduleEveningReflections",
+            { scheduledDate: scheduledDate.toISOString() },
+          );
+          continue;
+        }
+
+        // Create notification with a single random message
+        const notification: NotificationMessage = {
+          id: createNotificationId(),
+          title: "Evening Reflection",
+          body: getRandomEveningReflection(), // Single random message
+          type: "evening-reflection",
+        };
+
+        const event: NotificationEvent = {
+          type: "evening-reflection",
+          message: notification,
+          deliveryMethod: this.getDeliveryMethods(),
+          userId: this.config.userId,
+        };
+
+        await this.engine.schedule(event, scheduledDate);
+        await this.markNotificationAsScheduled(scheduledDateKey);
+        scheduledCount++;
       }
-
-      // Create notification with a single random message
-      const notification: NotificationMessage = {
-        id: createNotificationId(),
-        title: "Evening Reflection",
-        body: getRandomEveningReflection(), // Single random message
-        type: "evening-reflection",
-      };
-
-      const event: NotificationEvent = {
-        type: "evening-reflection",
-        message: notification,
-        deliveryMethod: this.getDeliveryMethods(),
-        userId: this.config.userId,
-      };
-
-      await this.engine.schedule(event, scheduledDate);
 
       GlobalErrorHandler.logDebug(
         "Evening reflections scheduled",
         "NotificationScheduler.scheduleEveningReflections",
         {
-          startTime: this.config.preferences.eveningTimeStart,
-          endTime: this.config.preferences.eveningTimeEnd,
+          eveningTime: eveningTime,
+          scheduledCount,
+          daysAhead: 3,
         },
       );
-      return true;
+      return scheduledCount > 0;
     } catch (error) {
       GlobalErrorHandler.logError(
         error,
@@ -305,9 +356,11 @@ export class NotificationScheduler {
     try {
       await this.engine.cancelAllNotifications();
 
+      // Clear scheduled notification tracking
+      await this.clearScheduledNotificationTracking();
+
       // Update notification store status
-      const notificationStore = useNotificationStore.getState();
-      notificationStore.markAsUnscheduled();
+      useNotificationStore.getState().markAsUnscheduled();
 
       GlobalErrorHandler.logDebug(
         "All notifications cancelled",
@@ -327,32 +380,35 @@ export class NotificationScheduler {
     this.config = { ...this.config, ...newConfig };
   }
 
-  private shouldScheduleMidday(): boolean {
-    return (
-      this.config.preferences.rhythm === "morning-only" ||
-      this.config.preferences.rhythm === "both"
-    );
-  }
-
-  private shouldScheduleEvening(): boolean {
-    return (
-      this.config.preferences.rhythm === "evening-only" ||
-      this.config.preferences.rhythm === "both"
-    );
-  }
-
   private getDeliveryMethods(): ("push" | "local" | "in-app")[] {
     // For Cadence notifications, use both push and in-app
     return ["push", "in-app"];
   }
 
   private async getUserStreakCount(): Promise<number> {
-    // TODO: Implement actual streak calculation from user data
     // This should integrate with the existing streak calculation logic
     try {
-      // Placeholder implementation
-      // In a real implementation, this would call the streak calculation service
-      return Math.floor(Math.random() * 30) + 1; // Random streak between 1-30
+      const timeslices = await useTimeslicesStore.getState()
+        .getTimeslicesFromTo(
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          new Date(),
+        );
+
+      const uniqueDays = new Set<string>(
+        (timeslices as Timeslice[])
+          .filter((ts: Timeslice) => {
+            if (!ts.start_time) return false;
+            const tsDate: Date = new Date(ts.start_time);
+            const oneWeekAgo: Date = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            return tsDate >= oneWeekAgo;
+          })
+          .map((ts: Timeslice) =>
+            new Date(ts.start_time as string).toDateString()
+          ),
+      );
+
+      return uniqueDays.size;
     } catch {
       GlobalErrorHandler.logWarning(
         "Failed to get user streak count, using default",
@@ -433,6 +489,101 @@ export class NotificationScheduler {
         "NotificationScheduler.scheduleOneTimeNotification",
       );
       throw error;
+    }
+  }
+
+  // Helper methods for double scheduling prevention
+  private async isNotificationAlreadyScheduled(key: string): Promise<boolean> {
+    try {
+      const AsyncStorage =
+        (await import("@react-native-async-storage/async-storage")).default;
+      const scheduledNotifications = JSON.parse(
+        await AsyncStorage.getItem("SCHEDULED_NOTIFICATIONS") || "{}",
+      );
+      return !!scheduledNotifications[key];
+    } catch (error) {
+      GlobalErrorHandler.logWarning(
+        "Failed to check scheduled notification tracking",
+        "NotificationScheduler.isNotificationAlreadyScheduled",
+        { key, error },
+      );
+      return false;
+    }
+  }
+
+  private async markNotificationAsScheduled(key: string): Promise<void> {
+    try {
+      const AsyncStorage =
+        (await import("@react-native-async-storage/async-storage")).default;
+      const scheduledNotifications = JSON.parse(
+        await AsyncStorage.getItem("SCHEDULED_NOTIFICATIONS") || "{}",
+      );
+
+      scheduledNotifications[key] = {
+        scheduledAt: new Date().toISOString(),
+        userId: this.config.userId,
+      };
+
+      await AsyncStorage.setItem(
+        "SCHEDULED_NOTIFICATIONS",
+        JSON.stringify(scheduledNotifications),
+      );
+    } catch (error) {
+      GlobalErrorHandler.logWarning(
+        "Failed to mark notification as scheduled",
+        "NotificationScheduler.markNotificationAsScheduled",
+        { key, error },
+      );
+    }
+  }
+
+  private async clearScheduledNotificationTracking(): Promise<void> {
+    try {
+      const AsyncStorage =
+        (await import("@react-native-async-storage/async-storage")).default;
+      await AsyncStorage.removeItem("SCHEDULED_NOTIFICATIONS");
+    } catch (error) {
+      GlobalErrorHandler.logWarning(
+        "Failed to clear scheduled notification tracking",
+        "NotificationScheduler.clearScheduledNotificationTracking",
+        { error },
+      );
+    }
+  }
+
+  // Method to clean up old scheduled notification tracking
+  private async cleanupOldScheduledNotifications(): Promise<void> {
+    try {
+      const AsyncStorage =
+        (await import("@react-native-async-storage/async-storage")).default;
+      const scheduledNotifications = JSON.parse(
+        await AsyncStorage.getItem("SCHEDULED_NOTIFICATIONS") || "{}",
+      );
+
+      const now = new Date();
+      const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
+
+      const cleanedNotifications: Record<string, any> = {};
+
+      Object.entries(scheduledNotifications).forEach(
+        ([key, value]: [string, any]) => {
+          const scheduledDate = new Date(value.scheduledAt);
+          if (scheduledDate > threeDaysAgo) {
+            cleanedNotifications[key] = value;
+          }
+        },
+      );
+
+      await AsyncStorage.setItem(
+        "SCHEDULED_NOTIFICATIONS",
+        JSON.stringify(cleanedNotifications),
+      );
+    } catch (error) {
+      GlobalErrorHandler.logWarning(
+        "Failed to cleanup old scheduled notifications",
+        "NotificationScheduler.cleanupOldScheduledNotifications",
+        { error },
+      );
     }
   }
 }

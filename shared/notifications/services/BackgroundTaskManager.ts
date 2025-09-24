@@ -2,8 +2,7 @@ import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import * as TaskManager from "expo-task-manager";
-// Removed import to avoid circular dependency - engine will be passed as parameter
-import { NotificationPreferences } from "../types";
+import { useNotificationStore } from "@/shared/stores/resources/useNotificationStore";
 import {
   NotificationScheduler,
   SchedulerConfig,
@@ -41,7 +40,9 @@ export class BackgroundTaskManager {
     try {
       if (!engine) {
         // Lazy load to avoid circular dependency
-        const { getNotificationEngineSingleton } = await import("../NotificationEngineSingleton");
+        const { getNotificationEngineSingleton } = await import(
+          "../NotificationEngineSingleton"
+        );
         engine = await getNotificationEngineSingleton();
       }
       this.scheduler = new NotificationScheduler(engine, config);
@@ -148,6 +149,40 @@ export class BackgroundTaskManager {
     }
   }
 
+  /**
+   * Public wrapper to get a copy of scheduled notifications.
+   * Returns a shallow copy to avoid external mutation of internal array.
+   */
+  async listScheduledNotifications(): Promise<ScheduledNotification[]> {
+    return [...this.scheduledNotifications];
+  }
+
+  /**
+   * Public method to remove a scheduled notification by id.
+   */
+  async removeScheduledNotificationById(id: string): Promise<void> {
+    await this.removeScheduledNotification(id);
+  }
+
+  /**
+   * Trigger a scheduled notification immediately and remove it from storage.
+   */
+  async triggerScheduledNotificationNow(id: string): Promise<void> {
+    try {
+      const notification = this.scheduledNotifications.find((n) => n.id === id);
+      if (!notification) return;
+      await this.sendNotification(notification);
+      await this.removeScheduledNotification(id);
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.triggerScheduledNotificationNow",
+        { notificationId: id },
+      );
+      throw error;
+    }
+  }
+
   async scheduleNotification(
     notification: ScheduledNotification,
   ): Promise<void> {
@@ -241,9 +276,13 @@ export class BackgroundTaskManager {
     }
   }
 
-  async updatePreferences(preferences: NotificationPreferences): Promise<void> {
+  async updatePreferences(): Promise<void> {
     try {
-      if (preferences.rhythm === "disabled") {
+      const notificationStore = useNotificationStore.getState();
+      const { preferences } = notificationStore;
+
+      // Check if notifications are disabled
+      if (!preferences.morningReminders && !preferences.eveningReminders) {
         await this.cancelAllNotifications();
         await this.unregisterBackgroundTask();
       } else {
@@ -253,7 +292,6 @@ export class BackgroundTaskManager {
         }
 
         if (this.scheduler) {
-          this.scheduler.updateConfig({ preferences });
           await this.scheduler.scheduleAllNotifications();
         }
       }
@@ -261,7 +299,11 @@ export class BackgroundTaskManager {
       GlobalErrorHandler.logDebug(
         "Preferences updated successfully",
         "BackgroundTaskManager.updatePreferences",
-        { rhythm: preferences.rhythm },
+        {
+          morningReminders: preferences.morningReminders,
+          eveningReminders: preferences.eveningReminders,
+          weeklyStreaks: preferences.weeklyStreaks
+        },
       );
     } catch (error) {
       GlobalErrorHandler.logError(

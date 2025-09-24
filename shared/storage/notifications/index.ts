@@ -26,6 +26,7 @@ class NotificationStorage extends BaseStorage {
     async getTiming(): Promise<StorageResult<NotificationTiming>> {
         return this.get<NotificationTiming>("timing", {
             middayTime: "12:00",
+            eveningTime: "20:00",
             eveningTimeStart: "20:00",
             eveningTimeEnd: "21:30",
             isAutomatic: true,
@@ -117,9 +118,9 @@ class NotificationStorage extends BaseStorage {
             return {
                 success: true,
                 data: {
-                    timing: timingResult.data,
-                    preferences: preferencesResult.data,
-                    scheduleStatus: statusResult.data,
+                    timing: timingResult.data!,
+                    preferences: preferencesResult.data!,
+                    scheduleStatus: statusResult.data!,
                 },
             };
         } catch (error) {

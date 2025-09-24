@@ -37,8 +37,6 @@ export function useBackgroundNotifications() {
         const taskManager = BackgroundTaskManager.getInstance();
         const config: SchedulerConfig = {
           userId: user.id,
-          preferences,
-          profileSettings: settings,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         };
 
