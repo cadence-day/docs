@@ -18,7 +18,14 @@ export const useTimelineData = (
   date: Date,
   options?: UseTimelineDataOptions,
 ) => {
-  const user_id = useUser().user?.id ?? null;
+  // Guard access to Clerk's user object. In some environments `useUser().user`
+  // may be a primitive or a shape we don't expect; ensure we only read `id`
+  // when `user` is an object with a string `id`. This prevents unexpected
+  // telemetry errors like "Value is a number, expected an Object".
+  const clerkUser = useUser().user as { id?: string } | null | undefined;
+  const user_id = typeof clerkUser === "object" && clerkUser?.id
+    ? clerkUser.id
+    : null;
   // Prefer injected activities getter, otherwise fall back to empty array
   // Grab enabled/disabled activities from the activities store so disabled
   // activities' colors/metadata are available to timeline rendering.

@@ -36,32 +36,32 @@ export const useTimelineActions = (opts?: {
   // `opts` to override selected implementations. This preserves the
   // hook call order required by React rules-of-hooks while keeping the
   // ability to inject test doubles.
-  const {
-    insertTimeslice: _insertTimesliceFromStore,
-    updateTimeslice: _updateTimesliceFromStore,
-    deleteTimeslice: _deleteTimesliceFromStore,
-  } = useTimeslicesStore((s) => ({
-    insertTimeslice: s.insertTimeslice,
-    updateTimeslice: s.updateTimeslice,
-    deleteTimeslice: s.deleteTimeslice,
-  }));
+  // Select individual functions from the timeslices store but use the
+  // `shallow` comparator so the selector's returned array/object is stable
+  // and won't create a new reference on every render (which breaks
+  // getSnapshot caching and can cause infinite update loops).
+  // Select functions individually to avoid returning a new object each render
+  // and to keep TypeScript inference straightforward.
+  const _insertTimesliceFromStore = useTimeslicesStore((s) =>
+    s.insertTimeslice
+  );
+  const _updateTimesliceFromStore = useTimeslicesStore((s) =>
+    s.updateTimeslice
+  );
+  const _deleteTimesliceFromStore = useTimeslicesStore((s) =>
+    s.deleteTimeslice
+  );
 
-  const {
-    toggleCollapse: _toggleCollapseFromStore,
-    closeDialog: _closeDialogFromStore,
-  } = useDialogStore((s) => ({
-    toggleCollapse: s.toggleCollapse,
-    closeDialog: s.closeDialog,
-  }));
+  const _toggleCollapseFromStore = useDialogStore((s) => s.toggleCollapse);
+  const _closeDialogFromStore = useDialogStore((s) => s.closeDialog);
 
   // Pending timeslices operations
-  const {
-    addPendingTimeslice: _addPendingTimesliceFromStore,
-    addPendingUpdate: _addPendingUpdateFromStore,
-  } = usePendingTimeslicesStore((s) => ({
-    addPendingTimeslice: s.addPendingTimeslice,
-    addPendingUpdate: s.addPendingUpdate,
-  }));
+  const _addPendingTimesliceFromStore = usePendingTimeslicesStore((s) =>
+    s.addPendingTimeslice
+  );
+  const _addPendingUpdateFromStore = usePendingTimeslicesStore((s) =>
+    s.addPendingUpdate
+  );
 
   // Expose final callables, allowing `opts` to override store implementations
   const insertTimesliceInStore = opts?.insertTimeslice ??

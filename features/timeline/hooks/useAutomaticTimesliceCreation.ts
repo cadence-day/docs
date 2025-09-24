@@ -34,13 +34,14 @@ export const useAutomaticTimesliceCreation = (opts?: {
     (state) => state.clearPendingUpdates,
   );
   // Call hooks unconditionally and allow `opts` to override implementations
-  const {
-    insertTimeslices: _insertTimeslicesFromStore,
-    updateTimeslice: _updateTimesliceFromStore,
-  } = useTimeslicesStore((state) => ({
-    insertTimeslices: state.insertTimeslices,
-    updateTimeslice: state.updateTimeslice,
-  }));
+  // Select functions individually to avoid returning a new object each render
+  // and to keep TypeScript inference straightforward.
+  const _insertTimeslicesFromStore = useTimeslicesStore((state) =>
+    state.insertTimeslices
+  );
+  const _updateTimesliceFromStore = useTimeslicesStore((state) =>
+    state.updateTimeslice
+  );
 
   const insertTimeslicesInStore = opts?.insertTimeslices ??
     _insertTimeslicesFromStore;
