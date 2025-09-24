@@ -36,6 +36,7 @@ interface StatesStore extends BaseStoreState {
   // Get operations
   getState: (id: string) => Promise<State | null>;
   getStates: (ids: string[]) => Promise<State[]>;
+  getStateByTimeslice: (timesliceId: string) => Promise<State | null>;
   getUserStates: (userId: string) => Promise<State[]>;
   getAllStates: () => Promise<State[]>;
 
@@ -214,6 +215,15 @@ const useStatesStore = create<StatesStore>((set) => ({
       () => statesApi.getStates(ids),
       "get states",
       [],
+    );
+  },
+
+  getStateByTimeslice: async (timesliceId: string) => {
+    return handleGetApiCall(
+      set,
+      () => statesApi.getStateByTimeslice(timesliceId),
+      "get state by timeslice",
+      null,
     );
   },
 

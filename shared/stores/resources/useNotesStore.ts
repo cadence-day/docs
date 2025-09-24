@@ -143,8 +143,8 @@ const useNotesStore = create<NotesStore>((set) => ({
         return fetchedNotes;
       },
       "refresh notes",
-      (fetchedNotes, state) => ({
-        notes: state.notes.concat(fetchedNotes),
+      (fetchedNotes) => ({
+        notes: fetchedNotes, // Replace instead of concat to avoid duplicates
       }),
     );
   },
