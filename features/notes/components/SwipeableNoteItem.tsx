@@ -88,9 +88,10 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
         useNativeDriver: true,
         tension: 150,
         friction: 8,
-      }).start();
-
-      isSwipeActive.current = false;
+      }).start(() => {
+        // Only reset swipe active after animation completes
+        isSwipeActive.current = false;
+      });
     }
   };
 
@@ -169,9 +170,10 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
       <PanGestureHandler
         onGestureEvent={onGestureEvent}
         onHandlerStateChange={onHandlerStateChange}
-        activeOffsetX={[-10, 10]}
-        failOffsetY={[-30, 30]}
+        activeOffsetX={[-20, 20]}
+        failOffsetY={[-50, 50]}
         enabled={!isActive} // Disable swipe when editing
+        shouldCancelWhenOutside={true}
       >
         <Animated.View
           style={[
@@ -198,7 +200,9 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
             onFocus={() => {
               onFocus();
             }}
-            editable={!isSwipeActive.current}
+            editable={true}
+            textAlignVertical="top"
+            blurOnSubmit={false}
           />
 
           {isPinned && (

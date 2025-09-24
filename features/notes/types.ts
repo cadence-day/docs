@@ -30,8 +30,6 @@ export interface NoteDialogState {
 export interface UseNoteHandlersProps {
   notes: NoteItem[];
   setNotes: React.Dispatch<React.SetStateAction<NoteItem[]>>;
-  deletedNoteIds: string[];
-  setDeletedNoteIds: React.Dispatch<React.SetStateAction<string[]>>;
   energy: number;
   timeslice: {
     id?: string;
@@ -42,7 +40,6 @@ export interface UseNoteHandlersProps {
   noteIds: string[];
   activeNoteIndex: number | null;
   setActiveNoteIndex: React.Dispatch<React.SetStateAction<number | null>>;
-  onClose: () => void;
 }
 
 export interface NoteDialogProps {

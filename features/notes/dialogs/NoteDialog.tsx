@@ -44,7 +44,6 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
 }) => {
   const { t } = useI18n();
   const [notes, setNotes] = useState<NoteItem[]>([]);
-  const [deletedNoteIds, setDeletedNoteIds] = useState<string[]>([]);
   const [energy, setEnergy] = useState(0);
   const [activeNoteIndex, setActiveNoteIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +65,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
   const notesStore = useNotesStore();
   const statesStore = useStatesStore();
   const activitiesStore = useActivitiesStore();
-  const dialogStore = useDialogStore();
+  const { setDialogProps, closeDialog } = useDialogStore();
 
   // Get the activity for this timeslice
   const noteActivity = activitiesStore.activities.find(
@@ -76,22 +75,19 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
   // Handle dialog close
   const handleClose = useCallback(() => {
     if (_dialogId) {
-      dialogStore.closeDialog(_dialogId);
+      closeDialog(_dialogId);
     }
-  }, [_dialogId, dialogStore]);
+  }, [_dialogId, closeDialog]);
 
   // Create handlers using the custom hook
   const noteHandlers = useNoteHandlers({
     notes,
     setNotes,
-    deletedNoteIds,
-    setDeletedNoteIds,
     energy,
     timeslice,
     noteIds,
     activeNoteIndex,
     setActiveNoteIndex,
-    onClose: handleClose,
   });
 
   // Pin/unpin handlers
@@ -127,32 +123,39 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     if (!ts_id) return;
 
     try {
-      // Check if we have a state for this timeslice in local store
-      const existingState = statesStore.states.find(
+      // First check if we have a state for this timeslice in local store
+      let existingState = statesStore.states.find(
         (state) => state.timeslice_id === ts_id
       );
+
+      // If not found locally, try to fetch from database
+      if (!existingState) {
+        const fetchedState = await statesStore.getStateByTimeslice(ts_id);
+        if (fetchedState) {
+          existingState = fetchedState;
+        }
+      }
 
       if (existingState) {
         // Set energy from existing state (0 is a valid value)
         setEnergy(existingState.energy || 0);
       }
-      // If no local state found, energy remains at default value of 0
+      // If no state found anywhere, energy remains at default value of 0
     } catch (error) {
       GlobalErrorHandler.logError(error, "loadEnergyState", {
         timesliceId: ts_id,
       });
     }
-  }, [ts_id, statesStore.states]); // Added statesStore.states to dependencies
+  }, [ts_id, statesStore]); // Add statesStore back since we use getStateByTimeslice
 
   const loadNotes = useCallback(async () => {
     if (!noteIds.length) {
-      // No existing notes, add an empty one
-      setNotes([
-        {
-          ...createEmptyNote(),
-          timeslice_id: timeslice.id || null,
-        } as NoteItem,
-      ]);
+      // No existing notes, add an empty one with proper timeslice_id
+      const emptyNote = {
+        ...createEmptyNote(),
+        timeslice_id: timeslice.id || null,
+      };
+      setNotes([emptyNote]);
       return;
     }
 
@@ -170,7 +173,11 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
 
       // Always ensure at least one note for input if we don't have any valid notes
       if (noteItems.length === 0) {
-        noteItems.push(createEmptyNote());
+        const emptyNote = {
+          ...createEmptyNote(),
+          timeslice_id: timeslice.id || null,
+        };
+        noteItems.push(emptyNote);
       }
 
       setNotes(noteItems);
@@ -181,11 +188,16 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       });
       setError("Failed to load notes. Please try again.");
       // Still show empty note for input
-      setNotes([createEmptyNote()]);
+      const emptyNote = {
+        ...createEmptyNote(),
+        timeslice_id: timeslice.id || null,
+      };
+      setNotes([emptyNote]);
     } finally {
       setIsLoading(false);
     }
-  }, [noteIds, ts_id, timeslice.id, notesStore]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noteIds, ts_id, timeslice.id]); // Remove notesStore dependency to prevent re-renders
 
   // Load existing notes when dialog opens
   useEffect(() => {
@@ -193,7 +205,8 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       loadNotes();
       loadEnergyState();
     }
-  }, [ts_id, loadNotes, loadEnergyState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ts_id]); // Only depend on ts_id to prevent infinite loops
 
   // Handle keyboard visibility
   useEffect(() => {
@@ -321,7 +334,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     if (!_dialogId) return;
 
     // Set static header props once - no dynamic updates to prevent infinite loops
-    dialogStore.setDialogProps(_dialogId, {
+    setDialogProps(_dialogId, {
       headerProps: {
         title: noteActivity?.name ? `${noteActivity.name} Notes` : "Notes",
         titleButtonComponent: noteActivity ? (
@@ -343,7 +356,8 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       },
       height: 85,
     });
-  }, [_dialogId, noteActivity, dialogStore, handleClose]); // Only when dialog ID, activity, dialogStore, or handleClose changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_dialogId, noteActivity?.name, noteActivity?.id]); // Only when dialog ID or activity changes
 
   return (
     <GestureHandlerRootView style={styles.container}>
@@ -423,6 +437,15 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
                         return textInputRefs.current[index] || null;
                       },
                       set current(value) {
+                        if (textInputRefs.current.length <= index) {
+                          // Extend array if needed
+                          textInputRefs.current = [
+                            ...textInputRefs.current,
+                            ...Array(
+                              index + 1 - textInputRefs.current.length
+                            ).fill(null),
+                          ];
+                        }
                         textInputRefs.current[index] = value;
                       },
                     }}
