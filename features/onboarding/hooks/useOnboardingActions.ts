@@ -14,6 +14,7 @@ export function useOnboardingActions() {
         const defaultPreferences: NotificationPreferences = {
           rhythm: "both",
           middayTime: "12:00",
+          eveningTime: "20:00",
           eveningTimeStart: "20:00",
           eveningTimeEnd: "21:00",
           streaksEnabled: true,
