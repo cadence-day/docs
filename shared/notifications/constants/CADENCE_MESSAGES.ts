@@ -65,10 +65,9 @@ export const getRandomEveningReflection = (): string => {
 };
 
 export const getRandomStreakMessage = (streakCount: number): string => {
-  const message =
-    CADENCE_STREAK_MESSAGES[
-      Math.floor(Math.random() * CADENCE_STREAK_MESSAGES.length)
-    ];
+  const message = CADENCE_STREAK_MESSAGES[
+    Math.floor(Math.random() * CADENCE_STREAK_MESSAGES.length)
+  ];
   return message.replace("{{streakCount}}", streakCount.toString());
 };
 

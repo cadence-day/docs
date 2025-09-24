@@ -1,9 +1,10 @@
-import { create } from "zustand";
-import { subscribeWithSelector } from "zustand/middleware";
-import * as Notifications from "expo-notifications";
-import { AppState, AppStateStatus } from "react-native";
+import { notificationStorage } from "@/shared/storage/notifications";
 import type { BaseStoreState } from "@/shared/stores/utils/utils";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import * as Notifications from "expo-notifications";
+import { AppState, AppStateStatus } from "react-native";
+import { create } from "zustand";
+import { subscribeWithSelector } from "zustand/middleware";
 
 export interface CadenceMessage {
   id: string;
@@ -11,7 +12,10 @@ export interface CadenceMessage {
   type: "midday" | "evening" | "streak";
 }
 
-export type NotificationType = "midday-reflection" | "evening-reflection" | "weekly-streaks";
+export type NotificationType =
+  | "midday-reflection"
+  | "evening-reflection"
+  | "weekly-streaks";
 
 export interface NotificationPreferences {
   morningReminders: boolean;
@@ -22,7 +26,7 @@ export interface NotificationPreferences {
 
 export interface NotificationTiming {
   morningTime: string; // "07:00"
-  middayTime: string;  // "12:00"
+  middayTime: string; // "12:00"
   eveningTime: string; // "19:00"
 }
 
@@ -43,8 +47,10 @@ export interface NotificationStore extends BaseStoreState {
   isInApp: boolean;
 
   // Actions
-  updatePreferences: (preferences: Partial<NotificationPreferences>) => void;
-  updateTiming: (timing: Partial<NotificationTiming>) => void;
+  updatePreferences: (
+    preferences: Partial<NotificationPreferences>,
+  ) => Promise<void>;
+  updateTiming: (timing: Partial<NotificationTiming>) => Promise<void>;
   requestPermissions: () => Promise<boolean>;
   scheduleNotifications: () => Promise<void>;
   getNextQuote: () => CadenceMessage;
@@ -52,8 +58,11 @@ export interface NotificationStore extends BaseStoreState {
   resetQuoteBacklog: () => void;
   deliverNotification: (quote: CadenceMessage, type: NotificationType) => void;
 
+  // Debug/repair methods
+  repairTiming: () => Promise<void>;
+
   // Internal methods
-  _initialize: () => void;
+  _initialize: () => Promise<void>;
   _updateAppState: (state: AppStateStatus) => void;
 }
 
@@ -136,9 +145,9 @@ const initialPreferences: NotificationPreferences = {
 };
 
 const initialTiming: NotificationTiming = {
-  morningTime: "07:00",
+  morningTime: "08:00",
   middayTime: "12:00",
-  eveningTime: "19:00",
+  eveningTime: "18:00",
 };
 
 // Helper function for notification titles
@@ -169,19 +178,53 @@ export const useNotificationStore = create<NotificationStore>()(
     error: null,
 
     // Actions
-    updatePreferences: (newPreferences: Partial<NotificationPreferences>) => {
-      set((state) => ({
-        preferences: { ...state.preferences, ...newPreferences },
-      }));
+    updatePreferences: async (
+      newPreferences: Partial<NotificationPreferences>,
+    ) => {
+      const updatedPreferences = { ...get().preferences, ...newPreferences };
+
+      set({ preferences: updatedPreferences });
+
+      // Persist to storage
+      try {
+        await notificationStorage.setPreferences(updatedPreferences);
+        GlobalErrorHandler.logDebug(
+          "Notification preferences saved",
+          "useNotificationStore.updatePreferences",
+          { preferences: updatedPreferences },
+        );
+      } catch (error) {
+        GlobalErrorHandler.logError(
+          error,
+          "useNotificationStore.updatePreferences",
+          { preferences: updatedPreferences },
+        );
+      }
 
       // Auto-reschedule notifications when preferences change
       get().scheduleNotifications();
     },
 
-    updateTiming: (newTiming: Partial<NotificationTiming>) => {
-      set((state) => ({
-        timing: { ...state.timing, ...newTiming },
-      }));
+    updateTiming: async (newTiming: Partial<NotificationTiming>) => {
+      const updatedTiming = { ...get().timing, ...newTiming };
+
+      set({ timing: updatedTiming });
+
+      // Persist to storage
+      try {
+        await notificationStorage.setTiming(updatedTiming);
+        GlobalErrorHandler.logDebug(
+          "Notification timing saved",
+          "useNotificationStore.updateTiming",
+          { timing: updatedTiming },
+        );
+      } catch (error) {
+        GlobalErrorHandler.logError(
+          error,
+          "useNotificationStore.updateTiming",
+          { timing: updatedTiming },
+        );
+      }
 
       // Auto-reschedule notifications when timing changes
       get().scheduleNotifications();
@@ -194,15 +237,23 @@ export const useNotificationStore = create<NotificationStore>()(
         const { status } = await Notifications.requestPermissionsAsync();
         const granted = status === "granted";
 
+        let permissionStatus: "granted" | "denied" | "undetermined";
+        if (status === "granted") {
+          permissionStatus = "granted";
+        } else if (status === "denied") {
+          permissionStatus = "denied";
+        } else {
+          permissionStatus = "undetermined";
+        }
+
         set({
-          permissionStatus: status === "granted" ? "granted" :
-                           status === "denied" ? "denied" : "undetermined",
+          permissionStatus,
           isPermissionLoading: false,
         });
 
         GlobalErrorHandler.logDebug(
           `Notification permissions ${granted ? "granted" : "denied"}`,
-          "useNotificationStore.requestPermissions"
+          "useNotificationStore.requestPermissions",
         );
 
         return granted;
@@ -210,13 +261,15 @@ export const useNotificationStore = create<NotificationStore>()(
         GlobalErrorHandler.logError(
           error,
           "useNotificationStore.requestPermissions",
-          {}
+          {},
         );
 
         set({
           permissionStatus: "denied",
           isPermissionLoading: false,
-          error: error instanceof Error ? error.message : "Failed to request permissions",
+          error: error instanceof Error
+            ? error.message
+            : "Failed to request permissions",
         });
 
         return false;
@@ -229,7 +282,7 @@ export const useNotificationStore = create<NotificationStore>()(
       if (permissionStatus !== "granted") {
         GlobalErrorHandler.logWarning(
           "Cannot schedule notifications without permissions",
-          "useNotificationStore.scheduleNotifications"
+          "useNotificationStore.scheduleNotifications",
         );
         return;
       }
@@ -238,37 +291,60 @@ export const useNotificationStore = create<NotificationStore>()(
         // Cancel existing notifications first
         await Notifications.cancelAllScheduledNotificationsAsync();
 
+        // Log the timing data for debugging
+        GlobalErrorHandler.logDebug(
+          "Scheduling notifications with timing data",
+          "useNotificationStore.scheduleNotifications",
+          { preferences, timing },
+        );
+
         const notifications = [];
 
         // Schedule morning reminders
         if (preferences.morningReminders) {
           // Morning reminders can use midday quotes for motivation
+          const morningTime = timing.morningTime || "08:00"; // Fallback if undefined
           notifications.push({
             type: "midday-reflection" as NotificationType,
-            time: timing.morningTime,
+            time: morningTime,
           });
         }
 
         // Schedule midday reflections
         if (preferences.middayReflection) {
+          const middayTime = timing.middayTime || "12:00"; // Fallback if undefined
           notifications.push({
             type: "midday-reflection" as NotificationType,
-            time: timing.middayTime,
+            time: middayTime,
           });
         }
 
         // Schedule evening reflections
         if (preferences.eveningReminders) {
+          const eveningTime = timing.eveningTime || "18:00"; // Fallback if undefined
           notifications.push({
             type: "evening-reflection" as NotificationType,
-            time: timing.eveningTime,
+            time: eveningTime,
           });
         }
 
         // Schedule each notification
         for (const notification of notifications) {
+          // Add safety check for time property
+          if (!notification.time) {
+            GlobalErrorHandler.logError(
+              new Error(
+                `Invalid notification time: ${JSON.stringify(notification)}`,
+              ),
+              "useNotificationStore.scheduleNotifications",
+              { notification, preferences, timing },
+            );
+            continue; // Skip this notification
+          }
+
           const [hours, minutes] = notification.time.split(":").map(Number);
-          const trigger = {
+          const trigger: Notifications.CalendarTriggerInput = {
+            type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
             hour: hours,
             minute: minutes,
             repeats: true,
@@ -287,18 +363,19 @@ export const useNotificationStore = create<NotificationStore>()(
         GlobalErrorHandler.logDebug(
           `Scheduled ${notifications.length} notifications`,
           "useNotificationStore.scheduleNotifications",
-          { notifications }
+          { notifications },
         );
-
       } catch (error) {
         GlobalErrorHandler.logError(
           error,
           "useNotificationStore.scheduleNotifications",
-          { preferences, timing }
+          { preferences, timing },
         );
 
         set({
-          error: error instanceof Error ? error.message : "Failed to schedule notifications",
+          error: error instanceof Error
+            ? error.message
+            : "Failed to schedule notifications",
         });
       }
     },
@@ -306,7 +383,7 @@ export const useNotificationStore = create<NotificationStore>()(
     getNextQuote: (): CadenceMessage => {
       const { usedQuoteIds, nextQuoteIndex } = get();
       const availableQuotes = cadenceMessages.filter(
-        (quote) => !usedQuoteIds.includes(quote.id)
+        (quote) => !usedQuoteIds.includes(quote.id),
       );
 
       // Reset backlog if all quotes used
@@ -333,6 +410,36 @@ export const useNotificationStore = create<NotificationStore>()(
       set({ usedQuoteIds: [], nextQuoteIndex: 0 });
     },
 
+    // Debug/repair function to fix timing data structure
+    repairTiming: async () => {
+      const { timing } = get();
+
+      // Ensure all required timing properties exist with defaults
+      const repairedTiming: NotificationTiming = {
+        morningTime: timing.morningTime || "08:00",
+        middayTime: timing.middayTime || "12:00",
+        eveningTime: timing.eveningTime || "18:00",
+      };
+
+      set({ timing: repairedTiming });
+
+      // Save repaired timing to storage
+      try {
+        await notificationStorage.setTiming(repairedTiming);
+        GlobalErrorHandler.logDebug(
+          "Timing data repaired and saved",
+          "useNotificationStore.repairTiming",
+          { originalTiming: timing, repairedTiming },
+        );
+      } catch (error) {
+        GlobalErrorHandler.logError(
+          error,
+          "useNotificationStore.repairTiming",
+          { timing: repairedTiming },
+        );
+      }
+    },
+
     deliverNotification: (quote: CadenceMessage, type: NotificationType) => {
       // This will be handled by the NotificationEngine singleton
       // For now, we just mark the quote as used
@@ -341,12 +448,51 @@ export const useNotificationStore = create<NotificationStore>()(
       GlobalErrorHandler.logDebug(
         "Notification delivered",
         "useNotificationStore.deliverNotification",
-        { quoteId: quote.id, type }
+        { quoteId: quote.id, type },
       );
     },
 
     // Internal methods
-    _initialize: () => {
+    _initialize: async () => {
+      try {
+        // Load stored preferences and timing
+        const [preferencesResult, timingResult] = await Promise.all([
+          notificationStorage.getPreferences(),
+          notificationStorage.getTiming(),
+        ]);
+
+        // Update store with loaded data or defaults
+        const preferences = preferencesResult.success && preferencesResult.data
+          ? preferencesResult.data
+          : initialPreferences;
+
+        const timing = timingResult.success && timingResult.data
+          ? timingResult.data
+          : initialTiming;
+
+        set({ preferences, timing });
+
+        GlobalErrorHandler.logDebug(
+          "Notification preferences loaded from storage",
+          "useNotificationStore._initialize",
+          { preferences, timing },
+        );
+      } catch (error) {
+        GlobalErrorHandler.logError(
+          error,
+          "useNotificationStore._initialize",
+          {
+            message: "Failed to load notification preferences, using defaults",
+          },
+        );
+
+        // Use defaults on error
+        set({
+          preferences: initialPreferences,
+          timing: initialTiming,
+        });
+      }
+
       // Set up app state listener
       const handleAppStateChange = (nextAppState: AppStateStatus) => {
         get()._updateAppState(nextAppState);
@@ -364,14 +510,24 @@ export const useNotificationStore = create<NotificationStore>()(
 
       GlobalErrorHandler.logDebug(
         `App state changed: ${state}, isInApp: ${isInApp}`,
-        "useNotificationStore._updateAppState"
+        "useNotificationStore._updateAppState",
       );
     },
-  }))
+  })),
 );
 
 // Initialize the store
-useNotificationStore.getState()._initialize();
+(async () => {
+  try {
+    await useNotificationStore.getState()._initialize();
+  } catch (error) {
+    GlobalErrorHandler.logError(
+      error,
+      "useNotificationStore initialization",
+      { message: "Failed to initialize notification store" },
+    );
+  }
+})();
 
 // Export default for consistency
 export default useNotificationStore;

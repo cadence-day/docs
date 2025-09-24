@@ -182,6 +182,7 @@
   "monthly": "",
   "morning-reminders": "Rappels du matin",
   "morning-reminders-are-sent-aft": "Les rappels du matin sont envoyés après votre heure de réveil et les rappels du soir avant votre temps de sommeil. \nLes mises à jour hebdomadaires de séquences célèbrent vos réalisations tous les dimanches.",
+  "morning-time": "",
   "name": "Nom",
   "new-password": "Nouveau mot de passe",
   "new-password-must-be-at-least": "Le nouveau mot de passe doit comporter au moins 8 caractères.",

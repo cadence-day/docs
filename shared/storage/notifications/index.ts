@@ -30,9 +30,9 @@ class NotificationStorage extends BaseStorage {
      */
     async getTiming(): Promise<StorageResult<NotificationTiming>> {
         return this.get<NotificationTiming>("timing", {
-            morningTime: "07:00",
+            morningTime: "08:00",
             middayTime: "12:00",
-            eveningTime: "19:00",
+            eveningTime: "18:00",
         });
     }
 

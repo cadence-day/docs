@@ -6,8 +6,8 @@ import {
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
-import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
 import { notificationEngine } from "@/shared/notifications/NotificationEngine";
+import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -30,7 +30,6 @@ export default function NotificationsSettings() {
     updatePreferences,
     updateTiming,
     permissionStatus,
-    isPermissionLoading,
     requestPermissions,
     scheduleNotifications,
   } = useNotificationStore();
@@ -44,12 +43,16 @@ export default function NotificationsSettings() {
     setPushNotificationsEnabled(permissionStatus === "granted");
   }, [permissionStatus]);
 
-  const handleNotificationToggle = (
-    type: "morningReminders" | "eveningReminders" | "weeklyStreaks" | "middayReflection",
+  const handleNotificationToggle = async (
+    type:
+      | "morningReminders"
+      | "eveningReminders"
+      | "weeklyStreaks"
+      | "middayReflection",
     value: boolean
   ) => {
     // Update the preferences in the new store
-    updatePreferences({
+    await updatePreferences({
       [type]: value,
     });
 
@@ -167,44 +170,64 @@ export default function NotificationsSettings() {
 
                 <CdTextInputOneLine
                   label={t("morning-reminders")}
-                  value={preferences.morningReminders ? t("enabled") : t("disabled")}
+                  value={
+                    preferences.morningReminders ? t("enabled") : t("disabled")
+                  }
                   showValueText={true}
                   isButton={true}
                   onPress={() =>
-                    handleNotificationToggle("morningReminders", !preferences.morningReminders)
+                    handleNotificationToggle(
+                      "morningReminders",
+                      !preferences.morningReminders
+                    )
                   }
                   showChevron={true}
                 />
 
                 <CdTextInputOneLine
                   label={t("midday-reflection")}
-                  value={preferences.middayReflection ? t("enabled") : t("disabled")}
+                  value={
+                    preferences.middayReflection ? t("enabled") : t("disabled")
+                  }
                   showValueText={true}
                   isButton={true}
                   onPress={() =>
-                    handleNotificationToggle("middayReflection", !preferences.middayReflection)
+                    handleNotificationToggle(
+                      "middayReflection",
+                      !preferences.middayReflection
+                    )
                   }
                   showChevron={true}
                 />
 
                 <CdTextInputOneLine
                   label={t("evening-reminders")}
-                  value={preferences.eveningReminders ? t("enabled") : t("disabled")}
+                  value={
+                    preferences.eveningReminders ? t("enabled") : t("disabled")
+                  }
                   showValueText={true}
                   isButton={true}
                   onPress={() =>
-                    handleNotificationToggle("eveningReminders", !preferences.eveningReminders)
+                    handleNotificationToggle(
+                      "eveningReminders",
+                      !preferences.eveningReminders
+                    )
                   }
                   showChevron={true}
                 />
 
                 <CdTextInputOneLine
                   label={t("weekly-streak-updates")}
-                  value={preferences.weeklyStreaks ? t("enabled") : t("disabled")}
+                  value={
+                    preferences.weeklyStreaks ? t("enabled") : t("disabled")
+                  }
                   showValueText={true}
                   isButton={true}
                   onPress={() =>
-                    handleNotificationToggle("weeklyStreaks", !preferences.weeklyStreaks)
+                    handleNotificationToggle(
+                      "weeklyStreaks",
+                      !preferences.weeklyStreaks
+                    )
                   }
                   showChevron={true}
                 />
@@ -225,10 +248,10 @@ export default function NotificationsSettings() {
                       label={t("morning-time")}
                       value={timing.morningTime}
                       showValueText={true}
-                      onSave={(newTime) => {
+                      onSave={async (newTime) => {
                         const formatted = formatTimeInput(newTime);
                         if (formatted) {
-                          updateTiming({ morningTime: formatted });
+                          await updateTiming({ morningTime: formatted });
                         } else {
                           const msg =
                             getTimeValidationError(newTime, "wake", t) ||
@@ -248,10 +271,10 @@ export default function NotificationsSettings() {
                       label={t("midday-reflection")}
                       value={timing.middayTime}
                       showValueText={true}
-                      onSave={(newTime) => {
+                      onSave={async (newTime) => {
                         const formatted = formatTimeInput(newTime);
                         if (formatted) {
-                          updateTiming({ middayTime: formatted });
+                          await updateTiming({ middayTime: formatted });
                         } else {
                           const msg =
                             getTimeValidationError(newTime, "wake", t) ||
@@ -271,10 +294,10 @@ export default function NotificationsSettings() {
                       label={t("evening-reflection")}
                       value={timing.eveningTime}
                       showValueText={true}
-                      onSave={(newTime) => {
+                      onSave={async (newTime) => {
                         const formatted = formatTimeInput(newTime);
                         if (formatted) {
-                          updateTiming({ eveningTime: formatted });
+                          await updateTiming({ eveningTime: formatted });
                         } else {
                           const msg =
                             getTimeValidationError(newTime, "sleep", t) ||

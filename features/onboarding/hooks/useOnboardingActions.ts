@@ -1,26 +1,29 @@
-import { useNotifications } from "@/shared/notifications";
+import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as WebBrowser from "expo-web-browser";
-import type { NotificationPreferences } from "@/shared/notifications/types";
 
 export function useOnboardingActions() {
-  const { requestPermissions, updatePreferences } = useNotifications();
+  const { requestPermissions, updatePreferences, updateTiming } = useNotificationStore();
 
   const handleNotificationPermission = async () => {
     try {
-      const result = await requestPermissions();
-      if (result.granted) {
-        const defaultPreferences: NotificationPreferences = {
-          rhythm: "both",
+      const granted = await requestPermissions();
+      if (granted) {
+        // Set default preferences
+        updatePreferences({
+          morningReminders: true,
+          eveningReminders: true,
+          middayReflection: true,
+          weeklyStreaks: true,
+        });
+
+        // Set default timing
+        updateTiming({
+          morningTime: "07:00",
           middayTime: "12:00",
           eveningTime: "20:00",
-          eveningTimeStart: "20:00",
-          eveningTimeEnd: "21:00",
-          streaksEnabled: true,
-          lightTouch: true,
-        };
-        await updatePreferences(defaultPreferences);
+        });
       }
     } catch (error) {
       GlobalErrorHandler.logError(

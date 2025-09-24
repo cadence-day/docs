@@ -1,4 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
+import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { RelativePathString, router } from "expo-router";
@@ -6,7 +7,6 @@ import React, { useCallback, useEffect, useRef } from "react";
 import {
   Animated,
   Dimensions,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -252,7 +252,7 @@ const Toast: React.FC<ToastProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: Platform.OS === "ios" ? 40 : 20,
+    bottom: NAV_BAR_SIZE, // Align with nav bar + small padding
     left: 0,
     right: 0,
     zIndex: 9999,

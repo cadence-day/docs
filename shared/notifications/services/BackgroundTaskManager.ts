@@ -1,11 +1,11 @@
+import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import * as TaskManager from "expo-task-manager";
-import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
 
 const NOTIFICATION_TASK_NAME = "CADENCE_NOTIFICATION_TASK";
-const CHECK_INTERVAL_MINUTES = 15;
+const CHECK_INTERVAL_MINUTES = 10; // Check every 10 minutes
 
 interface ScheduledNotification {
   id: string;
@@ -33,7 +33,6 @@ export class BackgroundTaskManager {
 
   async initialize(): Promise<void> {
     try {
-
       await this.registerBackgroundTask();
       await this.scheduleBackgroundTask();
 
@@ -278,9 +277,7 @@ export class BackgroundTaskManager {
           await this.scheduleBackgroundTask();
         }
 
-        if (this.scheduler) {
-          await this.scheduler.scheduleAllNotifications();
-        }
+        // Scheduler removed - notifications now managed by unified store
       }
 
       GlobalErrorHandler.logDebug(
@@ -289,7 +286,7 @@ export class BackgroundTaskManager {
         {
           morningReminders: preferences.morningReminders,
           eveningReminders: preferences.eveningReminders,
-          weeklyStreaks: preferences.weeklyStreaks
+          weeklyStreaks: preferences.weeklyStreaks,
         },
       );
     } catch (error) {
@@ -307,9 +304,7 @@ export class BackgroundTaskManager {
       this.scheduledNotifications = [];
       await this.persistScheduledNotifications();
 
-      if (this.scheduler) {
-        await this.scheduler.cancelAllNotifications();
-      }
+      // Scheduler removed - notifications now managed by unified store
 
       GlobalErrorHandler.logDebug(
         "All notifications cancelled",
