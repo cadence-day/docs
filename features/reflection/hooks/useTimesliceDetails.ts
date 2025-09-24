@@ -11,7 +11,7 @@ export interface TimesliceDetails {
 }
 
 export const useTimesliceDetails = (
-  timeslice: Timeslice | null
+  timeslice: Timeslice | null,
 ): TimesliceDetails => {
   const [energy, setEnergy] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,8 +50,9 @@ export const useTimesliceDetails = (
           setEnergy(null);
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to fetch energy data";
+        const errorMessage = err instanceof Error
+          ? err.message
+          : "Failed to fetch energy data";
         setError(errorMessage);
         GlobalErrorHandler.logError(err, "useTimesliceDetails.fetchEnergy", {
           timesliceId: timeslice?.id,
@@ -63,7 +64,7 @@ export const useTimesliceDetails = (
     };
 
     fetchEnergy();
-  }, [timeslice?.state_id]);
+  }, [timeslice?.state_id, timeslice?.id, statesStore]);
 
   return {
     activityColor,

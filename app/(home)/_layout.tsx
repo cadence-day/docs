@@ -1,4 +1,4 @@
-import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
+import { checkAndPromptEncryptionLinking } from "@/features/encryption/utils/detectNewDevice";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
@@ -9,48 +9,28 @@ import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 // Custom TabLabel component to have more control over the appearance
-function TabLabel({
-  focused,
-  color,
-  label,
-}: {
-  focused: boolean;
-  color: string;
-  label: string;
-}) {
+function TabLabel({ focused, label }: { focused: boolean; label: string }) {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: NAV_BAR_SIZE,
-        minWidth: 80,
-      }}
-    >
+    <View style={styles.tabLabelContainer}>
       <Text
-        style={{
-          fontSize: 10,
-          textTransform: "uppercase",
-          letterSpacing: 1.2,
-          color: COLORS.light.text,
-          textAlign: "center",
-          textDecorationLine: focused ? "underline" : "none",
-          fontWeight: focused ? "700" : "400",
-          verticalAlign: "middle",
-        }}
+        style={[styles.tabLabelText, focused && styles.tabLabelTextFocused]}
       >
         {label}
       </Text>
     </View>
   );
+}
+
+interface TabBarIconProps {
+  focused: boolean;
 }
 
 export default function TabLayout() {
@@ -201,14 +181,14 @@ export default function TabLayout() {
               marginTop: 12,
             },
             // Ensure each tab's touch target is larger via a custom tabBarButton
-            tabBarButton: (props: any) => {
+            tabBarButton: (props: BottomTabBarButtonProps) => {
               // If the underlying component is provided we wrap it in a TouchableOpacity
               const { children, onPress } = props;
               return (
                 <TouchableOpacity
                   onPress={onPress}
                   hitSlop={HIT_SLOP_24}
-                  style={{ flex: 1 }}
+                  style={styles.container}
                 >
                   {children}
                 </TouchableOpacity>
@@ -220,8 +200,8 @@ export default function TabLayout() {
             name="index"
             options={{
               title: t("today"),
-              tabBarIcon: ({ focused, color }: any) => (
-                <TabLabel focused={focused} color={color} label={t("today")} />
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("today")} />
               ),
             }}
           />
@@ -230,12 +210,8 @@ export default function TabLayout() {
             name="reflection"
             options={{
               title: t("reflection.title"),
-              tabBarIcon: ({ focused, color }: any) => (
-                <TabLabel
-                  focused={focused}
-                  color={color}
-                  label={t("reflection.title")}
-                />
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("reflection.title")} />
               ),
             }}
           />
@@ -244,12 +220,8 @@ export default function TabLayout() {
             name="profile"
             options={{
               title: t("profile.title"),
-              tabBarIcon: ({ focused, color }: any) => (
-                <TabLabel
-                  focused={focused}
-                  color={color}
-                  label={t("profile.title")}
-                />
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("profile.title")} />
               ),
             }}
           />
@@ -263,3 +235,29 @@ export default function TabLayout() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  tabLabelContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: NAV_BAR_SIZE,
+    minWidth: 80,
+  },
+  tabLabelText: {
+    fontSize: 10,
+    textTransform: "uppercase",
+    letterSpacing: 1.2,
+    color: COLORS.light.text,
+    textAlign: "center",
+    fontWeight: "400",
+    verticalAlign: "middle",
+  },
+  tabLabelTextFocused: {
+    textDecorationLine: "underline",
+    fontWeight: "700",
+  },
+});

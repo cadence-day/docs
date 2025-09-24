@@ -1,13 +1,13 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ScreenHeader } from "@/shared/components/CadenceUI";
-import NotificationSageIcon from "@/shared/components/NotificationSageIcon";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { useI18n } from "@/shared/hooks/useI18n";
 
+import SageIcon from "@/shared/components/icons/SageIcon";
 import LoadingScreen from "../(utils)/LoadingScreen";
 const ReflectionGrid = React.lazy(() =>
   import("@/features/reflection").then((m) => ({ default: m.ReflectionGrid }))
@@ -16,7 +16,6 @@ const ReflectionGrid = React.lazy(() =>
 export default function Reflection() {
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
-  const [isWeeklyView, setIsWeeklyView] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useI18n();
 
@@ -30,34 +29,18 @@ export default function Reflection() {
     return monday;
   };
 
-  const getLast7Days = (endDate: Date) => {
-    const start = new Date(endDate);
-    start.setDate(endDate.getDate() - 6);
-    start.setHours(0, 0, 0, 0); // Set to start of day in local time
-    return start;
-  };
-
   useEffect(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize to start of day
 
-    if (isWeeklyView) {
-      const startOfWeek = getStartOfWeek(today);
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      endOfWeek.setHours(23, 59, 59, 999);
+    const startOfWeek = getStartOfWeek(today);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
 
-      setFromDate(startOfWeek);
-      setToDate(endOfWeek);
-    } else {
-      const last7DaysStart = getLast7Days(today);
-      const last7DaysEnd = new Date(today);
-      last7DaysEnd.setHours(23, 59, 59, 999);
-
-      setFromDate(last7DaysStart);
-      setToDate(last7DaysEnd);
-    }
-  }, [isWeeklyView]);
+    setFromDate(startOfWeek);
+    setToDate(endOfWeek);
+  }, []);
 
   const handlePreviousWeek = () => {
     const newFromDate = new Date(fromDate);
@@ -101,29 +84,22 @@ export default function Reflection() {
     return fromDate.getTime() === currentWeekStart.getTime();
   };
 
-  function showInfo(message: string): void {
-    Alert.alert(
-      "Sage",
-      message,
-      [{ text: t?.("common.ok") ?? "OK", style: "default" }],
-      { cancelable: true }
-    );
-  }
   return (
     <LinearGradient
       colors={[
         backgroundLinearColors.primary.start,
         backgroundLinearColors.primary.end,
       ]}
-      style={{ flex: 1 }}
+      style={styles.container}
     >
       <ScreenHeader
         title={t("reflection.weekly-cadence")}
         OnRightElement={() => (
-          <NotificationSageIcon
+          <SageIcon
             size={40}
-            onSagePress={() => showInfo(t("sage.unavailableMessage"))}
-            showFallbackMessage={false}
+            status="pulsating"
+            auto={false}
+            isLoggedIn={true}
           />
         )}
         subtitle={
@@ -132,14 +108,7 @@ export default function Reflection() {
               onPress={handlePreviousWeek}
               hitSlop={HIT_SLOP_10}
             >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: "#444",
-                }}
-              >
-                ←
-              </Text>
+              <Text style={styles.dateRangeArrow}>←</Text>
             </TouchableOpacity>
 
             <Text style={styles.dateRangeText}>
@@ -152,10 +121,10 @@ export default function Reflection() {
               hitSlop={HIT_SLOP_10}
             >
               <Text
-                style={{
-                  fontSize: 14,
-                  color: isAtCurrentWeek() ? "#ccc" : "#444",
-                }}
+                style={[
+                  styles.dateRangeArrow,
+                  isAtCurrentWeek() && styles.dateRangeArrowDisabled,
+                ]}
               >
                 →
               </Text>
@@ -182,13 +151,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerOverride: {
-    margin: 0,
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginBottom: 10,
-  },
   gridContainer: {
     flex: 1,
     marginHorizontal: 12,
@@ -203,5 +165,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
     fontSize: 14,
     color: "#444",
+  },
+  dateRangeArrow: {
+    fontSize: 14,
+    color: "#444",
+  },
+  dateRangeArrowDisabled: {
+    color: "#ccc",
   },
 });

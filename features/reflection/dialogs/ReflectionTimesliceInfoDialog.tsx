@@ -2,7 +2,7 @@ import { ActivityBox } from "@/features/activity/components/ui/ActivityBox";
 import { useI18n } from "@/shared/hooks/useI18n";
 import { useDialogStore } from "@/shared/stores";
 import React, { useEffect } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import ReflectionTimesliceInfo from "../components/ReflectionTimesliceInfo";
 import type { EnhancedTimesliceInformation } from "../types";
 
@@ -48,10 +48,16 @@ const ReflectionTimesliceInfoDialog: React.FC<
   }, [_dialogId, t, timesliceInfo?.activity]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <ReflectionTimesliceInfo timesliceInfo={timesliceInfo} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default ReflectionTimesliceInfoDialog;

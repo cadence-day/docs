@@ -5,6 +5,7 @@ export const profileStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  uploadingImageOpacity: { opacity: 0.5 },
 
   // Profile Header Section
   profileHeader: {

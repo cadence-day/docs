@@ -99,12 +99,8 @@ const ReflectionTimesliceInfo: React.FC<ReflectionTimesliceInfoProps> = ({
 
   const {
     timeslice,
-    activity,
     noteList,
     state,
-    energyLevel,
-    statistics,
-    hoursOfActivityInView = 0,
     hoursOfActivityInDay = 0,
     activityStats,
   } = timesliceInfo;
@@ -178,22 +174,6 @@ const styles = StyleSheet.create({
   content: {
     padding: 8,
   },
-  activityHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  activityColorBar: {
-    width: 60,
-    height: 24,
-    borderRadius: 4,
-    marginRight: 12,
-  },
-  activityName: {
-    fontSize: 28,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
   dateTime: {
     fontSize: 16,
     color: "#8E8E93",
@@ -236,9 +216,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderColor: "#48484A",
   },
-  noteSection: {
-    marginTop: 16,
-  },
   notesSection: {
     marginTop: 16,
   },
@@ -248,11 +225,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     letterSpacing: 0.5,
     marginBottom: 8,
-  },
-  noteText: {
-    fontSize: 16,
-    color: "#FFFFFF",
-    lineHeight: 24,
   },
   // Note item styles (from SwipeableNoteItem)
   noteContainer: {

@@ -1,5 +1,12 @@
 import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { reflectionStyles } from "../styles";
 
 interface ReflectionTimeAxisProps {
@@ -7,7 +14,7 @@ interface ReflectionTimeAxisProps {
   hoursScrollViewRef?: React.RefObject<ScrollView | null>;
   toggleRow: (hour: string) => void;
   resetSelectedRows: (hour: string) => void;
-  onScroll?: (event: any) => void;
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
 const ReflectionTimeAxis: React.FC<ReflectionTimeAxisProps> = ({

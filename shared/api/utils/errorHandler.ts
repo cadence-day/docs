@@ -12,7 +12,7 @@ export interface RetryOptions {
 export class ApiError extends Error {
   constructor(
     public context: string,
-    public originalError: any,
+    public originalError: unknown,
     public isRetryable: boolean = false,
   ) {
     super(`[${context}] ${getErrorMessage(originalError)}`);
@@ -24,7 +24,7 @@ export class ApiError extends Error {
  * Map a technical error to a friendly, user-facing message.
  * Keep messages short and actionable; loggers still receive full details.
  */
-function getUserFriendlyMessage(error: any): string {
+function getUserFriendlyMessage(error: unknown): string {
   const message = getErrorMessage(error).toLowerCase();
 
   if (
@@ -73,16 +73,19 @@ function getUserFriendlyMessage(error: any): string {
   return "Something went wrong. Please try again.";
 }
 
-function getErrorMessage(error: any): string {
-  return (
-    error?.message ||
-    error?.error_description ||
-    String(error) ||
-    "Unknown error"
-  );
+function getErrorMessage(error: unknown): string {
+  if (typeof error === "object" && error !== null) {
+    const err = error as Record<string, unknown>;
+    if (typeof err.message === "string") return err.message;
+    if (typeof err.error_description === "string") return err.error_description;
+  }
+  return String(error ?? "Unknown error");
 }
 
-function isRetryableError(error: any, retryableErrors: string[] = []): boolean {
+function isRetryableError(
+  error: unknown,
+  retryableErrors: string[] = [],
+): boolean {
   const message = getErrorMessage(error).toLowerCase();
   const defaultRetryableErrors = [
     "network error",
@@ -122,7 +125,7 @@ export async function handleApiErrorWithRetry<T>(
     retryableErrors = [],
   } = options;
 
-  let lastError: any;
+  let lastError: unknown;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -187,13 +190,17 @@ export async function handleApiErrorWithRetry<T>(
  * @throws {ApiError} Always throws a formatted ApiError containing the context and original error.
  * @returns {never} This function never returns.
  */
-export function handleApiError(context: string, error: any): never {
+export function handleApiError(context: string, error: unknown): never {
   const apiError = new ApiError(context, error);
 
   GlobalErrorHandler.logError(apiError, "API_ERROR", {
     context,
     originalError: getErrorMessage(error),
-    errorType: error?.constructor?.name || "Unknown",
+    errorType:
+      typeof error === "object" && error !== null && "constructor" in error
+        ? (error as { constructor: { name?: string } }).constructor.name ||
+          "Unknown"
+        : "Unknown",
   });
 
   // Show a concise, user-friendly message instead of the raw technical message

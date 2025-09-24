@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from "react-native";
+import { Platform } from "react-native";
 
 // Define an enum for shadow levels
 export enum ShadowLevel {
@@ -46,10 +46,3 @@ export const getShadowStyle = (level: ShadowLevel) => {
         },
     });
 };
-
-// Example usage
-const styles = StyleSheet.create({
-    container: {
-        ...getShadowStyle(ShadowLevel.Medium),
-    },
-});

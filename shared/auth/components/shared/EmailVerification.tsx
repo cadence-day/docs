@@ -22,7 +22,6 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
   code,
   setCode,
   onVerificationSuccess,
-  onBackToSignUp,
   userEmail,
 }) => {
   const { isLoaded, signUp, setActive } = useSignUp();

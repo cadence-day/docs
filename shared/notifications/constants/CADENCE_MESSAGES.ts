@@ -65,10 +65,9 @@ export const getRandomEveningReflection = (): string => {
 };
 
 export const getRandomStreakMessage = (streakCount: number): string => {
-  const message =
-    CADENCE_STREAK_MESSAGES[
-      Math.floor(Math.random() * CADENCE_STREAK_MESSAGES.length)
-    ];
+  const message = CADENCE_STREAK_MESSAGES[
+    Math.floor(Math.random() * CADENCE_STREAK_MESSAGES.length)
+  ];
   return message.replace("{{streakCount}}", streakCount.toString());
 };
 
@@ -76,8 +75,9 @@ export const getRandomStreakMessage = (streakCount: number): string => {
 export const DEFAULT_CADENCE_PREFERENCES = {
   rhythm: "both" as const,
   middayTime: "12:00",
-  eveningTimeStart: "20:00",
-  eveningTimeEnd: "21:00",
+  eveningTime: "20:00",
+  eveningTimeStart: "20:00", // Keep for backward compatibility
+  eveningTimeEnd: "21:00", // Keep for backward compatibility
   streaksEnabled: true,
   lightTouch: true,
 };

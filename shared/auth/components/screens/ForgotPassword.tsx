@@ -8,7 +8,7 @@ import { useSignIn } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import {
   handleAuthError,
   isValidEmail,
@@ -119,11 +119,7 @@ const ForgotPasswordScreen = () => {
               {t("forgot-password.reset-password")}
             </CdText>
 
-            <CdText
-              variant="body"
-              size="medium"
-              style={{ marginBottom: 24, textAlign: "center" }}
-            >
+            <CdText variant="body" size="medium" style={localStyles.subtitle}>
               {t(
                 "forgot-password.enter-your-email-and-well-send-you-a-link-to-reset-your-password"
               )}
@@ -150,12 +146,12 @@ const ForgotPasswordScreen = () => {
 
             <TouchableOpacity
               onPress={() => router.back()}
-              style={{ marginTop: 20 }}
+              style={localStyles.backLinkWrapper}
             >
               <CdText
                 variant="link"
                 size="medium"
-                style={{ textAlign: "center" }}
+                style={localStyles.centerText}
               >
                 {t("forgot-password.back-to-sign-in")}
               </CdText>
@@ -186,3 +182,16 @@ const ForgotPasswordScreen = () => {
 };
 
 export default ForgotPasswordScreen;
+
+const localStyles = StyleSheet.create({
+  subtitle: {
+    marginBottom: 24,
+    textAlign: "center",
+  },
+  backLinkWrapper: {
+    marginTop: 20,
+  },
+  centerText: {
+    textAlign: "center",
+  },
+});

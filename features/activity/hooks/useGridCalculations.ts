@@ -1,12 +1,10 @@
 import type { Activity } from "@/shared/types/models/activity";
 import { useMemo } from "react";
-import type {
-  GridCalculationResult,
-  GridConfig,
-} from "../components/utils/gridUtils";
 import {
   calculateGridProperties,
   createDefaultGridConfig,
+  GridCalculationResult,
+  GridConfig,
 } from "../components/utils/gridUtils";
 
 interface UseGridCalculationsProps {
@@ -34,25 +32,25 @@ export const useGridCalculations = ({
       enabledActivities: activities.filter((a) => a.status === "ENABLED"),
       disabledActivities: activities.filter((a) => a.status === "DISABLED"),
     }),
-    [activities]
+    [activities],
   );
 
   // Memoize effective grid configuration
   const effectiveGridConfig = useMemo(
     () => createDefaultGridConfig(gridConfig),
-    [gridConfig]
+    [gridConfig],
   );
 
   // Memoize total items for grid calculation
   const totalItemsForGrid = useMemo(
     () => enabledActivities.length + (includeAddButton ? 1 : 0),
-    [enabledActivities.length, includeAddButton]
+    [enabledActivities.length, includeAddButton],
   );
 
   // Memoize grid properties calculation
   const gridProperties = useMemo(
     () => calculateGridProperties(totalItemsForGrid, effectiveGridConfig),
-    [totalItemsForGrid, effectiveGridConfig]
+    [totalItemsForGrid, effectiveGridConfig],
   );
 
   return {
@@ -67,7 +65,7 @@ export const useGridCalculations = ({
 // Specialized hook for activity management scenarios
 export const useActivityManagementGrid = (
   activities: Activity[],
-  gridConfig?: Partial<GridConfig>
+  gridConfig?: Partial<GridConfig>,
 ) => {
   return useGridCalculations({
     activities,
@@ -80,7 +78,7 @@ export const useActivityManagementGrid = (
 // Note: This now expects pre-ordered activities to maintain order consistency
 export const useActivityDisplayGrid = (
   orderedActivities: Activity[],
-  gridConfig?: Partial<GridConfig>
+  gridConfig?: Partial<GridConfig>,
 ) => {
   return useGridCalculations({
     activities: orderedActivities,

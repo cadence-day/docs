@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Rect } from "react-native-svg";
+import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 interface NoInternetScreenProps {
   onRetry?: () => Promise<void>;
@@ -25,7 +26,11 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
         try {
           retry();
         } catch (e) {
-          // noop
+          GlobalErrorHandler.logError(
+            "NoInternetFallback",
+            "Error calling retry from NetworkProvider",
+            e instanceof Error ? e : undefined
+          );
         }
       }
 
@@ -142,9 +147,6 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   gradient: {
     flex: 1,
     justifyContent: "center",

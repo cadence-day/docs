@@ -8,7 +8,14 @@ import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleProp,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 import { TIMESLICE_CURRENT_WIDTH } from "../../constants/dimensions";
 import { styles } from "../../styles";
 import { getContrastColor } from "../../utils";
@@ -38,7 +45,7 @@ interface TimeSliceProps {
   };
 }
 // Precomputed styles for each visual mode
-const MODE_STYLES: Record<Mode, any> = {
+const MODE_STYLES: Record<Mode, StyleProp<ViewStyle>> = {
   [Mode.Faded]: { opacity: 0.3, borderColor: COLORS.primary, borderWidth: 1 },
   [Mode.Today]: { borderColor: COLORS.primary, borderWidth: 1 },
   [Mode.Past]: { borderColor: COLORS.secondary, borderWidth: 2 },
@@ -54,23 +61,27 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
   timeslice,
   color,
   onIconPress,
-  usePreferences = false,
   modes = [Mode.Today],
   metadata,
   iconType,
 }) => {
   const { prefs, formatTime } = useDeviceDateTime();
   // Determine hour format (12h vs 24h) using device prefs if available, otherwise Intl probe
-  const inferredHourFormat =
-    prefs && prefs.timeFormat
-      ? prefs.timeFormat.toString().startsWith("12")
-        ? "12"
-        : "24"
-      : new Intl.DateTimeFormat(locale, { hour: "numeric" })
-            .formatToParts(new Date(2023, 0, 1, 13))
-            .find((part) => part.type === "dayPeriod")
-        ? "12"
-        : "24";
+  let inferredHourFormat = "24";
+  if (prefs && prefs.timeFormat) {
+    // If user has explicit preference like "12-hour" or starts with "12"
+    inferredHourFormat = prefs.timeFormat.toString().startsWith("12")
+      ? "12"
+      : "24";
+  } else {
+    // Fallback: probe Intl to see if the locale uses a dayPeriod (AM/PM)
+    const parts = new Intl.DateTimeFormat(locale, {
+      hour: "numeric",
+    }).formatToParts(new Date(2023, 0, 1, 13));
+    const hasDayPeriod =
+      parts.find((part) => part.type === "dayPeriod") !== undefined;
+    inferredHourFormat = hasDayPeriod ? "12" : "24";
+  }
 
   const finalHourFormat = inferredHourFormat;
   // Calculate contrast color for icons based on background color
@@ -81,10 +92,11 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
     : undefined;
 
   // Merge styles for all provided modes so modes are cumulative. Later modes
-  // in the array will override earlier ones when keys collide.
-  const combinedModeStyle = (modes || []).reduce((acc: any, m: Mode) => {
-    return { ...acc, ...(MODE_STYLES[m] || {}) };
-  }, {});
+  // in the array will override earlier ones when keys collide. Build an array
+  // of style objects; RN will flatten arrays passed to the `style` prop.
+  const combinedModeStyleArray = (modes || [])
+    .map((m: Mode) => MODE_STYLES[m])
+    .filter(Boolean) as Array<StyleProp<ViewStyle>>;
 
   // Use explicit props when provided; otherwise fall back to metadata-derived values.
   const displayNoteCount =
@@ -98,13 +110,16 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
       : (metadata?.state?.energy ?? null);
 
   // compute text style once to avoid repeated branching in render
-  const textStyle = modes.includes(Mode.Current)
-    ? finalHourFormat === "12"
-      ? styles.currentTimeLabel12
-      : styles.currentTimeLabel
-    : finalHourFormat === "12"
-      ? styles.timeSliceText12
-      : styles.timeSliceText;
+  let textStyle: StyleProp<TextStyle>;
+  if (modes.includes(Mode.Current)) {
+    textStyle =
+      finalHourFormat === "12"
+        ? styles.currentTimeLabel12
+        : styles.currentTimeLabel;
+  } else {
+    textStyle =
+      finalHourFormat === "12" ? styles.timeSliceText12 : styles.timeSliceText;
+  }
 
   return (
     <View
@@ -137,7 +152,7 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
           backgroundColor
             ? { backgroundColor: backgroundColor }
             : styles.emptyTimeslice,
-          combinedModeStyle,
+          ...combinedModeStyleArray,
         ]}
       >
         <View style={[styles.timeSliceIconContainer]}>

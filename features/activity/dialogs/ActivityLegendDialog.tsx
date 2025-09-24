@@ -70,28 +70,50 @@ const ActivityLegendDialog: React.FC<Props> = ({
     };
 
     // Update dialog properties based on current mode
+    let title: string;
+    if (isEditMode) {
+      title = t("activity.legend.editActivities");
+    } else if (isPickingMode) {
+      title = t("pick-activity-first");
+    } else {
+      title = t("activity.legend.activities");
+    }
+
+    let rightActionElement: string | undefined;
+    if (isEditMode) {
+      rightActionElement = undefined;
+    } else if (isPickingMode) {
+      rightActionElement = t("common.done");
+    } else {
+      rightActionElement = t("edit");
+    }
+
+    let onRightAction: (() => void) | undefined;
+    if (isEditMode) {
+      onRightAction = undefined;
+    } else if (isPickingMode) {
+      onRightAction = handleExitPickingMode;
+    } else {
+      onRightAction = openManage;
+    }
+
+    const leftActionElement = isEditMode ? t("common.done") : undefined;
+    const onLeftAction = isEditMode ? handleExitEditMode : undefined;
+
+    let height = 28;
+    if (isPickingMode) height = 50;
+    else if (isEditMode) height = 85;
+
     useDialogStore.getState().setDialogProps(id, {
       headerProps: {
-        title: isEditMode
-          ? t("activity.legend.editActivities")
-          : isPickingMode
-            ? t("pick-activity-first")
-            : t("activity.legend.activities"),
+        title,
         // Do not show edit when in picking mode
-        rightActionElement: isEditMode
-          ? undefined
-          : isPickingMode
-            ? t("common.done")
-            : t("edit"),
-        onRightAction: isEditMode
-          ? undefined
-          : isPickingMode
-            ? handleExitPickingMode
-            : openManage,
-        leftActionElement: isEditMode ? t("common.done") : undefined,
-        onLeftAction: isEditMode ? handleExitEditMode : undefined,
+        rightActionElement,
+        onRightAction,
+        leftActionElement,
+        onLeftAction,
       },
-      height: isPickingMode ? 50 : isEditMode ? 85 : 28,
+      height,
     });
   }, [
     _dialogId,

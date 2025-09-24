@@ -20,6 +20,13 @@ const CategoryPickerDialog: React.FC<Props> = ({ _dialogId, onConfirm }) => {
   const isLoadingCategories = useActivityCategoriesStore((s) => s.isLoading);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  // Reset selection if categories change or selectedId no longer exists
+  useEffect(() => {
+    if (selectedId && !categories.find((c) => c.id === selectedId)) {
+      setSelectedId(null);
+    }
+  }, [categories, selectedId]);
+
   // Load categories when dialog mounts if they're not already loaded
   useEffect(() => {
     if (categories.length === 0 && !isLoadingCategories) {
@@ -63,26 +70,29 @@ const CategoryPickerDialog: React.FC<Props> = ({ _dialogId, onConfirm }) => {
             if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
           }, 150); // Brief visual feedback before closing
         }}
-        style={({ pressed }) => [
-          styles.tile,
-          isSelected && styles.tileSelected,
-          pressed && styles.tilePressed,
-          {
+        style={({ pressed }) => {
+          const tileDynamicStyle = {
             backgroundColor: item.color
               ? `${item.color}15`
-              : styles.tile.backgroundColor,
-          },
-        ]}
+              : ACTIVITY_THEME.FORM_BG,
+          } as const;
+          return [
+            styles.tile,
+            isSelected && styles.tileSelected,
+            pressed && styles.tilePressed,
+            tileDynamicStyle,
+          ];
+        }}
       >
         <View
-          style={[
-            styles.swatch,
-            {
+          style={(() => {
+            const swatchDynamicStyle = {
               backgroundColor: item.color ?? ACTIVITY_THEME.GRAY_MEDIUM,
               borderColor: isSelected ? COLORS.white : "transparent",
               borderWidth: isSelected ? 2 : 1,
-            },
-          ]}
+            } as const;
+            return [styles.swatch, swatchDynamicStyle];
+          })()}
         />
         <Text style={[styles.tileText, isSelected && styles.tileTextSelected]}>
           {display}
