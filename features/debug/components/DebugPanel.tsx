@@ -1,5 +1,4 @@
 import useDetectNewDevice from "@/features/debug/hooks/useDetectNewDevice";
-import useTranslation from "@/shared/hooks/useI18n";
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useDialogStore from "@/shared/stores/useDialogStore";
@@ -17,7 +16,6 @@ type ScheduledNotificationView = {
 const DebugPanel: React.FC = () => {
   const router = useRouter();
   const openDialog = useDialogStore((s) => s.openDialog);
-  const { t } = useTranslation();
   const { detect, isLoading, detectResult } = useDetectNewDevice();
   const [tasks, setTasks] = useState<ScheduledNotificationView[]>([]);
 
@@ -72,22 +70,7 @@ const DebugPanel: React.FC = () => {
       console.error("clear onboarding storage failed", error);
     }
 
-    openDialog({
-      type: "onboarding",
-      props: {
-        height: 85,
-        enableDragging: false,
-        headerProps: {
-          title: t("welcome-to-cadence"),
-          rightActionElement: t("common.close"),
-          onRightAction: () => {
-            useDialogStore.getState().closeAll();
-          },
-        },
-      },
-      position: "dock",
-      viewSpecific: "profile",
-    });
+    router.push("/utils/onboarding");
   };
 
   const handleOpenDebugPage = () => {

@@ -2,7 +2,6 @@ import { profileStyles } from "@/features/profile/styles";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
-import { useDialogStore } from "@/shared/stores";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
@@ -96,16 +95,7 @@ export default function CustomerSupportSettings() {
   };
 
   const handleOpenOnboarding = () => {
-    useDialogStore.getState().openDialog({
-      type: "onboarding",
-      position: "dock",
-      props: {
-        headerProps: {
-          title: t("onboarding.title"),
-        },
-        height: 85,
-      },
-    });
+    router.push("/utils/onboarding");
   };
 
   return (

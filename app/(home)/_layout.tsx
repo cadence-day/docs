@@ -10,7 +10,7 @@ import useDialogStore from "@/shared/stores/useDialogStore";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-import { Tabs, useSegments } from "expo-router";
+import { Tabs, useRouter, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -36,6 +36,7 @@ interface TabBarIconProps {
 export default function TabLayout() {
   const { t } = useTranslation();
   const segments = useSegments();
+  const router = useRouter();
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
@@ -123,23 +124,8 @@ export default function TabLayout() {
           .getState()
           .getAllTimeslices();
         if (!timeslices || timeslices.length === 0) {
-          // Open onboarding dialog with requested props
-          useDialogStore.getState().openDialog({
-            type: "onboarding",
-            props: {
-              height: 85,
-              enableDragging: false,
-              headerProps: {
-                title: t("welcome-to-cadence"),
-                rightActionElement: t("common.close"),
-                onRightAction: () => {
-                  useDialogStore.getState().closeAll();
-                },
-              },
-            },
-            position: "dock",
-            viewSpecific: "profile",
-          });
+          // Navigate to full-screen onboarding instead of opening dialog
+          router.replace("/utils/onboarding");
         }
       } catch (err) {
         // Ignore errors here - non-fatal
