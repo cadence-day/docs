@@ -4,7 +4,8 @@ export type OnboardingScreenType =
   | "time-logging"
   | "pattern-view"
   | "note-taking"
-  | "notifications";
+  | "notifications"
+  | "final-animation";
 
 export interface OnboardingPage {
   id: string;

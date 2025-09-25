@@ -73,6 +73,13 @@ export function useOnboardingData() {
         },
       ],
     },
+    {
+      id: "final-animation",
+      type: "final-animation",
+      title: "",
+      content: "",
+      iconType: "sage",
+    },
   ], [t]);
 
   const goToPage = (pageIndex: number) => {

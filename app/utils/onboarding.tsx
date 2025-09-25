@@ -10,6 +10,7 @@ import {
 } from "react-native-gesture-handler";
 import {
   ActivitySelectionScreen,
+  FinalOnboardingScreen,
   WelcomeScreen,
 } from "../../features/onboarding/components/screens";
 import {
@@ -48,12 +49,8 @@ export default function OnboardingScreen() {
   const handleNext = () => {
     if (!isLastPage) {
       goToPage(currentPage + 1);
-    } else {
-      // On last page, complete onboarding and navigate to home
-      handleComplete(() => {
-        router.replace("/(home)");
-      });
     }
+    // On last page, FinalOnboardingScreen will handle completion and navigation
   };
 
   const handlePrevious = () => {
@@ -140,6 +137,14 @@ export default function OnboardingScreen() {
           </View>
         );
 
+      case "final-animation":
+        return (
+          <FinalOnboardingScreen
+            onFinish={() => router.replace("/(home)")}
+            pushOnboarding={handleComplete}
+          />
+        );
+
       // Fallback for other screen types - use simple layout
       default:
         return (
@@ -188,10 +193,12 @@ export default function OnboardingScreen() {
       >
         <PanGestureHandler onHandlerStateChange={handleSwipeGesture}>
           <View style={styles.container}>
-            {/* Pulsating SageIcon - Top Left */}
-            <View style={{ position: "absolute", top: 40, left: 30 }}>
-              <SageIcon status="pulsating" size={80} auto={false} />
-            </View>
+            {/* Pulsating SageIcon - Top Left (hide on final-animation screen) */}
+            {currentPageData.type !== "final-animation" && (
+              <View style={{ position: "absolute", top: 40, left: 30 }}>
+                <SageIcon status="pulsating" size={80} auto={false} />
+              </View>
+            )}
 
             {/* Main Content */}
             {renderScreen()}
