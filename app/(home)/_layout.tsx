@@ -1,7 +1,7 @@
 import { checkAndPromptEncryptionLinking } from "@/features/encryption/utils/detectNewDevice";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
-import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
+import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
 import useTranslation from "@/shared/hooks/useI18n";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
@@ -155,8 +155,10 @@ export default function TabLayout() {
               backgroundColor: COLORS.light.background,
               borderTopWidth: 1,
               borderTopColor: COLORS.light.border,
-              height: NAV_BAR_SIZE,
+              height: useNavBarSize(),
               ...getShadowStyle(ShadowLevel.Low),
+              justifyContent: "center", // Center content vertically
+              alignItems: "center", // Center content horizontally
             },
             tabBarItemStyle: {
               flex: 1,
@@ -164,17 +166,18 @@ export default function TabLayout() {
               alignItems: "center",
               alignSelf: "stretch",
               alignContent: "center",
-              marginTop: 12,
             },
             // Ensure each tab's touch target is larger via a custom tabBarButton
             tabBarButton: (props: BottomTabBarButtonProps) => {
-              // If the underlying component is provided we wrap it in a TouchableOpacity
               const { children, onPress } = props;
               return (
                 <TouchableOpacity
                   onPress={onPress}
                   hitSlop={HIT_SLOP_24}
-                  style={styles.container}
+                  style={[
+                    styles.container,
+                    { justifyContent: "center", alignItems: "center" },
+                  ]}
                 >
                   {children}
                 </TouchableOpacity>
@@ -230,8 +233,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    minHeight: NAV_BAR_SIZE,
-    minWidth: 80,
+    minWidth: 90,
   },
   tabLabelText: {
     fontSize: 10,

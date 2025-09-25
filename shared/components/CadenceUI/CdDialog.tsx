@@ -1,5 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
-import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
+import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -50,6 +50,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   isGlobal = false,
   zIndex,
 }) => {
+  const NavBarSize = useNavBarSize();
   const [isDragging, setIsDragging] = useState(false);
   const animatedHeight = useRef(new Animated.Value(height)).current;
   const dragStartHeight = useRef(0);
@@ -84,7 +85,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       // Compute maximum available percent while respecting safe area and nav bar.
       const maxAvailablePixels = Math.max(
         0,
-        screenHeight - insets.top - NAV_BAR_SIZE
+        screenHeight - insets.top - NavBarSize
       );
       const maxAvailablePercent = (maxAvailablePixels / screenHeight) * 100;
       const effectiveMax = Math.max(
@@ -205,7 +206,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       style={[
         styles.container,
         {
-          bottom: NAV_BAR_SIZE,
+          bottom: NavBarSize,
           height: animatedHeight.interpolate({
             inputRange: [0, 100],
             outputRange: ["0%", "100%"],

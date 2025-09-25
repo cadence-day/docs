@@ -200,7 +200,68 @@
   "onboarding": {
     "missed-intro": "In case you missed the introduction",
     "title": "Welcome to Cadence",
-    "view-again": "View Onboarding Again"
+    "view-again": "View Onboarding Again",
+    "welcome": {
+      "title": "Cadence helps you find the best rhythm of your life"
+    },
+    "activity-selection": {
+      "title": "Start by logging your daily activities and patterns will emerge",
+      "footer": "You can edit, add, remove activities later."
+    },
+    "time-logging": {
+      "title": "Start by logging your daily activities and patterns will emerge",
+      "content": "Select the activity and tap into a time slot."
+    },
+    "pattern-view": {
+      "title": "As the daily patterns emerge you will be able to see weekly rhythm"
+    },
+    "note-taking": {
+      "title": "Add a note to each activity to record your thoughts and feelings"
+    },
+    "notifications": {
+      "title": "Turn on notifications for gentle reminders to log your activities throughout the day.",
+      "button": "Allow notifications",
+      "schedule": {
+        "morning": "Morning",
+        "noon": "Noon",
+        "evening": "Evening"
+      }
+    },
+    "privacy": {
+      "title": "Your time is yours alone. Everything you log is encrypted and stored securely, so only you have access.",
+      "content": "Text about encryption key.",
+      "button": "Download the encryption key"
+    },
+    "activities": {
+      "work": "Work",
+      "admin": "Admin",
+      "email": "Email",
+      "meetings": "Meetings",
+      "planning": "Planning",
+      "family-time": "Family Time",
+      "caregiving": "Caregiving",
+      "friends": "Friends",
+      "sleep": "Sleep",
+      "exercise": "Exercise",
+      "meditation": "Meditation",
+      "health": "Health",
+      "meal": "Meal",
+      "cooking": "Cooking",
+      "chores": "Chores",
+      "groceries": "Groceries",
+      "home-admin": "Home Admin",
+      "learning": "Learning",
+      "reading": "Reading",
+      "creative-work": "Creative Work",
+      "hobby": "Hobby",
+      "relax": "Relax",
+      "tv": "TV",
+      "doomscrolling": "Doomscrolling",
+      "nature": "Nature",
+      "walking": "Walking",
+      "commute": "Commute",
+      "reflection": "Reflection"
+    }
   },
   "or-paste-encryption-key": "Or paste encryption key:",
   "parent-activity": "Parent Activity",

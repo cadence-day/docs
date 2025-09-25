@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface OnboardingPageIndicatorsProps {
   totalPages: number;
@@ -15,11 +15,19 @@ const OnboardingPageIndicators: React.FC<OnboardingPageIndicatorsProps> = ({
   return (
     <View style={styles.pageIndicatorContainer}>
       {Array.from({ length: totalPages }).map((_, index) => (
-        <TouchableOpacity key={index} onPress={() => onPagePress(index)}>
+        <TouchableOpacity
+          key={index}
+          style={[
+            styles.pageIndicator,
+            currentPage === index && styles.pageIndicatorActive,
+          ]}
+          onPress={() => onPagePress(index)}
+          activeOpacity={0.7}
+        >
           <View
             style={[
-              styles.pageIndicator,
-              currentPage === index && styles.pageIndicatorActive,
+              styles.pageIndicatorDot,
+              currentPage === index && styles.pageIndicatorActiveDot,
             ]}
           />
         </TouchableOpacity>
@@ -34,16 +42,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,
+    paddingVertical: 10,
   },
   pageIndicator: {
-    width: 7,
-    height: 7,
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    backgroundColor: "#727272",
-    marginHorizontal: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    marginHorizontal: 6,
+    minWidth: 44, // Ensures proper touch target size
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pageIndicatorDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   pageIndicatorActive: {
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+  },
+  pageIndicatorActiveDot: {
     backgroundColor: "#FFFFFF",
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
 });
 

@@ -2,11 +2,18 @@ import { useNotificationStore } from "@/shared/notifications/stores/notification
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as WebBrowser from "expo-web-browser";
+import { useState } from "react";
+import { useOnboardingCompletion } from "./useOnboardingCompletion";
 
 export function useOnboardingActions() {
-  const { requestPermissions, updatePreferences, updateTiming } = useNotificationStore();
+  const { requestPermissions, updatePreferences, updateTiming } =
+    useNotificationStore();
+  const { completeOnboarding } = useOnboardingCompletion();
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+  const [allowNotifications, setAllowNotifications] = useState(false);
 
   const handleNotificationPermission = async () => {
+    setAllowNotifications(true);
     try {
       const granted = await requestPermissions();
       if (granted) {
@@ -29,7 +36,7 @@ export function useOnboardingActions() {
       GlobalErrorHandler.logError(
         "Error setting up notifications in onboarding",
         "ONBOARDING_NOTIFICATION_ERROR",
-        { error }
+        { error },
       );
     }
   };
@@ -43,15 +50,23 @@ export function useOnboardingActions() {
   const handleComplete = async (confirm?: () => void, dialogId?: string) => {
     try {
       await userOnboardingStorage.setShown(true);
+
+      // Complete full onboarding flow with all collected data
+      await completeOnboarding(
+        {
+          selectedActivities,
+          allowNotifications,
+        },
+        confirm,
+      );
     } catch (error) {
       GlobalErrorHandler.logError(
-        "Error saving onboarding completion",
-        "ONBOARDING_STORAGE_ERROR",
-        { error }
+        "Error completing onboarding",
+        "ONBOARDING_COMPLETION_ERROR",
+        { error },
       );
+      confirm?.(); // Still call confirm even if there's an error
     }
-
-    confirm?.();
 
     try {
       const useDialogStore = require("@/shared/stores/useDialogStore").default;
@@ -67,5 +82,8 @@ export function useOnboardingActions() {
     handleNotificationPermission,
     handlePrivacyPolicy,
     handleComplete,
+    selectedActivities,
+    setSelectedActivities,
+    allowNotifications,
   };
 }

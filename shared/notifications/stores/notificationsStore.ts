@@ -1,5 +1,6 @@
 import { notificationStorage } from "@/shared/storage/notifications";
 import type { BaseStoreState } from "@/shared/stores/utils/utils";
+import { handleApiCall, handleVoidApiCall } from "@/shared/stores/utils/utils";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Notifications from "expo-notifications";
 import { AppState, AppStateStatus } from "react-native";
@@ -46,17 +47,34 @@ export interface NotificationStore extends BaseStoreState {
   // Notification engine state
   isInApp: boolean;
 
-  // Actions
+  // CRUD Actions
+  createPreference: (
+    key: keyof NotificationPreferences,
+    value: boolean,
+  ) => Promise<void>;
+  readPreferences: () => Promise<NotificationPreferences>;
   updatePreferences: (
     preferences: Partial<NotificationPreferences>,
   ) => Promise<void>;
+  deletePreference: (key: keyof NotificationPreferences) => Promise<void>;
+
+  createTiming: (key: keyof NotificationTiming, value: string) => Promise<void>;
+  readTiming: () => Promise<NotificationTiming>;
   updateTiming: (timing: Partial<NotificationTiming>) => Promise<void>;
+  deleteTiming: (key: keyof NotificationTiming) => Promise<void>;
+
+  // Additional Actions
   requestPermissions: () => Promise<boolean>;
   scheduleNotifications: () => Promise<void>;
   getNextQuote: () => CadenceMessage;
   markQuoteUsed: (quoteId: string) => void;
   resetQuoteBacklog: () => void;
   deliverNotification: (quote: CadenceMessage, type: NotificationType) => void;
+
+  // Bulk operations
+  resetAllPreferences: () => Promise<void>;
+  resetAllTiming: () => Promise<void>;
+  clearAllNotificationData: () => Promise<void>;
 
   // Debug/repair methods
   repairTiming: () => Promise<void>;
@@ -177,59 +195,181 @@ export const useNotificationStore = create<NotificationStore>()(
     isLoading: false,
     error: null,
 
-    // Actions
+    // CRUD Actions for Preferences
+    createPreference: async (
+      key: keyof NotificationPreferences,
+      value: boolean,
+    ) => {
+      return handleVoidApiCall(
+        set,
+        async () => {
+          await notificationStorage.updatePreferenceField(key, value);
+        },
+        "create notification preference",
+        (state) => ({
+          preferences: { ...state.preferences, [key]: value },
+        }),
+      );
+    },
+
+    readPreferences: async (): Promise<NotificationPreferences> => {
+      return handleApiCall(
+        set,
+        async () => {
+          const result = await notificationStorage.getPreferences();
+          return result.success ? result.data! : initialPreferences;
+        },
+        "read notification preferences",
+        initialPreferences,
+        (preferences) => ({ preferences }),
+      );
+    },
+
     updatePreferences: async (
       newPreferences: Partial<NotificationPreferences>,
     ) => {
-      const updatedPreferences = { ...get().preferences, ...newPreferences };
+      return handleVoidApiCall(
+        set,
+        async () => {
+          const updatedPreferences = {
+            ...get().preferences,
+            ...newPreferences,
+          };
+          await notificationStorage.setPreferences(updatedPreferences);
+          // Auto-reschedule notifications when preferences change
+          await get().scheduleNotifications();
+        },
+        "update notification preferences",
+        (state) => ({
+          preferences: { ...state.preferences, ...newPreferences },
+        }),
+      );
+    },
 
-      set({ preferences: updatedPreferences });
+    deletePreference: async (key: keyof NotificationPreferences) => {
+      return handleVoidApiCall(
+        set,
+        async () => {
+          await notificationStorage.removePreferenceField(key);
+        },
+        "delete notification preference",
+        (state) => {
+          const defaults = {
+            morningReminders: true,
+            eveningReminders: false,
+            weeklyStreaks: true,
+            middayReflection: true,
+          };
+          return {
+            preferences: { ...state.preferences, [key]: defaults[key] },
+          };
+        },
+      );
+    },
 
-      // Persist to storage
-      try {
-        await notificationStorage.setPreferences(updatedPreferences);
-        GlobalErrorHandler.logDebug(
-          "Notification preferences saved",
-          "useNotificationStore.updatePreferences",
-          { preferences: updatedPreferences },
-        );
-      } catch (error) {
-        GlobalErrorHandler.logError(
-          error,
-          "useNotificationStore.updatePreferences",
-          { preferences: updatedPreferences },
-        );
-      }
+    // CRUD Actions for Timing
+    createTiming: async (key: keyof NotificationTiming, value: string) => {
+      return handleVoidApiCall(
+        set,
+        async () => {
+          await notificationStorage.updateTimingField(key, value);
+        },
+        "create notification timing",
+        (state) => ({
+          timing: { ...state.timing, [key]: value },
+        }),
+      );
+    },
 
-      // Auto-reschedule notifications when preferences change
-      get().scheduleNotifications();
+    readTiming: async (): Promise<NotificationTiming> => {
+      return handleApiCall(
+        set,
+        async () => {
+          const result = await notificationStorage.getTiming();
+          return result.success ? result.data! : initialTiming;
+        },
+        "read notification timing",
+        initialTiming,
+        (timing) => ({ timing }),
+      );
     },
 
     updateTiming: async (newTiming: Partial<NotificationTiming>) => {
-      const updatedTiming = { ...get().timing, ...newTiming };
-
-      set({ timing: updatedTiming });
-
-      // Persist to storage
-      try {
-        await notificationStorage.setTiming(updatedTiming);
-        GlobalErrorHandler.logDebug(
-          "Notification timing saved",
-          "useNotificationStore.updateTiming",
-          { timing: updatedTiming },
-        );
-      } catch (error) {
-        GlobalErrorHandler.logError(
-          error,
-          "useNotificationStore.updateTiming",
-          { timing: updatedTiming },
-        );
-      }
-
-      // Auto-reschedule notifications when timing changes
-      get().scheduleNotifications();
+      return handleVoidApiCall(
+        set,
+        async () => {
+          const updatedTiming = { ...get().timing, ...newTiming };
+          await notificationStorage.setTiming(updatedTiming);
+          // Auto-reschedule notifications when timing changes
+          await get().scheduleNotifications();
+        },
+        "update notification timing",
+        (state) => ({
+          timing: { ...state.timing, ...newTiming },
+        }),
+      );
     },
 
+    deleteTiming: async (key: keyof NotificationTiming) => {
+      return handleVoidApiCall(
+        set,
+        async () => {
+          await notificationStorage.removeTimingField(key);
+        },
+        "delete notification timing",
+        (state) => {
+          const defaults = {
+            morningTime: "08:00",
+            middayTime: "12:00",
+            eveningTime: "18:00",
+          };
+          return { timing: { ...state.timing, [key]: defaults[key] } };
+        },
+      );
+    },
+
+    // Bulk operations
+    resetAllPreferences: async () => {
+      return handleVoidApiCall(
+        set,
+        async () => {
+          await notificationStorage.resetPreferences();
+        },
+        "reset all notification preferences",
+        () => ({ preferences: initialPreferences }),
+      );
+    },
+
+    resetAllTiming: async () => {
+      return handleVoidApiCall(
+        set,
+        async () => {
+          await notificationStorage.resetTiming();
+        },
+        "reset all notification timing",
+        () => ({ timing: initialTiming }),
+      );
+    },
+
+    clearAllNotificationData: async () => {
+      return handleVoidApiCall(
+        set,
+        async () => {
+          await notificationStorage.clearAll();
+          await Notifications.cancelAllScheduledNotificationsAsync();
+        },
+        "clear all notification data",
+        () => ({
+          preferences: initialPreferences,
+          timing: initialTiming,
+          usedQuoteIds: [],
+          nextQuoteIndex: 0,
+          permissionStatus: "undetermined" as const,
+        }),
+      );
+    },
+
+    // Actions (keeping existing ones but improved)
     requestPermissions: async (): Promise<boolean> => {
       set({ isPermissionLoading: true, error: null });
 
@@ -389,25 +529,72 @@ export const useNotificationStore = create<NotificationStore>()(
       // Reset backlog if all quotes used
       if (availableQuotes.length === 0) {
         set({ usedQuoteIds: [], nextQuoteIndex: 0 });
+
+        // Persist reset to storage
+        Promise.all([
+          notificationStorage.resetUsedQuoteIds(),
+          notificationStorage.setNextQuoteIndex(0),
+        ]).catch((error) => {
+          GlobalErrorHandler.logError(
+            error,
+            "useNotificationStore.getNextQuote.reset",
+          );
+        });
+
         return cadenceMessages[0];
       }
 
       // Return next unused quote
       const selectedQuote =
         availableQuotes[nextQuoteIndex % availableQuotes.length];
-      set({ nextQuoteIndex: nextQuoteIndex + 1 });
+      const newNextQuoteIndex = nextQuoteIndex + 1;
+
+      set({ nextQuoteIndex: newNextQuoteIndex });
+
+      // Persist index to storage
+      notificationStorage.setNextQuoteIndex(newNextQuoteIndex).catch(
+        (error) => {
+          GlobalErrorHandler.logError(
+            error,
+            "useNotificationStore.getNextQuote.persistIndex",
+            { nextQuoteIndex: newNextQuoteIndex },
+          );
+        },
+      );
 
       return selectedQuote;
     },
 
     markQuoteUsed: (quoteId: string) => {
-      set((state) => ({
-        usedQuoteIds: [...state.usedQuoteIds, quoteId],
-      }));
+      const currentUsedIds = get().usedQuoteIds;
+      if (!currentUsedIds.includes(quoteId)) {
+        const updatedIds = [...currentUsedIds, quoteId];
+        set({ usedQuoteIds: updatedIds });
+
+        // Persist to storage
+        notificationStorage.addUsedQuoteId(quoteId).catch((error) => {
+          GlobalErrorHandler.logError(
+            error,
+            "useNotificationStore.markQuoteUsed",
+            { quoteId },
+          );
+        });
+      }
     },
 
     resetQuoteBacklog: () => {
       set({ usedQuoteIds: [], nextQuoteIndex: 0 });
+
+      // Persist to storage
+      Promise.all([
+        notificationStorage.resetUsedQuoteIds(),
+        notificationStorage.setNextQuoteIndex(0),
+      ]).catch((error) => {
+        GlobalErrorHandler.logError(
+          error,
+          "useNotificationStore.resetQuoteBacklog",
+        );
+      });
     },
 
     // Debug/repair function to fix timing data structure
@@ -455,10 +642,17 @@ export const useNotificationStore = create<NotificationStore>()(
     // Internal methods
     _initialize: async () => {
       try {
-        // Load stored preferences and timing
-        const [preferencesResult, timingResult] = await Promise.all([
+        // Load stored preferences, timing, and quote data
+        const [
+          preferencesResult,
+          timingResult,
+          usedQuoteIdsResult,
+          nextQuoteIndexResult,
+        ] = await Promise.all([
           notificationStorage.getPreferences(),
           notificationStorage.getTiming(),
+          notificationStorage.getUsedQuoteIds(),
+          notificationStorage.getNextQuoteIndex(),
         ]);
 
         // Update store with loaded data or defaults
@@ -470,19 +664,40 @@ export const useNotificationStore = create<NotificationStore>()(
           ? timingResult.data
           : initialTiming;
 
-        set({ preferences, timing });
+        const usedQuoteIds =
+          usedQuoteIdsResult.success && usedQuoteIdsResult.data
+            ? usedQuoteIdsResult.data
+            : [];
+
+        const nextQuoteIndex =
+          nextQuoteIndexResult.success &&
+            nextQuoteIndexResult.data !== undefined
+            ? nextQuoteIndexResult.data
+            : 0;
+
+        set({
+          preferences,
+          timing,
+          usedQuoteIds,
+          nextQuoteIndex,
+        });
 
         GlobalErrorHandler.logDebug(
-          "Notification preferences loaded from storage",
+          "Notification store initialized from storage",
           "useNotificationStore._initialize",
-          { preferences, timing },
+          {
+            preferences,
+            timing,
+            usedQuotesCount: usedQuoteIds.length,
+            nextQuoteIndex,
+          },
         );
       } catch (error) {
         GlobalErrorHandler.logError(
           error,
           "useNotificationStore._initialize",
           {
-            message: "Failed to load notification preferences, using defaults",
+            message: "Failed to load notification data, using defaults",
           },
         );
 
@@ -490,6 +705,8 @@ export const useNotificationStore = create<NotificationStore>()(
         set({
           preferences: initialPreferences,
           timing: initialTiming,
+          usedQuoteIds: [],
+          nextQuoteIndex: 0,
         });
       }
 

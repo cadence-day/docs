@@ -1,33 +1,37 @@
+import SageIcon from "@/shared/components/icons/SageIcon";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React, { useCallback } from "react";
+import React from "react";
+import { StatusBar, StyleSheet, Text, View } from "react-native";
 import {
-  Animated,
-  PanResponder,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+  State,
+} from "react-native-gesture-handler";
 import {
-  OnboardingIcon,
-  SageIconContainer,
+  ActivitySelectionScreen,
+  WelcomeScreen,
+} from "../../features/onboarding/components/screens";
+import {
+  GridImage,
+  NoteImage,
+  TimelineImage,
 } from "../../features/onboarding/components/ui";
+import SideProgressIndicator from "../../features/onboarding/components/ui/SideProgressIndicator";
 import { useOnboardingActions } from "../../features/onboarding/hooks/useOnboardingActions";
 import { useOnboardingData } from "../../features/onboarding/hooks/useOnboardingData";
 import { useOnboardingPage } from "../../features/onboarding/hooks/useOnboardingPage";
-import useTranslation from "../../shared/hooks/useI18n";
-import OnboardingLayout from "./OnboardingLayout";
+import { CdButton } from "../../shared/components/CadenceUI";
 
 export default function OnboardingScreen() {
   const router = useRouter();
-  const { t } = useTranslation();
-  const { currentPage, pages, goToPage, isLastPage, totalPages } =
-    useOnboardingData();
-  const { handleNotificationPermission, handlePrivacyPolicy, handleComplete } =
-    useOnboardingActions();
-  const pan = React.useRef(new Animated.Value(0)).current;
+  const { currentPage, pages, goToPage, isLastPage } = useOnboardingData();
+  const {
+    handleNotificationPermission,
+    handlePrivacyPolicy,
+    handleComplete,
+    setSelectedActivities,
+  } = useOnboardingActions();
 
   const currentPageData = useOnboardingPage(
     pages,
@@ -36,8 +40,13 @@ export default function OnboardingScreen() {
     handlePrivacyPolicy
   );
 
-  const goToNextPage = useCallback(() => {
-    if (currentPage < totalPages - 1) {
+  // Wire ActivitySelectionScreen's onActivitiesChange to setSelectedActivities from actions hook
+  const handleActivitiesChange = (activities: string[]) => {
+    setSelectedActivities(activities);
+  };
+
+  const handleNext = () => {
+    if (!isLastPage) {
       goToPage(currentPage + 1);
     } else {
       // On last page, complete onboarding and navigate to home
@@ -45,40 +54,126 @@ export default function OnboardingScreen() {
         router.replace("/(home)");
       });
     }
-  }, [currentPage, totalPages, goToPage, handleComplete, router]);
+  };
 
-  const panResponder = React.useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Only respond to vertical swipes
-        return (
-          Math.abs(gestureState.dy) > 20 &&
-          Math.abs(gestureState.dy) > Math.abs(gestureState.dx)
-        );
-      },
-      onPanResponderMove: Animated.event([null, { dy: pan }], {
-        useNativeDriver: false,
-      }),
-      onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dy < -60) {
-          goToNextPage();
+  const handlePrevious = () => {
+    if (currentPage > 0) {
+      goToPage(currentPage - 1);
+    }
+  };
+
+  const handleSwipeGesture = (event: PanGestureHandlerGestureEvent) => {
+    const { translationX, translationY, velocityX, velocityY, state } =
+      event.nativeEvent;
+
+    if (state === State.END) {
+      const absTranslationX = Math.abs(translationX);
+      const absTranslationY = Math.abs(translationY);
+
+      // Horizontal swipes (primary navigation)
+      if (absTranslationX > absTranslationY && absTranslationX > 30) {
+        // Swipe left (next page)
+        if (translationX < -30 && (velocityX < -300 || absTranslationX > 80)) {
+          handleNext();
         }
-        Animated.spring(pan, {
-          toValue: 0,
-          useNativeDriver: false,
-        }).start();
-      },
-    })
-  ).current;
+        // Swipe right (previous page)
+        else if (
+          translationX > 30 &&
+          (velocityX > 300 || absTranslationX > 80)
+        ) {
+          handlePrevious();
+        }
+      }
+      // Vertical swipes (secondary navigation)
+      else if (absTranslationY > 40) {
+        // Swipe up (next page)
+        if (translationY < -40 && (velocityY < -400 || absTranslationY > 100)) {
+          handleNext();
+        }
+        // Swipe down (previous page)
+        else if (
+          translationY > 40 &&
+          (velocityY > 400 || absTranslationY > 100)
+        ) {
+          handlePrevious();
+        }
+      }
+    }
+  };
 
-  const renderIcon = () => {
-    if (currentPageData.iconType === "onboarding") {
-      return <OnboardingIcon />;
+  const renderScreen = () => {
+    switch (currentPageData.type) {
+      case "welcome":
+        return <WelcomeScreen pageData={currentPageData} />;
+
+      case "activity-selection":
+        return (
+          <ActivitySelectionScreen
+            pageData={currentPageData}
+            onActivitiesChange={handleActivitiesChange}
+          />
+        );
+
+      case "notifications":
+        return (
+          <View style={styles.screenContainer}>
+            <View style={styles.contentContainer}>
+              <Text style={styles.title}>{currentPageData.title}</Text>
+              <Text style={styles.content}>{currentPageData.content}</Text>
+
+              <View style={styles.notificationSchedule}>
+                {currentPageData.notificationSchedule?.map((item, index) => (
+                  <View key={index} style={styles.notificationItem}>
+                    <Text style={styles.notificationLabel}>{item.label}</Text>
+                    <Text style={styles.notificationTime}>{item.time}</Text>
+                  </View>
+                ))}
+              </View>
+
+              <CdButton
+                title="Allow notifications"
+                onPress={handleNext}
+                variant="outline"
+                style={styles.actionButton}
+              />
+            </View>
+          </View>
+        );
+
+      // Fallback for other screen types - use simple layout
+      default:
+        return (
+          <View style={styles.screenContainer}>
+            <View style={styles.contentContainer}>
+              <Text style={styles.title}>{currentPageData.title}</Text>
+              <Text style={styles.content}>{currentPageData.content}</Text>
+
+              {/* Add PNG images for specific screen types */}
+              {currentPageData.type === "time-logging" && (
+                <View style={styles.imageContainer}>
+                  <TimelineImage />
+                </View>
+              )}
+
+              {currentPageData.type === "pattern-view" && (
+                <View style={styles.imageContainer}>
+                  <GridImage />
+                </View>
+              )}
+
+              {currentPageData.type === "note-taking" && (
+                <View style={styles.imageContainer}>
+                  <NoteImage />
+                </View>
+              )}
+
+              {currentPageData.footer && (
+                <Text style={styles.footerText}>{currentPageData.footer}</Text>
+              )}
+            </View>
+          </View>
+        );
     }
-    if (currentPageData.iconType === "sage") {
-      return <SageIconContainer />;
-    }
-    return null;
   };
 
   return (
@@ -91,52 +186,27 @@ export default function OnboardingScreen() {
         end={{ x: 0.678, y: 0.841 }}
         style={styles.gradientContainer}
       >
-        <View style={styles.container} {...panResponder.panHandlers}>
-          <OnboardingLayout page={currentPage} totalPages={totalPages}>
-            {currentPageData.iconType && (
-              <View style={styles.iconContainer}>{renderIcon()}</View>
-            )}
-            <Text style={styles.title}>{currentPageData.title}</Text>
-            <Text style={styles.content}>{currentPageData.content}</Text>
+        <PanGestureHandler onHandlerStateChange={handleSwipeGesture}>
+          <View style={styles.container}>
+            {/* Pulsating SageIcon - Top Left */}
+            <View style={{ position: "absolute", top: 40, left: 30 }}>
+              <SageIcon status="pulsating" size={80} auto={false} />
+            </View>
 
-            {currentPageData.linkText && (
-              <TouchableOpacity
-                style={styles.linkButton}
-                onPress={currentPageData.linkText.onPress}
-              >
-                <Text style={styles.linkText}>
-                  {currentPageData.linkText.text}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </OnboardingLayout>
+            {/* Main Content */}
+            {renderScreen()}
 
-          {currentPageData.actionButton && (
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={currentPageData.actionButton.onPress}
-            >
-              <Text style={styles.actionButtonText}>
-                {currentPageData.actionButton.text}
-              </Text>
-            </TouchableOpacity>
-          )}
+            {/* Side Progress Indicator - Right */}
+            <SideProgressIndicator
+              totalPages={pages.length}
+              currentPage={currentPage}
+              onPagePress={goToPage}
+            />
 
-          {currentPageData.footer && (
-            <Text style={styles.footerText}>{currentPageData.footer}</Text>
-          )}
-
-          <TouchableOpacity
-            style={styles.continueButton}
-            onPress={goToNextPage}
-          >
-            <Text style={styles.continueButtonText}>
-              {isLastPage
-                ? t("get-started") || "Get Started"
-                : t("continue") || "Continue"}
-            </Text>
-          </TouchableOpacity>
-        </View>
+            {/* CADENCE Text - Bottom Left */}
+            <Text style={styles.cadenceText}>CADENCE</Text>
+          </View>
+        </PanGestureHandler>
       </LinearGradient>
     </>
   );
@@ -147,91 +217,89 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
+    marginTop: 20,
+    alignItems: "center",
     flex: 1,
+    width: "100%",
+    padding: 20,
     position: "relative",
   },
-  iconContainer: {
-    marginBottom: 24,
-    alignItems: "center",
-    justifyContent: "center",
+  screenContainer: {
+    flex: 1,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    padding: 20,
+    paddingTop: 40,
+    paddingBottom: 60,
+    paddingLeft: 20,
+  },
+  contentContainer: {
+    flex: 1,
+    width: 300,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    marginTop: 120,
   },
   title: {
-    color: "#fff",
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 16,
+    fontSize: 18,
+    color: "white",
     textAlign: "left",
-    width: "90%",
-    fontFamily: "FoundersGrotesk-Bold",
+    marginBottom: 16,
   },
   content: {
-    color: "#fff",
-    fontSize: 18,
-    opacity: 0.85,
+    fontSize: 16,
+    color: "white",
     textAlign: "left",
-    width: "90%",
-    lineHeight: 24,
-    fontFamily: "FoundersGrotesk-Regular",
-  },
-  actionButton: {
-    position: "absolute",
-    bottom: 120,
-    left: 32,
-    right: 32,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: "#FFFFFF",
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "transparent",
-  },
-  actionButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "500",
-    fontFamily: "FoundersGrotesk-Medium",
-  },
-  linkButton: {
-    marginTop: 32,
-    alignSelf: "flex-start",
-  },
-  linkText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    opacity: 0.8,
-    textAlign: "left",
-    textDecorationLine: "underline",
-    fontFamily: "FoundersGrotesk-Regular",
-  },
-  continueButton: {
-    position: "absolute",
-    bottom: 60,
-    left: 32,
-    right: 32,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-  },
-  continueButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "500",
-    fontFamily: "FoundersGrotesk-Medium",
+    lineHeight: 20,
+    opacity: 0.9,
   },
   footerText: {
-    position: "absolute",
-    bottom: 20,
-    left: 32,
-    right: 32,
     fontSize: 14,
     color: "#CCCCCC",
-    textAlign: "center",
+    textAlign: "left",
+    marginTop: 16,
+    marginBottom: 8,
+    paddingHorizontal: 0,
     lineHeight: 20,
+  },
+  cadenceText: {
+    position: "absolute",
+    bottom: 40,
+    left: 30,
+    fontSize: 24,
+    color: "white",
     fontFamily: "FoundersGrotesk-Regular",
+  },
+  notificationSchedule: {
+    marginTop: 24,
+    marginBottom: 32,
+    width: "100%",
+  },
+  notificationItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.1)",
+  },
+  notificationLabel: {
+    fontSize: 16,
+    color: "white",
+    opacity: 0.9,
+  },
+  notificationTime: {
+    fontSize: 16,
+    color: "white",
+    fontWeight: "bold",
+  },
+  actionButton: {
+    marginTop: 20,
+    alignSelf: "center",
+    width: "100%",
+  },
+  imageContainer: {
+    width: "100%",
+    alignItems: "flex-start",
   },
 });
