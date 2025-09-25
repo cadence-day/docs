@@ -91,6 +91,7 @@
   "contain-one-uppercase-letter": "- contener una letra mayúscula",
   "continue": "Continuar",
   "current-password-is-required": "Se requiere la contraseña actual",
+  "daily-total": "",
   "dateTime": {
     "preposition": "en"
   },
@@ -161,6 +162,7 @@
     "title": "Cadencia diaria",
     "todayTitle": "Cadencia de hoy"
   },
+  "hours": "",
   "i-agree-to-the": "Estoy de acuerdo con",
   "import-encryption-key": "Importar clave de cifrado",
   "import-key": "Importar clave",
@@ -180,6 +182,7 @@
   "midday-reflection": "Reflexión del mediodía",
   "mo": "Lun",
   "monthly": "",
+  "mood": "",
   "morning-reminders": "Recordatorios matutinos",
   "morning-reminders-are-sent-aft": "Los recordatorios matutinos se envían después de tu hora de despertar y los recordatorios vespertinos antes de tu hora de dormir. Las actualizaciones de rachas semanales celebran tus logros todos los domingos.",
   "morning-time": "",

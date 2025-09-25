@@ -80,10 +80,10 @@ export const TimelineTimeslices: React.FC<TimelineTimeslicesProps> = ({
         const stateObj = ts.state_id
           ? states?.find((s) => s.id === ts.state_id)
           : undefined;
-        // prefer mood then energy for a single 1..5 number; default to undefined
-        const stateNumber = stateObj
-          ? (stateObj.mood ?? stateObj.energy ?? 3)
-          : undefined;
+
+        // Extract individual mood and energy values
+        const energyValue = stateObj?.energy ?? null;
+        const moodValue = stateObj?.mood ?? null;
 
         // Check if the activity is disabled
         const isActivityDisabled =
@@ -129,7 +129,8 @@ export const TimelineTimeslices: React.FC<TimelineTimeslicesProps> = ({
                   noteCount: ts.note_ids ? ts.note_ids.length : 0,
                 },
                 state: {
-                  energy: stateNumber,
+                  energy: energyValue ?? undefined,
+                  mood: moodValue ?? undefined,
                 },
               }}
               modes={sliceModes}

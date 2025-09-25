@@ -115,6 +115,13 @@ export const reflectionStyles = StyleSheet.create({
     alignItems: "center" as const,
     zIndex: 1,
   },
+  cellRightItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignContent: "center",
+    justifyContent: "center",
+    marginLeft: 2,
+  },
   cellEnergyText: {
     fontSize: 7,
     color: "rgba(255, 255, 255, 0.9)",

@@ -91,6 +91,7 @@
   "contain-one-uppercase-letter": "- Contain one uppercase letter.",
   "continue": "Continue",
   "current-password-is-required": "Current password is required.",
+  "daily-total": "DAILY TOTAL",
   "dateTime": {
     "preposition": "at"
   },
@@ -161,6 +162,7 @@
     "title": "Daily Cadence",
     "todayTitle": "Today's Cadence"
   },
+  "hours": "hours",
   "i-agree-to-the": "I agree to the",
   "import-encryption-key": "Import Encryption Key",
   "import-key": "Import Key",
@@ -180,6 +182,7 @@
   "midday-reflection": "Midday Reflection",
   "mo": "Mon",
   "monthly": "Monthly",
+  "mood": "Mood",
   "morning-reminders": "Morning Reminders",
   "morning-reminders-are-sent-aft": "Morning reminders are sent after your wake time, and evening reminders before your sleep time. Weekly streak updates celebrate your achievements every Sunday.",
   "morning-time": "Morning Reflection",

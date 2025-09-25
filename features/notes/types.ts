@@ -31,6 +31,7 @@ export interface UseNoteHandlersProps {
   notes: NoteItem[];
   setNotes: React.Dispatch<React.SetStateAction<NoteItem[]>>;
   energy: number;
+  mood: number;
   timeslice: {
     id?: string;
     activity_id?: string;

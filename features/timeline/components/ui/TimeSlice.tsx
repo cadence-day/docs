@@ -41,6 +41,7 @@ interface TimeSliceProps {
     };
     state?: {
       energy?: number; // State number (1..5)
+      mood?: number; // Mood number (1..5)
     };
   };
 }
@@ -108,6 +109,11 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
     typeof metadata?.state?.energy !== "undefined"
       ? metadata.state.energy
       : (metadata?.state?.energy ?? null);
+
+  const displayMood =
+    typeof metadata?.state?.mood !== "undefined"
+      ? metadata.state.mood
+      : (metadata?.state?.mood ?? null);
 
   // compute text style once to avoid repeated branching in render
   let textStyle: StyleProp<TextStyle>;
@@ -178,6 +184,7 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
           <MetadataVertical
             noteCount={displayNoteCount}
             energy={displayEnergy ?? null}
+            mood={displayMood ?? null}
             iconColor={iconColor}
             onPress={onIconPress}
           />

@@ -91,6 +91,7 @@
   "contain-one-uppercase-letter": "- einen Großbuchstaben enthalten",
   "continue": "Weitermachen",
   "current-password-is-required": "Aktuelles Passwort ist erforderlich.",
+  "daily-total": "",
   "dateTime": {
     "preposition": "um"
   },
@@ -161,6 +162,7 @@
     "title": "Tagesrhythmus",
     "todayTitle": "Die heutige Trittfrequenz"
   },
+  "hours": "",
   "i-agree-to-the": "Ich stimme dem zu",
   "import-encryption-key": "Verschlüsselungsschlüssel importieren",
   "import-key": "Schlüssel importieren",
@@ -180,6 +182,7 @@
   "midday-reflection": "Mittagsreflexion",
   "mo": "Mon",
   "monthly": "",
+  "mood": "",
   "morning-reminders": "Morgen -Erinnerungen",
   "morning-reminders-are-sent-aft": "Morgen -Erinnerungen werden nach Ihrer Wachzeit und abendliche Erinnerungen vor Ihrer Schlafzeit geschickt. \nWöchentliche Streifen -Updates feiern jeden Sonntag Ihre Erfolge.",
   "morning-time": "",

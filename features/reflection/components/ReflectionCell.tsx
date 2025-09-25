@@ -1,6 +1,7 @@
 import NoteIcon from "@/shared/components/icons/NoteIcon";
 import { COLORS } from "@/shared/constants/COLORS";
 import { Timeslice } from "@/shared/types/models";
+import { getMoodIcon } from "@/shared/utils/moodUtils";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -33,7 +34,9 @@ export const ReflectionCell = ({
   isSelected = false,
 }: ReflectionCellProps) => {
   const hasTimeslice = !!timeslice?.id;
-  const { activityColor, energy } = useTimesliceDetails(timeslice ?? null);
+  const { activityColor, energy, mood } = useTimesliceDetails(
+    timeslice ?? null
+  );
 
   // Track if long press was triggered to prevent onPress
   const longPressTriggered = useRef(false);
@@ -83,15 +86,26 @@ export const ReflectionCell = ({
               <NoteIcon size="small" color="white" />
             </View>
           )}
-          {/* Energy icon and number on the right */}
-          {energy !== null && (
+          {/* Energy and mood icons on the right */}
+          {(energy !== null || mood !== null) && (
             <View style={reflectionStyles.cellRightContent}>
-              <Ionicons
-                name="flash"
-                size={8}
-                color="rgba(255, 255, 255, 0.9)"
-              />
-              <Text style={reflectionStyles.cellEnergyText}>{energy}</Text>
+              {/* Energy icon and number */}
+              {energy !== null && (
+                <View style={reflectionStyles.cellRightItem}>
+                  <Ionicons
+                    name="flash"
+                    size={10}
+                    color="rgba(255, 255, 255, 1)"
+                  />
+                  <Text style={reflectionStyles.cellEnergyText}>{energy}</Text>
+                </View>
+              )}
+              {/* Mood icon */}
+              {mood !== null && (
+                <View style={reflectionStyles.cellRightItem}>
+                  {getMoodIcon(mood, "rgba(255, 255, 255, 1)", { size: 10 })}
+                </View>
+              )}
             </View>
           )}
         </View>

@@ -14,6 +14,7 @@ export const useNoteHandlers = ({
   notes,
   setNotes,
   energy,
+  mood,
   timeslice,
   noteIds,
   activeNoteIndex,
@@ -265,16 +266,33 @@ export const useNoteHandlers = ({
         await updateNotes(existingNotesData);
       }
 
-      // Handle energy state (simplified - only save if energy > 0)
-      if (energy > 0 && ts_id) {
-        const existingState = statesStore.states.find(
+      // Handle energy and mood state (save if either > 0)
+      if ((energy > 0 || mood > 0) && ts_id) {
+        // First check if we have a state for this timeslice in local store
+        let existingState = statesStore.states.find(
           (state) => state.timeslice_id === ts_id,
         );
+
+        // If not found locally, try to fetch from database
+        if (!existingState) {
+          try {
+            const fetchedState = await statesStore.getStateByTimeslice(ts_id);
+            if (fetchedState) {
+              existingState = fetchedState;
+            }
+          } catch (fetchError) {
+            // If fetch fails, we'll create a new state below
+            GlobalErrorHandler.logError(fetchError, "saveAllNotes_fetchState", {
+              timesliceId: ts_id,
+            });
+          }
+        }
 
         if (existingState) {
           const updatedState = {
             ...existingState,
             energy,
+            mood,
           };
           await updateState(updatedState);
         } else {
@@ -282,7 +300,7 @@ export const useNoteHandlers = ({
           const newState = {
             timeslice_id: ts_id,
             energy,
-            mood: null,
+            mood,
             user_id: null, // Will be replaced by API with authenticated user's ID
           };
           const createdState = await insertState(newState);
@@ -307,8 +325,9 @@ export const useNoteHandlers = ({
   }, [
     notes,
     energy,
+    mood,
     timeslice,
-    statesStore.states,
+    statesStore,
     insertNotes,
     updateNotes,
     insertState,

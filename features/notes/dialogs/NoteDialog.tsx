@@ -20,7 +20,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { createEmptyNote } from "../utils";
 
 import { ActivityBox } from "@/features/activity/components/ui/ActivityBox";
-import { CdLevelIndicator } from "@/shared/components/CadenceUI";
+import { CdMoodSelector } from "@/shared/components/CadenceUI";
 import { useI18n } from "@/shared/hooks/useI18n";
 
 import {
@@ -45,6 +45,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
   const { t } = useI18n();
   const [notes, setNotes] = useState<NoteItem[]>([]);
   const [energy, setEnergy] = useState(0);
+  const [mood, setMood] = useState(0);
   const [activeNoteIndex, setActiveNoteIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,6 +85,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     notes,
     setNotes,
     energy,
+    mood,
     timeslice,
     noteIds,
     activeNoteIndex,
@@ -119,7 +121,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     );
   }, []);
 
-  const loadEnergyState = useCallback(async () => {
+  const loadStateData = useCallback(async () => {
     if (!ts_id) return;
 
     try {
@@ -137,12 +139,13 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       }
 
       if (existingState) {
-        // Set energy from existing state (0 is a valid value)
+        // Set energy and mood from existing state (0 is a valid value)
         setEnergy(existingState.energy || 0);
+        setMood(existingState.mood || 0);
       }
-      // If no state found anywhere, energy remains at default value of 0
+      // If no state found anywhere, energy and mood remain at default value of 0
     } catch (error) {
-      GlobalErrorHandler.logError(error, "loadEnergyState", {
+      GlobalErrorHandler.logError(error, "loadStateData", {
         timesliceId: ts_id,
       });
     }
@@ -203,7 +206,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
   useEffect(() => {
     if (ts_id) {
       loadNotes();
-      loadEnergyState();
+      loadStateData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ts_id]); // Only depend on ts_id to prevent infinite loops
@@ -246,6 +249,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     }
   }, [notes.length]);
 
+  //! Deprecated - energy is not currently used - keep for future use
   const handleEnergyChange = useCallback(
     async (newValue: number) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -255,12 +259,41 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       // Save energy to states store if we have a valid timeslice
       if (ts_id) {
         try {
-          const stateData = {
-            energy: finalValue || null, // Convert 0 to null for database
-            mood: null, // Not managing mood in this dialog
-            timeslice_id: ts_id,
-            user_id: null, // Will be replaced by API with authenticated user's ID
-          };
+          // First check if we have a state for this timeslice in local store
+          let existingState = statesStore.states.find(
+            (state) => state.timeslice_id === ts_id
+          );
+
+          // If not found locally, try to fetch from database
+          if (!existingState) {
+            try {
+              const fetchedState = await statesStore.getStateByTimeslice(ts_id);
+              if (fetchedState) {
+                existingState = fetchedState;
+              }
+            } catch (fetchError) {
+              // If fetch fails, we'll create a new state below
+              GlobalErrorHandler.logError(
+                fetchError,
+                "handleEnergyChange_fetchState",
+                {
+                  timesliceId: ts_id,
+                }
+              );
+            }
+          }
+
+          const stateData = existingState
+            ? {
+                ...existingState,
+                energy: finalValue || null, // Convert 0 to null for database
+              }
+            : {
+                energy: finalValue || null, // Convert 0 to null for database
+                mood: mood || null, // Preserve current mood value
+                timeslice_id: ts_id,
+                user_id: null, // Will be replaced by API with authenticated user's ID
+              };
 
           await statesStore.upsertState(stateData);
         } catch (error) {
@@ -272,7 +305,65 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
         }
       }
     },
-    [energy, ts_id, statesStore]
+    [energy, mood, ts_id, statesStore]
+  );
+
+  const handleMoodChange = useCallback(
+    async (newValue: number) => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      const finalValue = newValue === mood ? 0 : newValue;
+      setMood(finalValue);
+
+      // Save mood to states store if we have a valid timeslice
+      if (ts_id) {
+        try {
+          // First check if we have a state for this timeslice in local store
+          let existingState = statesStore.states.find(
+            (state) => state.timeslice_id === ts_id
+          );
+
+          // If not found locally, try to fetch from database
+          if (!existingState) {
+            try {
+              const fetchedState = await statesStore.getStateByTimeslice(ts_id);
+              if (fetchedState) {
+                existingState = fetchedState;
+              }
+            } catch (fetchError) {
+              // If fetch fails, we'll create a new state below
+              GlobalErrorHandler.logError(
+                fetchError,
+                "handleMoodChange_fetchState",
+                {
+                  timesliceId: ts_id,
+                }
+              );
+            }
+          }
+
+          const stateData = existingState
+            ? {
+                ...existingState,
+                mood: finalValue || null, // Convert 0 to null for database
+              }
+            : {
+                energy: energy || null, // Preserve current energy value
+                mood: finalValue || null, // Convert 0 to null for database
+                timeslice_id: ts_id,
+                user_id: null, // Will be replaced by API with authenticated user's ID
+              };
+
+          await statesStore.upsertState(stateData);
+        } catch (error) {
+          GlobalErrorHandler.logError(error, "saveMoodState", {
+            timesliceId: ts_id,
+            mood: finalValue,
+          });
+          // Don't show error to user for mood saves - it's not critical
+        }
+      }
+    },
+    [energy, mood, ts_id, statesStore]
   );
 
   const handleSaveNote = async (index: number) => {
@@ -362,7 +453,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.container}>
-        <CdLevelIndicator
+        {/* <CdLevelIndicator
           label={t("energyLabel")}
           value={energy}
           onChange={handleEnergyChange}
@@ -370,6 +461,13 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
             lowLabel: t("energyLow"),
             highLabel: t("energyHigh"),
           }}
+        /> */}
+
+        <CdMoodSelector
+          label="MOOD"
+          value={mood}
+          onChange={handleMoodChange}
+          style={{ marginTop: 16 }}
         />
 
         <ScrollView

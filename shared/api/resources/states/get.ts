@@ -75,7 +75,8 @@ export async function getStateByTimeslice(
         .from("states")
         .select("*")
         .eq("timeslice_id", timesliceId)
-        .single();
+        .limit(1)
+        .maybeSingle();
       return { data, error };
     });
   } catch (error) {

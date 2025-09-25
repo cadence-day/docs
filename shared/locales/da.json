@@ -91,6 +91,7 @@
   "contain-one-uppercase-letter": "- indeholder et stort bogstav",
   "continue": "Fortsætte",
   "current-password-is-required": "Nuværende adgangskode er påkrævet.",
+  "daily-total": "",
   "dateTime": {
     "preposition": "kl."
   },
@@ -161,6 +162,7 @@
     "title": "Daglig Cadence",
     "todayTitle": "Dagens Cadence"
   },
+  "hours": "",
   "i-agree-to-the": "Jeg accepterer",
   "import-encryption-key": "Importer krypteringsnøgle",
   "import-key": "Importer nøgle",
@@ -180,6 +182,7 @@
   "midday-reflection": "Middagsreflektion",
   "mo": "Man",
   "monthly": "",
+  "mood": "",
   "morning-reminders": "Morgen-påmindelser",
   "morning-reminders-are-sent-aft": "Morgen-påmindelser sendes efter din opvågningstid og aften-påmindelser før din sengetid. Ugentlige streak-opdateringer fejrer dine resultater hver søndag.",
   "morning-time": "",
