@@ -229,6 +229,7 @@
       "work": "Work"
     },
     "activity-selection": {
+      "content": "Pick activities that are relevant to you:",
       "footer": "You can edit, add, remove activities later.",
       "title": "Start by logging your daily activities and patterns will emerge"
     },

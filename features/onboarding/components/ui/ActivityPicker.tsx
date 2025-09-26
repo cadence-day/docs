@@ -20,10 +20,6 @@ export const ActivityPicker: React.FC<ActivityPickerProps> = ({
 
   return (
     <>
-      <Text style={styles.subtitle}>
-        Pick activities that are relevant to you:
-      </Text>
-
       <ScrollView
         style={styles.activitiesContainer}
         showsVerticalScrollIndicator={false}

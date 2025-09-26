@@ -113,9 +113,10 @@ export default function OnboardingScreen() {
               </View>
             )}
 
-            {/* Main Content */}
-            {renderScreen()}
-
+            <View style={styles.contentContainer}>
+              {/* Main Content */}
+              {renderScreen()}
+            </View>
             {/* Side Progress Indicator - Right */}
             <SideProgressIndicator
               totalPages={pages.length}
@@ -138,9 +139,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    marginTop: 120, // Push content down to make room for the icon
     flex: 1,
-    padding: 20,
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 30,
+    marginTop: 120,
+    marginBottom: 100,
   },
   cadenceText: {
     position: "absolute",

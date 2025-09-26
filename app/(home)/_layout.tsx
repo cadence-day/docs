@@ -125,7 +125,7 @@ export default function TabLayout() {
           .getAllTimeslices();
         if (!timeslices || timeslices.length === 0) {
           // Navigate to full-screen onboarding instead of opening dialog
-          router.replace("/utils/onboarding");
+          router.replace("/onboarding");
         }
       } catch (err) {
         // Ignore errors here - non-fatal

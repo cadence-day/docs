@@ -95,7 +95,7 @@ export default function CustomerSupportSettings() {
   };
 
   const handleOpenOnboarding = () => {
-    router.push("/utils/onboarding");
+    router.push("/onboarding");
   };
 
   return (

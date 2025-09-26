@@ -2,28 +2,27 @@ import { StyleSheet } from "react-native";
 
 export const onboardingStyles = StyleSheet.create({
   container: {
-    marginTop: 20,
-    alignItems: "flex-start", // Align items to the left
     flex: 1,
-    width: "60%", // Take up 60% of the parent container's width
-    padding: 30,
-    position: "relative",
   },
   contentContainer: {
     flex: 1,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    marginTop: 100,
   },
   embeddedContent: {
+    borderColor: "magenta",
+    borderWidth: 0, // Set to 1 for debugging layout
     flex: 1,
     marginTop: 20,
+    paddingRight: 20,
     alignItems: "center",
     justifyContent: "center",
   },
+  pictureContainer: {
+    resizeMode: "contain",
+    width: "90%",
+  },
   textContainer: {
+    marginVertical: 8,
     width: "100%",
-    marginBottom: 16,
   },
   spacer: {
     height: 12,
@@ -32,6 +31,7 @@ export const onboardingStyles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     textAlign: "left",
+    marginTop: 20,
     marginBottom: 16,
   },
   titleContainer: {
@@ -85,10 +85,6 @@ export const onboardingStyles = StyleSheet.create({
     flex: 1,
     alignItems: "flex-start",
     justifyContent: "flex-start",
-    padding: 20,
-    paddingTop: 40,
-    paddingBottom: 60,
-    paddingLeft: 20,
   },
   subtitle: {
     fontSize: 12,
@@ -98,7 +94,8 @@ export const onboardingStyles = StyleSheet.create({
     marginBottom: 8,
   },
   activitiesContainer: {
-    maxHeight: 200,
+    flex: 1,
+    marginTop: 12,
   },
   activitiesGrid: {
     flexDirection: "row",

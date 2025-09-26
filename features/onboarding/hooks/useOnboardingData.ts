@@ -19,6 +19,7 @@ export function useOnboardingData() {
       id: "activity-selection",
       type: "activity-selection",
       title: t("onboarding.activity-selection.title"),
+      content: t("onboarding.activity-selection.content"),
       footer: t("onboarding.activity-selection.footer"),
     },
     {

@@ -229,6 +229,7 @@
       "work": "Travail"
     },
     "activity-selection": {
+      "content": "",
       "footer": "Vous pouvez modifier, ajouter, supprimer des activités plus tard.",
       "title": "Commencez par enregistrer vos activités quotidiennes et les modèles émergeront"
     },

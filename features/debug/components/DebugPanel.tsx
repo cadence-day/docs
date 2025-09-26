@@ -70,7 +70,7 @@ const DebugPanel: React.FC = () => {
       console.error("clear onboarding storage failed", error);
     }
 
-    router.push("/utils/onboarding");
+    router.push("/onboarding");
   };
 
   const handleOpenDebugPage = () => {
