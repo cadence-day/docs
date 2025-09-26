@@ -1,3 +1,4 @@
+import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -7,6 +8,7 @@ export const styles = StyleSheet.create({
   gridContainer: {
     flex: 1,
     padding: 16,
+    ...getShadowStyle(ShadowLevel.Low),
   },
   // ActivityBox / placeholders
   activityBoxContainer: {
@@ -97,11 +99,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#ff4444",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 5,
+    ...getShadowStyle(ShadowLevel.Medium),
   },
   deleteButtonText: {
     color: "#fff",
@@ -246,11 +244,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#6366F1",
     borderWidth: 3,
     borderColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    ...getShadowStyle(ShadowLevel.Medium),
   },
   sliderThumbDragging: {
     transform: [{ scale: 1.2 }],

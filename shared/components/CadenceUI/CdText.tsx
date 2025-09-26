@@ -16,12 +16,46 @@ export const CdText: React.FC<CdTextProps> = ({
   style,
   numberOfLines,
 }) => {
-  const textStyle = [
-    localStyles.text,
-    localStyles[`${variant}Text`],
-    localStyles[`${size}Text`],
-    style,
-  ];
+  let variantStyle: TextStyle | undefined;
+  switch (variant) {
+    case "title":
+      variantStyle = localStyles.titleText;
+      break;
+    case "body":
+      variantStyle = localStyles.bodyText;
+      break;
+    case "caption":
+      variantStyle = localStyles.captionText;
+      break;
+    case "error":
+      variantStyle = localStyles.errorText;
+      break;
+    case "message":
+      variantStyle = localStyles.messageText;
+      break;
+    case "link":
+      variantStyle = localStyles.linkText;
+      break;
+    default:
+      variantStyle = undefined;
+  }
+
+  let sizeStyle: TextStyle | undefined;
+  switch (size) {
+    case "small":
+      sizeStyle = localStyles.smallText;
+      break;
+    case "medium":
+      sizeStyle = localStyles.mediumText;
+      break;
+    case "large":
+      sizeStyle = localStyles.largeText;
+      break;
+    default:
+      sizeStyle = undefined;
+  }
+
+  const textStyle = [localStyles.text, variantStyle, sizeStyle, style];
 
   return (
     <Text style={textStyle} numberOfLines={numberOfLines}>
@@ -34,38 +68,35 @@ const localStyles = StyleSheet.create({
   text: {
     color: "#FFFFFF",
   },
-
-  // Variant styles
   titleText: {
-    textAlign: "center",
-    fontWeight: "600",
+    fontSize: 24,
+    fontWeight: "bold",
   },
   bodyText: {
-    fontWeight: "400",
+    fontSize: 16,
+    fontWeight: "normal",
   },
   captionText: {
-    fontWeight: "300",
-    opacity: 0.8,
+    fontSize: 12,
+    color: "#AAAAAA",
   },
   errorText: {
-    color: "#FF6B5D",
-    textTransform: "uppercase",
+    color: "#FF4D4F",
+    fontWeight: "bold",
   },
   messageText: {
-    color: "#6646EC",
-    textTransform: "uppercase",
+    fontSize: 15,
+    color: "#00B894",
   },
   linkText: {
-    color: "#FFFFFF",
+    color: "#3498DB",
     textDecorationLine: "underline",
   },
-
-  // Size styles
   smallText: {
     fontSize: 12,
   },
   mediumText: {
-    fontSize: 14,
+    fontSize: 16,
   },
   largeText: {
     fontSize: 20,

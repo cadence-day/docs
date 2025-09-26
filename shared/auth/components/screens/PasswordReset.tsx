@@ -8,7 +8,7 @@ import { useSignIn } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { handleAuthError, parseClerkErrors } from "../../utils";
 import { PASSWORD_REQUIREMENTS } from "../../utils/constants";
 import PasswordRequirement from "../shared/PasswordRequirement";
@@ -48,59 +48,62 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
   }, [resendCooldown]);
 
   // Password validation
-  const validatePassword = (pwd: string): string | null => {
-    if (pwd.length < PASSWORD_REQUIREMENTS.MIN_LENGTH) {
-      return t(
-        "password-reset.password-must-be-at-least-password_requirements-min_length-characters"
-      ).replace("{0}", PASSWORD_REQUIREMENTS.MIN_LENGTH.toString());
-    }
-    if (PASSWORD_REQUIREMENTS.REQUIRE_UPPERCASE && !/[A-Z]/.test(pwd)) {
-      return t(
-        "password-reset.password-must-contain-at-least-one-uppercase-letter"
-      );
-    }
-    if (PASSWORD_REQUIREMENTS.REQUIRE_LOWERCASE && !/[a-z]/.test(pwd)) {
-      return t(
-        "password-reset.password-must-contain-at-least-one-lowercase-letter"
-      );
-    }
-    if (PASSWORD_REQUIREMENTS.REQUIRE_NUMBER && !/[0-9]/.test(pwd)) {
-      return t("password-reset.password-must-contain-at-least-one-number");
-    }
-    if (
-      PASSWORD_REQUIREMENTS.REQUIRE_SPECIAL_CHAR &&
-      !/[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/.test(pwd)
-    ) {
-      return t(
-        "password-reset.password-must-contain-at-least-one-special-character"
-      );
-    }
-    return null;
-  };
+  const validatePassword = useCallback(
+    (pwd: string): string | null => {
+      if (pwd.length < PASSWORD_REQUIREMENTS.MIN_LENGTH) {
+        return t(
+          "password-reset.password-must-be-at-least-password_requirements-min_length-characters"
+        ).replace("{0}", PASSWORD_REQUIREMENTS.MIN_LENGTH.toString());
+      }
+      if (PASSWORD_REQUIREMENTS.REQUIRE_UPPERCASE && !/[A-Z]/.test(pwd)) {
+        return t(
+          "password-reset.password-must-contain-at-least-one-uppercase-letter"
+        );
+      }
+      if (PASSWORD_REQUIREMENTS.REQUIRE_LOWERCASE && !/[a-z]/.test(pwd)) {
+        return t(
+          "password-reset.password-must-contain-at-least-one-lowercase-letter"
+        );
+      }
+      if (PASSWORD_REQUIREMENTS.REQUIRE_NUMBER && !/[0-9]/.test(pwd)) {
+        return t("password-reset.password-must-contain-at-least-one-number");
+      }
+      if (
+        PASSWORD_REQUIREMENTS.REQUIRE_SPECIAL_CHAR &&
+        !/[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/.test(pwd)
+      ) {
+        return t(
+          "password-reset.password-must-contain-at-least-one-special-character"
+        );
+      }
+      return null;
+    },
+    [t]
+  );
 
   // Check if passwords match
-  const validatePasswordMatch = (
-    pwd: string,
-    repeatPwd: string
-  ): string | null => {
-    if (pwd !== repeatPwd && repeatPwd.length > 0) {
-      return t("password-reset.passwords-do-not-match");
-    }
-    return null;
-  };
+  const validatePasswordMatch = useCallback(
+    (pwd: string, repeatPwd: string): string | null => {
+      if (pwd !== repeatPwd && repeatPwd.length > 0) {
+        return t("password-reset.passwords-do-not-match");
+      }
+      return null;
+    },
+    [t]
+  );
 
   // Check if all password requirements are met
-  const isPasswordValid = (): boolean => {
+  const isPasswordValid = useCallback((): boolean => {
     return (
       validatePassword(password) === null &&
       validatePasswordMatch(password, repeatPassword) === null &&
       password.length > 0 &&
       repeatPassword.length > 0
     );
-  };
+  }, [password, repeatPassword, validatePassword, validatePasswordMatch]);
 
   // Handle resending verification code
-  const onResendPress = async () => {
+  const onResendPress = useCallback(async () => {
     if (!isLoaded || !signIn || isResending || resendCooldown > 0 || !email)
       return;
 
@@ -127,7 +130,16 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
     } finally {
       setIsResending(false);
     }
-  };
+  }, [
+    isLoaded,
+    signIn,
+    isResending,
+    resendCooldown,
+    email,
+    showSuccess,
+    showError,
+    t,
+  ]);
 
   // Handle verification code submission
   const onVerifyCodePress = useCallback(async () => {
@@ -187,7 +199,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [isLoaded, signIn, code, isSubmitting, showSuccess, showError]);
+  }, [isLoaded, signIn, code, isSubmitting, showSuccess, showError, t, email]);
 
   // Handle password reset completion
   const onResetPasswordPress = useCallback(async () => {
@@ -265,6 +277,11 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
     repeatPassword,
     showSuccess,
     showError,
+    t,
+    setActive,
+    validatePassword,
+    validatePasswordMatch,
+    email,
   ]);
 
   // Auto-submit code when 6 digits are entered
@@ -275,6 +292,17 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
       }, 100);
     }
   }, [code, step, isSubmitting, onVerifyCodePress]);
+
+  let resendText = t("password-reset.resend-code");
+  if (isResending) {
+    resendText = "Sending...";
+  } else if (resendCooldown > 0) {
+    resendText = t("password-reset.resend-in-resendcooldown-s", {
+      seconds: resendCooldown,
+    });
+  }
+
+  const resendOpacity = isResending || resendCooldown > 0 ? 0.5 : 1;
 
   return (
     <LinearGradient
@@ -293,25 +321,17 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
           <View style={styles.formContainer}>
             {step === "code" ? (
               <>
-                <CdText variant="title" size="large" style={styles.title}>
-                  {t("password-reset.enter-verification-code")}
-                </CdText>
-
                 <CdText
                   variant="body"
                   size="medium"
-                  style={{
-                    marginBottom: 24,
-                    textAlign: "center",
-                    color: "#B9B9B9",
-                  }}
+                  style={localStyles.subtitle}
                 >
                   {t("password-reset.weve-sent-a-6-digit-verification-code-to")}{" "}
                   {email && (
                     <CdText
                       variant="body"
                       size="medium"
-                      style={{ fontWeight: "600" }}
+                      style={localStyles.boldText}
                     >
                       {email}
                     </CdText>
@@ -341,18 +361,14 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                   onSubmitEditing={onVerifyCodePress}
                   maxLength={6}
                   letterSpacing={2}
-                  style={{
-                    textAlign: "center",
-                    fontSize: 18,
-                    color: COLORS.white,
-                  }}
+                  style={localStyles.codeInput}
                 />
 
-                <View style={{ marginTop: 20, alignItems: "center" }}>
+                <View style={localStyles.resendWrapper}>
                   <CdText
                     variant="body"
                     size="small"
-                    style={{ color: COLORS.placeholderText, marginBottom: 10 }}
+                    style={localStyles.placeholderText}
                   >
                     {t("password-reset.didnt-receive-the-code")}
                   </CdText>
@@ -360,22 +376,17 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                   <TouchableOpacity
                     onPress={onResendPress}
                     disabled={isResending || resendCooldown > 0}
-                    style={{
-                      opacity: isResending || resendCooldown > 0 ? 0.5 : 1,
-                    }}
+                    style={[
+                      localStyles.resendButton,
+                      { opacity: resendOpacity },
+                    ]}
                   >
                     <CdText
                       variant="body"
                       size="medium"
-                      style={{ color: COLORS.primary, fontWeight: "600" }}
+                      style={localStyles.resendText}
                     >
-                      {isResending
-                        ? "Sending..."
-                        : resendCooldown > 0
-                          ? t("password-reset.resend-in-resendcooldown-s", {
-                              seconds: resendCooldown,
-                            })
-                          : t("password-reset.resend-code")}
+                      {resendText}
                     </CdText>
                   </TouchableOpacity>
                 </View>
@@ -389,11 +400,7 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
                 <CdText
                   variant="body"
                   size="medium"
-                  style={{
-                    marginBottom: 24,
-                    textAlign: "center",
-                    color: "#B9B9B9",
-                  }}
+                  style={localStyles.subtitle}
                 >
                   {t(
                     "password-reset.create-a-strong-password-for-your-account"
@@ -455,12 +462,12 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
 
             <TouchableOpacity
               onPress={() => router.back()}
-              style={{ marginTop: 20 }}
+              style={localStyles.backLinkWrapper}
             >
               <CdText
                 variant="link"
                 size="medium"
-                style={{ textAlign: "center" }}
+                style={localStyles.centerText}
               >
                 {t("password-reset.back-to-sign-in")}
               </CdText>
@@ -501,3 +508,38 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
 };
 
 export default PasswordResetScreen;
+
+const localStyles = StyleSheet.create({
+  subtitle: {
+    marginBottom: 24,
+    textAlign: "center",
+    color: "#B9B9B9",
+  },
+  codeInput: {
+    textAlign: "center",
+    fontSize: 18,
+    color: COLORS.white,
+  },
+  resendWrapper: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  placeholderText: {
+    color: COLORS.placeholderText,
+    marginBottom: 10,
+  },
+  resendButton: {},
+  resendText: {
+    color: COLORS.primary,
+    fontWeight: "600",
+  },
+  backLinkWrapper: {
+    marginTop: 20,
+  },
+  centerText: {
+    textAlign: "center",
+  },
+  boldText: {
+    fontWeight: "600",
+  },
+});

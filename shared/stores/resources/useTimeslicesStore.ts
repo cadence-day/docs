@@ -16,21 +16,21 @@ interface TimeslicesStore extends BaseStoreState {
   // Core operations
   // Insert operations
   insertTimeslice: (
-    timeslice: Omit<Timeslice, "id">
+    timeslice: Omit<Timeslice, "id">,
   ) => Promise<Timeslice | null>;
   insertTimeslices: (
-    timeslices: Omit<Timeslice, "id">[]
+    timeslices: Omit<Timeslice, "id">[],
   ) => Promise<Timeslice[]>;
   upsertTimeslice: (
     timeslice:
       | Timeslice
-      | (Omit<Timeslice, "id"> & Partial<Pick<Timeslice, "id">>)
+      | (Omit<Timeslice, "id"> & Partial<Pick<Timeslice, "id">>),
   ) => Promise<Timeslice | null>;
   upsertTimeslices: (
     timeslices: (
       | Timeslice
       | (Omit<Timeslice, "id"> & Partial<Pick<Timeslice, "id">>)
-    )[]
+    )[],
   ) => Promise<Timeslice[]>;
 
   // Update operations
@@ -56,7 +56,7 @@ interface TimeslicesStore extends BaseStoreState {
   reset: () => void;
 }
 
-const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
+const useTimeslicesStore = create<TimeslicesStore>((set) => ({
   // Initial state
   timeslices: [],
   isLoading: false,
@@ -73,9 +73,9 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       (newTimeslice, currentState) =>
         newTimeslice
           ? {
-              timeslices: [...currentState.timeslices, newTimeslice],
-            }
-          : {}
+            timeslices: [...currentState.timeslices, newTimeslice],
+          }
+          : {},
     );
   },
 
@@ -88,15 +88,16 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       (newTimeslices, currentState) =>
         newTimeslices.length > 0
           ? {
-              timeslices: [...currentState.timeslices, ...newTimeslices],
-            }
-          : {}
+            timeslices: [...currentState.timeslices, ...newTimeslices],
+          }
+          : {},
     );
   },
 
   upsertTimeslice: async (
-    timeslice: Omit<Timeslice, "id"> &
-      Partial<Pick<Timeslice, "state_id" | "note_ids">>
+    timeslice:
+      & Omit<Timeslice, "id">
+      & Partial<Pick<Timeslice, "state_id" | "note_ids">>,
   ) => {
     return handleApiCall(
       set,
@@ -107,7 +108,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
         if (!upsertedTimeslice) return {};
 
         const existingIndex = currentState.timeslices.findIndex(
-          (t) => t.id === upsertedTimeslice.id
+          (t) => t.id === upsertedTimeslice.id,
         );
         if (existingIndex >= 0) {
           // Update existing
@@ -122,13 +123,15 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
             timeslices: [...currentState.timeslices, upsertedTimeslice],
           };
         }
-      }
+      },
     );
   },
 
   upsertTimeslices: async (
-    timeslices: (Omit<Timeslice, "id"> &
-      Partial<Pick<Timeslice, "state_id" | "note_ids">>)[]
+    timeslices: (
+      & Omit<Timeslice, "id">
+      & Partial<Pick<Timeslice, "state_id" | "note_ids">>
+    )[],
   ) => {
     return handleApiCall(
       set,
@@ -142,7 +145,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
 
         upsertedTimeslices.forEach((upsertedTimeslice) => {
           const existingIndex = updatedTimeslices.findIndex(
-            (t) => t.id === upsertedTimeslice.id
+            (t) => t.id === upsertedTimeslice.id,
           );
           if (existingIndex >= 0) {
             // Update existing
@@ -154,7 +157,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
         });
 
         return { timeslices: updatedTimeslices };
-      }
+      },
     );
   },
 
@@ -167,11 +170,11 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       (updatedTimeslice, currentState) =>
         updatedTimeslice
           ? {
-              timeslices: currentState.timeslices.map((t) =>
-                t.id === updatedTimeslice.id ? updatedTimeslice : t
-              ),
-            }
-          : {}
+            timeslices: currentState.timeslices.map((t) =>
+              t.id === updatedTimeslice.id ? updatedTimeslice : t
+            ),
+          }
+          : {},
     );
   },
 
@@ -183,7 +186,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       null,
       (deletedTimeslice, currentState) => ({
         timeslices: currentState.timeslices.filter((t) => t.id !== id),
-      })
+      }),
     );
   },
 
@@ -195,9 +198,9 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       [],
       (deletedTimeslices, currentState) => ({
         timeslices: currentState.timeslices.filter(
-          (t) => t.id && !ids.includes(t.id)
+          (t) => t.id && !ids.includes(t.id),
         ),
-      })
+      }),
     );
   },
 
@@ -209,8 +212,9 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
         set({ isRefreshing: true });
         try {
           // Fetch timeslices for the user from remote database
-          const fetchedTimeslices =
-            await timeslicesApi.getUserTimeslices(userId);
+          const fetchedTimeslices = await timeslicesApi.getUserTimeslices(
+            userId,
+          );
           return fetchedTimeslices;
         } finally {
           set({ isRefreshing: false });
@@ -219,7 +223,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       "refresh timeslices",
       (fetchedTimeslices, currentState) => ({
         timeslices: currentState.timeslices.concat(fetchedTimeslices),
-      })
+      }),
     );
   },
 
@@ -229,7 +233,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       set,
       () => timeslicesApi.getTimeslice(id),
       "get timeslice",
-      null
+      null,
     );
   },
 
@@ -238,7 +242,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       set,
       () => timeslicesApi.getTimeslices(ids),
       "get timeslices",
-      []
+      [],
     );
   },
 
@@ -247,7 +251,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       set,
       () => timeslicesApi.getUserTimeslices(userId),
       "get user timeslices",
-      []
+      [],
     );
   },
 
@@ -256,7 +260,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       set,
       () => timeslicesApi.getAllTimeslices(),
       "get all timeslices",
-      []
+      [],
     );
   },
 
@@ -265,7 +269,7 @@ const useTimeslicesStore = create<TimeslicesStore>((set, get) => ({
       set,
       () => timeslicesApi.getTimeslicesFromTo(startUtc, endUtc),
       "get timeslices from to",
-      []
+      [],
     );
   },
 

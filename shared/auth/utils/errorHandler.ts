@@ -42,7 +42,7 @@ export const parseClerkErrors = (error: any): ParsedClerkError => {
     GlobalErrorHandler.logError(
       new Error(fallbackMessage),
       "AUTH_CLERK_EMPTY_ERROR",
-      { errorType: "empty_error" }
+      { errorType: "empty_error" },
     );
 
     return {
@@ -53,43 +53,47 @@ export const parseClerkErrors = (error: any): ParsedClerkError => {
     };
   }
 
-  if (error?.errors && Array.isArray(error.errors) && error.errors.length > 0) {
+  // Use type guards to safely access nested properties
+  const hasErrorsArray = typeof error === "object" && error !== null &&
+    "errors" in (error as Record<string, unknown>) &&
+    Array.isArray((error as Record<string, unknown>).errors) &&
+    ((error as Record<string, unknown>).errors as unknown[]).length > 0;
+
+  if (hasErrorsArray) {
+    const errorsArray =
+      ((error as Record<string, unknown>).errors as unknown[]) || [];
     // Collect all error messages for toast
     const errorMessages: string[] = [];
-    const errorDetails: any[] = [];
+    const errorDetails: Record<string, unknown>[] = [];
 
-    error.errors.forEach((err: any) => {
-      const paramName = err.meta?.paramName;
-      const message = err.message || err.longMessage;
-      const code = err.code;
+    errorsArray.forEach((unknownErr) => {
+      if (typeof unknownErr !== "object" || unknownErr === null) return;
+      const errObj = unknownErr as Record<string, unknown>;
+      const meta = errObj.meta as Record<string, unknown> | undefined;
+      const paramName = meta?.paramName as string | undefined;
+      const message = (errObj.message as string | undefined) ||
+        (errObj.longMessage as string | undefined) || undefined;
+      const code = errObj.code as string | undefined;
 
-      if (message) {
-        errorMessages.push(message);
-      }
+      if (message) errorMessages.push(message);
 
-      errorDetails.push({
-        paramName,
-        message,
-        code,
-        meta: err.meta,
-      });
+      errorDetails.push({ paramName, message, code, meta });
 
-      // Map errors to specific fields
       switch (paramName) {
         case "email_address":
-          fieldErrors.email = message;
+          fieldErrors.email = message || fieldErrors.email;
           break;
         case "first_name":
-          fieldErrors.firstName = message;
+          fieldErrors.firstName = message || fieldErrors.firstName;
           break;
         case "last_name":
-          fieldErrors.lastName = message;
+          fieldErrors.lastName = message || fieldErrors.lastName;
           break;
         case "password":
-          fieldErrors.password = message;
+          fieldErrors.password = message || fieldErrors.password;
           break;
         default:
-          if (!fieldErrors.general) {
+          if (!fieldErrors.general && message) {
             fieldErrors.general = message;
             generalError = message;
           }
@@ -110,9 +114,11 @@ export const parseClerkErrors = (error: any): ParsedClerkError => {
     }
   } else {
     // Fallback for unexpected error format
-    const fallbackMessage =
-      error?.message ||
-      error?.toString() ||
+    const fallbackMessage = (typeof error === "object" && error !== null &&
+        "message" in (error as Record<string, unknown>)
+      ? String((error as Record<string, unknown>).message)
+      : undefined) ||
+      (typeof error === "string" ? error : undefined) ||
       "An unexpected error occurred. Please try again.";
     fieldErrors.general = fallbackMessage;
     generalError = fallbackMessage;
@@ -141,14 +147,14 @@ export const parseClerkErrors = (error: any): ParsedClerkError => {
  * @returns Function to clear specific fields
  */
 export const createClerkErrorClearer = (
-  setClerkErrors: React.Dispatch<React.SetStateAction<ClerkErrorMapping>>
+  setClerkErrors: React.Dispatch<React.SetStateAction<ClerkErrorMapping>>,
 ) => {
   return (field: keyof ClerkErrorMapping) => {
     setClerkErrors((prev) => ({ ...prev, [field]: null }));
 
     GlobalErrorHandler.logDebug(
       `Cleared Clerk error for field: ${field}`,
-      "AUTH_CLERK_ERROR_CLEAR"
+      "AUTH_CLERK_ERROR_CLEAR",
     );
   };
 };
@@ -158,7 +164,7 @@ export const createClerkErrorClearer = (
  * @param setClerkErrors - State setter for clerk errors
  */
 export const clearAllClerkErrors = (
-  setClerkErrors: React.Dispatch<React.SetStateAction<ClerkErrorMapping>>
+  setClerkErrors: React.Dispatch<React.SetStateAction<ClerkErrorMapping>>,
 ) => {
   setClerkErrors({
     email: null,
@@ -170,7 +176,7 @@ export const clearAllClerkErrors = (
 
   GlobalErrorHandler.logDebug(
     "Cleared all Clerk errors",
-    "AUTH_CLERK_ERROR_CLEAR_ALL"
+    "AUTH_CLERK_ERROR_CLEAR_ALL",
   );
 };
 
@@ -200,7 +206,7 @@ export const CLERK_ERROR_MESSAGES = {
  */
 export const getClerkErrorMessage = (
   code: string,
-  fallback: string
+  fallback: string,
 ): string => {
   const friendlyMessage =
     CLERK_ERROR_MESSAGES[code as keyof typeof CLERK_ERROR_MESSAGES] || fallback;
@@ -209,7 +215,7 @@ export const getClerkErrorMessage = (
     GlobalErrorHandler.logDebug(
       `Mapped Clerk error code '${code}' to friendly message`,
       "AUTH_CLERK_ERROR_MAPPING",
-      { code, friendlyMessage }
+      { code, friendlyMessage },
     );
   }
 
@@ -223,13 +229,17 @@ export const getClerkErrorMessage = (
  * @param extra - Extra data to include with the error
  */
 export const handleAuthError = (
-  error: any,
+  error: unknown,
   context: string,
-  extra?: Record<string, any>
+  extra?: Record<string, any>,
 ) => {
+  const errorType = typeof error === "object" && error !== null &&
+      "constructor" in (error as Record<string, unknown>)
+    ? (error as Error).constructor?.name
+    : typeof error;
   GlobalErrorHandler.logError(error, `AUTH_${context}`, {
     authContext: context,
-    errorType: error?.constructor?.name || typeof error,
+    errorType,
     ...extra,
   });
 };
@@ -243,7 +253,7 @@ export const handleAuthError = (
 export const handleAuthWarning = (
   message: string,
   context: string,
-  extra?: Record<string, any>
+  extra?: Record<string, any>,
 ) => {
   GlobalErrorHandler.logWarning(message, `AUTH_${context}`, {
     authContext: context,

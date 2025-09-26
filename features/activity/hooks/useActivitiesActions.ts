@@ -30,13 +30,13 @@ export const useActivitiesActions = ({
       // (e.g. timeslice assignment) can read the current activity selection.
       try {
         useSelectionStore.getState().setSelectedActivityId(activity.id ?? null);
-      } catch (e) {
+      } catch {
         // If store not available for some reason, ignore silently
       }
 
       onActivityPress?.(activity);
     },
-    [onActivityPress]
+    [onActivityPress],
   );
 
   const handleActivityLongPress = useCallback(
@@ -45,7 +45,7 @@ export const useActivitiesActions = ({
       onActivityLongPress?.(activity);
       onEditActivity?.(activity);
     },
-    [onActivityLongPress, onEditActivity]
+    [onActivityLongPress, onEditActivity],
   );
 
   const refresh = useCallback(async () => {

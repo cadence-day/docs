@@ -2,7 +2,7 @@ import { useProfileStore } from "@/features/profile/stores/useProfileStore";
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import useI18n from "@/shared/hooks/useI18n";
 import { useDialogStore } from "@/shared/stores";
-import { Activity, Note, State, Timeslice } from "@/shared/types/models";
+import { Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -17,17 +17,12 @@ import { RefreshControl, ScrollView, View } from "react-native";
 import { REFLECTION_LAYOUT } from "../constants/layout";
 import { useReflectionData } from "../hooks/useReflectionData";
 import { useTimesliceStatistics } from "../hooks/useTimesliceStatistics";
-import { reflectionStyles } from "../styles";
+import styles, { reflectionStyles } from "../styles";
 import { EmptyReflectionCell, ReflectionCell } from "./ReflectionCell";
 import ReflectionDateAxis from "./ReflectionDateAxis";
 import ReflectionTimeAxis from "./ReflectionTimeAxis";
 
 // Use shared layout constants for consistent alignment
-
-type TimesliceInformationStats = {
-  hoursOfActivityInView: number;
-  hoursOfActivityInDay: number;
-};
 
 type ScheduleGridProps = {
   fromDate: Date;
@@ -35,13 +30,6 @@ type ScheduleGridProps = {
   refreshing: boolean;
   setRefreshing: (refreshing: boolean) => void;
 };
-
-type SelectedTimesliceInformation = {
-  timeslice: Timeslice | undefined;
-  activity: Activity | undefined;
-  noteList: Note[] | undefined;
-  state: State | undefined;
-} | null;
 
 // Memoized date column component for better performance
 type DateColumnProps = {
@@ -226,10 +214,6 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
 
   const clearActivityIsolation = useCallback(() => {
     setIsolatedActivityId(null);
-  }, []);
-
-  const clearTimesliceSelection = useCallback(() => {
-    setSelectedTimeslice(null);
   }, []);
 
   // Memoize date range key for dependency tracking
@@ -604,7 +588,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
             backgroundLinearColors.primary.start,
             backgroundLinearColors.primary.end,
           ]}
-          style={{ flex: 1 }}
+          style={styles.container}
         >
           <ReflectionDateAxis
             dates={dates}

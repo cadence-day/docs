@@ -1,10 +1,13 @@
 export interface NotificationPreferences {
   rhythm: "morning-only" | "evening-only" | "both" | "disabled";
   middayTime: string;
-  eveningTimeStart: string;
-  eveningTimeEnd: string;
+  eveningTime: string;
+  eveningTimeStart?: string; // Keep for backward compatibility
+  eveningTimeEnd?: string; // Keep for backward compatibility
   streaksEnabled: boolean;
   lightTouch: boolean;
+  soundEnabled?: boolean;
+  vibrationEnabled?: boolean;
   locale?: string;
   timezone?: string;
   expoPushToken?: string;
@@ -16,7 +19,7 @@ export interface NotificationMessage {
   body: string;
   type: NotificationType;
   scheduledFor?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface NotificationEvent {
@@ -27,12 +30,14 @@ export interface NotificationEvent {
 }
 
 export type NotificationType =
+  | "morning-motivation"
   | "midday-reflection"
   | "evening-reflection"
   | "streak-reminder"
   | "achievement"
   | "reminder"
-  | "system";
+  | "system"
+  | "test";
 
 export type NotificationDeliveryMethod = "push" | "local" | "in-app";
 
@@ -42,7 +47,7 @@ export interface NotificationProvider {
   sendNotification(notification: NotificationMessage): Promise<void>;
   scheduleNotification(
     notification: NotificationMessage,
-    scheduledFor: Date
+    scheduledFor: Date,
   ): Promise<void>;
   cancelNotification(notificationId: string): Promise<void>;
   cancelAllNotifications(): Promise<void>;
@@ -70,7 +75,7 @@ export interface NotificationLog {
   scheduledFor?: Date;
   deliveryMethod: NotificationDeliveryMethod;
   errorMessage?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface NotificationSubscriber {
@@ -78,7 +83,7 @@ export interface NotificationSubscriber {
   onNotificationSent?: (notification: NotificationMessage) => void;
   onNotificationFailed?: (
     notification: NotificationMessage,
-    error: Error
+    error: Error,
   ) => void;
   onPermissionChanged?: (status: NotificationPermissionStatus) => void;
 }

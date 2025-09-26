@@ -38,7 +38,6 @@ export const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
     const [isFocused, setIsFocused] = useState(false);
 
     const hasError = !!error;
-    const hasValue = value.length > 0;
 
     return (
       <View style={styles.container}>

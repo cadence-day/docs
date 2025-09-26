@@ -9,12 +9,7 @@ export interface ProfileFormData {
 export interface ProfileSettings {
   wakeTime: string; // "07:30"
   sleepTime: string; // "23:30"
-  notifications: {
-    morningReminders: boolean;
-    eveningReminders: boolean;
-    weeklyStreaks: boolean;
-  };
-  subscriptionPlan: "free" | "deep_cadence";
+  subscriptionPlan: "free" | "supporter" | "premium_supporter" | "feature_sponsor";
 }
 
 export interface UserPersona {

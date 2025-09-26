@@ -169,10 +169,7 @@ const FeatureRequestScreen = () => {
             >
               <View style={styles.noteContainerStyle}>
                 <TextInput
-                  style={[
-                    styles.noteInputStyle,
-                    { minHeight: 120, paddingRight: 16 },
-                  ]}
+                  style={[styles.noteInputStyle, styles.descriptionInputStyle]}
                   value={description}
                   onChangeText={setDescription}
                   placeholder={t("detailed-description-of-the-fe")}
@@ -209,10 +206,7 @@ const FeatureRequestScreen = () => {
             onPress={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"
-            style={{
-              borderColor: COLORS.primary,
-              marginHorizontal: 24,
-            }}
+            style={styles.SubmitButtonStyle}
             textStyle={{ color: COLORS.primary }}
           />
         </ScrollView>
@@ -233,13 +227,6 @@ const styles = StyleSheet.create({
   headerBorder: {
     height: 1,
     backgroundColor: COLORS.white,
-  },
-  fixedInfoSection: {
-    backgroundColor: COLORS.light.background,
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.white,
   },
   noteContainerStyle: {
     minHeight: 60,
@@ -266,26 +253,18 @@ const styles = StyleSheet.create({
     minHeight: 60,
     textAlignVertical: "top" as const,
   },
+  descriptionInputStyle: {
+    minHeight: 120,
+    paddingRight: 16,
+  },
   infoTextStyle: {
     fontSize: 14,
     color: "#000000",
     lineHeight: 20,
   },
-  submitButtonStyle: {
-    marginTop: 32,
-    marginHorizontal: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    backgroundColor: "#6366F1",
-    borderRadius: 8,
-    alignItems: "center" as const,
-  },
-  submitButtonDisabledStyle: {
-    backgroundColor: "#AAAAAA",
-  },
-  submitButtonTextStyle: {
-    color: "#FFFFFF",
-    fontSize: 16,
+  SubmitButtonStyle: {
+    borderColor: COLORS.primary,
+    marginHorizontal: 24,
   },
   backButton: {
     flexDirection: "row",
@@ -301,16 +280,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     paddingVertical: 12,
-  },
-  infoIcon: {
-    marginTop: 2,
-    marginRight: 12,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 12,
-    color: COLORS.bodyText,
-    lineHeight: 18,
   },
 });
 

@@ -1,86 +1,63 @@
 import { COLORS } from "@/shared/constants/COLORS";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, Text } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { RelativePathString, router } from "expo-router";
+import React, { useCallback, useEffect, useRef } from "react";
+import {
+  Animated,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { ToastType } from "@/shared/types/toast.types";
+import { useNavBarSize } from "../constants/VIEWPORT";
 
 interface ToastProps {
-  message: string;
+  // Backwards compatible: some callers provide a single `message` string
+  message?: string;
+
+  // Preferred shape: explicit title and body
+  title?: string;
+  body?: string;
+
   type: ToastType;
   isVisible: boolean;
   onHide: () => void;
   duration?: number;
+  dismissible?: boolean;
+  // Navigation options
+  href?: string; // Expo Router path to navigate to on tap
+  onPress?: () => void; // Custom action on tap
 }
 
+const { width: screenWidth } = Dimensions.get("window");
+
 const Toast: React.FC<ToastProps> = ({
+  // Accept either `message` or `title`/`body`. Prefer explicit title/body.
   message,
+  title,
+  body,
   type,
   isVisible,
   onHide,
   duration = 4000,
+  dismissible = true,
+  href,
+  onPress,
 }) => {
-  const translateY = useRef(new Animated.Value(-100)).current;
+  // Resolve display values: if explicit title/body are missing, use `message` as the body.
+  const NavBarSize = useNavBarSize();
+  const resolvedTitle = title ?? "";
+  const resolvedBody = body ?? message ?? "";
+  const translateY = useRef(new Animated.Value(100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
 
-  useEffect(() => {
-    if (isVisible) {
-      // Reset values when showing
-      translateY.setValue(-100);
-      opacity.setValue(0);
-
-      // Animate in
-      animationRef.current = Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]);
-
-      animationRef.current.start();
-
-      // Auto hide after duration
-      timeoutRef.current = setTimeout(() => {
-        hideToast();
-      }, duration);
-    }
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-      if (animationRef.current) {
-        animationRef.current.stop();
-        animationRef.current = null;
-      }
-    };
-  }, [isVisible, duration]);
-
-  // Cleanup effect when component unmounts
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      if (animationRef.current) {
-        animationRef.current.stop();
-      }
-      // Reset animated values to prevent memory leaks
-      translateY.setValue(-100);
-      opacity.setValue(0);
-    };
-  }, []);
-
-  const hideToast = () => {
+  const hideToast = useCallback(() => {
     // Clear any existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -94,7 +71,7 @@ const Toast: React.FC<ToastProps> = ({
 
     animationRef.current = Animated.parallel([
       Animated.timing(translateY, {
-        toValue: -100,
+        toValue: 100,
         duration: 300,
         useNativeDriver: true,
       }),
@@ -111,37 +88,111 @@ const Toast: React.FC<ToastProps> = ({
       }
       animationRef.current = null;
     });
-  };
+  }, [translateY, opacity, onHide]);
 
-  const getToastStyle = () => {
-    switch (type) {
-      case "success":
-        return styles.successToast;
-      case "error":
-        return styles.errorToast;
-      case "warning":
-        return styles.warningToast;
-      case "info":
-        return styles.infoToast;
-      default:
-        return styles.infoToast;
+  useEffect(() => {
+    if (isVisible) {
+      // Reset values when showing
+      translateY.setValue(100);
+      opacity.setValue(0);
+
+      // Animate in with spring effect
+      animationRef.current = Animated.parallel([
+        Animated.spring(translateY, {
+          toValue: 0,
+          useNativeDriver: true,
+          tension: 80,
+          friction: 8,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]);
+
+      animationRef.current.start();
+
+      // Auto hide after duration if duration > 0
+      if (duration > 0) {
+        timeoutRef.current = setTimeout(() => {
+          hideToast();
+        }, duration);
+      }
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      if (animationRef.current) {
+        animationRef.current.stop();
+        animationRef.current = null;
+      }
+    };
+  }, [isVisible, duration, hideToast, translateY, opacity]);
+
+  // Cleanup effect when component unmounts
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      if (animationRef.current) {
+        animationRef.current.stop();
+      }
+      // Reset animated values to prevent memory leaks
+      translateY.setValue(100);
+      opacity.setValue(0);
+    };
+  }, [translateY, opacity]);
+
+  const handleDismiss = () => {
+    if (dismissible) {
+      hideToast();
     }
   };
 
-  const getIconName = (): keyof typeof Ionicons.glyphMap => {
-    switch (type) {
-      case "success":
-        return "checkmark-circle";
-      case "error":
-        return "alert-circle";
-      case "warning":
-        return "warning";
-      case "info":
-        return "information-circle";
-      default:
-        return "information-circle";
+  const handleToastPress = () => {
+    if (onPress) {
+      onPress();
+    } else if (href) {
+      router.push(href as RelativePathString);
+    }
+    // Optionally dismiss toast after navigation
+    if (href || onPress) {
+      hideToast();
     }
   };
+
+  const getIconConfig = () => {
+    switch (type) {
+      case "success":
+        return {
+          name: "checkmark-circle" as const,
+          color: COLORS.quinary, // Sage green
+        };
+      case "error":
+        return {
+          name: "close-circle" as const,
+          color: COLORS.error, // Red
+        };
+      case "warning":
+        return {
+          name: "warning" as const,
+          color: COLORS.tertiary, // Coral red
+        };
+      case "info":
+      default:
+        return {
+          name: "information-circle" as const,
+          color: COLORS.primary, // Steel blue
+        };
+    }
+  };
+
+  const iconConfig = getIconConfig();
 
   if (!isVisible) return null;
 
@@ -149,20 +200,53 @@ const Toast: React.FC<ToastProps> = ({
     <Animated.View
       style={[
         styles.container,
-        getToastStyle(),
         {
           transform: [{ translateY }],
           opacity,
         },
+        { bottom: NavBarSize },
       ]}
     >
-      <Ionicons
-        name={getIconName()}
-        size={20}
-        color={COLORS.white}
-        style={styles.icon}
-      />
-      <Text style={styles.message}>{message}</Text>
+      <LinearGradient
+        colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientContainer}
+      >
+        <View style={styles.content}>
+          <View style={styles.iconContainer}>
+            <Ionicons
+              name={iconConfig.name}
+              size={24}
+              color={iconConfig.color}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.textContainer}
+            onPress={handleToastPress}
+            disabled={!href && !onPress}
+            activeOpacity={href || onPress ? 0.7 : 1}
+          >
+            <Text style={styles.title} numberOfLines={1}>
+              {resolvedTitle}
+            </Text>
+            <Text style={styles.body} numberOfLines={2}>
+              {resolvedBody}
+            </Text>
+          </TouchableOpacity>
+
+          {(dismissible || duration === 0) && (
+            <TouchableOpacity
+              onPress={handleDismiss}
+              style={styles.dismissButton}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons name="close" size={20} color={COLORS.white} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </LinearGradient>
     </Animated.View>
   );
 };
@@ -170,44 +254,59 @@ const Toast: React.FC<ToastProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 60,
-    left: 20,
-    right: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
     zIndex: 9999,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
+    width: screenWidth,
+  },
+  gradientContainer: {
+    borderRadius: 0,
+    marginHorizontal: 0,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: -2,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 8,
+    elevation: 10,
   },
-  successToast: {
-    backgroundColor: "#10B981",
+  content: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    minHeight: 64,
   },
-  errorToast: {
-    backgroundColor: COLORS.error,
+  iconContainer: {
+    marginRight: 12,
+    marginTop: 2, // Slight adjustment to align with title
   },
-  warningToast: {
-    backgroundColor: "#F59E0B",
-  },
-  infoToast: {
-    backgroundColor: COLORS.primary,
-  },
-  icon: {
-    marginRight: 8,
-  },
-  message: {
+  textContainer: {
     flex: 1,
+    marginRight: 12,
+  },
+  title: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: "600",
+    lineHeight: 20,
+    marginBottom: 4,
+  },
+  body: {
     color: COLORS.white,
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "400",
+    lineHeight: 18,
+    opacity: 0.9,
+  },
+  dismissButton: {
+    padding: 8,
+    borderRadius: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

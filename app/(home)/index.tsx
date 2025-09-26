@@ -2,7 +2,7 @@ import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
@@ -19,21 +19,12 @@ const ErrorBoundary: React.FC<{ children?: React.ReactNode }> = ({
 }) => <>{children}</>;
 
 // Stores
-
-import { useToast } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 import useDialogStore from "@/shared/stores/useDialogStore";
 
 export default function Today() {
   const { t } = useI18n();
-  const {
-    prefs,
-    formatDate,
-    formatTime,
-    getDateTimeSeparator,
-    displayDateTime,
-  } = useDeviceDateTime();
-  const { showInfo } = useToast();
+  const { getDateTimeSeparator, displayDateTime } = useDeviceDateTime();
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -72,23 +63,19 @@ export default function Today() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={style.container}>
       <SignedIn>
         <LinearGradient
           colors={[
             backgroundLinearColors.primary.end,
             backgroundLinearColors.primary.end,
           ]}
-          style={{ flex: 1 }}
+          style={style.container}
         >
           <ScreenHeader
             title={title}
             OnRightElement={() => (
-              <TouchableOpacity
-                onPress={() => showInfo(t("sage.unavailableMessage"))}
-              >
-                <SageIcon size={40} status={"pulsating"} auto={false} />
-              </TouchableOpacity>
+              <SageIcon size={40} status="pulsating" auto={false} />
             )}
             subtitle={
               <>
@@ -132,51 +119,18 @@ export default function Today() {
                         includeTime,
                       }
                     );
-                    return (
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: "#444",
-                          textDecorationLine: "underline",
-                        }}
-                      >
-                        {displayed}
-                      </Text>
-                    );
+                    return <Text style={style.header}>{displayed}</Text>;
                   })()}
                 </TouchableOpacity>
                 {/* Back to Today button when a non-today date is selected */}
                 {selectedDate.toDateString() !== new Date().toDateString() && (
                   <TouchableOpacity
                     onPress={() => setSelectedDate(new Date())}
-                    style={{ marginLeft: 12 }}
+                    style={style.backToTodayButton}
                   >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 4,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          textTransform: "uppercase",
-                          color: "#444",
-                          fontSize: 12,
-                          letterSpacing: 0.5,
-                        }}
-                      >
-                        {" < "}
-                      </Text>
-                      <Text
-                        style={{
-                          textDecorationLine: "underline",
-                          textTransform: "uppercase",
-                          color: "#444",
-                          fontSize: 12,
-                          letterSpacing: 0.5,
-                        }}
-                      >
+                    <View style={style.backToTodayButtonContainer}>
+                      <Text style={style.backToTodayButtonText}>{" < "}</Text>
+                      <Text style={style.backToTodayButtonTextRight}>
                         {t("back-to-today")}
                       </Text>
                     </View>
@@ -194,13 +148,7 @@ export default function Today() {
           </ErrorBoundary>
 
           {/* Spacer to ensure there's room below the timeline (e.g., above nav) */}
-          <View
-            style={{
-              height: DIALOG_HEIGHT_PLACEHOLDER,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+          <View style={style.emptySpaceBelowTimeline}>
             {/* Reopen Activity Dialog Button - shown when dialog is closed */}
             {!isActivityDialogOpen && (
               <CdButton
@@ -208,13 +156,8 @@ export default function Today() {
                 onPress={reopenActivityDialog}
                 variant="outline"
                 size="medium"
-                style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  borderColor: "rgba(255, 255, 255, 0.3)",
-                }}
-                textStyle={{
-                  color: "#333",
-                }}
+                style={style.openActivityDialogButton}
+                textStyle={style.openActivityDialogButtonText}
               />
             )}
           </View>
@@ -228,3 +171,47 @@ export default function Today() {
     </View>
   );
 }
+
+const style = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    fontSize: 14,
+    color: "#444",
+    textDecorationLine: "underline",
+  },
+  backToTodayButton: {
+    marginLeft: 12,
+  },
+  backToTodayButtonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  backToTodayButtonText: {
+    textTransform: "uppercase",
+    color: "#444",
+    fontSize: 12,
+    letterSpacing: 0.5,
+  },
+  backToTodayButtonTextRight: {
+    textDecorationLine: "underline",
+    textTransform: "uppercase",
+    color: "#444",
+    fontSize: 12,
+    letterSpacing: 0.5,
+  },
+  emptySpaceBelowTimeline: {
+    height: DIALOG_HEIGHT_PLACEHOLDER,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  openActivityDialogButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  openActivityDialogButtonText: {
+    color: "#333",
+  },
+});

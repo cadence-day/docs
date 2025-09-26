@@ -28,10 +28,70 @@ export const CdButton: React.FC<CdButtonProps> = ({
   textStyle,
   fullWidth = false,
 }) => {
+  const getVariantButtonStyle = (variant: CdButtonProps["variant"]) => {
+    switch (variant) {
+      case "primary":
+        return localStyles.primaryButton;
+      case "secondary":
+        return localStyles.secondaryButton;
+      case "outline":
+        return localStyles.outlineButton;
+      case "text":
+        return localStyles.textButton;
+      case "destructive":
+        return localStyles.destructiveButton;
+      default:
+        return localStyles.outlineButton;
+    }
+  };
+
+  const getSizeButtonStyle = (size: CdButtonProps["size"]) => {
+    switch (size) {
+      case "small":
+        return localStyles.smallButton;
+      case "medium":
+        return localStyles.mediumButton;
+      case "large":
+        return localStyles.largeButton;
+      default:
+        return localStyles.mediumButton;
+    }
+  };
+
+  const getVariantButtonTextStyle = (variant: CdButtonProps["variant"]) => {
+    switch (variant) {
+      case "primary":
+        return localStyles.primaryButtonText;
+      case "secondary":
+        return localStyles.secondaryButtonText;
+      case "outline":
+        return localStyles.outlineButtonText;
+      case "text":
+        return localStyles.textButtonText;
+      case "destructive":
+        return localStyles.destructiveButtonText;
+      default:
+        return localStyles.outlineButtonText;
+    }
+  };
+
+  const getSizeButtonTextStyle = (size: CdButtonProps["size"]) => {
+    switch (size) {
+      case "small":
+        return localStyles.smallButtonText;
+      case "medium":
+        return localStyles.mediumButtonText;
+      case "large":
+        return localStyles.largeButtonText;
+      default:
+        return localStyles.mediumButtonText;
+    }
+  };
+
   const buttonStyle = [
     localStyles.button,
-    localStyles[`${variant}Button`],
-    localStyles[`${size}Button`],
+    getVariantButtonStyle(variant),
+    getSizeButtonStyle(size),
     fullWidth && localStyles.fullWidth,
     disabled && localStyles.disabledButton,
     style,
@@ -39,8 +99,8 @@ export const CdButton: React.FC<CdButtonProps> = ({
 
   const buttonTextStyle = [
     localStyles.buttonText,
-    localStyles[`${variant}ButtonText`],
-    localStyles[`${size}ButtonText`],
+    getVariantButtonTextStyle(variant),
+    getSizeButtonTextStyle(size),
     disabled && localStyles.disabledButtonText,
     textStyle,
   ];

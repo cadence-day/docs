@@ -14,7 +14,7 @@ import {
   useStatesStore,
   useTimeslicesStore,
 } from "@/shared/stores";
-import { useAuth, useSignIn, useUser } from "@clerk/clerk-expo";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -33,7 +33,6 @@ export default function SecuritySettings() {
   const router = useRouter();
   const { user } = useUser();
   const { signOut } = useAuth();
-  const { signIn } = useSignIn();
   const { toast, showError, showSuccess, hideToast } = useToast();
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
@@ -156,22 +155,14 @@ export default function SecuritySettings() {
           },
         },
       ]);
-    } catch (error: any) {
+    } catch {
+      const error = "Failed to change password";
       GlobalErrorHandler.logError(
         "Password change error",
         "PASSWORD_CHANGE_ERROR",
         { error }
       );
-
-      if (error?.errors) {
-        const errorMessage =
-          error.errors[0]?.message || t("failed-to-change-password");
-        showError(errorMessage);
-      } else if (error?.message) {
-        showError(error.message);
-      } else {
-        showError(t("failed-to-change-password-plea"));
-      }
+      showError(error);
     } finally {
       setIsChangingPassword(false);
     }

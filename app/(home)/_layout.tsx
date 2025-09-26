@@ -1,50 +1,27 @@
-import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
+import { checkAndPromptEncryptionLinking } from "@/features/encryption/utils/detectNewDevice";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
-import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
+import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
 import useTranslation from "@/shared/hooks/useI18n";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
+import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
-import { Tabs, useSegments } from "expo-router";
+import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
+import { Tabs, useRouter, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 // Custom TabLabel component to have more control over the appearance
-function TabLabel({
-  focused,
-  color,
-  label,
-}: {
-  focused: boolean;
-  color: string;
-  label: string;
-}) {
+function TabLabel({ focused, label }: { focused: boolean; label: string }) {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: NAV_BAR_SIZE,
-        minWidth: 80,
-      }}
-    >
+    <View style={styles.tabLabelContainer}>
       <Text
-        style={{
-          fontSize: 10,
-          textTransform: "uppercase",
-          letterSpacing: 1.2,
-          color: COLORS.light.text,
-          textAlign: "center",
-          textDecorationLine: focused ? "underline" : "none",
-          fontWeight: focused ? "700" : "400",
-          verticalAlign: "middle",
-        }}
+        style={[styles.tabLabelText, focused && styles.tabLabelTextFocused]}
       >
         {label}
       </Text>
@@ -52,9 +29,14 @@ function TabLabel({
   );
 }
 
+interface TabBarIconProps {
+  focused: boolean;
+}
+
 export default function TabLayout() {
   const { t } = useTranslation();
   const segments = useSegments();
+  const router = useRouter();
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
@@ -117,7 +99,6 @@ export default function TabLayout() {
       await checkAndPromptEncryptionLinking(userId);
       setDidCheckEncryption(true);
     })();
-     
   }, [user, segments, didCheckEncryption]);
 
   // On initial mount when signed-in, open onboarding if the user has no timeslices
@@ -143,23 +124,8 @@ export default function TabLayout() {
           .getState()
           .getAllTimeslices();
         if (!timeslices || timeslices.length === 0) {
-          // Open onboarding dialog with requested props
-          useDialogStore.getState().openDialog({
-            type: "onboarding",
-            props: {
-              height: 85,
-              enableDragging: false,
-              headerProps: {
-                title: t("welcome-to-cadence"),
-                rightActionElement: t("common.close"),
-                onRightAction: () => {
-                  useDialogStore.getState().closeAll();
-                },
-              },
-            },
-            position: "dock",
-            viewSpecific: "profile",
-          });
+          // Navigate to full-screen onboarding instead of opening dialog
+          router.replace("/onboarding");
         }
       } catch (err) {
         // Ignore errors here - non-fatal
@@ -189,11 +155,10 @@ export default function TabLayout() {
               backgroundColor: COLORS.light.background,
               borderTopWidth: 1,
               borderTopColor: COLORS.light.border,
-              height: NAV_BAR_SIZE,
-              elevation: 10, // Android shadow
-              shadowOffset: { width: 0, height: -2 }, // iOS shadow
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
+              height: useNavBarSize(),
+              ...getShadowStyle(ShadowLevel.Low),
+              justifyContent: "center", // Center content vertically
+              alignItems: "center", // Center content horizontally
             },
             tabBarItemStyle: {
               flex: 1,
@@ -201,17 +166,18 @@ export default function TabLayout() {
               alignItems: "center",
               alignSelf: "stretch",
               alignContent: "center",
-              marginTop: 12,
             },
             // Ensure each tab's touch target is larger via a custom tabBarButton
-            tabBarButton: (props: any) => {
-              // If the underlying component is provided we wrap it in a TouchableOpacity
+            tabBarButton: (props: BottomTabBarButtonProps) => {
               const { children, onPress } = props;
               return (
                 <TouchableOpacity
                   onPress={onPress}
                   hitSlop={HIT_SLOP_24}
-                  style={{ flex: 1 }}
+                  style={[
+                    styles.container,
+                    { justifyContent: "center", alignItems: "center" },
+                  ]}
                 >
                   {children}
                 </TouchableOpacity>
@@ -223,8 +189,8 @@ export default function TabLayout() {
             name="index"
             options={{
               title: t("today"),
-              tabBarIcon: ({ focused, color }: any) => (
-                <TabLabel focused={focused} color={color} label={t("today")} />
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("today")} />
               ),
             }}
           />
@@ -233,12 +199,8 @@ export default function TabLayout() {
             name="reflection"
             options={{
               title: t("reflection.title"),
-              tabBarIcon: ({ focused, color }: any) => (
-                <TabLabel
-                  focused={focused}
-                  color={color}
-                  label={t("reflection.title")}
-                />
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("reflection.title")} />
               ),
             }}
           />
@@ -247,12 +209,8 @@ export default function TabLayout() {
             name="profile"
             options={{
               title: t("profile.title"),
-              tabBarIcon: ({ focused, color }: any) => (
-                <TabLabel
-                  focused={focused}
-                  color={color}
-                  label={t("profile.title")}
-                />
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("profile.title")} />
               ),
             }}
           />
@@ -266,3 +224,28 @@ export default function TabLayout() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  tabLabelContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 90,
+  },
+  tabLabelText: {
+    fontSize: 10,
+    textTransform: "uppercase",
+    letterSpacing: 1.2,
+    color: COLORS.light.text,
+    textAlign: "center",
+    fontWeight: "400",
+    verticalAlign: "middle",
+  },
+  tabLabelTextFocused: {
+    textDecorationLine: "underline",
+    fontWeight: "700",
+  },
+});

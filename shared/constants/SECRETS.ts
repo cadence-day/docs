@@ -16,6 +16,12 @@ export const SECRETS = {
 
   // Expo Notifications
   EXPO_PROJECT_ID: process.env.EXPO_PROJECT_ID,
+
+  // RevenueCat
+  EXPO_PUBLIC_REVENUECAT_IOS_API_KEY:
+    process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
+  EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY:
+    process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
 } as const;
 
 // Type guard to ensure required secrets are present

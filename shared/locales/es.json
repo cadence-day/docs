@@ -1,6 +1,7 @@
 {
   "about-encryption": "Sobre el cifrado",
   "about-notifications": "Sobre notificaciones",
+  "about-subscription": "Sobre suscripciones",
   "account-management": "Gestión de cuentas",
   "account-verified-successfully-welcome": "¡Cuenta verificada con éxito! ¡Bienvenido!",
   "active-activities": "Actividades activas",
@@ -36,9 +37,12 @@
   },
   "actual-behavior": "Comportamiento real",
   "actual-behavior-optional": "Comportamiento real (opcional)",
+  "add-a-new-note": "Agregue una nueva nota ...",
   "add-new-activity": "Agregar nueva actividad",
+  "add-new-note": "Agregue una nueva nota.",
   "allow-notifications": "Permitir notificaciones",
   "already-have-an-account": "¿Ya tienes una cuenta?",
+  "already-subscribed-premium": "¡Ya estás suscrito a Premium!",
   "app-information": "Información de la aplicación",
   "app-version-and-platform": "• Versión y plataforma de la aplicación",
   "are-you-sure-you-want-to-sign": "¿Estás seguro de que quieres cerrar sesión?",
@@ -62,7 +66,9 @@
   "cannot-find-native-module": "No se puede encontrar el módulo nativo",
   "category": "Categoría",
   "change-password": "Cambiar la contraseña",
+  "change-plan": "Plan de cambio",
   "check-your-inbox-for-verification-email": "Revise su bandeja de entrada para el correo de verificación.",
+  "choose-your-plan": "Elige tu plan",
   "choose_action": "Elegir acción",
   "close": "Cerrar",
   "color": "Color",
@@ -74,6 +80,7 @@
     "error": "Error",
     "ok": "OK",
     "saving": "Guardando...",
+    "select": "Seleccionar",
     "submitting": "Enviando..."
   },
   "confirm": "Confirmar",
@@ -84,6 +91,7 @@
   "contain-one-uppercase-letter": "- contener una letra mayúscula",
   "continue": "Continuar",
   "current-password-is-required": "Se requiere la contraseña actual",
+  "daily-total": "Total diario",
   "dateTime": {
     "preposition": "en"
   },
@@ -98,12 +106,16 @@
   "disabled-activities": "Actividades desactivadas",
   "dont-have-an-account": "¿No tienes una cuenta?",
   "edit": "Editar",
+  "edit-your-note": "Edite su nota ...",
   "email-not-available": "Correo electrónico no disponible",
   "email-support": "Soporte por correo electrónico",
   "enabled": "Activado",
   "encryption": "Cifrado",
   "encryption-key": "Clave de cifrado",
   "encryption-key-present-exportf": "Clave de cifrado presente ({0})",
+  "energyHigh": "Alto",
+  "energyLabel": "Energía",
+  "energyLow": "Bajo",
   "enter-6-digit-code": "Ingrese el código de 6 dígitos",
   "enter-64-character-encryption": "Ingrese la clave de cifrado de 64 caracteres",
   "enter-activity-name": "Ingrese el nombre de la actividad",
@@ -150,6 +162,7 @@
     "title": "Cadencia diaria",
     "todayTitle": "Cadencia de hoy"
   },
+  "hours": "horas",
   "i-agree-to-the": "Estoy de acuerdo con",
   "import-encryption-key": "Importar clave de cifrado",
   "import-key": "Importar clave",
@@ -162,12 +175,17 @@
   "key-imported-successfully-fing": "¡Clave importada con éxito! Huella digital: {0}",
   "laid-back": "Relajado",
   "legal": "Legal",
+  "loading-plans": "Cargando planes de suscripción ...",
+  "long-press-to-copy": "¡Long Press para copiar!",
   "make-cadence-yours": "Haz Cadence tuyo",
   "meet-sage": "Conoce a Sage",
   "midday-reflection": "Reflexión del mediodía",
   "mo": "Lun",
+  "monthly": "Mensual",
+  "mood": "Ánimo",
   "morning-reminders": "Recordatorios matutinos",
   "morning-reminders-are-sent-aft": "Los recordatorios matutinos se envían después de tu hora de despertar y los recordatorios vespertinos antes de tu hora de dormir. Las actualizaciones de rachas semanales celebran tus logros todos los domingos.",
+  "morning-time": "Reflexión de la mañana",
   "name": "Nombre",
   "new-password": "Nueva contraseña",
   "new-password-must-be-at-least": "La nueva contraseña debe tener al menos 8 caracteres.",
@@ -178,10 +196,73 @@
   "not-available-in-this-build": "no disponible en esta compilación",
   "notification-schedule": "Horario de notificaciones",
   "notification-types": "Tipos de notificación",
+  "ok": "DE ACUERDO",
   "onboarding": {
+    "activities": {
+      "admin": "Administración",
+      "caregiving": "Cuidador",
+      "chores": "Quehaceres",
+      "commute": "Desplazarse",
+      "cooking": "Cocinando",
+      "creative-work": "Trabajo creativo",
+      "doomscrolling": "Doomscrolling",
+      "email": "Correo electrónico",
+      "exercise": "Ejercicio",
+      "family-time": "Tiempo en familia",
+      "friends": "Amigos",
+      "groceries": "Comestibles",
+      "health": "Salud",
+      "hobby": "Pasatiempo",
+      "home-admin": "Administrador de casas",
+      "learning": "Aprendiendo",
+      "meal": "Comida",
+      "meditation": "Meditación",
+      "meetings": "Reuniones",
+      "nature": "Naturaleza",
+      "planning": "Planificación",
+      "reading": "Lectura",
+      "reflection": "Reflexión",
+      "relax": "Relajarse",
+      "sleep": "Dormir",
+      "tv": "TELEVISOR",
+      "walking": "Caminando",
+      "work": "Trabajar"
+    },
+    "activity-selection": {
+      "content": "",
+      "footer": "Puede editar, agregar, eliminar actividades más tarde.",
+      "title": "Comience por registrar sus actividades y patrones diarios surgirá"
+    },
     "missed-intro": "En caso de que te hayas perdido la introducción",
+    "note-taking": {
+      "title": "Agregue una nota a cada actividad para registrar sus pensamientos y sentimientos"
+    },
+    "notifications": {
+      "button": "Permitir notificaciones",
+      "schedule": {
+        "evening": "Noche",
+        "morning": "Mañana",
+        "noon": "Mediodía"
+      },
+      "title": "Encienda las notificaciones para recordatorios suaves para registrar sus actividades durante todo el día."
+    },
+    "pattern-view": {
+      "title": "A medida que surjan los patrones diarios, podrás ver el ritmo semanal"
+    },
+    "privacy": {
+      "button": "Descargue la clave de cifrado",
+      "content": "Texto sobre la clave de cifrado.",
+      "title": "Tu tiempo es solo tuyo. \nTodo lo que registra está encriptado y almacenado de forma segura, por lo que solo usted tiene acceso."
+    },
+    "time-logging": {
+      "content": "Seleccione la actividad y toque una ranura de tiempo.",
+      "title": "Comience por registrar sus actividades y patrones diarios surgirá"
+    },
     "title": "Bienvenido a Cadence",
-    "view-again": "Ver introducción de nuevo"
+    "view-again": "Ver introducción de nuevo",
+    "welcome": {
+      "title": "La cadencia te ayuda a encontrar el mejor ritmo de tu vida"
+    }
   },
   "or-paste-encryption-key": "O pega la clave de cifrado:",
   "parent-activity": "Actividad principal",
@@ -220,6 +301,23 @@
   "permanently-delete-account": "Eliminar cuenta permanentemente",
   "permission-required": "Permiso requerido",
   "pick-activity-first": "Selecciona una actividad primero",
+  "plan": {
+    "feature": {
+      "all_free": "Todo en gratis",
+      "all_supporter": "Todo en partidario",
+      "beta_access": "Tendrá acceso premium a nuestra última versión beta con las últimas funcionalidades.",
+      "community": "Acceso a nuestra comunidad",
+      "free": "Todas las funcionalidades",
+      "premium_support": "Decide lo que vendrá después",
+      "roadmap": "Codiseño con nosotros"
+    },
+    "free": "Explorador gratis",
+    "free_price": "Gratis",
+    "premium": "Partidario premium",
+    "premium_price": "$ 9.99/mes",
+    "supporter": "Seguidor",
+    "supporter_price": "$ 4.99/mes"
+  },
   "please-enable-camera-access-in": "Habilita el acceso a la cámara en la configuración de tu dispositivo para escanear códigos QR.",
   "please-enter-a-bug-description": "Ingresa una descripción del error",
   "please-enter-a-bug-title": "Ingresa un título del error",
@@ -227,8 +325,10 @@
   "please-enter-time-in-hh-mm-for": "Ingresa la hora en formato HH:MM (por ejemplo, 12:00)",
   "please-enter-time-in-hh-mm-for-0": "Ingresa la hora en formato HH:MM (por ejemplo, 20:00)",
   "please-fill-in-both-title-and": "Por favor completa el título y la descripción",
+  "please-select-subscription-plan": "Seleccione un plan de suscripción",
   "please-visit-https-cadence-day": "Visita https://cadence.day/faq en tu navegador",
   "point-your-camera-at-the-qr-co": "Apunta tu cámara al código QR que contiene la clave de cifrado",
+  "press-to-edit": "Haga clic para editar!",
   "privacy-policy": "Política de privacidad",
   "profile": {
     "actions": {
@@ -254,7 +354,11 @@
     "developer": {
       "open-debug-page": "Abrir página de debug",
       "section-title": "Desarrollador",
-      "show-onboarding": "Mostrar bienvenida (debug)"
+      "show-onboarding": "Mostrar bienvenida (debug)",
+      "test-notification": "Tarea de notificación de prueba BG"
+    },
+    "development": {
+      "test-notifications": "Notificaciones de prueba"
     },
     "edit-photo": "Editar foto",
     "email": "Correo electrónico",
@@ -322,6 +426,7 @@
     "wake-time": "Hora de despertar",
     "whats-inside": "¿Qué incluye?"
   },
+  "purchases-restored-successfully": "¡Sus compras han sido restauradas con éxito!",
   "push-notification-permissions": "Se requieren permisos de notificación push para recibir notificaciones. Puedes habilitarlos en la configuración de tu dispositivo.",
   "push-notifications-disabled": "Notificaciones push deshabilitadas",
   "push-notifications-have-been-d": "Las notificaciones push han sido deshabilitadas. Puedes volver a habilitarlas en cualquier momento.",
@@ -330,6 +435,7 @@
   "read-more-about-how-we-protect": "Lea más sobre cómo protegemos su privacidad →",
   "reflection": {
     "activityLabel": "Actividad",
+    "daily-cadence": "Cadencia diaria",
     "details": "Detalles",
     "noTimesliceInfo": "No hay información adicional para este período de tiempo.",
     "title": "Reflexión",
@@ -340,8 +446,10 @@
   "requesting-camera-permission": "Solicitando permiso de cámara...",
   "resend-code": "Reenviar código",
   "resend-in-resendcooldown-s": "Reenviar en {0}s",
+  "restore-purchases": "Restaurar compras",
   "sa": "Sáb",
   "sage": {
+    "title": "Notificaciones de salvia",
     "unavailableMessage": "Cadence AI actualmente no está disponible."
   },
   "sage-your-friendly-ai-guide-wi": "Sage Su amigable guía de IA lo ayudará a notar los patrones en su tiempo. \nCuanto más registre, más salvia puede ayudar.",
@@ -351,6 +459,7 @@
   "security-information": "Información de seguridad",
   "select-a-category": "Selecciona una categoría",
   "select-activity": "Seleccionar actividad",
+  "select-billing-period": "Seleccionar período de facturación",
   "send-feedback": "Enviar comentarios",
   "send-reset-email": "Enviar correo de restablecimiento",
   "sending": "Enviando...",
@@ -437,6 +546,7 @@
   },
   "sign-up-now": "Registrarse ahora",
   "since-all-notification-types-a": "Dado que todos los tipos de notificación están deshabilitados, las notificaciones push se han apagado automáticamente.",
+  "start-free-trial": "Iniciar prueba gratis",
   "stay-in-sync-nwith-your-time": "Manténgase sincronizado con su tiempo",
   "steps-to-reproduce": "Pasos para reproducir",
   "steps-to-reproduce-optional": "Pasos para reproducir (opcional)",
@@ -447,6 +557,12 @@
   "submit-bug-reports": "Enviar informes de errores",
   "submit-feature-request": "Enviar solicitud de función",
   "submit-feature-suggestions": "Enviar sugerencias de funciones",
+  "subscription": {
+    "choose_plan": "Decidir apoyar la cadencia"
+  },
+  "subscription-activated-successfully": "¡Su suscripción se ha activado con éxito!",
+  "subscription-info-text": "Actualmente, no tenemos funcionalidades premium, todos nuestros usuarios tienen acceso a todas nuestras últimas funcionalidades. \nSin embargo, necesitamos crowdfund nuestra plataforma para continuar desarrollando y ayudar a las personas a administrar su vida. \nSi está entusiasmado con la salud mental, nos apoya. \nSerás nombrado en nuestro sitio web de patrocinador.",
+  "subscription-terms": "Suscripción Auto-Renoves a menos que se cancele. \nSe aplican términos y condiciones.",
   "success": "Éxito",
   "support-information": "Información de soporte",
   "system-settings": "Configuración del sistema",
@@ -468,6 +584,7 @@
   "to-modify-notification-permiss": "Para modificar los permisos de notificación a nivel del sistema, ve a la aplicación Configuración de tu dispositivo y busca la configuración de notificaciones de esta aplicación.",
   "today": "Hoy",
   "tu": "Mar",
+  "tuning-cadence-at-your-rhythm": "Tuning Cadence en tu ritmo",
   "turn-on-notifications-for-gent": "Active las notificaciones para recordatorios suaves para registrar sus actividades durante todo el día. \nSin presión, solo un empujón diario para ayudarlo a mantenerse al tanto de su tiempo. \n\n✨ Su futuro yo le agradecerá. \nTómese un momento para registrar su día.",
   "unable-to-open-email-app-pleas": "No se puede abrir la aplicación de correo electrónico. Envía tu solicitud de soporte a: dev@cadence.day",
   "unable-to-open-link": "No se puede abrir el enlace",
@@ -489,6 +606,7 @@
   "welcome-to-cadence": "Bienvenido a Cadence",
   "were-here-to-help-our-support": "¡Estamos aquí para ayudar! Nuestro equipo de soporte generalmente responde dentro de las 24 horas. Para cuestiones urgentes, incluye la mayor cantidad de detalles posible en tu mensaje.",
   "weve-sent-a-verification-code-to": "Hemos enviado un código de verificación a",
+  "yearly": "Anual",
   "yesterday": "Ayer",
   "you-have-a-new-notification": "Tienes una nueva notificación",
   "your-account-security-is-impor": "La seguridad de tu cuenta es importante para nosotros. Los cambios de contraseña requieren verificación por correo electrónico para tu protección. Contáctanos para las solicitudes de eliminación de cuenta.",

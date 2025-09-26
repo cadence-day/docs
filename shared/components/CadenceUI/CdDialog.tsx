@@ -1,5 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
-import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
+import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -38,23 +38,19 @@ interface CdDialogProps {
 
 export const CdDialog: React.FC<CdDialogProps> = ({
   visible = false,
-  onClose,
   children,
   height = 100,
   maxHeight = 100,
-  showCloseButton = true,
   headerProps,
-  enableCloseOnBackgroundPress = true,
   onHeightChange,
   enableDragging = true,
   onDoubleTapResize,
-  collapsed = false,
   allowedViews = [],
   currentView = "",
   isGlobal = false,
-  id,
   zIndex,
 }) => {
+  const NavBarSize = useNavBarSize();
   const [isDragging, setIsDragging] = useState(false);
   const animatedHeight = useRef(new Animated.Value(height)).current;
   const dragStartHeight = useRef(0);
@@ -89,7 +85,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       // Compute maximum available percent while respecting safe area and nav bar.
       const maxAvailablePixels = Math.max(
         0,
-        screenHeight - insets.top - NAV_BAR_SIZE
+        screenHeight - insets.top - NavBarSize
       );
       const maxAvailablePercent = (maxAvailablePixels / screenHeight) * 100;
       const effectiveMax = Math.max(
@@ -98,7 +94,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       );
       return Math.max(minHeightPercent, Math.min(effectiveMax, newHeight));
     },
-    [enableDragging, screenHeight, maxHeight]
+    [enableDragging, screenHeight, maxHeight, insets.top]
   );
 
   const updateHeight = useCallback(
@@ -137,7 +133,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   const panResponder = React.useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: (evt) => {
+        onStartShouldSetPanResponder: (_evt) => {
           if (!enableDragging) return false;
 
           // Check for potential double tap
@@ -158,7 +154,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         onMoveShouldSetPanResponder: (evt, gestureState) => {
           return enableDragging && Math.abs(gestureState.dy) > 3;
         },
-        onPanResponderGrant: (evt) => {
+        onPanResponderGrant: (_evt) => {
           if (!enableDragging) return;
 
           // Light haptic feedback when drag starts
@@ -193,7 +189,14 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         },
         onPanResponderTerminationRequest: () => false,
       }),
-    [enableDragging, clampHeight, screenHeight, handleDoubleTap]
+    [
+      enableDragging,
+      clampHeight,
+      screenHeight,
+      handleDoubleTap,
+      animatedHeight,
+      updateHeight,
+    ]
   );
 
   if (!shouldRender) return null;
@@ -203,7 +206,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       style={[
         styles.container,
         {
-          bottom: NAV_BAR_SIZE,
+          bottom: NavBarSize,
           height: animatedHeight.interpolate({
             inputRange: [0, 100],
             outputRange: ["0%", "100%"],
@@ -327,25 +330,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-  },
-  closeButton: {
-    position: "absolute",
-    top: 16,
-    right: 16,
-    width: 24,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  closeButtonLine: {
-    position: "absolute",
-    width: 20,
-    height: 2,
-    borderRadius: 1,
-  },
-  closeButtonLineRotated: {
-    transform: [{ rotate: "45deg" }],
   },
   content: {
     flex: 1,

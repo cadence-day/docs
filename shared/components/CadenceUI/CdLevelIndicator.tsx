@@ -6,6 +6,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import { COLORS } from "../../constants/COLORS";
 
 interface CdLevelIndicatorProps {
   label: string;
@@ -20,8 +21,8 @@ interface CdLevelIndicatorProps {
 }
 
 const CIRCLE_COUNT = 5;
-const ACTIVE_COLOR = "#7B61FF";
-const LINE_COLOR = "#444";
+const ACTIVE_COLOR = COLORS.primary;
+const LINE_COLOR = COLORS.separatorline.light;
 
 export const CdLevelIndicator: React.FC<CdLevelIndicatorProps> = ({
   label,

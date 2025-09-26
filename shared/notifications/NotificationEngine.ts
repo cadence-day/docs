@@ -1,274 +1,423 @@
+import { ToastService } from "@/shared/context/ToastProvider";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import * as Notifications from "expo-notifications";
+import { AppState, AppStateStatus } from "react-native";
 import {
-  NotificationDeliveryMethod,
-  NotificationEngineConfig,
-  NotificationEvent,
-  NotificationLog,
-  NotificationProvider,
-  NotificationSubscriber,
+  CadenceMessage,
   NotificationType,
-} from "./types";
+  useNotificationStore,
+} from "./stores/notificationsStore";
+
+export interface NotificationEngineConfig {
+  enableLogging?: boolean;
+}
 
 export class NotificationEngine {
-  private providers: Map<NotificationDeliveryMethod, NotificationProvider> =
-    new Map();
-  private subscribers: NotificationSubscriber[] = [];
+  private static instance: NotificationEngine;
   private config: NotificationEngineConfig;
-  private logs: NotificationLog[] = [];
+  private appState: AppStateStatus = "active";
+  private appStateSubscription: { remove: () => void } | null = null;
 
-  constructor(config: NotificationEngineConfig) {
-    this.config = config;
+  private constructor(config: NotificationEngineConfig = {}) {
+    this.config = {
+      enableLogging: true,
+      ...config,
+    };
+    this.setupAppStateMonitoring();
   }
 
-  registerProvider(
-    method: NotificationDeliveryMethod,
-    provider: NotificationProvider
-  ): void {
-    if (!this.config.enabledProviders.includes(method)) {
+  static getInstance(config?: NotificationEngineConfig): NotificationEngine {
+    if (!NotificationEngine.instance) {
+      NotificationEngine.instance = new NotificationEngine(config);
+    }
+    return NotificationEngine.instance;
+  }
+
+  private setupAppStateMonitoring(): void {
+    // Get current app state
+    this.appState = AppState.currentState;
+
+    // Listen for app state changes
+    this.appStateSubscription = AppState.addEventListener(
+      "change",
+      this.handleAppStateChange.bind(this),
+    );
+
+    if (this.config.enableLogging) {
+      GlobalErrorHandler.logDebug(
+        `NotificationEngine: App state monitoring initialized. Current state: ${this.appState}`,
+        "NotificationEngine.setupAppStateMonitoring",
+      );
+    }
+  }
+
+  private handleAppStateChange(nextAppState: AppStateStatus): void {
+    const previousState = this.appState;
+    this.appState = nextAppState;
+
+    // Update the store's app state
+    useNotificationStore.getState()._updateAppState(nextAppState);
+
+    if (this.config.enableLogging) {
+      GlobalErrorHandler.logDebug(
+        `NotificationEngine: App state changed: ${previousState} → ${nextAppState}`,
+        "NotificationEngine.handleAppStateChange",
+      );
+    }
+  }
+
+  private isAppInForeground(): boolean {
+    return this.appState === "active";
+  }
+
+  async scheduleQuoteNotification(
+    scheduledTime: Date,
+    type: NotificationType,
+  ): Promise<void> {
+    const messageType = this.getMessageTypeForNotificationType(type);
+    const quote = useNotificationStore.getState().getNextQuote(messageType);
+
+    if (this.isAppInForeground()) {
+      // Deliver in-app immediately if time matches
+      this.deliverInApp(quote, type);
+    } else {
+      // Schedule via Expo Push Notification
+      await this.scheduleExpoPushNotification(quote, type, scheduledTime);
+    }
+
+    useNotificationStore.getState().markQuoteUsed(quote.id);
+  }
+
+  // Force scheduling regardless of app state (useful for testing)
+  async forceScheduleQuoteNotification(
+    scheduledTime: Date,
+    type: NotificationType,
+  ): Promise<void> {
+    const messageType = this.getMessageTypeForNotificationType(type);
+    const quote = useNotificationStore.getState().getNextQuote(messageType);
+
+    // Always schedule the notification, regardless of app state
+    await this.scheduleExpoPushNotification(quote, type, scheduledTime);
+
+    useNotificationStore.getState().markQuoteUsed(quote.id);
+  }
+
+  private deliverInApp(quote: CadenceMessage, type: NotificationType): void {
+    // Show in-app notification/toast with quote
+    const title = this.getTitleForType(type);
+    const body = quote.text;
+
+    // Use ToastService for immediate display
+    ToastService.show({
+      title,
+      body,
+      type: "info",
+      duration: 5000,
+    });
+
+    useNotificationStore.getState().deliverNotification(quote, type);
+
+    if (this.config.enableLogging) {
+      GlobalErrorHandler.logDebug(
+        `NotificationEngine: Delivered in-app notification`,
+        "NotificationEngine.deliverInApp",
+        { quoteId: quote.id, type, text: quote.text },
+      );
+    }
+  }
+
+  private async scheduleExpoPushNotification(
+    quote: CadenceMessage,
+    type: NotificationType,
+    scheduledTime: Date,
+  ): Promise<void> {
+    try {
+      // Calculate seconds from now to the scheduled time
+      const now = new Date();
+      const secondsUntilTrigger = Math.max(
+        1,
+        Math.ceil((scheduledTime.getTime() - now.getTime()) / 1000),
+      );
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: this.getTitleForType(type),
+          body: quote.text,
+          data: { quoteId: quote.id, type },
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: secondsUntilTrigger,
+        },
+      });
+
+      if (this.config.enableLogging) {
+        GlobalErrorHandler.logDebug(
+          `NotificationEngine: Scheduled Expo push notification`,
+          "NotificationEngine.scheduleExpoPushNotification",
+          {
+            notificationId,
+            quoteId: quote.id,
+            type,
+            scheduledTime: scheduledTime.toISOString(),
+            text: quote.text.substring(0, 100) +
+              (quote.text.length > 100 ? "..." : ""),
+          },
+        );
+      }
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "NotificationEngine.scheduleExpoPushNotification",
+        { quoteId: quote.id, type, scheduledTime: scheduledTime.toISOString() },
+      );
+      throw error;
+    }
+  }
+
+  private getTitleForType(type: NotificationType): string {
+    switch (type) {
+      case "morning-motivation":
+        return "Morning Inspiration";
+      case "midday-reflection":
+        return "Midday Pause";
+      case "evening-reflection":
+        return "Evening Reflection";
+      case "weekly-streaks":
+        return "Weekly Progress";
+      default:
+        return "Cadence Reminder";
+    }
+  }
+
+  private getBodyForType(type: NotificationType): string {
+    switch (type) {
+      case "morning-motivation":
+        return "Start your day with intention";
+      case "midday-reflection":
+        return "Pause and reflect on your morning";
+      case "evening-reflection":
+        return "Tap to reflect on your day";
+      case "weekly-streaks":
+        return "Check your weekly progress";
+      default:
+        return "Tap to open Cadence";
+    }
+  }
+
+  private getMessageTypeForNotificationType(type: NotificationType): "morning" | "midday" | "evening" | "streak" | undefined {
+    switch (type) {
+      case "morning-motivation":
+        return "morning";
+      case "midday-reflection":
+        return "midday";
+      case "evening-reflection":
+        return "evening";
+      case "streak-reminder":
+        return "streak";
+      default:
+        return undefined;
+    }
+  }
+
+  // Schedule all notifications based on current preferences and timing
+  async scheduleAllNotifications(): Promise<void> {
+    const store = useNotificationStore.getState();
+    const { preferences, timing, permissionStatus } = store;
+
+    if (permissionStatus !== "granted") {
       if (this.config.enableLogging) {
         GlobalErrorHandler.logWarning(
-          `Provider ${method} is not enabled in config`,
-          "NotificationEngine.registerProvider"
+          "NotificationEngine: Cannot schedule notifications without permissions",
+          "NotificationEngine.scheduleAllNotifications",
         );
       }
       return;
     }
 
-    this.providers.set(method, provider);
-    if (this.config.enableLogging) {
-      GlobalErrorHandler.logDebug(
-        `Registered provider: ${provider.name} for ${method}`,
-        "NotificationEngine.registerProvider"
+    try {
+      // Cancel existing notifications first
+      await this.cancelAllNotifications();
+
+      const scheduledNotifications = [];
+
+      // Schedule morning reminders (using dedicated morning motivation messages)
+      if (preferences.morningReminders) {
+        const morningTime = this.parseTimeString(timing.morningTime);
+        await this.scheduleRecurringNotification(
+          morningTime,
+          "morning-motivation",
+        );
+        scheduledNotifications.push(`Morning at ${timing.morningTime}`);
+      }
+
+      // Schedule midday reflections
+      if (preferences.middayReflection) {
+        const middayTime = this.parseTimeString(timing.middayTime);
+        await this.scheduleRecurringNotification(
+          middayTime,
+          "midday-reflection",
+        );
+        scheduledNotifications.push(`Midday at ${timing.middayTime}`);
+      }
+
+      // Schedule evening reflections
+      if (preferences.eveningReminders) {
+        const eveningTime = this.parseTimeString(timing.eveningTime);
+        await this.scheduleRecurringNotification(
+          eveningTime,
+          "evening-reflection",
+        );
+        scheduledNotifications.push(`Evening at ${timing.eveningTime}`);
+      }
+
+      if (this.config.enableLogging) {
+        GlobalErrorHandler.logDebug(
+          `NotificationEngine: Scheduled ${scheduledNotifications.length} recurring notifications`,
+          "NotificationEngine.scheduleAllNotifications",
+          { scheduledNotifications },
+        );
+      }
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "NotificationEngine.scheduleAllNotifications",
+        { preferences, timing },
       );
+      throw error;
     }
   }
 
-  subscribe(subscriber: NotificationSubscriber): () => void {
-    this.subscribers.push(subscriber);
-    return () => {
-      const index = this.subscribers.indexOf(subscriber);
-      if (index > -1) {
-        this.subscribers.splice(index, 1);
-      }
-    };
+  private parseTimeString(
+    timeString: string,
+  ): { hour: number; minute: number } {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    return { hour: hours, minute: minutes };
   }
 
-  async initialize(): Promise<void> {
-    const initPromises = Array.from(this.providers.values()).map((provider) =>
-      provider.initialize().catch((error) => {
-        GlobalErrorHandler.logError(error, "NotificationEngine.initialize", {
-          providerName: provider.name,
-        });
-      })
-    );
-
-    await Promise.allSettled(initPromises);
-
-    if (this.config.enableLogging) {
-      GlobalErrorHandler.logDebug(
-        `Initialized with ${this.providers.size} providers`,
-        "NotificationEngine.initialize"
-      );
-    }
-  }
-
-  async emit(event: NotificationEvent): Promise<void> {
-    const deliveryPromises = event.deliveryMethod.map(async (method) => {
-      const provider = this.providers.get(method);
-      if (!provider) {
-        if (this.config.enableLogging) {
-          GlobalErrorHandler.logWarning(
-            `No provider found for method: ${method}`,
-            "NotificationEngine.emit"
-          );
-        }
-        return;
-      }
-
-      if (!provider.isSupported()) {
-        if (this.config.enableLogging) {
-          GlobalErrorHandler.logWarning(
-            `Provider ${provider.name} is not supported`,
-            "NotificationEngine.emit"
-          );
-        }
-        return;
-      }
-
-      try {
-        await provider.sendNotification(event.message);
-        this.logNotification(
-          event.userId || "unknown",
-          event.type,
-          method,
-          "sent"
-        );
-        this.notifySubscribers("onNotificationSent", event.message);
-      } catch (error) {
-        this.logNotification(
-          event.userId || "unknown",
-          event.type,
-          method,
-          "failed",
-          error as Error
-        );
-        this.notifySubscribers(
-          "onNotificationFailed",
-          event.message,
-          error as Error
-        );
-      }
-    });
-
-    await Promise.allSettled(deliveryPromises);
-  }
-
-  async schedule(
-    event: NotificationEvent,
-    scheduledFor: Date,
-    userId?: string
+  private async scheduleRecurringNotification(
+    time: { hour: number; minute: number },
+    type: NotificationType,
   ): Promise<void> {
-    const schedulePromises = event.deliveryMethod.map(async (method) => {
-      const provider = this.providers.get(method);
-      if (!provider || !provider.isSupported()) {
-        return;
-      }
+    // For recurring notifications, we don't use a specific quote yet
+    // The quote will be selected when the notification fires
+    const trigger: Notifications.CalendarTriggerInput = {
+      type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
+      hour: time.hour,
+      minute: time.minute,
+      repeats: true,
+    };
 
-      try {
-        await provider.scheduleNotification(event.message, scheduledFor);
-        this.logNotification(
-          userId || event.userId || "unknown",
-          event.type,
-          method,
-          "scheduled",
-          undefined,
-          scheduledFor
-        );
-      } catch (error) {
-        this.logNotification(
-          userId || event.userId || "unknown",
-          event.type,
-          method,
-          "failed",
-          error as Error
-        );
-      }
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: this.getTitleForType(type),
+        body: this.getBodyForType(type),
+        data: { type },
+      },
+      trigger,
     });
-
-    await Promise.allSettled(schedulePromises);
-  }
-
-  async cancelNotification(notificationId: string): Promise<void> {
-    const cancelPromises = Array.from(this.providers.values()).map((provider) =>
-      provider.cancelNotification(notificationId).catch((error) => {
-        GlobalErrorHandler.logError(
-          error,
-          "NotificationEngine.cancelNotification",
-          { notificationId, providerName: provider.name }
-        );
-      })
-    );
-
-    await Promise.allSettled(cancelPromises);
   }
 
   async cancelAllNotifications(): Promise<void> {
-    const cancelPromises = Array.from(this.providers.values()).map((provider) =>
-      provider.cancelAllNotifications().catch((error) => {
-        GlobalErrorHandler.logError(
-          error,
+    try {
+      await Notifications.cancelAllScheduledNotificationsAsync();
+
+      if (this.config.enableLogging) {
+        GlobalErrorHandler.logDebug(
+          "NotificationEngine: Cancelled all scheduled notifications",
           "NotificationEngine.cancelAllNotifications",
-          { providerName: provider.name }
         );
-      })
-    );
-
-    await Promise.allSettled(cancelPromises);
-  }
-
-  getProvider(
-    method: NotificationDeliveryMethod
-  ): NotificationProvider | undefined {
-    return this.providers.get(method);
-  }
-
-  getEnabledProviders(): NotificationDeliveryMethod[] {
-    return Array.from(this.providers.keys());
-  }
-
-  getLogs(userId?: string, limit?: number): NotificationLog[] {
-    let filteredLogs = this.logs;
-
-    if (userId) {
-      filteredLogs = filteredLogs.filter((log) => log.userId === userId);
-    }
-
-    if (limit) {
-      filteredLogs = filteredLogs.slice(-limit);
-    }
-
-    return filteredLogs.sort(
-      (a, b) =>
-        (b.sentAt || b.scheduledFor || new Date()).getTime() -
-        (a.sentAt || a.scheduledFor || new Date()).getTime()
-    );
-  }
-
-  clearLogs(userId?: string): void {
-    if (userId) {
-      this.logs = this.logs.filter((log) => log.userId !== userId);
-    } else {
-      this.logs = [];
-    }
-  }
-
-  private logNotification(
-    userId: string,
-    type: NotificationType,
-    deliveryMethod: NotificationDeliveryMethod,
-    status: "scheduled" | "sent" | "failed" | "cancelled",
-    error?: Error,
-    scheduledFor?: Date
-  ): void {
-    if (!this.config.enableLogging) return;
-
-    const log: NotificationLog = {
-      id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
-      userId,
-      type,
-      status,
-      deliveryMethod,
-      sentAt: status === "sent" ? new Date() : undefined,
-      scheduledFor,
-      errorMessage: error?.message,
-      metadata: error ? { stack: error.stack } : undefined,
-    };
-
-    this.logs.push(log);
-
-    // Keep only last 1000 logs to prevent memory leaks
-    if (this.logs.length > 1000) {
-      this.logs = this.logs.slice(-1000);
-    }
-  }
-
-  private notifySubscribers(
-    event: keyof NotificationSubscriber,
-    ...args: any[]
-  ): void {
-    this.subscribers.forEach((subscriber) => {
-      const handler = subscriber[event];
-      if (handler && typeof handler === "function") {
-        try {
-          (handler as Function)(...args);
-        } catch (error) {
-          GlobalErrorHandler.logError(
-            error,
-            "NotificationEngine.notifySubscribers",
-            { event }
-          );
-        }
       }
-    });
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "NotificationEngine.cancelAllNotifications",
+        {},
+      );
+      throw error;
+    }
+  }
+
+  async cancelNotification(notificationId: string): Promise<void> {
+    try {
+      await Notifications.cancelScheduledNotificationAsync(notificationId);
+
+      if (this.config.enableLogging) {
+        GlobalErrorHandler.logDebug(
+          `NotificationEngine: Cancelled notification ${notificationId}`,
+          "NotificationEngine.cancelNotification",
+        );
+      }
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "NotificationEngine.cancelNotification",
+        { notificationId },
+      );
+      throw error;
+    }
+  }
+
+  // Get the next quote for immediate delivery
+  async deliverNotificationNow(type: NotificationType): Promise<void> {
+    const messageType = this.getMessageTypeForNotificationType(type);
+    const quote = useNotificationStore.getState().getNextQuote(messageType);
+
+    if (this.isAppInForeground()) {
+      this.deliverInApp(quote, type);
+    } else {
+      // For immediate delivery when app is in background, schedule for "now"
+      await this.scheduleExpoPushNotification(quote, type, new Date());
+    }
+
+    useNotificationStore.getState().markQuoteUsed(quote.id);
+  }
+
+  // Initialize the notification engine
+  async initialize(): Promise<void> {
+    try {
+      // Set up notification handling
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: false,
+          shouldShowBanner: true,
+          shouldShowList: true,
+        }),
+      });
+
+      if (this.config.enableLogging) {
+        GlobalErrorHandler.logDebug(
+          "NotificationEngine: Initialized successfully",
+          "NotificationEngine.initialize",
+        );
+      }
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "NotificationEngine.initialize",
+        {},
+      );
+      throw error;
+    }
+  }
+
+  // Clean up resources
+  destroy(): void {
+    if (this.appStateSubscription) {
+      this.appStateSubscription.remove();
+      this.appStateSubscription = null;
+    }
+
+    if (this.config.enableLogging) {
+      GlobalErrorHandler.logDebug(
+        "NotificationEngine: Destroyed",
+        "NotificationEngine.destroy",
+      );
+    }
   }
 }
+
+// Export a default instance
+export const notificationEngine = NotificationEngine.getInstance();

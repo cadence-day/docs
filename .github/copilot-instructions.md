@@ -42,9 +42,9 @@
 
 ### Development Setup
 
-- **Local development**: `npm run start:dev` (uses `.env.development`)
-- **Production simulation**: `npm start` (uses Doppler secrets)
-- **Platform specific**: `npm run ios:dev` / `npm run android:dev`
+- **Local development**: `npm run start`
+- **Production simulation**: `npm start`
+- **Platform specific**: `npm run ios` / `npm run android`
 - **Supabase local**: `supabase start` + `npm run dev:types:update`
 
 ### Build & Deployment
@@ -56,7 +56,7 @@
 
 ### Code Quality
 
-- **Linting**: `npm run lint` (ESLint) + `npm run lint:fix`
+- **Linting**: `npm run lint` (ESLint) + `npm run lint`
 - **Formatting**: `npm run format` (Prettier) + `npm run format:check`
 - **Type checking**: `npm run typescript`
 - **Testing**: `npm test` (Jest with Expo preset)

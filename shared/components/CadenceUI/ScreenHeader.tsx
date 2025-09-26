@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  SafeAreaView,
   StyleSheet,
   Text,
   TextStyle,
@@ -8,6 +7,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export interface ScreenHeaderProps {
   title: string;

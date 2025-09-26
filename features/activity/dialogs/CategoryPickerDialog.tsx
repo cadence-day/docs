@@ -4,6 +4,7 @@ import { useI18n } from "@/shared/hooks/useI18n";
 import { useActivityCategoriesStore } from "@/shared/stores";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import ActivityCategory from "@/shared/types/models/activityCategory";
+import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import React, { useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -18,6 +19,13 @@ const CategoryPickerDialog: React.FC<Props> = ({ _dialogId, onConfirm }) => {
   const refreshCategories = useActivityCategoriesStore((s) => s.refresh);
   const isLoadingCategories = useActivityCategoriesStore((s) => s.isLoading);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Reset selection if categories change or selectedId no longer exists
+  useEffect(() => {
+    if (selectedId && !categories.find((c) => c.id === selectedId)) {
+      setSelectedId(null);
+    }
+  }, [categories, selectedId]);
 
   // Load categories when dialog mounts if they're not already loaded
   useEffect(() => {
@@ -62,26 +70,29 @@ const CategoryPickerDialog: React.FC<Props> = ({ _dialogId, onConfirm }) => {
             if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
           }, 150); // Brief visual feedback before closing
         }}
-        style={({ pressed }) => [
-          styles.tile,
-          isSelected && styles.tileSelected,
-          pressed && styles.tilePressed,
-          {
+        style={({ pressed }) => {
+          const tileDynamicStyle = {
             backgroundColor: item.color
               ? `${item.color}15`
-              : styles.tile.backgroundColor,
-          },
-        ]}
+              : ACTIVITY_THEME.FORM_BG,
+          } as const;
+          return [
+            styles.tile,
+            isSelected && styles.tileSelected,
+            pressed && styles.tilePressed,
+            tileDynamicStyle,
+          ];
+        }}
       >
         <View
-          style={[
-            styles.swatch,
-            {
+          style={(() => {
+            const swatchDynamicStyle = {
               backgroundColor: item.color ?? ACTIVITY_THEME.GRAY_MEDIUM,
               borderColor: isSelected ? COLORS.white : "transparent",
               borderWidth: isSelected ? 2 : 1,
-            },
-          ]}
+            } as const;
+            return [styles.swatch, swatchDynamicStyle];
+          })()}
         />
         <Text style={[styles.tileText, isSelected && styles.tileTextSelected]}>
           {display}
@@ -154,12 +165,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: "transparent",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
     minHeight: 80,
+    ...getShadowStyle(ShadowLevel.Low),
   },
   tilePressed: {
     transform: [{ scale: 0.95 }],
@@ -169,7 +176,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderWidth: 2,
     backgroundColor: `${COLORS.primary}20`,
-    shadowOpacity: 0.2,
+    ...getShadowStyle(ShadowLevel.High),
   },
   swatch: {
     width: 32,

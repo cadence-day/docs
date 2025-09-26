@@ -4,7 +4,8 @@ import { useI18n } from "@/shared/hooks/useI18n";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { getShadowStyle, ShadowLevel } from "../../../shared/utils/shadowUtils";
 import { useActivityManagement } from "../hooks";
 import { EditActivitiesViewProps } from "../types";
 import {
@@ -82,76 +83,35 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: COLORS.text.header }}>Loading activities...</Text>
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading activities...</Text>
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       {/* Header with Done button */}
-      {onExitEditMode && (
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            marginBottom: 16,
-          }}
-        ></View>
-      )}
+      {onExitEditMode && <View style={styles.headerRight} />}
 
       {/* Enabled Activities Section */}
       <View>
         {enabledActivities.length > 0 ? (
-          <Text
-            style={{
-              color: COLORS.text.subheader,
-              fontSize: 16,
-              fontWeight: "600",
-              marginBottom: 12,
-              textAlign: "left",
-            }}
-          >
+          <Text style={styles.sectionHeader}>
             {t("active-activities")} ({activityOrder.length})
             {isSavingOrder && (
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: COLORS.secondary,
-                  fontWeight: "normal",
-                }}
-              >
-                {" "}
-                - {t("common.saving")}...
-              </Text>
+              <Text style={styles.savingText}> - {t("common.saving")}...</Text>
             )}
           </Text>
         ) : (
-          <Text
-            style={{
-              color: COLORS.text.subheader,
-              fontSize: 14,
-              marginBottom: 12,
-              textAlign: "center",
-              fontStyle: "italic",
-            }}
-          >
-            {t("no-active-activities")}
-          </Text>
+          <Text style={styles.noActiveText}>{t("no-active-activities")}</Text>
         )}
 
         {/* Grid Container */}
         <View
           ref={containerRef}
           onLayout={handleContainerLayout}
-          style={{
-            position: "relative",
-            minHeight: minHeight,
-          }}
+          style={[styles.gridContainer, { minHeight }]}
         >
           <GridView
             items={activityOrder}
@@ -218,28 +178,12 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
       </View>
 
       {/* Visual Separator */}
-      {disabledActivities.length > 0 && (
-        <View
-          style={{
-            height: 1,
-            backgroundColor: COLORS.separatorline.light,
-            marginVertical: 20,
-          }}
-        />
-      )}
+      {disabledActivities.length > 0 && <View style={styles.separator} />}
 
       {/* Disabled Activities Section */}
       {disabledActivities.length > 0 && (
         <View>
-          <Text
-            style={{
-              color: COLORS.text.subheader,
-              fontSize: 16,
-              fontWeight: "600",
-              marginBottom: 12,
-              textAlign: "left",
-            }}
-          >
+          <Text style={styles.sectionHeader}>
             {t("disabled-activities")} ({disabledActivities.length})
           </Text>
 
@@ -255,15 +199,10 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
             renderItem={(activity) => (
               <View
                 key={activity.id}
-                style={{
-                  width: disabledItemWidthPx as any,
-                  position: "relative",
-                  marginBottom: 15,
-                  opacity: 0.6,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingHorizontal: 4,
-                }}
+                style={[
+                  styles.disabledItemWrapper,
+                  { width: disabledItemWidthPx as any },
+                ]}
               >
                 <ActivityBox
                   activity={activity}
@@ -272,25 +211,10 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
                 />
 
                 <TouchableOpacity
-                  style={{
-                    position: "absolute",
-                    top: -8,
-                    right: -8,
-                    backgroundColor: ENABLE_BUTTON_BG,
-                    borderRadius: 12,
-                    width: 20,
-                    height: 20,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderWidth: 1,
-                    borderColor: "#fff",
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 2,
-                    elevation: 3,
-                    zIndex: 1001,
-                  }}
+                  style={[
+                    styles.enableButton,
+                    getShadowStyle(ShadowLevel.Medium),
+                  ]}
                   onPress={async () => {
                     try {
                       await handleEnableActivity(activity);
@@ -314,3 +238,64 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
 };
 
 export default EditActivitiesView;
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+  loadingText: { color: COLORS.text.header },
+  headerRight: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginBottom: 16,
+  },
+  sectionHeader: {
+    color: COLORS.text.subheader,
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 12,
+    textAlign: "left",
+  },
+  savingText: {
+    fontSize: 14,
+    color: COLORS.secondary,
+    fontWeight: "normal",
+  },
+  noActiveText: {
+    color: COLORS.text.subheader,
+    fontSize: 14,
+    marginBottom: 12,
+    textAlign: "center",
+    fontStyle: "italic",
+  },
+  gridContainer: { position: "relative" },
+  separator: {
+    height: 1,
+    backgroundColor: COLORS.separatorline.light,
+    marginVertical: 20,
+  },
+  disabledItemWrapper: {
+    position: "relative",
+    marginBottom: 15,
+    opacity: 0.6,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 4,
+  },
+  enableButton: {
+    position: "absolute",
+    top: -8,
+    right: -8,
+    backgroundColor: ENABLE_BUTTON_BG,
+    borderRadius: 12,
+    width: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#fff",
+    zIndex: 1001,
+  },
+});

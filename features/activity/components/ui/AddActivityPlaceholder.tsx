@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, ViewStyle } from "react-native";
+import { Text, TouchableOpacity, View, ViewStyle } from "react-native";
 
 import { useI18n } from "@/shared/hooks/useI18n";
 
@@ -14,7 +14,6 @@ interface AddActivityPlaceholderBoxProps {
 
 import { ADD_PLACEHOLDER_BORDER } from "@/features/activity/constants";
 import { styles } from "@/features/activity/styles";
-import { TouchableOpacity } from "react-native";
 
 export const AddActivityPlaceholder: React.FC<
   AddActivityPlaceholderBoxProps

@@ -79,10 +79,13 @@ const SignInScreen = () => {
   const clearClerkError = createClerkErrorClearer(setClerkErrors);
 
   // Validation functions for SignIn
-  const validatePasswordSignIn = (password: string): string | null => {
-    if (password.length === 0) return t("sign-in.password_required");
-    return null;
-  };
+  const validatePasswordSignIn = useCallback(
+    (password: string): string | null => {
+      if (password.length === 0) return t("sign-in.password_required");
+      return null;
+    },
+    [t]
+  );
 
   // Check if form is valid
   const isFormValid = () => {
@@ -120,7 +123,7 @@ const SignInScreen = () => {
         password: validatePasswordSignIn(password),
       }));
     }
-  }, [password, fieldTouched.password]);
+  }, [password, fieldTouched.password, validatePasswordSignIn]);
 
   // Handle any pending authentication sessions
   WebBrowser.maybeCompleteAuthSession();
@@ -177,15 +180,14 @@ const SignInScreen = () => {
   const onPress = useCallback(
     async (strategy: string) => {
       try {
-        const { createdSessionId, setActive, signIn, signUp } =
-          await startSSOFlow({
-            strategy: strategy as OAuthStrategy,
-            // Use the app's custom scheme and the `/clerk` callback route
-            redirectUrl: AuthSession.makeRedirectUri({
-              scheme: "day.cadence",
-              path: "clerk",
-            }),
-          });
+        const { createdSessionId, setActive } = await startSSOFlow({
+          strategy: strategy as OAuthStrategy,
+          // Use the app's custom scheme and the `/clerk` callback route
+          redirectUrl: AuthSession.makeRedirectUri({
+            scheme: "day.cadence",
+            path: "clerk",
+          }),
+        });
 
         if (createdSessionId) {
           setActive!({ session: createdSessionId });
@@ -208,7 +210,7 @@ const SignInScreen = () => {
         }
       }
     },
-    [startSSOFlow, showError, showSuccess]
+    [startSSOFlow, showError, showSuccess, t]
   );
 
   return (
