@@ -14,6 +14,7 @@ import {
   ACTIVITY_PRESETS,
   convertPresetToActivity,
 } from "../data/activityPresets";
+import { useOnboardingStore } from "../store/useOnboardingStore";
 
 interface OnboardingCompletionData {
   selectedActivities: string[];
@@ -27,6 +28,7 @@ export function useOnboardingCompletion() {
     state.insertActivities
   );
   const { categories, getAllCategories } = useActivityCategoriesStore();
+  const { resetStore } = useOnboardingStore();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const requestNotificationPermissions = async (): Promise<boolean> => {
@@ -199,7 +201,7 @@ export function useOnboardingCompletion() {
         }
       }
 
-      // Step 2: Create selected activities
+      // Step 2: Create selected activities (only if activities are selected)
       if (data.selectedActivities.length > 0 && user?.id) {
         GlobalErrorHandler.logDebug(
           "Creating activities as part of onboarding",
@@ -207,13 +209,19 @@ export function useOnboardingCompletion() {
           { selectedActivities: data.selectedActivities, userId: user.id },
         );
         await createActivities(data.selectedActivities, user.id);
+      } else {
+        GlobalErrorHandler.logDebug(
+          "No activities selected or no user ID - skipping activity creation",
+          "onboarding:completeOnboarding",
+        );
       }
 
-      // Step 3: Mark onboarding as complete - activities created successfully
+      // Step 3: Mark onboarding as complete - flush onboarding store
       GlobalErrorHandler.logDebug(
-        "Onboarding completed successfully",
+        "Onboarding completed successfully - flushing onboarding store",
         "onboarding:completeOnboarding",
       );
+      resetStore();
 
       // Step 4: Call completion callback
       onComplete?.();

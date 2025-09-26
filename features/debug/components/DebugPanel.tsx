@@ -3,8 +3,9 @@ import { BackgroundTaskManager } from "@/shared/notifications/services/Backgroun
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { useRouter } from "expo-router";
+import * as Notifications from "expo-notifications";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type ScheduledNotificationView = {
   id: string;
@@ -18,6 +19,7 @@ const DebugPanel: React.FC = () => {
   const openDialog = useDialogStore((s) => s.openDialog);
   const { detect, isLoading, detectResult } = useDetectNewDevice();
   const [tasks, setTasks] = useState<ScheduledNotificationView[]>([]);
+  const [notificationStatus, setNotificationStatus] = useState<string>('unknown');
 
   const loadTasks = async () => {
     try {
@@ -36,8 +38,18 @@ const DebugPanel: React.FC = () => {
     }
   };
 
+  const checkNotificationStatus = async () => {
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
+      setNotificationStatus(status);
+    } catch (error) {
+      setNotificationStatus('error');
+    }
+  };
+
   useEffect(() => {
     void loadTasks();
+    void checkNotificationStatus();
   }, []);
 
   const handleRemove = async (id: string) => {
@@ -82,8 +94,57 @@ const DebugPanel: React.FC = () => {
     }
   };
 
+  const handleSuppressNotificationPermissions = () => {
+    Alert.alert(
+      "Suppress Notification Permissions",
+      "This will simulate denied notification permissions. You'll need to go to device settings to re-enable them.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Suppress",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              // Note: We can't actually revoke permissions programmatically on iOS/Android
+              // But we can show the user how to do it manually
+              Alert.alert(
+                "Manual Action Required",
+                "To suppress notification permissions:\n\n1. Go to device Settings\n2. Find this app\n3. Turn off Notifications\n4. Return to app to test onboarding flow",
+                [
+                  {
+                    text: "OK",
+                    onPress: () => checkNotificationStatus(),
+                  },
+                ]
+              );
+            } catch (error) {
+              console.error("Failed to suppress notifications", error);
+              Alert.alert("Error", "Failed to suppress notification permissions");
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.body}>
+      {/* Notification Status Display */}
+      <View style={styles.statusContainer}>
+        <Text style={styles.statusText}>
+          Notification Status: {notificationStatus}
+        </Text>
+        <TouchableOpacity
+          style={[styles.button, { paddingVertical: 6, paddingHorizontal: 12 }]}
+          onPress={() => checkNotificationStatus()}
+        >
+          <Text style={[styles.buttonText, { fontSize: 14 }]}>Refresh</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* List of buttons using TouchableOpacity for custom styling */}
       <TouchableOpacity
         style={styles.button}
@@ -99,6 +160,13 @@ const DebugPanel: React.FC = () => {
         onPress={() => router.push("/test-notifications")}
       >
         <Text style={styles.buttonText}>Test Notifications</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: "#cc6600" }]}
+        onPress={handleSuppressNotificationPermissions}
+      >
+        <Text style={styles.buttonText}>Suppress Notification Permissions</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={detect} style={styles.button}>
@@ -197,6 +265,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#007bff66",
     padding: 12,
     borderRadius: 8,
+  },
+  statusContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#0056b3",
+    padding: 8,
+    borderRadius: 6,
+  },
+  statusText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "500",
+    flex: 1,
   },
   button: {
     backgroundColor: "#007bff",
