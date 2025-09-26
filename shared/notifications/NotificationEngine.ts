@@ -6,7 +6,7 @@ import {
   CadenceMessage,
   NotificationType,
   useNotificationStore,
-} from "./stores/notificationsStore";
+} from "./services/useNotificationsHandler";
 
 export interface NotificationEngineConfig {
   enableLogging?: boolean;
@@ -205,7 +205,9 @@ export class NotificationEngine {
     }
   }
 
-  private getMessageTypeForNotificationType(type: NotificationType): "morning" | "midday" | "evening" | "streak" | undefined {
+  private getMessageTypeForNotificationType(
+    type: NotificationType,
+  ): "morning" | "midday" | "evening" | "streak" | undefined {
     switch (type) {
       case "morning-motivation":
         return "morning";

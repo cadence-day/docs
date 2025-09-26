@@ -12,7 +12,7 @@ export { default as useNotificationSettingsStore } from "@/shared/stores/resourc
 export type { Notification } from "@/shared/types/models/notification";
 
 // Helper functions for notification management
-export class NotificationManager {
+export class useNotificationHandler {
   private static store = useNotificationSettingsStore;
 
   /**
@@ -32,7 +32,6 @@ export class NotificationManager {
       );
     }
   }
-
   /**
    * Request notification permissions
    */
@@ -261,7 +260,7 @@ export const useNotificationStore = useNotificationSettingsStore;
 // Auto-initialize when imported (like the original)
 (async () => {
   try {
-    await NotificationManager.initialize();
+    await useNotificationHandler.initialize();
   } catch (error) {
     GlobalErrorHandler.logError(
       error,

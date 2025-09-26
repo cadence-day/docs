@@ -7,7 +7,6 @@ import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOne
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
 import { notificationEngine } from "@/shared/notifications/NotificationEngine";
-import useNotificationStore from "@/shared/stores/resources/useNotificationsStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -18,21 +17,23 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 import { useToast } from "../../shared/hooks";
+import { useNotificationHandler } from "@/shared/notifications/services/useNotificationsHandler";
 
 export default function NotificationsSettings() {
   const { t } = useTranslation();
   const router = useRouter();
   const { showError, showSuccess, showInfo } = useToast();
   const {
-    preferences,
-    timing,
-    updatePreferences,
-    updateTiming,
-    permissionStatus,
     requestPermissions,
-    scheduleNotifications, // TODO: Why is this unused? Because we need to make sure notifications are scheduled when enabling push notifications
-  } = useNotificationStore();
+    updatePushToken,
+    getCurrentUserSettings,
+    updatePreferences,
+    isPushEnabled,
+    scheduleNotifications,
+    scheduleTimeBasedNotification,
+  } = useNotificationHandler;
 
   const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(
     permissionStatus === "granted"
@@ -131,6 +132,7 @@ export default function NotificationsSettings() {
             <TouchableOpacity
               onPress={() => router.push("/(home)/profile")}
               style={styles.backButton}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
               <Text style={styles.backText}>{t("back")}</Text>
