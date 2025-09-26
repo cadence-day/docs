@@ -89,7 +89,9 @@ export function useOnboardingData() {
   const currentPageData = pages[currentPage];
 
   if (!currentPageData) {
-    throw new Error("Invalid current page index");
+    throw new Error(
+      `Invalid current page index: ${currentPage} (total pages: ${pages.length})`,
+    );
   }
 
   return {

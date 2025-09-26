@@ -16,45 +16,29 @@ export const CdText: React.FC<CdTextProps> = ({
   style,
   numberOfLines,
 }) => {
-  let variantStyle: TextStyle | undefined;
-  switch (variant) {
-    case "title":
-      variantStyle = localStyles.titleText;
-      break;
-    case "body":
-      variantStyle = localStyles.bodyText;
-      break;
-    case "caption":
-      variantStyle = localStyles.captionText;
-      break;
-    case "error":
-      variantStyle = localStyles.errorText;
-      break;
-    case "message":
-      variantStyle = localStyles.messageText;
-      break;
-    case "link":
-      variantStyle = localStyles.linkText;
-      break;
-    default:
-      variantStyle = undefined;
-  }
+  const variantStyleMap: Record<
+    NonNullable<CdTextProps["variant"]>,
+    TextStyle | undefined
+  > = {
+    title: localStyles.titleText,
+    body: localStyles.bodyText,
+    caption: localStyles.captionText,
+    error: localStyles.errorText,
+    message: localStyles.messageText,
+    link: localStyles.linkText,
+  };
 
-  let sizeStyle: TextStyle | undefined;
-  switch (size) {
-    case "small":
-      sizeStyle = localStyles.smallText;
-      break;
-    case "medium":
-      sizeStyle = localStyles.mediumText;
-      break;
-    case "large":
-      sizeStyle = localStyles.largeText;
-      break;
-    default:
-      sizeStyle = undefined;
-  }
+  const sizeStyleMap: Record<
+    NonNullable<CdTextProps["size"]>,
+    TextStyle | undefined
+  > = {
+    small: localStyles.smallText,
+    medium: localStyles.mediumText,
+    large: localStyles.largeText,
+  };
 
+  const variantStyle = variantStyleMap[variant];
+  const sizeStyle = sizeStyleMap[size];
   const textStyle = [localStyles.text, variantStyle, sizeStyle, style];
 
   return (

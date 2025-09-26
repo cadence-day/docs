@@ -2,7 +2,7 @@ import useTranslation from "@/shared/hooks/useI18n";
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -146,8 +146,7 @@ export const CdTextInputOneLine: React.FC<CdTextInputOneLineProps> = ({
       </TouchableOpacity>
 
       {/* Indicator helper text below the border line */}
-      {(() => {
-        // Determine which indicator to show using clear logic (avoid nested ternary)
+      {useMemo(() => {
         let mode: "copy" | "edit" | "none" = "none";
         if (indicatorMode) {
           mode = indicatorMode;
@@ -158,10 +157,8 @@ export const CdTextInputOneLine: React.FC<CdTextInputOneLineProps> = ({
         }
 
         if (mode === "none") return null;
-        if (isEditing) return null; // don't show while editing
+        if (isEditing) return null;
 
-        // If this control is rendered as a button and there is no value to show,
-        // hide the indicator — buttons with no value shouldn't show the hint.
         if (isButton && !showValueText) return null;
 
         const text =
@@ -172,7 +169,15 @@ export const CdTextInputOneLine: React.FC<CdTextInputOneLineProps> = ({
             {text}
           </Text>
         );
-      })()}
+      }, [
+        indicatorMode,
+        allowCopy,
+        editable,
+        isEditing,
+        isButton,
+        showValueText,
+        t,
+      ])}
     </View>
   );
 };

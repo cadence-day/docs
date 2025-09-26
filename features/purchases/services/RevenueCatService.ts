@@ -42,12 +42,14 @@ class RevenueCatService {
         ? SECRETS.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY
         : SECRETS.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
 
+      // Validate API key: must be a non-empty string and at least 20 characters (RevenueCat keys are usually longer)
       if (
-        !apiKey || apiKey === "your_ios_api_key_here" ||
-        apiKey === "your_android_api_key_here"
+        !apiKey ||
+        typeof apiKey !== "string" ||
+        apiKey.trim().length < 20
       ) {
         GlobalErrorHandler.logWarning(
-          "RevenueCat API key not set - skipping configuration",
+          "RevenueCat API key is missing or invalid - skipping configuration",
           "REVENUECAT_CONFIG",
         );
         return;
