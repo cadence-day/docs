@@ -2,13 +2,16 @@
 export { useOnboardingActions } from "./hooks/useOnboardingActions";
 export { useOnboardingData } from "./hooks/useOnboardingData";
 
+// Store
+export { useOnboardingStore } from "./store";
+
 // Types (public interfaces only)
 export type {
   OnboardingPage,
   NotificationTime,
-  OnboardingScreenType,
+  OnboardingScreenProps,
 } from "./types";
 
 // Components (if needed by other features)
 export { OnboardingPageIndicators } from "./components/ui";
-export { WelcomeScreen, ActivitySelectionScreen, NotificationScreen } from "./components/screens";
+export { WelcomeScreen, ActivitySelectionScreen, NotificationScreen, OnboardingScreenRenderer } from "./components/screens";

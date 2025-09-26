@@ -1,35 +1,21 @@
-export type OnboardingScreenType =
-  | "welcome"
-  | "activity-selection"
-  | "time-logging"
-  | "pattern-view"
-  | "note-taking"
-  | "notifications"
-  | "final-animation";
-
 export interface OnboardingPage {
   id: string;
-  type: OnboardingScreenType;
+  type: string;
   title: string;
-  content: string;
-  icon?: React.ReactNode;
-  iconType?: "onboarding" | "sage" | null;
+  content?: string;
+  footer?: string;
   actionButton?: {
     text: string;
     onPress: () => void;
   };
-  linkText?: {
-    text: string;
-    onPress: () => void;
-  };
-  footer?: string;
-  // Enhanced properties for complex screens
-  activities?: string[];
-  selectedActivities?: string[];
-  timeSlots?: TimeSlot[];
-  notificationSchedule?: NotificationTime[];
   showMoodTracker?: boolean;
-  customComponent?: React.ComponentType<Record<string, unknown>>;
+}
+
+export interface OnboardingScreenProps {
+  pageData: OnboardingPage;
+  onNext?: () => void;
+  onPrevious?: () => void;
+  onButtonPress?: () => void;
 }
 
 export interface TimeSlot {

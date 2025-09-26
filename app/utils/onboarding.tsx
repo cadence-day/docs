@@ -9,42 +9,18 @@ import {
   State,
 } from "react-native-gesture-handler";
 import {
-  ActivitySelectionScreen,
   FinalOnboardingScreen,
-  WelcomeScreen,
+  OnboardingScreenRenderer,
 } from "../../features/onboarding/components/screens";
-import {
-  GridImage,
-  NoteImage,
-  TimelineImage,
-} from "../../features/onboarding/components/ui";
 import SideProgressIndicator from "../../features/onboarding/components/ui/SideProgressIndicator";
 import { useOnboardingActions } from "../../features/onboarding/hooks/useOnboardingActions";
 import { useOnboardingData } from "../../features/onboarding/hooks/useOnboardingData";
-import { useOnboardingPage } from "../../features/onboarding/hooks/useOnboardingPage";
-import { CdButton } from "../../shared/components/CadenceUI";
 
 export default function OnboardingScreen() {
   const router = useRouter();
-  const { currentPage, pages, goToPage, isLastPage } = useOnboardingData();
-  const {
-    handleNotificationPermission,
-    handlePrivacyPolicy,
-    handleComplete,
-    setSelectedActivities,
-  } = useOnboardingActions();
-
-  const currentPageData = useOnboardingPage(
-    pages,
-    currentPage,
-    handleNotificationPermission,
-    handlePrivacyPolicy
-  );
-
-  // Wire ActivitySelectionScreen's onActivitiesChange to setSelectedActivities from actions hook
-  const handleActivitiesChange = (activities: string[]) => {
-    setSelectedActivities(activities);
-  };
+  const { currentPage, currentPageData, pages, goToPage, isLastPage } =
+    useOnboardingData();
+  const { handleComplete } = useOnboardingActions();
 
   const handleNext = () => {
     if (!isLastPage) {
@@ -99,86 +75,38 @@ export default function OnboardingScreen() {
   };
 
   const renderScreen = () => {
-    switch (currentPageData.type) {
-      case "welcome":
-        return <WelcomeScreen pageData={currentPageData} />;
-
-      case "activity-selection":
-        return (
-          <ActivitySelectionScreen
-            pageData={currentPageData}
-            onActivitiesChange={handleActivitiesChange}
-          />
-        );
-
-      case "notifications":
-        return (
-          <View style={styles.screenContainer}>
-            <View style={styles.contentContainer}>
-              <Text style={styles.title}>{currentPageData.title}</Text>
-              <Text style={styles.content}>{currentPageData.content}</Text>
-
-              <View style={styles.notificationSchedule}>
-                {currentPageData.notificationSchedule?.map((item, index) => (
-                  <View key={index} style={styles.notificationItem}>
-                    <Text style={styles.notificationLabel}>{item.label}</Text>
-                    <Text style={styles.notificationTime}>{item.time}</Text>
-                  </View>
-                ))}
-              </View>
-
-              <CdButton
-                title="Allow notifications"
-                onPress={handleNext}
-                variant="outline"
-                style={styles.actionButton}
-              />
-            </View>
-          </View>
-        );
-
-      case "final-animation":
-        return (
-          <FinalOnboardingScreen
-            onFinish={() => router.replace("/(home)")}
-            pushOnboarding={handleComplete}
-          />
-        );
-
-      // Fallback for other screen types - use simple layout
-      default:
-        return (
-          <View style={styles.screenContainer}>
-            <View style={styles.contentContainer}>
-              <Text style={styles.title}>{currentPageData.title}</Text>
-              <Text style={styles.content}>{currentPageData.content}</Text>
-
-              {/* Add PNG images for specific screen types */}
-              {currentPageData.type === "time-logging" && (
-                <View style={styles.imageContainer}>
-                  <TimelineImage />
-                </View>
-              )}
-
-              {currentPageData.type === "pattern-view" && (
-                <View style={styles.imageContainer}>
-                  <GridImage />
-                </View>
-              )}
-
-              {currentPageData.type === "note-taking" && (
-                <View style={styles.imageContainer}>
-                  <NoteImage />
-                </View>
-              )}
-
-              {currentPageData.footer && (
-                <Text style={styles.footerText}>{currentPageData.footer}</Text>
-              )}
-            </View>
-          </View>
-        );
+    // Handle final animation separately since it has different props
+    if (currentPageData.type === "final-animation") {
+      return (
+        <FinalOnboardingScreen
+          onFinish={() => router.replace("/(home)")}
+          pushOnboarding={handleComplete}
+        />
+      );
     }
+
+    // Enhance page data with navigation actions
+    const enhancedPageData = {
+      ...currentPageData,
+      actionButton: currentPageData.actionButton
+        ? {
+            ...currentPageData.actionButton,
+            onPress:
+              currentPageData.type === "notifications"
+                ? currentPageData.actionButton.onPress
+                : handleNext,
+          }
+        : undefined,
+    };
+
+    // Use the unified renderer for all other screen types
+    return (
+      <OnboardingScreenRenderer
+        pageData={enhancedPageData}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+      />
+    );
   };
 
   return (
@@ -195,7 +123,7 @@ export default function OnboardingScreen() {
           <View style={styles.container}>
             {/* Pulsating SageIcon - Top Left (hide on final-animation screen) */}
             {currentPageData.type !== "final-animation" && (
-              <View style={{ position: "absolute", top: 40, left: 30 }}>
+              <View style={styles.iconContainer}>
                 <SageIcon status="pulsating" size={80} auto={false} />
               </View>
             )}
@@ -220,6 +148,7 @@ export default function OnboardingScreen() {
 }
 
 const styles = StyleSheet.create({
+  iconContainer: { position: "absolute", top: 40, left: 30 },
   gradientContainer: {
     flex: 1,
   },
@@ -231,44 +160,6 @@ const styles = StyleSheet.create({
     padding: 20,
     position: "relative",
   },
-  screenContainer: {
-    flex: 1,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    padding: 20,
-    paddingTop: 40,
-    paddingBottom: 60,
-    paddingLeft: 20,
-  },
-  contentContainer: {
-    flex: 1,
-    width: 300,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    marginTop: 120,
-  },
-  title: {
-    fontSize: 18,
-    color: "white",
-    textAlign: "left",
-    marginBottom: 16,
-  },
-  content: {
-    fontSize: 16,
-    color: "white",
-    textAlign: "left",
-    lineHeight: 20,
-    opacity: 0.9,
-  },
-  footerText: {
-    fontSize: 14,
-    color: "#CCCCCC",
-    textAlign: "left",
-    marginTop: 16,
-    marginBottom: 8,
-    paddingHorizontal: 0,
-    lineHeight: 20,
-  },
   cadenceText: {
     position: "absolute",
     bottom: 40,
@@ -276,37 +167,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "white",
     fontFamily: "FoundersGrotesk-Regular",
-  },
-  notificationSchedule: {
-    marginTop: 24,
-    marginBottom: 32,
-    width: "100%",
-  },
-  notificationItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.1)",
-  },
-  notificationLabel: {
-    fontSize: 16,
-    color: "white",
-    opacity: 0.9,
-  },
-  notificationTime: {
-    fontSize: 16,
-    color: "white",
-    fontWeight: "bold",
-  },
-  actionButton: {
-    marginTop: 20,
-    alignSelf: "center",
-    width: "100%",
-  },
-  imageContainer: {
-    width: "100%",
-    alignItems: "flex-start",
   },
 });

@@ -1,4 +1,2 @@
-export { ActivitySelectionScreen } from "./ActivitySelectionScreen";
+export { OnboardingScreenRenderer } from "../OnboardingScreenRenderer";
 export { FinalOnboardingScreen } from "./FinalOnboardingScreen";
-export { NotificationScreen } from "./NotificationScreen";
-export { WelcomeScreen } from "./WelcomeScreen";

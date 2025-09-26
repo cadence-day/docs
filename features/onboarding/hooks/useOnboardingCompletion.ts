@@ -232,10 +232,20 @@ export function useOnboardingCompletion() {
     }
   };
 
+  const pushOnboarding = async (): Promise<void> => {
+    // This function pushes onboarding data to backend/storage
+    // Implementation can be added here if needed
+    GlobalErrorHandler.logDebug(
+      "Pushing onboarding data to backend",
+      "onboarding:pushOnboarding",
+    );
+  };
+
   return {
     completeOnboarding,
     isProcessing,
     requestNotificationPermissions,
     createActivities,
+    pushOnboarding,
   };
 }

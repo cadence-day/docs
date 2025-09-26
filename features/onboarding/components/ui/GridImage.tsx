@@ -1,22 +1,21 @@
 import React from "react";
-import { Image, ImageStyle } from "react-native";
+import { Image, ImageStyle, Dimensions } from "react-native";
 
 interface GridImageProps {
-  width?: number;
   style?: ImageStyle;
 }
 
-export const GridImage: React.FC<GridImageProps> = ({
-  width,
-  style
-}) => {
+const { width: screenWidth } = Dimensions.get('window');
+
+export const GridImage: React.FC<GridImageProps> = ({ style }) => {
   return (
     <Image
       source={require("@/assets/images/onboarding/grid.png")}
       style={[
         {
-          width: width || "100%",
-          resizeMode: "contain"
+          width: screenWidth * 0.9,
+          height: screenWidth * 0.6,
+          resizeMode: "contain",
         },
         style
       ]}

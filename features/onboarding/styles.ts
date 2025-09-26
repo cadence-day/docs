@@ -11,18 +11,22 @@ export const onboardingStyles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    width: 300,
     alignItems: "flex-start",
     justifyContent: "flex-start",
-    marginTop: 120,
+    marginTop: 100,
   },
-  iconContainer: {
-    position: "absolute",
-    width: "100%",
-    top: "14%",
+  embeddedContent: {
+    flex: 1,
+    marginTop: 20,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 24,
+  },
+  textContainer: {
+    width: "100%",
+    marginBottom: 16,
+  },
+  spacer: {
+    height: 12,
   },
   title: {
     fontSize: 18,
@@ -44,6 +48,11 @@ export const onboardingStyles = StyleSheet.create({
   },
   actionButton: {
     marginTop: 20,
+    alignSelf: "center",
+    width: "100%",
+  },
+  notificationActionButton: {
+    marginTop: 8,
     alignSelf: "center",
     width: "100%",
   },
@@ -84,20 +93,18 @@ export const onboardingStyles = StyleSheet.create({
   subtitle: {
     fontSize: 12,
     color: "white",
-    marginTop: 20,
-    marginBottom: 16,
     textAlign: "left",
     alignSelf: "flex-start",
+    marginBottom: 8,
   },
   activitiesContainer: {
     maxHeight: 200,
-    marginVertical: 10,
   },
   activitiesGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "flex-start",
-    gap: 8,
+    gap: 6,
     paddingHorizontal: 4,
   },
   activityTag: {
@@ -111,6 +118,9 @@ export const onboardingStyles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     opacity: 1,
   },
+  activityTagDimmed: {
+    opacity: 0.4,
+  },
   activityTagText: {
     color: "white",
     fontSize: 7,
@@ -121,18 +131,26 @@ export const onboardingStyles = StyleSheet.create({
   activityTagTextSelected: {
     fontWeight: "500",
   },
-  notificationSchedule: {
-    marginTop: 24,
-    marginBottom: 32,
+  activityTagTextDimmed: {
+    opacity: 0.6,
+  },
+  fullWidthContainer: {
     width: "100%",
+    flex: 1,
+  },
+  notificationSchedule: {
+    width: "100%",
+    flex: 1,
+    minHeight: 200,
   },
   notificationItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 8,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255, 255, 255, 0.1)",
+    minHeight: 50,
   },
   notificationLabel: {
     fontSize: 16,
@@ -143,6 +161,19 @@ export const onboardingStyles = StyleSheet.create({
     fontSize: 16,
     color: "white",
     fontWeight: "bold",
+  },
+  moodTrackerPlaceholder: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  moodTrackerText: {
+    color: "white",
+    fontSize: 14,
+    opacity: 0.7,
+    textAlign: "center",
   },
 });
 

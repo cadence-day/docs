@@ -1,16 +1,19 @@
 import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
-import * as WebBrowser from "expo-web-browser";
-import { useState } from "react";
+import { useOnboardingStore } from "../store/useOnboardingStore";
 import { useOnboardingCompletion } from "./useOnboardingCompletion";
 
 export function useOnboardingActions() {
   const { requestPermissions, updatePreferences, updateTiming } =
     useNotificationStore();
   const { completeOnboarding } = useOnboardingCompletion();
-  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
-  const [allowNotifications, setAllowNotifications] = useState(false);
+  const { getOnboardingData, setAllowNotifications } = useOnboardingStore();
+
+  // For compatibility with existing code that expects state variables
+  const onboardingData = getOnboardingData();
+  const selectedActivities = onboardingData.selectedActivities;
+  const allowNotifications = onboardingData.allowNotifications;
 
   const handleNotificationPermission = async () => {
     setAllowNotifications(true);
@@ -41,21 +44,18 @@ export function useOnboardingActions() {
     }
   };
 
-  const handlePrivacyPolicy = async () => {
-    await WebBrowser.openBrowserAsync("https://app.cadence.day/legal/privacy", {
-      presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
-    });
-  };
-
   const handleComplete = async (confirm?: () => void, dialogId?: string) => {
     try {
       await userOnboardingStorage.setShown(true);
 
+      // Get the latest data from the store
+      const currentData = getOnboardingData();
+
       // Complete full onboarding flow with all collected data
       await completeOnboarding(
         {
-          selectedActivities,
-          allowNotifications,
+          selectedActivities: currentData.selectedActivities,
+          allowNotifications: currentData.allowNotifications,
         },
         confirm,
       );
@@ -80,10 +80,8 @@ export function useOnboardingActions() {
 
   return {
     handleNotificationPermission,
-    handlePrivacyPolicy,
     handleComplete,
     selectedActivities,
-    setSelectedActivities,
     allowNotifications,
   };
 }
