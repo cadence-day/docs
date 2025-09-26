@@ -7,7 +7,7 @@ import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOne
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
 import { notificationEngine } from "@/shared/notifications/NotificationEngine";
-import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
+import useNotificationStore from "@/shared/stores/resources/useNotificationsStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";

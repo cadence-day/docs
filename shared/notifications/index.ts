@@ -1,6 +1,8 @@
 // New unified notification system
 export { NotificationEngine, notificationEngine } from "./NotificationEngine";
-export { useNotificationStore, cadenceMessages } from "./stores/notificationsStore";
+
+// Import notification store from shared stores
+export { default as useNotificationStore } from "@/shared/stores/resources/useNotificationsStore";
 
 // Types
 export * from "./types";

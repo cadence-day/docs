@@ -1,7 +1,7 @@
 import type {
     NotificationPreferences,
     NotificationTiming,
-} from "@/shared/notifications/stores/notificationsStore";
+} from "@/shared/stores/resources/useNotificationsStore";
 import { BaseStorage } from "../base";
 import type { StorageResult } from "../types";
 

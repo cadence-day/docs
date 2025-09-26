@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GlobalErrorHandler } from "../../shared/utils";
 import {
   fetchV1ActivitiesWithDetails,
   fetchV2ActivitiesWithDetails,
@@ -51,7 +52,7 @@ export default function MigrationScreen() {
       setV1Activities(v1Data);
       setV2Activities(v2Data);
     } catch (error) {
-      // Error is already handled by the API functions
+      GlobalErrorHandler.logError(error, "MIGRATION_SERVICE");
     } finally {
       setIsLoadingActivities(false);
     }
@@ -106,7 +107,7 @@ export default function MigrationScreen() {
       await migrateActivities(convertedMappings);
       setShowCarousel(false);
     } catch (error) {
-      // Error is already handled by the migration functions
+      GlobalErrorHandler.logError(error, "MIGRATION_SERVICE");
     }
   };
 
@@ -135,7 +136,6 @@ export default function MigrationScreen() {
           <Text style={styles.subtitle}>{t("migration.auth.subtitle")}</Text>
 
           <CdTextInput
-            label={t("migration.auth.email")}
             value={email}
             onChangeText={setEmail}
             placeholder={t("migration.auth.email-placeholder")}
@@ -144,7 +144,6 @@ export default function MigrationScreen() {
           />
 
           <CdTextInput
-            label={t("migration.auth.password")}
             value={password}
             onChangeText={setPassword}
             placeholder={t("migration.auth.password-placeholder")}
@@ -282,16 +281,6 @@ const styles = StyleSheet.create({
     alignContent: "center",
     padding: 24,
   },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-  },
-  backText: {
-    color: COLORS.primary,
-    fontSize: 16,
-    marginLeft: 4,
-  },
   authSection: {
     padding: 20,
   },
@@ -322,11 +311,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.bodyText,
     fontWeight: "500",
-  },
-  overviewValue: {
-    fontSize: 16,
-    color: COLORS.text.header,
-    fontWeight: "bold",
   },
   startMigrationButton: {
     backgroundColor: COLORS.primary,
@@ -380,56 +364,7 @@ const styles = StyleSheet.create({
     color: COLORS.error,
     flex: 1,
   },
-  logsSection: {
-    backgroundColor: COLORS.white,
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginVertical: 8,
-    padding: 16,
-  },
-  logsContainer: {
-    maxHeight: 200,
-    backgroundColor: "#F5F5F5",
-    borderRadius: 8,
-    padding: 8,
-  },
-  logItem: {
-    fontSize: 12,
-    color: COLORS.bodyText,
-    marginBottom: 4,
-    fontFamily: "monospace",
-  },
   encryptionStatusContainer: {
     marginVertical: 8,
-  },
-  explanationCard: {
-    backgroundColor: COLORS.white,
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginVertical: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: COLORS.light.border,
-  },
-  explanationTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: COLORS.text?.header ?? COLORS.light.text,
-    marginBottom: 8,
-  },
-  explanationText: {
-    fontSize: 14,
-    color: COLORS.bodyText,
-    marginBottom: 12,
-    lineHeight: 20,
-  },
-  optionsList: {
-    paddingLeft: 4,
-  },
-  optionItem: {
-    fontSize: 14,
-    color: COLORS.bodyText,
-    marginBottom: 6,
-    lineHeight: 20,
   },
 });

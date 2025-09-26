@@ -2,11 +2,7 @@ import { COLORS } from "@/shared/constants/COLORS";
 import { ToastService } from "@/shared/context/ToastProvider";
 import { notificationEngine } from "@/shared/notifications/NotificationEngine";
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
-import {
-  cadenceMessages,
-  NotificationType,
-  useNotificationStore,
-} from "@/shared/notifications/stores/notificationsStore";
+import useNotificationStore from "@/shared/stores/resources/useNotificationsStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import * as Notifications from "expo-notifications";
