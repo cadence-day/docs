@@ -1,5 +1,11 @@
+import { revenueCatService } from "@/features/purchases";
+import { SECRETS } from "@/shared/constants/SECRETS";
 import { EncryptionProvider, NetworkProvider } from "@/shared/context";
+import { ToastProvider } from "@/shared/context/ToastProvider";
+import { useColorScheme } from "@/shared/hooks/useColorScheme";
+import { getIsDev } from "@/shared/hooks/useDev";
 import i18n from "@/shared/locales";
+import { NotificationProvider } from "@/shared/notifications";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import {
@@ -7,20 +13,15 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import * as Sentry from "@sentry/react-native";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
+import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
-
-import { SECRETS } from "@/shared/constants/SECRETS";
-import { ToastProvider } from "@/shared/context/ToastProvider";
-import { useColorScheme } from "@/shared/hooks/useColorScheme";
-import { getIsDev } from "@/shared/hooks/useDev";
-import { NotificationProvider } from "@/shared/notifications";
-import * as Sentry from "@sentry/react-native";
-import { StyleSheet } from "react-native";
 import { GlobalErrorHandler } from "../shared/utils/errorHandler";
 
 if (
@@ -108,6 +109,23 @@ const RootLayout = function RootLayout() {
     "FoundersGrotesk-Semibold": require("../assets/fonts/FoundersGrotesk-Semibold-BF66175e972c958.otf"),
     "FoundersGrotesk-Bold": require("../assets/fonts/FoundersGrotesk-Bold-BF66175e9700615.otf"),
   });
+
+  // Initialize RevenueCat on app startup
+  useEffect(() => {
+    const initializeRevenueCat = async () => {
+      try {
+        await revenueCatService.configure();
+        GlobalErrorHandler.logDebug(
+          "RevenueCat configured successfully",
+          "REVENUECAT_INIT"
+        );
+      } catch (error) {
+        GlobalErrorHandler.logError(error, "Failed to initialize RevenueCat");
+      }
+    };
+
+    initializeRevenueCat();
+  }, []);
 
   if (!loaded) {
     // Async font loading only occurs in development.
