@@ -1,22 +1,15 @@
-import { CdButton } from "@/shared/components/CadenceUI";
 import React from "react";
 import { Text, View } from "react-native";
-import { useOnboardingStore } from "../../store/useOnboardingStore";
 import { onboardingStyles as styles } from "../../styles";
 import { NotificationTime } from "../../types";
 
 interface NotificationTableProps {
-  actionButton?: {
-    text: string;
-    onPress: () => void;
-  };
+  notificationSchedule: NotificationTime[];
 }
 
 export const NotificationTable: React.FC<NotificationTableProps> = ({
-  actionButton,
+  notificationSchedule,
 }) => {
-  const { notificationSchedule } = useOnboardingStore();
-
   return (
     <View style={styles.fullWidthContainer}>
       <View style={styles.notificationSchedule}>
@@ -27,15 +20,6 @@ export const NotificationTable: React.FC<NotificationTableProps> = ({
           </View>
         ))}
       </View>
-
-      {actionButton && actionButton.text && actionButton.onPress && (
-        <CdButton
-          title={actionButton.text}
-          onPress={actionButton.onPress}
-          variant="outline"
-          style={styles.notificationActionButton}
-        />
-      )}
     </View>
   );
 };

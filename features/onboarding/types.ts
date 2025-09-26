@@ -1,14 +1,13 @@
 export interface OnboardingPage {
   id: string;
   type: string;
-  title: string;
+  title?: string;
   content?: string;
   footer?: string;
   actionButton?: {
     text: string;
     onPress: () => void;
   };
-  showMoodTracker?: boolean;
 }
 
 export interface OnboardingScreenProps {

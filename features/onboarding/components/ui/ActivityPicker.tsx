@@ -2,17 +2,20 @@ import useTranslation from "@/shared/hooks/useI18n";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ACTIVITY_PRESETS } from "../../data/activityPresets";
-import { useOnboardingStore } from "../../store/useOnboardingStore";
 import { onboardingStyles as styles } from "../../styles";
 
 interface ActivityPickerProps {
   footer?: string;
+  selectedActivities: string[];
+  onToggleActivity: (activityId: string) => void;
 }
 
-export const ActivityPicker: React.FC<ActivityPickerProps> = ({ footer }) => {
+export const ActivityPicker: React.FC<ActivityPickerProps> = ({
+  footer,
+  selectedActivities,
+  onToggleActivity,
+}) => {
   const { t } = useTranslation();
-  const { selectedActivities, toggleActivity } = useOnboardingStore();
-
   const hasSelectedActivities = selectedActivities.length > 0;
 
   return (
@@ -38,7 +41,7 @@ export const ActivityPicker: React.FC<ActivityPickerProps> = ({ footer }) => {
                   isSelected && styles.activityTagSelected,
                   shouldDimUnselected && styles.activityTagDimmed,
                 ]}
-                onPress={() => toggleActivity(preset.id)}
+                onPress={() => onToggleActivity(preset.id)}
               >
                 <Text
                   style={[

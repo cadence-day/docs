@@ -1,12 +1,10 @@
+import { CdButton } from "@/shared/components/CadenceUI";
 import React from "react";
 import { Text, View } from "react-native";
 import { onboardingStyles as styles } from "../styles";
 import { OnboardingScreenProps } from "../types";
-import { ActivityPicker } from "./ui/ActivityPicker";
-import { GridImage } from "./ui/GridImage";
-import { NoteImage } from "./ui/NoteImage";
-import { NotificationTable } from "./ui/NotificationTable";
-import { TimelineImage } from "./ui/TimelineImage";
+import { ActivityPickerContainer, NotificationTableContainer } from "./containers";
+import { GridImage, NoteImage, TimelineImage } from "./ui";
 
 export const OnboardingScreenRenderer: React.FC<OnboardingScreenProps> = ({
   pageData,
@@ -14,7 +12,7 @@ export const OnboardingScreenRenderer: React.FC<OnboardingScreenProps> = ({
   const renderPageContent = () => {
     switch (pageData.type) {
       case "activity-selection":
-        return <ActivityPicker footer={pageData.footer} />;
+        return <ActivityPickerContainer />;
       case "time-logging":
         return <TimelineImage />;
       case "pattern-view":
@@ -22,18 +20,22 @@ export const OnboardingScreenRenderer: React.FC<OnboardingScreenProps> = ({
       case "note-taking":
         return <NoteImage />;
       case "notifications":
-        return <NotificationTable actionButton={pageData.actionButton} />;
+        return <NotificationTableContainer />;
       default:
         return null;
     }
   };
 
+  // Unified layout for all pages
   return (
     <View style={styles.screenContainer}>
       <View style={styles.contentContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>{pageData.title}</Text>
-        </View>
+        {pageData.title && (
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>{pageData.title}</Text>
+          </View>
+        )}
+
         {pageData.content && (
           <View style={styles.textContainer}>
             <Text style={styles.content}>{pageData.content}</Text>
@@ -42,8 +44,17 @@ export const OnboardingScreenRenderer: React.FC<OnboardingScreenProps> = ({
 
         <View style={styles.embeddedContent}>{renderPageContent()}</View>
 
-        {pageData.footer && pageData.type !== "activity-selection" && (
+        {pageData.footer && (
           <Text style={styles.footerText}>{pageData.footer}</Text>
+        )}
+
+        {pageData.actionButton && pageData.actionButton.text && pageData.actionButton.onPress && (
+          <CdButton
+            title={pageData.actionButton.text}
+            onPress={pageData.actionButton.onPress}
+            variant="outline"
+            style={pageData.type === "notifications" ? styles.notificationActionButton : styles.actionButton}
+          />
         )}
       </View>
     </View>

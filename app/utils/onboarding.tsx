@@ -85,24 +85,9 @@ export default function OnboardingScreen() {
       );
     }
 
-    // Enhance page data with navigation actions
-    const enhancedPageData = {
-      ...currentPageData,
-      actionButton: currentPageData.actionButton
-        ? {
-            ...currentPageData.actionButton,
-            onPress:
-              currentPageData.type === "notifications"
-                ? currentPageData.actionButton.onPress
-                : handleNext,
-          }
-        : undefined,
-    };
-
-    // Use the unified renderer for all other screen types
     return (
       <OnboardingScreenRenderer
-        pageData={enhancedPageData}
+        pageData={currentPageData}
         onNext={handleNext}
         onPrevious={handlePrevious}
       />
@@ -153,12 +138,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    marginTop: 20,
-    alignItems: "center",
+    marginTop: 120, // Push content down to make room for the icon
     flex: 1,
-    width: "100%",
     padding: 20,
-    position: "relative",
   },
   cadenceText: {
     position: "absolute",

@@ -1,13 +1,13 @@
 import useTranslation from "@/shared/hooks/useI18n";
 import { useMemo, useState } from "react";
 import { OnboardingPage } from "../types";
-import { useOnboardingActions } from "./useOnboardingActions";
+import { useNotificationActions } from "./useNotificationActions";
 
 export function useOnboardingData() {
   const [currentPage, setCurrentPage] = useState(0);
   const { t } = useTranslation();
 
-  const { handleNotificationPermission } = useOnboardingActions();
+  const { handleNotificationPermission } = useNotificationActions();
 
   const pages: OnboardingPage[] = useMemo(() => [
     {
