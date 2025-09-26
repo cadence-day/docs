@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "description": "A mobile app for recording daily activities and reflections",
     "ios": {
-      "buildNumber": "96",
+      "buildNumber": "99",
       "supportsTablet": false,
       "bundleIdentifier": "day.cadence.mobile",
       "associatedDomains": [
