@@ -1,4 +1,5 @@
 import SageIcon from "@/shared/components/icons/SageIcon";
+import { Stack } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -6,7 +7,8 @@ import { StyleSheet, View } from "react-native";
 export default function LoadingScreen() {
   return (
     <View style={styles.container} testID="loading-screen">
-      <SageIcon size={150} status={"pulsating"} auto={true} />
+      <Stack.Screen options={{ headerShown: false }} />
+      <SageIcon size={150} status={"pulsating"} auto={false} />
     </View>
   );
 }

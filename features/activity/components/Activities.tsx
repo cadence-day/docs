@@ -71,12 +71,6 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
       [gridConfig]
     );
 
-    // Memoize combined activities for edit mode
-    const combinedActivities = useMemo(
-      () => [...activities, ...disabledActivities],
-      [activities, disabledActivities]
-    );
-
     React.useImperativeHandle(
       ref,
       () => ({

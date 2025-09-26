@@ -1,7 +1,7 @@
 {
   "about-encryption": "Om kryptering",
   "about-notifications": "Om notifikationer",
-  "about-subscription": "",
+  "about-subscription": "Om abonnementer",
   "account-management": "Kontoadministration",
   "account-verified-successfully-welcome": "Konto bekræftet med succes! Velkommen!",
   "active-activities": "Aktive aktiviteter",
@@ -37,10 +37,12 @@
   },
   "actual-behavior": "Faktisk adfærd",
   "actual-behavior-optional": "Faktisk adfærd (valgfri)",
+  "add-a-new-note": "Tilføj en ny note ...",
   "add-new-activity": "Tilføj ny aktivitet",
+  "add-new-note": "Tilføj en ny note.",
   "allow-notifications": "Tillad meddelelser",
   "already-have-an-account": "Har du allerede en konto?",
-  "already-subscribed-premium": "",
+  "already-subscribed-premium": "Du er allerede abonneret på premium!",
   "app-information": "App-information",
   "app-version-and-platform": "• App-version og platform",
   "are-you-sure-you-want-to-sign": "Er du sikker på, at du vil logge ud?",
@@ -64,9 +66,9 @@
   "cannot-find-native-module": "Kan ikke finde native modul",
   "category": "Kategori",
   "change-password": "Skift adgangskode",
-  "change-plan": "",
+  "change-plan": "Skift plan",
   "check-your-inbox-for-verification-email": "Tjek din indbakke for bekræftelses-email.",
-  "choose-your-plan": "",
+  "choose-your-plan": "Vælg din plan",
   "choose_action": "Vælg handling",
   "close": "Luk",
   "color": "Farve",
@@ -78,7 +80,7 @@
     "error": "Fejl",
     "ok": "OK",
     "saving": "Gemmer...",
-    "select": "",
+    "select": "Vælge",
     "submitting": "Sender..."
   },
   "confirm": "Bekræft",
@@ -89,6 +91,7 @@
   "contain-one-uppercase-letter": "- indeholder et stort bogstav",
   "continue": "Fortsætte",
   "current-password-is-required": "Nuværende adgangskode er påkrævet.",
+  "daily-total": "Daglig total",
   "dateTime": {
     "preposition": "kl."
   },
@@ -103,12 +106,16 @@
   "disabled-activities": "Deaktiverede aktiviteter",
   "dont-have-an-account": "Har du ikke en konto?",
   "edit": "Rediger",
+  "edit-your-note": "Rediger din note ...",
   "email-not-available": "E-mail ikke tilgængelig",
   "email-support": "E-mail support",
   "enabled": "Aktiveret",
   "encryption": "Kryptering",
   "encryption-key": "Krypteringsnøgle",
   "encryption-key-present-exportf": "Krypteringsnøgle til stede ({0})",
+  "energyHigh": "Høj",
+  "energyLabel": "Energi",
+  "energyLow": "Lav",
   "enter-6-digit-code": "Indtast 6-cifret kode",
   "enter-64-character-encryption": "Indtast 64-karakterkrypteringsnøgle",
   "enter-activity-name": "Indtast aktivitetsnavn",
@@ -155,6 +162,7 @@
     "title": "Daglig Cadence",
     "todayTitle": "Dagens Cadence"
   },
+  "hours": "timer",
   "i-agree-to-the": "Jeg accepterer",
   "import-encryption-key": "Importer krypteringsnøgle",
   "import-key": "Importer nøgle",
@@ -167,14 +175,17 @@
   "key-imported-successfully-fing": "Nøgle importeret med succes! Fingeraftryk: {0}",
   "laid-back": "Afslappet",
   "legal": "Legal",
-  "loading-plans": "",
+  "loading-plans": "Indlæsning af abonnementsplaner ...",
+  "long-press-to-copy": "Lang tryk for at kopiere!",
   "make-cadence-yours": "Gør Cadence din",
   "meet-sage": "Mød Sage",
   "midday-reflection": "Middagsreflektion",
   "mo": "Man",
-  "monthly": "",
+  "monthly": "Månedlig",
+  "mood": "Humør",
   "morning-reminders": "Morgen-påmindelser",
   "morning-reminders-are-sent-aft": "Morgen-påmindelser sendes efter din opvågningstid og aften-påmindelser før din sengetid. Ugentlige streak-opdateringer fejrer dine resultater hver søndag.",
+  "morning-time": "Morgenreflektion",
   "name": "Navn",
   "new-password": "Ny adgangskode",
   "new-password-must-be-at-least": "Ny adgangskode skal være mindst 8 tegn lang.",
@@ -185,11 +196,73 @@
   "not-available-in-this-build": "Ikke tilgængelig i denne build",
   "notification-schedule": "Notifikationsplan",
   "notification-types": "Notifikationstyper",
-  "ok": "",
+  "ok": "OK",
   "onboarding": {
+    "activities": {
+      "admin": "Admin",
+      "caregiving": "Pleje",
+      "chores": "Pligter",
+      "commute": "Pendle",
+      "cooking": "Madlavning",
+      "creative-work": "Kreativt arbejde",
+      "doomscrolling": "Doomscrolling",
+      "email": "E -mail",
+      "exercise": "Øvelse",
+      "family-time": "Familietid",
+      "friends": "Venner",
+      "groceries": "Dagligvarer",
+      "health": "Sundhed",
+      "hobby": "Hobby",
+      "home-admin": "Hjemadministrator",
+      "learning": "Læring",
+      "meal": "Måltid",
+      "meditation": "Meditation",
+      "meetings": "Møder",
+      "nature": "Natur",
+      "planning": "Planlægning",
+      "reading": "Læsning",
+      "reflection": "Afspejling",
+      "relax": "Slappe af",
+      "sleep": "Sove",
+      "tv": "Tv",
+      "walking": "Gå",
+      "work": "Arbejde"
+    },
+    "activity-selection": {
+      "content": "",
+      "footer": "Du kan redigere, tilføje, fjerne aktiviteter senere.",
+      "title": "Start med at logge på dine daglige aktiviteter og mønstre vil dukke op"
+    },
     "missed-intro": "I tilfælde af at du gik glip af introduktionen",
+    "note-taking": {
+      "title": "Tilføj en note til hver aktivitet for at registrere dine tanker og følelser"
+    },
+    "notifications": {
+      "button": "Tillad meddelelser",
+      "schedule": {
+        "evening": "Aften",
+        "morning": "Morgen",
+        "noon": "Middag"
+      },
+      "title": "Tænd meddelelser om blide påmindelser om at logge dine aktiviteter hele dagen."
+    },
+    "pattern-view": {
+      "title": "Når de daglige mønstre dukker op, vil du være i stand til at se ugentlig rytme"
+    },
+    "privacy": {
+      "button": "Download krypteringsnøglen",
+      "content": "Tekst om krypteringsnøgle.",
+      "title": "Din tid er din alene. \nAlt, hvad du logger, er krypteret og gemt sikkert, så kun du har adgang."
+    },
+    "time-logging": {
+      "content": "Vælg aktiviteten, og tryk på en tidsslot.",
+      "title": "Start med at logge på dine daglige aktiviteter og mønstre vil dukke op"
+    },
     "title": "Velkommen til Cadence",
-    "view-again": "Se onboarding igen"
+    "view-again": "Se onboarding igen",
+    "welcome": {
+      "title": "Cadence hjælper dig med at finde den bedste rytme i dit liv"
+    }
   },
   "or-paste-encryption-key": "Eller indsæt krypteringsnøgle:",
   "parent-activity": "Forældreaktivitet",
@@ -230,20 +303,20 @@
   "pick-activity-first": "Vælg først en aktivitet.",
   "plan": {
     "feature": {
-      "all_free": "",
-      "all_supporter": "",
-      "beta_access": "",
-      "community": "",
-      "free": "",
-      "premium_support": "",
-      "roadmap": ""
+      "all_free": "Alt i gratis",
+      "all_supporter": "Alt i tilhænger",
+      "beta_access": "Du vil have premium adgang til vores seneste beta med de nyeste funktionaliteter.",
+      "community": "Adgang til vores samfund",
+      "free": "Alle funktionaliteter",
+      "premium_support": "Bestem, hvad der kommer næste gang",
+      "roadmap": "Co-design med os"
     },
-    "free": "",
-    "free_price": "",
-    "premium": "",
-    "premium_price": "",
-    "supporter": "",
-    "supporter_price": ""
+    "free": "Gratis opdagelsesrejsende",
+    "free_price": "Gratis",
+    "premium": "Premium tilhænger",
+    "premium_price": "$ 9,99/mo",
+    "supporter": "Tilhænger",
+    "supporter_price": "$ 4,99/mo"
   },
   "please-enable-camera-access-in": "Aktivér kameraadgang i dine enhedsindstillinger for at scanne QR -koder.",
   "please-enter-a-bug-description": "Indtast en fejlbeskrivelse.",
@@ -252,9 +325,10 @@
   "please-enter-time-in-hh-mm-for": "Indtast tid i HH: MM -format (f.eks. 12:00)",
   "please-enter-time-in-hh-mm-for-0": "Indtast tid i HH: MM -format (f.eks. 20:00)",
   "please-fill-in-both-title-and": "Udfyld venligst både titel og beskrivelse",
-  "please-select-subscription-plan": "",
+  "please-select-subscription-plan": "Vælg en abonnementsplan",
   "please-visit-https-cadence-day": "Besøg https://cadence.day/faq i din browser",
   "point-your-camera-at-the-qr-co": "Peg dit kamera på QR -koden, der indeholder krypteringsnøglen",
+  "press-to-edit": "Klik for at redigere!",
   "privacy-policy": "Privatlivspolitik",
   "profile": {
     "actions": {
@@ -281,10 +355,10 @@
       "open-debug-page": "Åbn debug-side",
       "section-title": "Udvikler",
       "show-onboarding": "Vis velkomst (debug)",
-      "test-notification": ""
+      "test-notification": "Testmeddelelse BG -opgave"
     },
     "development": {
-      "test-notifications": ""
+      "test-notifications": "Testmeddelelser"
     },
     "edit-photo": "Rediger foto",
     "email": "E -mail",
@@ -352,7 +426,7 @@
     "wake-time": "Opvågningstid",
     "whats-inside": "Hvad du får:"
   },
-  "purchases-restored-successfully": "",
+  "purchases-restored-successfully": "Dine køb er gendannet med succes!",
   "push-notification-permissions": "Push-notifikationstilladelser er påkrævet for at modtage notifikationer. Du kan aktivere dem i dine enhedsindstillinger.",
   "push-notifications-disabled": "Push-notifikationer deaktiveret",
   "push-notifications-have-been-d": "Push-notifikationer er blevet deaktiveret. Du kan genaktivere dem når som helst.",
@@ -361,6 +435,7 @@
   "read-more-about-how-we-protect": "Læs mere om, hvordan vi beskytter dit privatliv →",
   "reflection": {
     "activityLabel": "Aktivitet",
+    "daily-cadence": "Daglig kadence",
     "details": "Detaljer",
     "noTimesliceInfo": "Ingen yderligere information for dette tidsinterval.",
     "title": "Refleksion",
@@ -371,9 +446,10 @@
   "requesting-camera-permission": "Anmoder om kameratilladelse...",
   "resend-code": "Send kode igen",
   "resend-in-resendcooldown-s": "Send igen om {0}s",
-  "restore-purchases": "",
+  "restore-purchases": "Gendan køb",
   "sa": "Lør",
   "sage": {
+    "title": "Sage -meddelelser",
     "unavailableMessage": "Cadence AI er i øjeblikket ikke tilgængelig."
   },
   "sage-your-friendly-ai-guide-wi": "Sage, din venlige AI-guide, hjælper dig med at bemærke mønstrene i din tid. \n\nSpørg Sage om at opsummere din dag, hjælpe dig med at huske dine mål eller lægge mærke til dine tidsmønstre. \nJo mere du logger, jo mere kan Sage hjælpe.",
@@ -383,7 +459,7 @@
   "security-information": "Sikkerhedsoplysninger",
   "select-a-category": "Vælg en kategori",
   "select-activity": "Vælg aktivitet",
-  "select-billing-period": "",
+  "select-billing-period": "Vælg faktureringsperiode",
   "send-feedback": "Send feedback",
   "send-reset-email": "Send nulstilling e -mail",
   "sending": "Sender ...",
@@ -470,7 +546,7 @@
   },
   "sign-up-now": "Tilmeld dig nu",
   "since-all-notification-types-a": "Da alle notifikationstyper er deaktiveret, er push-notifikationer automatisk slukket.",
-  "start-free-trial": "",
+  "start-free-trial": "Start gratis prøve",
   "stay-in-sync-nwith-your-time": "Bliv synkroniseret \nmed din tid",
   "steps-to-reproduce": "Trin til at gengive",
   "steps-to-reproduce-optional": "Trin til reproducer (valgfrit)",
@@ -482,11 +558,11 @@
   "submit-feature-request": "Indsend funktionsanmodning",
   "submit-feature-suggestions": "Indsend funktionsforslag",
   "subscription": {
-    "choose_plan": ""
+    "choose_plan": "Beslutte at støtte kadence"
   },
-  "subscription-activated-successfully": "",
-  "subscription-info-text": "",
-  "subscription-terms": "",
+  "subscription-activated-successfully": "Dit abonnement er blevet aktiveret med succes!",
+  "subscription-info-text": "I øjeblikket har vi ikke premium -funktionaliteter, alle vores brugere har adgang til alle vores seneste funktionaliteter. \nVi er dog nødt til at crowdfund vores platform for at fortsætte med at udvikle og hjælpe folk med at styre deres liv. \nHvis du er entusiast til mental sundhed, skal du støtte os. \nDu vil blive navngivet på vores sponsorwebsted.",
+  "subscription-terms": "Abonnement Auto-fornys, medmindre det er annulleret. \nVilkår og betingelser gælder.",
   "success": "Succes",
   "support-information": "Supportoplysninger",
   "system-settings": "Systemindstillinger",
@@ -508,6 +584,7 @@
   "to-modify-notification-permiss": "For at ændre notifikationstilladelser på systemniveau skal du gå til din enheds indstillingsapp og finde denne apps notifikationsindstillinger.",
   "today": "I dag",
   "tu": "Tir",
+  "tuning-cadence-at-your-rhythm": "Tuning kadence på din rytme",
   "turn-on-notifications-for-gent": "Tænd notifikationer for blide påmindelser om at logge dine aktiviteter hele dagen. \nInget pres, bare en daglig skubbe til at hjælpe dig med at holde dig opmærksom på din tid. \n\n✨ Dit fremtidige selv vil takke dig. \nTag et øjeblik til at logge din dag.",
   "unable-to-open-email-app-pleas": "Kan ikke åbne e-mail-app. Send din supportanmodning til: dev@cadence.day",
   "unable-to-open-link": "Kan ikke åbne link",
@@ -529,7 +606,7 @@
   "welcome-to-cadence": "Velkommen til Cadence",
   "were-here-to-help-our-support": "Vi er her for at hjælpe! Vores supportteam reagerer typisk inden for 24 timer. For presserende problemer skal du medtage så mange detaljer som muligt i din besked.",
   "weve-sent-a-verification-code-to": "Vi har sendt en bekræftelseskode til",
-  "yearly": "",
+  "yearly": "Årligt",
   "yesterday": "I går",
   "you-have-a-new-notification": "Du har en ny notifikation",
   "your-account-security-is-impor": "Din kontosikkerhed er vigtig for os. Ændringer af adgangskode kræver e-mail-verifikation for din beskyttelse. Kontakt support til anmodninger om sletning af konto.",

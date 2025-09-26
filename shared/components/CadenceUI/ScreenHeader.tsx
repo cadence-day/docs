@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  SafeAreaView,
   StyleSheet,
   Text,
   TextStyle,
@@ -8,6 +7,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export interface ScreenHeaderProps {
   title: string;
@@ -60,8 +60,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 12,
     paddingTop: 10,
-    paddingBottom: 10,
-    margin: 12,
   },
   leftSection: {
     flex: 1,

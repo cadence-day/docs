@@ -16,12 +16,30 @@ export const CdText: React.FC<CdTextProps> = ({
   style,
   numberOfLines,
 }) => {
-  const textStyle = [
-    localStyles.text,
-    localStyles[`${variant}Text`],
-    localStyles[`${size}Text`],
-    style,
-  ];
+  const variantStyleMap: Record<
+    NonNullable<CdTextProps["variant"]>,
+    TextStyle | undefined
+  > = {
+    title: localStyles.titleText,
+    body: localStyles.bodyText,
+    caption: localStyles.captionText,
+    error: localStyles.errorText,
+    message: localStyles.messageText,
+    link: localStyles.linkText,
+  };
+
+  const sizeStyleMap: Record<
+    NonNullable<CdTextProps["size"]>,
+    TextStyle | undefined
+  > = {
+    small: localStyles.smallText,
+    medium: localStyles.mediumText,
+    large: localStyles.largeText,
+  };
+
+  const variantStyle = variantStyleMap[variant];
+  const sizeStyle = sizeStyleMap[size];
+  const textStyle = [localStyles.text, variantStyle, sizeStyle, style];
 
   return (
     <Text style={textStyle} numberOfLines={numberOfLines}>
@@ -34,38 +52,35 @@ const localStyles = StyleSheet.create({
   text: {
     color: "#FFFFFF",
   },
-
-  // Variant styles
   titleText: {
-    textAlign: "center",
-    fontWeight: "600",
+    fontSize: 24,
+    fontWeight: "bold",
   },
   bodyText: {
-    fontWeight: "400",
+    fontSize: 16,
+    fontWeight: "normal",
   },
   captionText: {
-    fontWeight: "300",
-    opacity: 0.8,
+    fontSize: 12,
+    color: "#AAAAAA",
   },
   errorText: {
-    color: "#FF6B5D",
-    textTransform: "uppercase",
+    color: "#FF4D4F",
+    fontWeight: "bold",
   },
   messageText: {
-    color: "#6646EC",
-    textTransform: "uppercase",
+    fontSize: 15,
+    color: "#00B894",
   },
   linkText: {
-    color: "#FFFFFF",
+    color: "#3498DB",
     textDecorationLine: "underline",
   },
-
-  // Size styles
   smallText: {
     fontSize: 12,
   },
   mediumText: {
-    fontSize: 14,
+    fontSize: 16,
   },
   largeText: {
     fontSize: 20,

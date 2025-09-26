@@ -5,14 +5,14 @@ import { useI18n } from "@/shared/hooks/useI18n";
 import { useActivitiesStore, useDialogStore } from "@/shared/stores";
 import type { Activity } from "@/shared/types/models/activity";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { ActionSheetIOS, Alert, Platform, View } from "react-native";
+import React, { useCallback, useEffect, useRef } from "react";
+import {
+  ActionSheetIOS,
+  Alert,
+  Platform,
+  StyleSheet,
+  View,
+} from "react-native";
 
 type Props = {
   _dialogId?: string;
@@ -25,17 +25,6 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
   const updateActivity = useActivitiesStore((s) => s.updateActivity);
   const softDeleteActivity = useActivitiesStore((s) => s.softDeleteActivity);
   const disableActivity = useActivitiesStore((s) => s.disableActivity);
-  const allEnabled = useActivitiesStore((s) => s.activities);
-  const disabled = useActivitiesStore((s) => s.disabledActivities);
-
-  const [replacementId, setReplacementId] = useState<string | null>(null);
-
-  const candidateActivities = useMemo(() => {
-    const enabled = allEnabled || [];
-    const disabledList = disabled || [];
-    const combined = [...enabled, ...disabledList];
-    return combined.filter((a) => a.id && a.id !== activity?.id) as Activity[];
-  }, [allEnabled, disabled, activity?.id]);
 
   useEffect(() => {
     if (!_dialogId) return;
@@ -120,7 +109,7 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
         activityId: activity.id,
       });
     }
-  }, [activity?.id, disableActivity, _dialogId, t]);
+  }, [activity?.id, disableActivity, _dialogId]);
 
   const openDeleteMenu = useCallback(() => {
     // Use native ActionSheet on iOS for contextual choices
@@ -162,9 +151,9 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
   // Reassignment is handled in the separate `reassign-activity` dialog
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={localStyles.container}>
       <ActivityForm
-        ref={formRef as any}
+        ref={formRef as React.RefObject<{ submit: () => void }>}
         _dialogId={_dialogId}
         initialValues={activity}
         onSubmit={handleSubmit}
@@ -174,7 +163,7 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
         submitLabel={t("save")}
       />
       {activity?.id ? (
-        <View style={{ padding: 20 }}>
+        <View style={localStyles.footerPadding}>
           <CdButton
             title={t("delete")}
             onPress={openDeleteMenu}
@@ -191,3 +180,8 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
 };
 
 export default EditActivityDialog;
+
+const localStyles = StyleSheet.create({
+  container: { flex: 1 },
+  footerPadding: { padding: 20 },
+});

@@ -1,8 +1,9 @@
 export interface NotificationPreferences {
   rhythm: "morning-only" | "evening-only" | "both" | "disabled";
   middayTime: string;
-  eveningTimeStart: string;
-  eveningTimeEnd: string;
+  eveningTime: string;
+  eveningTimeStart?: string; // Keep for backward compatibility
+  eveningTimeEnd?: string; // Keep for backward compatibility
   streaksEnabled: boolean;
   lightTouch: boolean;
   soundEnabled?: boolean;
@@ -29,6 +30,7 @@ export interface NotificationEvent {
 }
 
 export type NotificationType =
+  | "morning-motivation"
   | "midday-reflection"
   | "evening-reflection"
   | "streak-reminder"

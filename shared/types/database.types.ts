@@ -48,22 +48,7 @@ export type Database = {
           user_id?: string | null
           weight?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "activities_activity_category_id_fkey"
-            columns: ["activity_category_id"]
-            isOneToOne: false
-            referencedRelation: "activity_categories"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "activities_parent_activity_id_fkey"
-            columns: ["parent_activity_id"]
-            isOneToOne: false
-            referencedRelation: "activities"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       activity_categories: {
         Row: {
@@ -208,22 +193,7 @@ export type Database = {
           state_id?: string | null
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "timeslices_activity_id_fkey"
-            columns: ["activity_id"]
-            isOneToOne: false
-            referencedRelation: "activities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "timeslices_state_id_fkey"
-            columns: ["state_id"]
-            isOneToOne: false
-            referencedRelation: "states"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       weekly_kpi_summary: {
         Row: {

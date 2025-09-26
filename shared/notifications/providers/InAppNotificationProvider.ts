@@ -75,10 +75,10 @@ export class InAppNotificationProvider implements NotificationProvider {
 
       // Show toast notification
       const toastType = this.mapNotificationTypeToToastType(notification.type);
-      const toastMessage = `${notification.title}: ${notification.body}`;
 
       ToastService.show({
-        message: toastMessage,
+        title: notification.title,
+        body: notification.body,
         type: toastType,
         duration: this.options.autoHideDuration || 5000,
       });

@@ -1,16 +1,11 @@
+import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import * as TaskManager from "expo-task-manager";
-import { getNotificationEngineSingleton } from "../NotificationEngineSingleton";
-import { NotificationPreferences } from "../types";
-import {
-  NotificationScheduler,
-  SchedulerConfig,
-} from "./NotificationScheduler";
 
 const NOTIFICATION_TASK_NAME = "CADENCE_NOTIFICATION_TASK";
-const CHECK_INTERVAL_MINUTES = 15;
+const CHECK_INTERVAL_MINUTES = 10; // Check every 10 minutes
 
 interface ScheduledNotification {
   id: string;
@@ -24,7 +19,6 @@ interface ScheduledNotification {
 
 export class BackgroundTaskManager {
   private static instance: BackgroundTaskManager;
-  private scheduler: NotificationScheduler | null = null;
   private isRegistered = false;
   private scheduledNotifications: ScheduledNotification[] = [];
 
@@ -37,11 +31,8 @@ export class BackgroundTaskManager {
     return BackgroundTaskManager.instance;
   }
 
-  async initialize(config: SchedulerConfig): Promise<void> {
+  async initialize(): Promise<void> {
     try {
-      const engine = await getNotificationEngineSingleton();
-      this.scheduler = new NotificationScheduler(engine, config);
-
       await this.registerBackgroundTask();
       await this.scheduleBackgroundTask();
 
@@ -144,6 +135,40 @@ export class BackgroundTaskManager {
     }
   }
 
+  /**
+   * Public wrapper to get a copy of scheduled notifications.
+   * Returns a shallow copy to avoid external mutation of internal array.
+   */
+  async listScheduledNotifications(): Promise<ScheduledNotification[]> {
+    return [...this.scheduledNotifications];
+  }
+
+  /**
+   * Public method to remove a scheduled notification by id.
+   */
+  async removeScheduledNotificationById(id: string): Promise<void> {
+    await this.removeScheduledNotification(id);
+  }
+
+  /**
+   * Trigger a scheduled notification immediately and remove it from storage.
+   */
+  async triggerScheduledNotificationNow(id: string): Promise<void> {
+    try {
+      const notification = this.scheduledNotifications.find((n) => n.id === id);
+      if (!notification) return;
+      await this.sendNotification(notification);
+      await this.removeScheduledNotification(id);
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "BackgroundTaskManager.triggerScheduledNotificationNow",
+        { notificationId: id },
+      );
+      throw error;
+    }
+  }
+
   async scheduleNotification(
     notification: ScheduledNotification,
   ): Promise<void> {
@@ -237,9 +262,13 @@ export class BackgroundTaskManager {
     }
   }
 
-  async updatePreferences(preferences: NotificationPreferences): Promise<void> {
+  async updatePreferences(): Promise<void> {
     try {
-      if (preferences.rhythm === "disabled") {
+      const notificationStore = useNotificationStore.getState();
+      const { preferences } = notificationStore;
+
+      // Check if notifications are disabled
+      if (!preferences.morningReminders && !preferences.eveningReminders) {
         await this.cancelAllNotifications();
         await this.unregisterBackgroundTask();
       } else {
@@ -248,16 +277,17 @@ export class BackgroundTaskManager {
           await this.scheduleBackgroundTask();
         }
 
-        if (this.scheduler) {
-          this.scheduler.updateConfig({ preferences });
-          await this.scheduler.scheduleAllNotifications();
-        }
+        // Scheduler removed - notifications now managed by unified store
       }
 
       GlobalErrorHandler.logDebug(
         "Preferences updated successfully",
         "BackgroundTaskManager.updatePreferences",
-        { rhythm: preferences.rhythm },
+        {
+          morningReminders: preferences.morningReminders,
+          eveningReminders: preferences.eveningReminders,
+          weeklyStreaks: preferences.weeklyStreaks,
+        },
       );
     } catch (error) {
       GlobalErrorHandler.logError(
@@ -274,9 +304,7 @@ export class BackgroundTaskManager {
       this.scheduledNotifications = [];
       await this.persistScheduledNotifications();
 
-      if (this.scheduler) {
-        await this.scheduler.cancelAllNotifications();
-      }
+      // Scheduler removed - notifications now managed by unified store
 
       GlobalErrorHandler.logDebug(
         "All notifications cancelled",

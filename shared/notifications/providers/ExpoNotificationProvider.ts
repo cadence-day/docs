@@ -20,7 +20,8 @@ export class ExpoNotificationProvider implements NotificationProvider {
   private setupNotificationHandler(): void {
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
-        shouldShowAlert: true,
+        // `shouldShowAlert` is deprecated in recent Expo versions.
+        // Use `shouldShowBanner` and `shouldShowList` for equivalent behavior.
         shouldPlaySound: true,
         shouldSetBadge: false,
         shouldShowBanner: true,

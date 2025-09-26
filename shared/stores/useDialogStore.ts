@@ -1,5 +1,4 @@
-import type { StoreApi } from "zustand";
-import { create } from "zustand";
+import { create, StoreApi } from "zustand";
 
 export type DialogId = string;
 export type DialogType = string;
@@ -19,7 +18,7 @@ interface DialogStore {
   currentView: string | null; // Track the current view
   viewSpecificDialogs: Record<string, DialogSpec[]>; // Store view-specific dialogs when view is not active
   openDialog: (
-    spec: Omit<DialogSpec, "id" | "zIndex"> & { id?: DialogId }
+    spec: Omit<DialogSpec, "id" | "zIndex"> & { id?: DialogId },
   ) => DialogId;
   closeAll: () => void;
   // Force close all dialogs, ignoring any preventClose flags.
@@ -40,14 +39,14 @@ const makeId = () => Math.random().toString(36).slice(2, 9);
 const useDialogStore = create<DialogStore>(
   (
     set: StoreApi<DialogStore>["setState"],
-    get: StoreApi<DialogStore>["getState"]
+    get: StoreApi<DialogStore>["getState"],
   ) => ({
     dialogs: {},
     currentView: null,
     viewSpecificDialogs: {},
 
     openDialog: (
-      spec: Omit<DialogSpec, "id" | "zIndex"> & { id?: DialogId }
+      spec: Omit<DialogSpec, "id" | "zIndex"> & { id?: DialogId },
     ) => {
       // Close all other non-persistent dialogs by default to enforce
       // single-open policy while preserving any dialogs that set
@@ -73,10 +72,9 @@ const useDialogStore = create<DialogStore>(
       const id = spec.id ?? makeId();
 
       // Activity legend dialogs should always have a low z-index to stay in the background
-      const zIndex =
-        spec.type === "activity-legend" || spec.type === "activity"
-          ? 1 // Always keep activity legend in the background
-          : Object.keys(get().dialogs).length + 10; // Other dialogs start at higher z-index
+      const zIndex = spec.type === "activity-legend" || spec.type === "activity"
+        ? 1 // Always keep activity legend in the background
+        : Object.keys(get().dialogs).length + 10; // Other dialogs start at higher z-index
 
       const next: DialogSpec = {
         id,
@@ -142,7 +140,7 @@ const useDialogStore = create<DialogStore>(
 
         const max = Math.max(
           0,
-          ...Object.values(state.dialogs).map((d) => d?.zIndex ?? 0)
+          ...Object.values(state.dialogs).map((d) => d?.zIndex ?? 0),
         );
         return {
           dialogs: { ...state.dialogs, [id]: { ...d, zIndex: max + 1 } },
@@ -169,7 +167,7 @@ const useDialogStore = create<DialogStore>(
         // If switching from a different view, store any view-specific dialogs from the previous view
         if (state.currentView && state.currentView !== viewName) {
           const viewSpecificDialogs = Object.values(state.dialogs).filter(
-            (dialog) => dialog.viewSpecific === state.currentView
+            (dialog) => dialog.viewSpecific === state.currentView,
           );
 
           // Store the dialogs for the previous view
@@ -200,7 +198,7 @@ const useDialogStore = create<DialogStore>(
     closeViewSpecificDialogs: (viewName: string) =>
       set((state: DialogStore) => {
         const viewSpecificDialogs = Object.values(state.dialogs).filter(
-          (dialog) => dialog.viewSpecific === viewName
+          (dialog) => dialog.viewSpecific === viewName,
         );
 
         if (viewSpecificDialogs.length === 0) return state;
@@ -247,7 +245,7 @@ const useDialogStore = create<DialogStore>(
           viewSpecificDialogs: updatedViewSpecificDialogs,
         };
       }),
-  })
+  }),
 );
 
 export default useDialogStore;

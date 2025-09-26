@@ -1,6 +1,6 @@
 // useTimelineData.ts
 import { useActivitiesStore, useTimeslicesStore } from "@/shared/stores";
-import { Timeslice } from "@/shared/types/models";
+import { Activity, Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import { useMemo } from "react";
@@ -8,7 +8,7 @@ import { useMemo } from "react";
 // Optional external listeners can be passed in via a small options bag.
 export interface UseTimelineDataOptions {
   // A lightweight activity provider to avoid importing the full activities store
-  getActivities?: () => any[];
+  getActivities?: () => Activity[];
 }
 
 /**
@@ -16,15 +16,20 @@ export interface UseTimelineDataOptions {
  */
 export const useTimelineData = (
   date: Date,
-  options?: UseTimelineDataOptions
+  options?: UseTimelineDataOptions,
 ) => {
-  const user_id = useUser().user?.id ?? null;
+  // Guard access to Clerk's user object. In some environments `useUser().user`
+  // may be a primitive or a shape we don't expect; ensure we only read `id`
+  // when `user` is an object with a string `id`. This prevents unexpected
+  // telemetry errors like "Value is a number, expected an Object".
+  const clerkUser = useUser().user;
+  const user_id = clerkUser ? clerkUser.id : null;
   // Prefer injected activities getter, otherwise fall back to empty array
   // Grab enabled/disabled activities from the activities store so disabled
   // activities' colors/metadata are available to timeline rendering.
   const enabledActivitiesFromStore = useActivitiesStore((s) => s.activities);
   const disabledActivitiesFromStore = useActivitiesStore(
-    (s) => s.disabledActivities
+    (s) => s.disabledActivities,
   );
 
   const activities = useMemo(() => {
@@ -41,7 +46,7 @@ export const useTimelineData = (
       GlobalErrorHandler.logError(
         error as Error,
         "useTimelineData:getActivities",
-        {}
+        {},
       );
       return [];
     }
@@ -55,7 +60,7 @@ export const useTimelineData = (
       GlobalErrorHandler.logWarning(
         "useTimelineData received invalid date",
         "useTimelineData:date",
-        { date }
+        { date },
       );
       return new Date();
     }
@@ -95,7 +100,7 @@ export const useTimelineData = (
   const mergeTimeslices = useMemo(() => {
     return (
       slots: Timeslice[],
-      existingTimeslices: Timeslice[]
+      existingTimeslices: Timeslice[],
     ): Timeslice[] => {
       const merged = slots.map((slot) => {
         const existing = existingTimeslices.find((ts) => {
@@ -108,7 +113,7 @@ export const useTimelineData = (
           // Match if the times are within the same 30-minute slot
           return (
             Math.abs(existingStartUtc.getTime() - slotStartUtc.getTime()) <
-            30 * 60 * 1000
+              30 * 60 * 1000
           );
         });
         return existing || slot;
@@ -144,19 +149,19 @@ export const useTimelineData = (
   // Generate time slot placeholders
   const TimeslicePlaceholders = useMemo(
     () => generateTimeSlots(dateForDisplay),
-    [generateTimeSlots, dateForDisplay]
+    [generateTimeSlots, dateForDisplay],
   );
 
   // Get existing timeslices for today and yesterday
   const ExistingTimeslices = useMemo(
     () => filterTimeslicesByDate(dateForDisplay),
-    [filterTimeslicesByDate, dateForDisplay]
+    [filterTimeslicesByDate, dateForDisplay],
   );
 
   // Merge empty slots with existing timeslices
   const Timeslices = useMemo(
     () => mergeTimeslices(TimeslicePlaceholders, ExistingTimeslices),
-    [mergeTimeslices, TimeslicePlaceholders, ExistingTimeslices]
+    [mergeTimeslices, TimeslicePlaceholders, ExistingTimeslices],
   );
 
   return {

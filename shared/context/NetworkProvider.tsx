@@ -35,7 +35,7 @@ export const NetworkProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!isConnected) {
-      router.replace("/(utils)/no-internet" as any);
+      router.replace("/(utils)/no-internet");
     }
   }, [isConnected, router]);
 

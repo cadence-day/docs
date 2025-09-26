@@ -1,5 +1,6 @@
 import { COLORS } from "@/shared/constants/COLORS";
 import { useI18n } from "@/shared/hooks/useI18n";
+import { formatDateTime } from "@/shared/utils/dateTimeUtils";
 import { Star } from "phosphor-react-native";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -10,19 +11,19 @@ interface ReflectionTimesliceInfoProps {
   timesliceInfo: EnhancedTimesliceInformation | null;
 }
 
-// Mood indicator component
-const MoodIndicator: React.FC<{ mood: number; maxMood?: number }> = ({
-  mood,
-  maxMood = 5,
+// Level indicator component
+const LevelIndicator: React.FC<{ level: number; maxLevel?: number }> = ({
+  level,
+  maxLevel = 5,
 }) => {
   return (
-    <View style={styles.moodContainer}>
-      {Array.from({ length: maxMood }, (_, index) => (
+    <View style={styles.levelContainer}>
+      {Array.from({ length: maxLevel }, (_, index) => (
         <View
           key={index}
           style={[
-            styles.moodCircle,
-            index < mood ? styles.moodCircleFilled : styles.moodCircleEmpty,
+            styles.levelCircle,
+            index < level ? styles.levelCircleFilled : styles.levelCircleEmpty,
           ]}
         />
       ))}
@@ -50,7 +51,7 @@ const ReadOnlyNoteItem: React.FC<{
 
         {note.isPinned && showPinIndicator && (
           <View style={styles.pinIndicator}>
-            <Star size={16} color="#6366F1" />
+            <Star size={16} color={COLORS.primary} />
           </View>
         )}
       </View>
@@ -99,65 +100,43 @@ const ReflectionTimesliceInfo: React.FC<ReflectionTimesliceInfoProps> = ({
 
   const {
     timeslice,
-    activity,
     noteList,
     state,
-    energyLevel,
-    statistics,
-    hoursOfActivityInView = 0,
     hoursOfActivityInDay = 0,
-    activityStats,
   } = timesliceInfo;
-
-  // Format date and time
-  const formatDateTime = () => {
-    if (!timeslice?.start_time) return "";
-    const date = new Date(timeslice.start_time);
-    const dateStr = date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "2-digit",
-    });
-    const timeStr = date.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    return `${dateStr} at ${timeStr}`;
-  };
-
-  // Get mood value (convert from 1-10 to 1-5 scale if needed)
-  const moodValue = state?.energy ? Math.min(Math.ceil(state.energy), 5) : 0;
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         {/* Date and Time */}
-        <Text style={styles.dateTime}>{formatDateTime()}</Text>
+        <Text style={styles.dateTime}>
+          {formatDateTime(timeslice?.start_time)}
+        </Text>
 
         {/* Daily Total */}
         <View style={styles.statsRow}>
-          <Text style={styles.statsLabel}>DAILY TOTAL</Text>
+          <Text style={styles.statsLabel}>{t("daily-total")}</Text>
           <Text style={styles.statsValue}>
-            {hoursOfActivityInDay.toFixed(1)} hours
+            {hoursOfActivityInDay.toFixed(1)}
+            {t("hours")}
           </Text>
         </View>
 
-        {/* Mood Indicators */}
-        <View style={styles.statsRow}>
-          <Text style={styles.statsLabel}>ENERGY</Text>
-          <MoodIndicator mood={moodValue} />
-        </View>
+        {/* Energy Indicators */}
+        {state?.energy !== null && state?.energy !== undefined && (
+          <View style={styles.statsRow}>
+            <Text style={styles.statsLabel}>{t("energyLabel")}</Text>
+            <LevelIndicator level={state?.energy} />
+          </View>
+        )}
 
-        {/* Average Energy for Activity */}
-        {activityStats?.averageEnergy !== null &&
-          activityStats?.averageEnergy !== undefined && (
-            <View style={styles.statsRow}>
-              <Text style={styles.statsLabel}>AVG ENERGY (WEEK)</Text>
-              <MoodIndicator
-                mood={Math.min(Math.ceil(activityStats.averageEnergy), 5)}
-              />
-            </View>
-          )}
+        {/* Mood Indicators */}
+        {state?.mood !== null && state?.mood !== undefined && (
+          <View style={styles.statsRow}>
+            <Text style={styles.statsLabel}>{t("mood")}</Text>
+            <LevelIndicator level={state?.mood} />
+          </View>
+        )}
 
         {/* Note Section */}
         {noteList && noteList.length > 0 && (
@@ -178,22 +157,6 @@ const styles = StyleSheet.create({
   content: {
     padding: 8,
   },
-  activityHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  activityColorBar: {
-    width: 60,
-    height: 24,
-    borderRadius: 4,
-    marginRight: 12,
-  },
-  activityName: {
-    fontSize: 28,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
   dateTime: {
     fontSize: 16,
     color: "#8E8E93",
@@ -211,33 +174,31 @@ const styles = StyleSheet.create({
     color: "#8E8E93",
     fontWeight: "500",
     letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
   statsValue: {
     fontSize: 18,
     color: "#FFFFFF",
     fontWeight: "500",
   },
-  moodContainer: {
+  levelContainer: {
     flexDirection: "row",
     gap: 8,
   },
-  moodCircle: {
+  levelCircle: {
     width: 16,
     height: 16,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#8E8E93",
   },
-  moodCircleFilled: {
+  levelCircleFilled: {
     backgroundColor: COLORS.primary,
     borderColor: COLORS.primary,
   },
-  moodCircleEmpty: {
+  levelCircleEmpty: {
     backgroundColor: "transparent",
     borderColor: "#48484A",
-  },
-  noteSection: {
-    marginTop: 16,
   },
   notesSection: {
     marginTop: 16,
@@ -248,11 +209,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     letterSpacing: 0.5,
     marginBottom: 8,
-  },
-  noteText: {
-    fontSize: 16,
-    color: "#FFFFFF",
-    lineHeight: 24,
   },
   // Note item styles (from SwipeableNoteItem)
   noteContainer: {

@@ -20,7 +20,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { createEmptyNote } from "../utils";
 
 import { ActivityBox } from "@/features/activity/components/ui/ActivityBox";
-import { CdLevelIndicator } from "@/shared/components/CadenceUI";
+import { CdMoodSelector } from "@/shared/components/CadenceUI";
 import { useI18n } from "@/shared/hooks/useI18n";
 
 import {
@@ -32,6 +32,7 @@ import {
 
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
+import { useToast } from "../../../shared/hooks";
 import { SwipeableNoteItem } from "../components";
 import { useNoteHandlers } from "../hooks/useNoteHandlers";
 import { styles } from "../styles";
@@ -43,14 +44,14 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
 }) => {
   const { t } = useI18n();
   const [notes, setNotes] = useState<NoteItem[]>([]);
-  const [deletedNoteIds, setDeletedNoteIds] = useState<string[]>([]);
   const [energy, setEnergy] = useState(0);
+  const [mood, setMood] = useState(0);
   const [activeNoteIndex, setActiveNoteIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [pinnedNotes, setPinnedNotes] = useState<Set<number>>(new Set());
+  const { showError } = useToast();
 
   const textInputRefs = useRef<(TextInput | null)[]>([]);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -65,7 +66,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
   const notesStore = useNotesStore();
   const statesStore = useStatesStore();
   const activitiesStore = useActivitiesStore();
-  const dialogStore = useDialogStore();
+  const { setDialogProps, closeDialog } = useDialogStore();
 
   // Get the activity for this timeslice
   const noteActivity = activitiesStore.activities.find(
@@ -75,22 +76,20 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
   // Handle dialog close
   const handleClose = useCallback(() => {
     if (_dialogId) {
-      dialogStore.closeDialog(_dialogId);
+      closeDialog(_dialogId);
     }
-  }, [_dialogId, dialogStore]);
+  }, [_dialogId, closeDialog]);
 
   // Create handlers using the custom hook
   const noteHandlers = useNoteHandlers({
     notes,
     setNotes,
-    deletedNoteIds,
-    setDeletedNoteIds,
     energy,
+    mood,
     timeslice,
     noteIds,
     activeNoteIndex,
     setActiveNoteIndex,
-    onClose: handleClose,
   });
 
   // Pin/unpin handlers
@@ -122,36 +121,44 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     );
   }, []);
 
-  const loadEnergyState = useCallback(async () => {
+  const loadStateData = useCallback(async () => {
     if (!ts_id) return;
 
     try {
-      // Check if we have a state for this timeslice in local store
-      const existingState = statesStore.states.find(
+      // First check if we have a state for this timeslice in local store
+      let existingState = statesStore.states.find(
         (state) => state.timeslice_id === ts_id
       );
 
-      if (existingState) {
-        // Set energy from existing state (0 is a valid value)
-        setEnergy(existingState.energy || 0);
+      // If not found locally, try to fetch from database
+      if (!existingState) {
+        const fetchedState = await statesStore.getStateByTimeslice(ts_id);
+        if (fetchedState) {
+          existingState = fetchedState;
+        }
       }
-      // If no local state found, energy remains at default value of 0
+
+      if (existingState) {
+        // Set energy and mood from existing state (0 is a valid value)
+        setEnergy(existingState.energy || 0);
+        setMood(existingState.mood || 0);
+      }
+      // If no state found anywhere, energy and mood remain at default value of 0
     } catch (error) {
-      GlobalErrorHandler.logError(error, "loadEnergyState", {
+      GlobalErrorHandler.logError(error, "loadStateData", {
         timesliceId: ts_id,
       });
     }
-  }, [ts_id]); // Remove statesStore.states dependency to prevent infinite re-renders
+  }, [ts_id, statesStore]); // Add statesStore back since we use getStateByTimeslice
 
   const loadNotes = useCallback(async () => {
     if (!noteIds.length) {
-      // No existing notes, add an empty one
-      setNotes([
-        {
-          ...createEmptyNote(),
-          timeslice_id: timeslice.id || null,
-        } as NoteItem,
-      ]);
+      // No existing notes, add an empty one with proper timeslice_id
+      const emptyNote = {
+        ...createEmptyNote(),
+        timeslice_id: timeslice.id || null,
+      };
+      setNotes([emptyNote]);
       return;
     }
 
@@ -169,7 +176,11 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
 
       // Always ensure at least one note for input if we don't have any valid notes
       if (noteItems.length === 0) {
-        noteItems.push(createEmptyNote());
+        const emptyNote = {
+          ...createEmptyNote(),
+          timeslice_id: timeslice.id || null,
+        };
+        noteItems.push(emptyNote);
       }
 
       setNotes(noteItems);
@@ -180,34 +191,38 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       });
       setError("Failed to load notes. Please try again.");
       // Still show empty note for input
-      setNotes([createEmptyNote()]);
+      const emptyNote = {
+        ...createEmptyNote(),
+        timeslice_id: timeslice.id || null,
+      };
+      setNotes([emptyNote]);
     } finally {
       setIsLoading(false);
     }
-  }, [noteIds, ts_id, timeslice.id]); // Removed notesStore - access it directly since it's stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noteIds, ts_id, timeslice.id]); // Remove notesStore dependency to prevent re-renders
 
   // Load existing notes when dialog opens
   useEffect(() => {
     if (ts_id) {
       loadNotes();
-      loadEnergyState();
+      loadStateData();
     }
-  }, [ts_id, loadNotes, loadEnergyState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ts_id]); // Only depend on ts_id to prevent infinite loops
 
   // Handle keyboard visibility
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      (event) => {
+      () => {
         setKeyboardVisible(true);
-        setKeyboardHeight(event.endCoordinates.height);
       }
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
       () => {
         setKeyboardVisible(false);
-        setKeyboardHeight(0);
       }
     );
 
@@ -234,42 +249,122 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     }
   }, [notes.length]);
 
-  const handleEnergyChange = useCallback(
+  //? Deprecated - energy is not currently used - keep it eventually for future use.
+  // const handleEnergyChange = useCallback(
+  //   async (newValue: number) => {
+  //     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  //     const finalValue = newValue === energy ? 0 : newValue;
+  //     setEnergy(finalValue);
+
+  //     // Save energy to states store if we have a valid timeslice
+  //     if (ts_id) {
+  //       try {
+  //         // First check if we have a state for this timeslice in local store
+  //         let existingState = statesStore.states.find(
+  //           (state) => state.timeslice_id === ts_id
+  //         );
+
+  //         // If not found locally, try to fetch from database
+  //         if (!existingState) {
+  //           try {
+  //             const fetchedState = await statesStore.getStateByTimeslice(ts_id);
+  //             if (fetchedState) {
+  //               existingState = fetchedState;
+  //             }
+  //           } catch (fetchError) {
+  //             // If fetch fails, we'll create a new state below
+  //             GlobalErrorHandler.logError(
+  //               fetchError,
+  //               "handleEnergyChange_fetchState",
+  //               {
+  //                 timesliceId: ts_id,
+  //               }
+  //             );
+  //           }
+  //         }
+
+  //         const stateData = existingState
+  //           ? {
+  //               ...existingState,
+  //               energy: finalValue || null, // Convert 0 to null for database
+  //             }
+  //           : {
+  //               energy: finalValue || null, // Convert 0 to null for database
+  //               mood: mood || null, // Preserve current mood value
+  //               timeslice_id: ts_id,
+  //               user_id: null, // Will be replaced by API with authenticated user's ID
+  //             };
+
+  //         await statesStore.upsertState(stateData);
+  //       } catch (error) {
+  //         GlobalErrorHandler.logError(error, "saveEnergyState", {
+  //           timesliceId: ts_id,
+  //           energy: finalValue,
+  //         });
+  //         // Don't show error to user for energy saves - it's not critical
+  //       }
+  //     }
+  //   },
+  //   [energy, mood, ts_id, statesStore]
+  // );
+
+  const handleMoodChange = useCallback(
     async (newValue: number) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      const finalValue = newValue === energy ? 0 : newValue;
-      setEnergy(finalValue);
+      const finalValue = newValue === mood ? 0 : newValue;
+      setMood(finalValue);
 
-      // Save energy to states store if we have a valid timeslice
+      // Save mood to states store if we have a valid timeslice
       if (ts_id) {
         try {
-          const stateData = {
-            energy: finalValue || null, // Convert 0 to null for database
-            mood: null, // Not managing mood in this dialog
-            timeslice_id: ts_id,
-            user_id: null, // Will be replaced by API with authenticated user's ID
-          };
+          // First check if we have a state for this timeslice in local store
+          let existingState = statesStore.states.find(
+            (state) => state.timeslice_id === ts_id
+          );
+
+          // If not found locally, try to fetch from database
+          if (!existingState) {
+            try {
+              const fetchedState = await statesStore.getStateByTimeslice(ts_id);
+              if (fetchedState) {
+                existingState = fetchedState;
+              }
+            } catch (fetchError) {
+              // If fetch fails, we'll create a new state below
+              GlobalErrorHandler.logError(
+                fetchError,
+                "handleMoodChange_fetchState",
+                {
+                  timesliceId: ts_id,
+                }
+              );
+            }
+          }
+
+          const stateData = existingState
+            ? {
+                ...existingState,
+                mood: finalValue || null, // Convert 0 to null for database
+              }
+            : {
+                energy: energy || null, // Preserve current energy value
+                mood: finalValue || null, // Convert 0 to null for database
+                timeslice_id: ts_id,
+                user_id: null, // Will be replaced by API with authenticated user's ID
+              };
 
           await statesStore.upsertState(stateData);
         } catch (error) {
-          GlobalErrorHandler.logError(error, "saveEnergyState", {
+          GlobalErrorHandler.logError(error, "saveMoodState", {
             timesliceId: ts_id,
-            energy: finalValue,
+            mood: finalValue,
           });
-          // Don't show error to user for energy saves - it's not critical
+          // Don't show error to user for mood saves - it's not critical
         }
       }
     },
-    [energy, ts_id, statesStore]
+    [energy, mood, ts_id, statesStore]
   );
-
-  const handleNotePress = useCallback((index: number) => {
-    setActiveNoteIndex(index);
-    // Focus the text input
-    setTimeout(() => {
-      textInputRefs.current[index]?.focus();
-    }, 100);
-  }, []);
 
   const handleSaveNote = async (index: number) => {
     try {
@@ -277,7 +372,8 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Error", "Failed to save note. Please try again.");
+      GlobalErrorHandler.logError(error, "handleSaveNote", { index });
+      showError("Failed to save note. Please try again.");
     }
   };
 
@@ -316,40 +412,20 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           } catch (error) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-            Alert.alert("Error", "Failed to delete note. Please try again.");
+            GlobalErrorHandler.logError(error, "handleDeleteNote", { index });
+            showError("Failed to delete note. Please try again.");
           }
         },
       },
     ]);
   };
 
-  const handleSaveAll = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      await noteHandlers.saveAllNotes();
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      handleClose();
-    } catch (error) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Error", "Failed to save notes. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [noteHandlers.saveAllNotes, handleClose]);
-
-  const hasAnyContent = useMemo(
-    () =>
-      notes.some((note) => (note.message?.trim().length ?? 0) > 0) ||
-      energy > 0,
-    [notes, energy]
-  );
-
   // Set initial dialog header props once when dialog mounts
   useEffect(() => {
     if (!_dialogId) return;
 
     // Set static header props once - no dynamic updates to prevent infinite loops
-    dialogStore.setDialogProps(_dialogId, {
+    setDialogProps(_dialogId, {
       headerProps: {
         title: noteActivity?.name ? `${noteActivity.name} Notes` : "Notes",
         titleButtonComponent: noteActivity ? (
@@ -371,27 +447,36 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       },
       height: 85,
     });
-  }, [_dialogId, noteActivity?.id, noteActivity?.name]); // Only when dialog ID or activity changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_dialogId, noteActivity?.name, noteActivity?.id]); // Only when dialog ID or activity changes
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        <CdLevelIndicator
-          label={t("energyLabel", "Energy")}
+    <GestureHandlerRootView style={styles.container}>
+      <View style={styles.container}>
+        {/* <CdLevelIndicator
+          label={t("energyLabel")}
           value={energy}
           onChange={handleEnergyChange}
           props={{
-            lowLabel: t("energyLow", "Low"),
-            highLabel: t("energyHigh", "High"),
+            lowLabel: t("energyLow"),
+            highLabel: t("energyHigh"),
           }}
+        /> */}
+
+        <CdMoodSelector
+          label="MOOD"
+          value={mood}
+          onChange={handleMoodChange}
+          style={{ marginTop: 16 }}
         />
 
         <ScrollView
-          style={{ flex: 1, marginTop: 20 }}
-          contentContainerStyle={{
-            paddingBottom:
-              keyboardVisible && activeNoteIndex !== null ? 120 : 20, // Extra padding when keyboard is visible
-          }}
+          style={styles.scrollContainer}
+          contentContainerStyle={
+            keyboardVisible && activeNoteIndex !== null
+              ? styles.scrollContentContainerKeyboard
+              : styles.scrollContentContainer
+          }
           scrollEnabled={true}
           scrollIndicatorInsets={{ right: 0, left: 0 }}
           keyboardShouldPersistTaps="handled"
@@ -404,18 +489,21 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
             </View>
           )}
 
-          {isLoading ? (
+          {isLoading && (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#6366F1" />
               <Text style={styles.loadingText}>Loading notes...</Text>
             </View>
-          ) : notes.length === 0 ? (
+          )}
+          {!isLoading && notes.length === 0 && (
             <View style={styles.emptyState}>
               <Text style={styles.emptyStateText}>
                 No notes yet. Add your first note below.
               </Text>
             </View>
-          ) : (
+          )}
+          {!isLoading &&
+            notes.length > 0 &&
             notes.map((note, index) => {
               const canSave = (note.message?.trim().length || 0) > 0;
               const isSaving = note.isSaving || false;
@@ -430,7 +518,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
                     canSave={canSave}
                     isSaving={isSaving}
                     placeholder={
-                      note.isNew ? "Add a new note..." : "Edit your note..."
+                      note.isNew ? t("add-a-new-note") : t("edit-your-note")
                     }
                     onChangeText={(text) => {
                       noteHandlers.updateNote(index, text);
@@ -447,28 +535,28 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
                         return textInputRefs.current[index] || null;
                       },
                       set current(value) {
+                        if (textInputRefs.current.length <= index) {
+                          // Extend array if needed
+                          textInputRefs.current = [
+                            ...textInputRefs.current,
+                            ...Array(
+                              index + 1 - textInputRefs.current.length
+                            ).fill(null),
+                          ];
+                        }
                         textInputRefs.current[index] = value;
                       },
                     }}
                   />
                 </View>
               );
-            })
-          )}
+            })}
 
           <TouchableOpacity
             onPress={noteHandlers.addNote}
-            style={{
-              marginTop: 15,
-              paddingVertical: 10,
-              paddingHorizontal: 8,
-              backgroundColor: "#333",
-              borderRadius: 8,
-            }}
+            style={styles.addNewNoteButton}
           >
-            <Text style={{ color: "#fff", textAlign: "center" }}>
-              {t("add_new_note", "Add Note")}
-            </Text>
+            <Text style={styles.addNewNoteButtonText}>{t("add-new-note")}</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>

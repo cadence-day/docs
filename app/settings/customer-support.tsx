@@ -2,7 +2,6 @@ import { profileStyles } from "@/features/profile/styles";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
-import { useDialogStore } from "@/shared/stores";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
@@ -96,16 +95,7 @@ export default function CustomerSupportSettings() {
   };
 
   const handleOpenOnboarding = () => {
-    useDialogStore.getState().openDialog({
-      type: "onboarding",
-      position: "dock",
-      props: {
-        headerProps: {
-          title: t("onboarding.title"),
-        },
-        height: 85,
-      },
-    });
+    router.push("/onboarding");
   };
 
   return (
@@ -141,7 +131,7 @@ export default function CustomerSupportSettings() {
             <CdTextInputOneLine
               label={t("email-support")}
               value={t("contact-our-support-team")}
-              showValueText={true}
+              showValueText={false}
               isButton={true}
               onPress={handleEmailSupport}
               showChevron={true}
@@ -150,7 +140,7 @@ export default function CustomerSupportSettings() {
             <CdTextInputOneLine
               label="FAQ"
               value={t("frequently-asked-questions")}
-              showValueText={true}
+              showValueText={false}
               isButton={true}
               onPress={handleFAQ}
               showChevron={true}
@@ -159,7 +149,7 @@ export default function CustomerSupportSettings() {
             <CdTextInputOneLine
               label={t("onboarding.view-again")}
               value={t("onboarding.missed-intro")}
-              showValueText={true}
+              showValueText={false}
               isButton={true}
               onPress={handleOpenOnboarding}
               showChevron={true}
@@ -173,7 +163,7 @@ export default function CustomerSupportSettings() {
             <CdTextInputOneLine
               label={t("feature-request")}
               value={t("submit-feature-suggestions")}
-              showValueText={true}
+              showValueText={false}
               isButton={true}
               onPress={handleFeatureRequest}
               showChevron={true}
@@ -182,7 +172,7 @@ export default function CustomerSupportSettings() {
             <CdTextInputOneLine
               label={t("report-bug")}
               value={t("submit-bug-reports")}
-              showValueText={true}
+              showValueText={false}
               isButton={true}
               onPress={handleBugReport}
               showChevron={true}
@@ -217,7 +207,7 @@ export default function CustomerSupportSettings() {
             <CdTextInputOneLine
               label={t("privacy-policy")}
               value={t("view-our-privacy-policy")}
-              showValueText={true}
+              showValueText={false}
               isButton={true}
               onPress={handlePrivacyPolicy}
               showChevron={true}
@@ -226,7 +216,7 @@ export default function CustomerSupportSettings() {
             <CdTextInputOneLine
               label={t("terms-of-service")}
               value={t("view-terms-of-service")}
-              showValueText={true}
+              showValueText={false}
               isButton={true}
               onPress={handleTermsOfService}
               showChevron={true}

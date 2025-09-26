@@ -169,10 +169,7 @@ const FeatureRequestScreen = () => {
             >
               <View style={styles.noteContainerStyle}>
                 <TextInput
-                  style={[
-                    styles.noteInputStyle,
-                    { minHeight: 120, paddingRight: 16 },
-                  ]}
+                  style={[styles.noteInputStyle, styles.descriptionInputStyle]}
                   value={description}
                   onChangeText={setDescription}
                   placeholder={t("detailed-description-of-the-fe")}
@@ -209,10 +206,7 @@ const FeatureRequestScreen = () => {
             onPress={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"
-            style={{
-              borderColor: COLORS.primary,
-              marginHorizontal: 24,
-            }}
+            style={styles.SubmitButtonStyle}
             textStyle={{ color: COLORS.primary }}
           />
         </ScrollView>
@@ -233,13 +227,6 @@ const styles = StyleSheet.create({
   headerBorder: {
     height: 1,
     backgroundColor: COLORS.white,
-  },
-  fixedInfoSection: {
-    backgroundColor: COLORS.light.background,
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.white,
   },
   noteContainerStyle: {
     minHeight: 60,
@@ -266,10 +253,18 @@ const styles = StyleSheet.create({
     minHeight: 60,
     textAlignVertical: "top" as const,
   },
+  descriptionInputStyle: {
+    minHeight: 120,
+    paddingRight: 16,
+  },
   infoTextStyle: {
     fontSize: 14,
     color: "#000000",
     lineHeight: 20,
+  },
+  SubmitButtonStyle: {
+    borderColor: COLORS.primary,
+    marginHorizontal: 24,
   },
   backButton: {
     flexDirection: "row",

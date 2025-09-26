@@ -10,6 +10,9 @@
       "channel": "development",
       "env": {
         "NODE_ENV": "development"
+      },
+      "ios": {
+        "simulator": false
       }
     },
     "preview": {

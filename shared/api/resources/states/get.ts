@@ -1,7 +1,7 @@
-import type { State } from "@/shared/types/models";
 import { supabaseClient } from "@/shared/api/client/supabaseClient";
 import { apiCall } from "@/shared/api/utils/apiHelpers";
 import { handleApiError } from "@/shared/api/utils/errorHandler";
+import type { State } from "@/shared/types/models";
 
 /**
  * Fetches a state by its ID.
@@ -58,6 +58,29 @@ export async function getUserStates(userId: string): Promise<State[]> {
     });
   } catch (error) {
     handleApiError("getUserStates", error);
+  }
+}
+
+/**
+ * Fetches a state by its timeslice ID.
+ * @param timesliceId - The ID of the timeslice whose state to fetch.
+ * @returns A promise that resolves to the state or null if not found.
+ */
+export async function getStateByTimeslice(
+  timesliceId: string,
+): Promise<State | null> {
+  try {
+    return await apiCall(async () => {
+      const { data, error } = await supabaseClient
+        .from("states")
+        .select("*")
+        .eq("timeslice_id", timesliceId)
+        .limit(1)
+        .maybeSingle();
+      return { data, error };
+    });
+  } catch (error) {
+    handleApiError("getStateByTimeslice", error);
   }
 }
 

@@ -1,6 +1,6 @@
 import { styles } from "@/features/activity/styles";
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 type GridViewProps<T> = {
   items: T[];
@@ -56,42 +56,29 @@ export default function GridView<T>({
   return (
     <View {...(accessibilityProps || {})}>
       {/* Background grid */}
-      <View
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          flexDirection: "row",
-          flexWrap: "wrap",
-          zIndex: 0,
-          width: "100%",
-        }}
-      >
+      <View style={localStyles.backgroundGrid}>
         {Array.from({ length: totalCells }).map((_, index) => {
           const row = Math.floor(index / columns);
           const col = index % columns;
 
           const isAddPlaceholder = index === 0 && !!onAdd;
-          const activityStartIndex = onAdd ? 1 : 0;
-          const activityIndex = index - activityStartIndex;
-          const isOccupied =
-            index >= activityStartIndex && activityIndex < items.length;
           const isPlaceholder = dragPlaceholderIndex === index;
 
-          const content = renderBackgroundCell
-            ? renderBackgroundCell({
-                index,
-                isPlaceholder,
-                isAddPlaceholder,
-                row,
-                col,
-              })
-            : isAddPlaceholder && renderAddPlaceholder
-              ? renderAddPlaceholder(onAdd, 80)
-              : null;
+          let content: React.ReactNode = null;
+          if (renderBackgroundCell) {
+            content = renderBackgroundCell({
+              index,
+              isPlaceholder,
+              isAddPlaceholder,
+              row,
+              col,
+            });
+          } else if (isAddPlaceholder && renderAddPlaceholder) {
+            content = renderAddPlaceholder(onAdd, 80);
+          }
 
-          const CellWrapper: any = onCellPress ? TouchableOpacity : View;
+          const CellWrapper: React.ComponentType<Record<string, unknown>> =
+            onCellPress ? TouchableOpacity : View;
 
           return (
             <CellWrapper
@@ -119,17 +106,29 @@ export default function GridView<T>({
       </View>
 
       {/* Items overlay */}
-      <View
-        style={{
-          position: "relative",
-          zIndex: 1,
-          flexDirection: "row",
-          flexWrap: "wrap",
-          width: "100%",
-        }}
-      >
+      <View style={localStyles.itemsOverlay}>
         {items.map((item, index) => renderItem(item, index))}
       </View>
     </View>
   );
 }
+
+const localStyles = StyleSheet.create({
+  backgroundGrid: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    zIndex: 0,
+    width: "100%",
+  },
+  itemsOverlay: {
+    position: "relative",
+    zIndex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    width: "100%",
+  },
+});

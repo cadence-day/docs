@@ -193,6 +193,42 @@ export const styles = StyleSheet.create({
     width: "100%",
     marginTop: 10,
   },
+  // Email verification styles
+  emailBody: {
+    color: "#B9B9B9",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  emailBold: {
+    fontWeight: "600",
+  },
+  verificationInput: {
+    textAlign: "center",
+    fontSize: 18,
+    color: "#FFFFFF",
+  },
+  resendContainer: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  resendTouchableEnabled: {
+    opacity: 1,
+  },
+  resendTouchableDisabled: {
+    opacity: 0.5,
+  },
+  resendText: {
+    color: "#6646EC",
+    fontWeight: "600",
+  },
+  placeholderText: {
+    color: "#B9B9B9",
+    marginBottom: 10,
+  },
+  // Generic spacer
+  spacer20: {
+    height: 20,
+  },
 
   // Checkbox styles
   checkboxRow: {

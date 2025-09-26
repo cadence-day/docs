@@ -27,15 +27,10 @@ const initialProfileData: ProfileFormData = {
 const initialSettings: ProfileSettings = {
   wakeTime: "07:30",
   sleepTime: "23:30",
-  notifications: {
-    morningReminders: true,
-    eveningReminders: false,
-    weeklyStreaks: true,
-  },
   subscriptionPlan: "free",
 };
 
-export const useProfileStore = create<ProfileStore>((set, get) => ({
+export const useProfileStore = create<ProfileStore>((set) => ({
   // Initial state
   profileData: initialProfileData,
   settings: initialSettings,
@@ -53,10 +48,6 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
       settings: {
         ...state.settings,
         ...newSettings,
-        // Handle nested notifications object properly
-        notifications: newSettings.notifications
-          ? { ...state.settings.notifications, ...newSettings.notifications }
-          : state.settings.notifications,
       },
     })),
 

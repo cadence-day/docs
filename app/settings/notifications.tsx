@@ -1,153 +1,120 @@
-import { useProfileStore } from "@/features/profile/stores/useProfileStore";
 import { profileStyles } from "@/features/profile/styles";
+import {
+  formatTimeInput,
+  getTimeValidationError,
+} from "@/features/profile/utils";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
-import { useNotifications } from "@/shared/notifications";
+import { notificationEngine } from "@/shared/notifications/NotificationEngine";
+import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { useToast } from "../../shared/hooks";
 
 export default function NotificationsSettings() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { settings, updateSettings } = useProfileStore();
+  const { showError, showSuccess, showInfo } = useToast();
   const {
     preferences,
+    timing,
     updatePreferences,
+    updateTiming,
     permissionStatus,
     requestPermissions,
-    isInitialized,
-    isLoading,
-  } = useNotifications();
+    scheduleNotifications, // TODO: Why is this unused? Because we need to make sure notifications are scheduled when enabling push notifications
+  } = useNotificationStore();
 
   const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(
-    permissionStatus.granted
+    permissionStatus === "granted"
   );
 
   // Update push notifications state when permission status changes
   useEffect(() => {
-    setPushNotificationsEnabled(permissionStatus.granted);
-  }, [permissionStatus.granted]);
+    setPushNotificationsEnabled(permissionStatus === "granted");
+  }, [permissionStatus]);
 
-  const handleNotificationToggle = (
-    type: "morningReminders" | "eveningReminders" | "weeklyStreaks",
+  const handleNotificationToggle = async (
+    type:
+      | "morningReminders"
+      | "eveningReminders"
+      | "weeklyStreaks"
+      | "middayReflection",
     value: boolean
   ) => {
-    const updatedNotifications = {
-      ...settings.notifications,
+    // Update the preferences in the new store
+    await updatePreferences({
       [type]: value,
-    };
-
-    updateSettings({
-      notifications: updatedNotifications,
     });
 
     // Check if all notification types are disabled
+    const updatedPreferences = {
+      ...preferences,
+      [type]: value,
+    };
+
     const allDisabled =
-      !updatedNotifications.morningReminders &&
-      !updatedNotifications.eveningReminders &&
-      !updatedNotifications.weeklyStreaks;
+      !updatedPreferences.morningReminders &&
+      !updatedPreferences.eveningReminders &&
+      !updatedPreferences.middayReflection &&
+      !updatedPreferences.weeklyStreaks;
 
     // If all notifications are disabled, disable push notifications too
     if (allDisabled && pushNotificationsEnabled) {
       setPushNotificationsEnabled(false);
-      Alert.alert(
-        t("push-notifications-disabled"),
-        t("since-all-notification-types-a")
+      showInfo?.(
+        t("push-notifications-disabled") +
+          "\n" +
+          t("since-all-notification-types-a")
       );
-    }
-
-    // Only update notification rhythm for morning and evening reminders, not weekly streaks
-    if (type === "morningReminders" || type === "eveningReminders") {
-      let newRhythm = preferences.rhythm;
-
-      if (type === "morningReminders") {
-        if (value && !updatedNotifications.eveningReminders) {
-          newRhythm = "morning-only";
-        } else if (value && updatedNotifications.eveningReminders) {
-          newRhythm = "both";
-        } else if (!value && updatedNotifications.eveningReminders) {
-          newRhythm = "evening-only";
-        } else {
-          newRhythm = "disabled";
-        }
-      } else if (type === "eveningReminders") {
-        if (value && !updatedNotifications.morningReminders) {
-          newRhythm = "evening-only";
-        } else if (value && updatedNotifications.morningReminders) {
-          newRhythm = "both";
-        } else if (!value && updatedNotifications.morningReminders) {
-          newRhythm = "morning-only";
-        } else {
-          newRhythm = "disabled";
-        }
-      }
-
-      updatePreferences({
-        rhythm: newRhythm,
-        streaksEnabled: preferences.streaksEnabled,
-      });
-    } else if (type === "weeklyStreaks") {
-      // Only update streaks setting, don't change rhythm
-      updatePreferences({
-        rhythm: preferences.rhythm,
-        streaksEnabled: value,
-      });
     }
   };
 
   const handlePushNotificationsToggle = async () => {
     if (!pushNotificationsEnabled) {
       try {
-        const status = await requestPermissions();
-        if (status.granted) {
+        const granted = await requestPermissions();
+        if (granted) {
           setPushNotificationsEnabled(true);
 
           // Automatically enable all notification types when push notifications are enabled
-          updateSettings({
-            notifications: {
-              ...settings.notifications,
-              morningReminders: true,
-              eveningReminders: true,
-              weeklyStreaks: true,
-            },
-          });
-
-          // Update preferences to enable both morning and evening rhythm
           updatePreferences({
-            rhythm: "both",
-            streaksEnabled: true,
+            morningReminders: true,
+            eveningReminders: true,
+            middayReflection: true,
+            weeklyStreaks: true,
           });
 
-          Alert.alert(t("success"), t("push-notifications-have-been-e"));
+          // Initialize the notification engine and schedule notifications
+          await notificationEngine.initialize();
+          await notificationEngine.scheduleAllNotifications();
+
+          showSuccess?.(t("push-notifications-have-been-e"));
         } else {
-          Alert.alert(
-            t("permission-required"),
-            t("push-notification-permissions")
+          showInfo?.(
+            t("permission-required") + "\n" + t("push-notification-permissions")
           );
         }
       } catch (error) {
-        Alert.alert(t("common.error"), t("failed-to-enable-push-notifica"));
+        showError(error instanceof Error ? error.message : String(error));
       }
     } else {
       setPushNotificationsEnabled(false);
-      Alert.alert(t("disabled"), t("push-notifications-have-been-d"));
-    }
-  };
 
-  const openSystemSettings = () => {
-    Alert.alert(t("system-settings"), t("to-modify-notification-permiss"), [
-      { text: "OK", style: "default" },
-    ]);
+      // Cancel all scheduled notifications
+      await notificationEngine.cancelAllNotifications();
+
+      showInfo?.(t("push-notifications-have-been-d"));
+    }
   };
 
   return (
@@ -204,16 +171,30 @@ export default function NotificationsSettings() {
                 <CdTextInputOneLine
                   label={t("morning-reminders")}
                   value={
-                    settings.notifications.morningReminders
-                      ? t("enabled")
-                      : t("disabled")
+                    preferences.morningReminders ? t("enabled") : t("disabled")
                   }
                   showValueText={true}
                   isButton={true}
                   onPress={() =>
                     handleNotificationToggle(
                       "morningReminders",
-                      !settings.notifications.morningReminders
+                      !preferences.morningReminders
+                    )
+                  }
+                  showChevron={true}
+                />
+
+                <CdTextInputOneLine
+                  label={t("midday-reflection")}
+                  value={
+                    preferences.middayReflection ? t("enabled") : t("disabled")
+                  }
+                  showValueText={true}
+                  isButton={true}
+                  onPress={() =>
+                    handleNotificationToggle(
+                      "middayReflection",
+                      !preferences.middayReflection
                     )
                   }
                   showChevron={true}
@@ -222,16 +203,14 @@ export default function NotificationsSettings() {
                 <CdTextInputOneLine
                   label={t("evening-reminders")}
                   value={
-                    settings.notifications.eveningReminders
-                      ? t("enabled")
-                      : t("disabled")
+                    preferences.eveningReminders ? t("enabled") : t("disabled")
                   }
                   showValueText={true}
                   isButton={true}
                   onPress={() =>
                     handleNotificationToggle(
                       "eveningReminders",
-                      !settings.notifications.eveningReminders
+                      !preferences.eveningReminders
                     )
                   }
                   showChevron={true}
@@ -240,69 +219,95 @@ export default function NotificationsSettings() {
                 <CdTextInputOneLine
                   label={t("weekly-streak-updates")}
                   value={
-                    settings.notifications.weeklyStreaks
-                      ? t("enabled")
-                      : t("disabled")
+                    preferences.weeklyStreaks ? t("enabled") : t("disabled")
                   }
                   showValueText={true}
                   isButton={true}
                   onPress={() =>
                     handleNotificationToggle(
                       "weeklyStreaks",
-                      !settings.notifications.weeklyStreaks
+                      !preferences.weeklyStreaks
                     )
                   }
                   showChevron={true}
                 />
               </View>
 
-              {/* Timing Settings Section - Only show if relevant notification types are enabled */}
-              {(settings.notifications.morningReminders ||
-                settings.notifications.eveningReminders) && (
+              {/* Timing Settings Section - Show if any time-based notifications are enabled */}
+              {(preferences.morningReminders ||
+                preferences.middayReflection ||
+                preferences.eveningReminders) && (
                 <View style={profileStyles.settingsSection}>
                   <Text style={profileStyles.sectionTitle}>
                     {t("notification-schedule")}
                   </Text>
 
-                  {/* Show Midday Reflection time only if morning reminders are enabled */}
-                  {settings.notifications.morningReminders && (
+                  {/* Show Morning time if morning reminders are enabled */}
+                  {preferences.morningReminders && (
+                    <CdTextInputOneLine
+                      label={t("morning-time")}
+                      value={timing.morningTime}
+                      showValueText={true}
+                      onSave={async (newTime) => {
+                        const formatted = formatTimeInput(newTime);
+                        if (formatted) {
+                          await updateTiming({ morningTime: formatted });
+                        } else {
+                          const msg =
+                            getTimeValidationError(newTime, "wake", t) ||
+                            t("invalid-time") +
+                              "\n" +
+                              t("please-enter-time-in-hh-mm-for");
+                          showInfo?.(msg);
+                        }
+                      }}
+                      placeholder="07:00"
+                    />
+                  )}
+
+                  {/* Show Midday time if midday reflection is enabled */}
+                  {preferences.middayReflection && (
                     <CdTextInputOneLine
                       label={t("midday-reflection")}
-                      value={preferences.middayTime}
+                      value={timing.middayTime}
                       showValueText={true}
-                      onSave={(newTime) => {
-                        const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-                        if (timeRegex.test(newTime)) {
-                          updatePreferences({ middayTime: newTime });
+                      onSave={async (newTime) => {
+                        const formatted = formatTimeInput(newTime);
+                        if (formatted) {
+                          await updateTiming({ middayTime: formatted });
                         } else {
-                          Alert.alert(
-                            t("invalid-time"),
-                            t("please-enter-time-in-hh-mm-for")
-                          );
+                          const msg =
+                            getTimeValidationError(newTime, "wake", t) ||
+                            t("invalid-time") +
+                              "\n" +
+                              t("please-enter-time-in-hh-mm-for");
+                          showInfo?.(msg);
                         }
                       }}
                       placeholder="12:00"
                     />
                   )}
 
-                  {/* Show Evening Reflection time only if evening reminders are enabled */}
-                  {settings.notifications.eveningReminders && (
+                  {/* Show Evening time if evening reminders are enabled */}
+                  {preferences.eveningReminders && (
                     <CdTextInputOneLine
                       label={t("evening-reflection")}
-                      value={preferences.eveningTimeStart}
+                      value={timing.eveningTime}
                       showValueText={true}
-                      onSave={(newTime) => {
-                        const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-                        if (timeRegex.test(newTime)) {
-                          updatePreferences({ eveningTimeStart: newTime });
+                      onSave={async (newTime) => {
+                        const formatted = formatTimeInput(newTime);
+                        if (formatted) {
+                          await updateTiming({ eveningTime: formatted });
                         } else {
-                          Alert.alert(
-                            t("invalid-time"),
-                            t("please-enter-time-in-hh-mm-for-0")
-                          );
+                          const msg =
+                            getTimeValidationError(newTime, "sleep", t) ||
+                            t("invalid-time") +
+                              "\n" +
+                              t("please-enter-time-in-hh-mm-for-0");
+                          showInfo?.(msg);
                         }
                       }}
-                      placeholder="20:00"
+                      placeholder="19:00"
                     />
                   )}
                 </View>

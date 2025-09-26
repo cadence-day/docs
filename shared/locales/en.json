@@ -37,7 +37,9 @@
   },
   "actual-behavior": "Actual Behavior",
   "actual-behavior-optional": "Actual behavior (optional)",
+  "add-a-new-note": "Add a new note...",
   "add-new-activity": "Add New Activity",
+  "add-new-note": "Add a new note.",
   "allow-notifications": "Allow notifications",
   "already-have-an-account": "Already have an account?",
   "already-subscribed-premium": "You are already subscribed to Premium!",
@@ -89,6 +91,7 @@
   "contain-one-uppercase-letter": "- Contain one uppercase letter.",
   "continue": "Continue",
   "current-password-is-required": "Current password is required.",
+  "daily-total": "DAILY TOTAL",
   "dateTime": {
     "preposition": "at"
   },
@@ -103,12 +106,16 @@
   "disabled-activities": "Disabled Activities",
   "dont-have-an-account": "Don't have an account?",
   "edit": "Edit",
+  "edit-your-note": "Edit your note...",
   "email-not-available": "Email Not Available",
   "email-support": "Email Support",
   "enabled": "Enabled",
   "encryption": "Encryption",
   "encryption-key": "Encryption Key",
   "encryption-key-present-exportf": "Encryption key present ({0})",
+  "energyHigh": "High",
+  "energyLabel": "Energy",
+  "energyLow": "Low",
   "enter-6-digit-code": "Enter 6-digit code",
   "enter-64-character-encryption": "Enter 64-character encryption key",
   "enter-activity-name": "Enter activity name",
@@ -155,6 +162,7 @@
     "title": "Daily Cadence",
     "todayTitle": "Today's Cadence"
   },
+  "hours": "hours",
   "i-agree-to-the": "I agree to the",
   "import-encryption-key": "Import Encryption Key",
   "import-key": "Import Key",
@@ -168,13 +176,16 @@
   "laid-back": "Laid Back",
   "legal": "Legal",
   "loading-plans": "Loading subscription plans...",
+  "long-press-to-copy": "Long press to copy!",
   "make-cadence-yours": "Make Cadence Yours",
   "meet-sage": "Meet Sage",
   "midday-reflection": "Midday Reflection",
   "mo": "Mon",
   "monthly": "Monthly",
+  "mood": "Mood",
   "morning-reminders": "Morning Reminders",
   "morning-reminders-are-sent-aft": "Morning reminders are sent after your wake time, and evening reminders before your sleep time. Weekly streak updates celebrate your achievements every Sunday.",
+  "morning-time": "Morning Reflection",
   "name": "Name",
   "new-password": "New Password",
   "new-password-must-be-at-least": "New password must be at least 8 characters long.",
@@ -187,9 +198,71 @@
   "notification-types": "Notification Types",
   "ok": "OK",
   "onboarding": {
+    "activities": {
+      "admin": "Admin",
+      "caregiving": "Caregiving",
+      "chores": "Chores",
+      "commute": "Commute",
+      "cooking": "Cooking",
+      "creative-work": "Creative Work",
+      "doomscrolling": "Doomscrolling",
+      "email": "Email",
+      "exercise": "Exercise",
+      "family-time": "Family Time",
+      "friends": "Friends",
+      "groceries": "Groceries",
+      "health": "Health",
+      "hobby": "Hobby",
+      "home-admin": "Home Admin",
+      "learning": "Learning",
+      "meal": "Meal",
+      "meditation": "Meditation",
+      "meetings": "Meetings",
+      "nature": "Nature",
+      "planning": "Planning",
+      "reading": "Reading",
+      "reflection": "Reflection",
+      "relax": "Relax",
+      "sleep": "Sleep",
+      "tv": "TV",
+      "walking": "Walking",
+      "work": "Work"
+    },
+    "activity-selection": {
+      "content": "Pick activities that are relevant to you:",
+      "footer": "You can edit, add, remove activities later.",
+      "title": "Start by logging your daily activities and patterns will emerge"
+    },
     "missed-intro": "In case you missed the introduction",
+    "note-taking": {
+      "title": "Add a note to each activity to record your thoughts and feelings"
+    },
+    "notifications": {
+      "button": "Allow notifications",
+      "schedule": {
+        "evening": "Evening",
+        "morning": "Morning",
+        "noon": "Noon"
+      },
+      "title": "Turn on notifications for gentle reminders to log your activities throughout the day."
+    },
+    "pattern-view": {
+      "title": "As the daily patterns emerge you will be able to see weekly rhythm"
+    },
+    "privacy": {
+      "button": "Download the encryption key",
+      "content": "Text about encryption key.",
+      "title": "Your time is yours alone. Everything you log is encrypted and stored securely, so only you have access."
+    },
+    "time-logging": {
+      "content": "Select the activity and tap into a time slot.",
+      "title": "Start by logging your daily activities and patterns will emerge"
+    },
     "title": "Welcome to Cadence",
-    "view-again": "View Onboarding Again"
+    "view-again": "View Onboarding Again",
+    "welcome": {
+      "title": "Cadence helps you find the best rhythm of your life"
+    }
   },
   "or-paste-encryption-key": "Or paste encryption key:",
   "parent-activity": "Parent Activity",
@@ -255,6 +328,7 @@
   "please-select-subscription-plan": "Please select a subscription plan",
   "please-visit-https-cadence-day": "Please visit https://cadence.day/faq in your browser",
   "point-your-camera-at-the-qr-co": "Point your camera at the QR code containing the encryption key",
+  "press-to-edit": "Click to edit!",
   "privacy-policy": "Privacy Policy",
   "profile": {
     "actions": {
@@ -363,6 +437,7 @@
   "read-more-about-how-we-protect": "Read more about how we protect your privacy →",
   "reflection": {
     "activityLabel": "Activity",
+    "daily-cadence": "Daily Cadence",
     "details": "Details",
     "noTimesliceInfo": "No additional info for this timeslice.",
     "title": "Reflection",
@@ -376,6 +451,7 @@
   "restore-purchases": "Restore Purchases",
   "sa": "Sat",
   "sage": {
+    "title": "Sage Notifications",
     "unavailableMessage": "Cadence AI is currently not available."
   },
   "sage-your-friendly-ai-guide-wi": "Sage your friendly AI guide will help you notice the patterns in your time.\\n\\nAsk Sage to summarize your day, help you remember your goals, or notice your time patterns. The more you log, the more Sage can help.",
@@ -510,6 +586,7 @@
   "to-modify-notification-permiss": "To modify notification permissions at the system level, please go to your device's Settings app and find this app's notification settings.",
   "today": "Today",
   "tu": "Tue",
+  "tuning-cadence-at-your-rhythm": "Tuning Cadence at your rhythm",
   "turn-on-notifications-for-gent": "Turn on notifications for gentle reminders to log your activities throughout the day. No pressure, just a daily nudge to help you stay aware of your time.\\n\\n✨ Your future self will thank you. Take a moment to log your day.",
   "unable-to-open-email-app-pleas": "Unable to open email app. Please send your support request to: dev@cadence.day",
   "unable-to-open-link": "Unable to Open Link",

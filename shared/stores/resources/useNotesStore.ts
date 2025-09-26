@@ -40,7 +40,7 @@ interface NotesStore extends BaseStoreState {
   reset: () => void;
 }
 
-const useNotesStore = create<NotesStore>((set, get) => ({
+const useNotesStore = create<NotesStore>((set) => ({
   // Initial state
   notes: [],
   isLoading: false,
@@ -56,9 +56,9 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       (newNote, state) =>
         newNote
           ? {
-              notes: [...state.notes, newNote],
-            }
-          : {}
+            notes: [...state.notes, newNote],
+          }
+          : {},
     );
   },
 
@@ -71,9 +71,9 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       (newNotes, state) =>
         newNotes.length > 0
           ? {
-              notes: [...state.notes, ...newNotes],
-            }
-          : {}
+            notes: [...state.notes, ...newNotes],
+          }
+          : {},
     );
   },
 
@@ -86,11 +86,11 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       (updatedNote, state) =>
         updatedNote
           ? {
-              notes: state.notes.map((n) =>
-                n.id === updatedNote.id ? updatedNote : n
-              ),
-            }
-          : {}
+            notes: state.notes.map((n) =>
+              n.id === updatedNote.id ? updatedNote : n
+            ),
+          }
+          : {},
     );
   },
 
@@ -103,12 +103,12 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       (updatedNotes, state) =>
         updatedNotes && updatedNotes.length > 0
           ? {
-              notes: state.notes.map((n) => {
-                const updated = updatedNotes.find((un) => un.id === n.id);
-                return updated || n;
-              }),
-            }
-          : {}
+            notes: state.notes.map((n) => {
+              const updated = updatedNotes.find((un) => un.id === n.id);
+              return updated || n;
+            }),
+          }
+          : {},
     );
   },
 
@@ -119,7 +119,7 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       "delete note",
       (state) => ({
         notes: state.notes.filter((n) => n.id !== id),
-      })
+      }),
     );
   },
 
@@ -130,7 +130,7 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       "delete notes",
       (state) => ({
         notes: state.notes.filter((n) => n.id && !ids.includes(n.id)),
-      })
+      }),
     );
   },
 
@@ -143,9 +143,9 @@ const useNotesStore = create<NotesStore>((set, get) => ({
         return fetchedNotes;
       },
       "refresh notes",
-      (fetchedNotes, state) => ({
-        notes: state.notes.concat(fetchedNotes),
-      })
+      (fetchedNotes) => ({
+        notes: fetchedNotes, // Replace instead of concat to avoid duplicates
+      }),
     );
   },
 
@@ -155,7 +155,7 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       set,
       () => notesApi.getNoteById(id),
       "get note",
-      null
+      null,
     );
   },
 
@@ -164,12 +164,12 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       set,
       async () => {
         const results = await Promise.all(
-          ids.map((id) => notesApi.getNoteById(id))
+          ids.map((id) => notesApi.getNoteById(id)),
         );
         return results.filter(Boolean) as Note[];
       },
       "get notes",
-      []
+      [],
     );
   },
 
@@ -178,7 +178,7 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       set,
       () => notesApi.getUserNotes(userId),
       "get user notes",
-      []
+      [],
     );
   },
 
@@ -187,7 +187,7 @@ const useNotesStore = create<NotesStore>((set, get) => ({
       set,
       () => notesApi.getLastXUserNotes(userId, limit),
       "get last notes",
-      []
+      [],
     );
   },
 

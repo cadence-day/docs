@@ -3,11 +3,10 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
   },
   scrollContainer: {
-    flexGrow: 1,
+    flex: 1,
+    marginTop: 20,
   },
   notesSection: {
     marginBottom: 24,
@@ -18,6 +17,12 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 12,
   },
+  scrollContentContainerKeyboard: {
+    paddingBottom: 120,
+  },
+  scrollContentContainer: {
+    paddingBottom: 20,
+  },
   noteContainer: {
     marginBottom: 16,
     borderRadius: 8,
@@ -25,6 +30,14 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.1)",
   },
+  addNewNoteButton: {
+    marginTop: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    backgroundColor: "#333",
+    borderRadius: 8,
+  },
+  addNewNoteButtonText: { color: "#fff", textAlign: "center" },
   noteInput: {
     color: "#FFFFFF",
     fontSize: 16,

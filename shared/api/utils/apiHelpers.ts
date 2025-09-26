@@ -1,5 +1,5 @@
 // Utility functions for API operations
-import { apiCache, buildCacheKey } from "./cache";
+import { apiCache } from "./cache";
 import { handleApiErrorWithRetry, RetryOptions } from "./errorHandler";
 
 export interface ApiCallOptions extends RetryOptions {
@@ -12,20 +12,25 @@ export interface ApiCallOptions extends RetryOptions {
  * Returns the first error message from a Supabase error or a default message.
  */
 export function getSupabaseErrorMessage(
-  error: any,
-  defaultMsg = "Unknown error"
+  error: unknown,
+  defaultMsg = "Unknown error",
 ): string {
   if (!error) return defaultMsg;
   if (typeof error === "string") return error;
-  if (error.message) return error.message;
-  if (error.error_description) return error.error_description;
+  if (typeof error === "object" && error !== null) {
+    const errObj = error as Record<string, unknown>;
+    if (typeof errObj.message === "string") return errObj.message;
+    if (typeof errObj.error_description === "string") {
+      return errObj.error_description;
+    }
+  }
   return defaultMsg;
 }
 
 /**
  * Safely select a single row from Supabase response.
  */
-export function getSingle<T>(data: T | null, error: any): T | null {
+export function getSingle<T>(data: T | null, error: unknown): T | null {
   if (error) throw new Error(getSupabaseErrorMessage(error));
   return data;
 }
@@ -35,12 +40,12 @@ export function getSingle<T>(data: T | null, error: any): T | null {
  */
 export function convertDatesToLocal<T>(data: T): T {
   if (Array.isArray(data)) {
-    return data.map(convertDatesToLocal) as any;
+    return data.map(convertDatesToLocal) as unknown as T;
   }
   if (data && typeof data === "object") {
-    const result: any = {};
-    for (const key in data) {
-      const value = (data as any)[key];
+    const result: Record<string, unknown> = {};
+    for (const key in data as Record<string, unknown>) {
+      const value = (data as Record<string, unknown>)[key];
       if (typeof value === "string" && isIsoDateString(value)) {
         result[key] = new Date(value);
       } else if (typeof value === "object" && value !== null) {
@@ -49,7 +54,7 @@ export function convertDatesToLocal<T>(data: T): T {
         result[key] = value;
       }
     }
-    return result;
+    return result as unknown as T;
   }
   return data;
 }
@@ -59,12 +64,12 @@ export function convertDatesToLocal<T>(data: T): T {
  */
 export function convertDatesToUTC<T>(data: T): T {
   if (Array.isArray(data)) {
-    return data.map(convertDatesToUTC) as any;
+    return data.map(convertDatesToUTC) as unknown as T;
   }
   if (data && typeof data === "object") {
-    const result: any = {};
-    for (const key in data) {
-      const value = (data as any)[key];
+    const result: Record<string, unknown> = {};
+    for (const key in data as Record<string, unknown>) {
+      const value = (data as Record<string, unknown>)[key];
       if (value instanceof Date) {
         result[key] = value.toISOString();
       } else if (typeof value === "object" && value !== null) {
@@ -73,7 +78,7 @@ export function convertDatesToUTC<T>(data: T): T {
         result[key] = value;
       }
     }
-    return result;
+    return result as unknown as T;
   }
   return data;
 }
@@ -91,8 +96,8 @@ function isIsoDateString(value: string): boolean {
  * Usage: await apiCall(() => supabaseClient.from(...).select(...), { useCache: true })
  */
 export async function apiCall<T>(
-  fn: () => Promise<{ data: T; error: any }>,
-  options: ApiCallOptions = {}
+  fn: () => Promise<{ data: T; error: unknown }>,
+  options: ApiCallOptions = {},
 ): Promise<T> {
   const {
     useCache = false,
@@ -119,7 +124,7 @@ export async function apiCall<T>(
     const result = await handleApiErrorWithRetry(
       "apiCall",
       apiCallFn,
-      retryOptions
+      retryOptions,
     );
 
     // Cache successful result if caching is enabled
