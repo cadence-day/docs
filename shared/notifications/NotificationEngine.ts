@@ -74,7 +74,8 @@ export class NotificationEngine {
     scheduledTime: Date,
     type: NotificationType,
   ): Promise<void> {
-    const quote = useNotificationStore.getState().getNextQuote();
+    const messageType = this.getMessageTypeForNotificationType(type);
+    const quote = useNotificationStore.getState().getNextQuote(messageType);
 
     if (this.isAppInForeground()) {
       // Deliver in-app immediately if time matches
@@ -92,7 +93,8 @@ export class NotificationEngine {
     scheduledTime: Date,
     type: NotificationType,
   ): Promise<void> {
-    const quote = useNotificationStore.getState().getNextQuote();
+    const messageType = this.getMessageTypeForNotificationType(type);
+    const quote = useNotificationStore.getState().getNextQuote(messageType);
 
     // Always schedule the notification, regardless of app state
     await this.scheduleExpoPushNotification(quote, type, scheduledTime);
@@ -175,6 +177,8 @@ export class NotificationEngine {
 
   private getTitleForType(type: NotificationType): string {
     switch (type) {
+      case "morning-motivation":
+        return "Morning Inspiration";
       case "midday-reflection":
         return "Midday Pause";
       case "evening-reflection":
@@ -183,6 +187,36 @@ export class NotificationEngine {
         return "Weekly Progress";
       default:
         return "Cadence Reminder";
+    }
+  }
+
+  private getBodyForType(type: NotificationType): string {
+    switch (type) {
+      case "morning-motivation":
+        return "Start your day with intention";
+      case "midday-reflection":
+        return "Pause and reflect on your morning";
+      case "evening-reflection":
+        return "Tap to reflect on your day";
+      case "weekly-streaks":
+        return "Check your weekly progress";
+      default:
+        return "Tap to open Cadence";
+    }
+  }
+
+  private getMessageTypeForNotificationType(type: NotificationType): "morning" | "midday" | "evening" | "streak" | undefined {
+    switch (type) {
+      case "morning-motivation":
+        return "morning";
+      case "midday-reflection":
+        return "midday";
+      case "evening-reflection":
+        return "evening";
+      case "streak-reminder":
+        return "streak";
+      default:
+        return undefined;
     }
   }
 
@@ -207,12 +241,12 @@ export class NotificationEngine {
 
       const scheduledNotifications = [];
 
-      // Schedule morning reminders (using midday reflection quotes for motivation)
+      // Schedule morning reminders (using dedicated morning motivation messages)
       if (preferences.morningReminders) {
         const morningTime = this.parseTimeString(timing.morningTime);
         await this.scheduleRecurringNotification(
           morningTime,
-          "midday-reflection",
+          "morning-motivation",
         );
         scheduledNotifications.push(`Morning at ${timing.morningTime}`);
       }
@@ -277,7 +311,7 @@ export class NotificationEngine {
     await Notifications.scheduleNotificationAsync({
       content: {
         title: this.getTitleForType(type),
-        body: "Tap to reflect on your day",
+        body: this.getBodyForType(type),
         data: { type },
       },
       trigger,
@@ -326,7 +360,8 @@ export class NotificationEngine {
 
   // Get the next quote for immediate delivery
   async deliverNotificationNow(type: NotificationType): Promise<void> {
-    const quote = useNotificationStore.getState().getNextQuote();
+    const messageType = this.getMessageTypeForNotificationType(type);
+    const quote = useNotificationStore.getState().getNextQuote(messageType);
 
     if (this.isAppInForeground()) {
       this.deliverInApp(quote, type);

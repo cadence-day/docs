@@ -1,4 +1,28 @@
 // Cadence notification messages and quotes for gentle reminders
+
+export const CADENCE_MORNING_MOTIVATIONS = [
+  "A new day opens. What intention will you carry forward?",
+  "The morning light offers a fresh start. How will you receive it?",
+  "Today's canvas awaits. What will you paint on these hours?",
+  "This day holds space for your choices. What will you choose?",
+  "Morning brings possibility. Which door will you walk through?",
+  "The sun rises for your potential. How will you meet it?",
+  "A fresh slate appears before you. What will you write?",
+  "Today offers a gentle invitation. Will you accept?",
+  "This morning holds a question only you can answer.",
+  "The day begins with your first conscious breath. What follows?",
+  "Your attention shapes the hours ahead. Where will it rest?",
+  "This morning is a gift wrapped in time. How will you open it?",
+  "The clock resets, but your story continues. What's next?",
+  "Dawn breaks, carrying whispers of what's possible.",
+  "Your morning ritual becomes the day's foundation. What will you build?",
+  "Time flows forward, and you can choose your current.",
+  "Today's rhythm starts with your first step. Where will it lead?",
+  "The horizon holds your unwritten hours. How will you fill them?",
+  "This morning asks: What version of yourself will you be today?",
+  "A new chapter begins at sunrise. What will it say about you?",
+];
+
 export const CADENCE_MIDDAY_REFLECTIONS = [
   "How has time shaped your morning?",
   "The morning's behind you. Want to catch its trace?",
@@ -52,6 +76,12 @@ export const CADENCE_STREAK_MESSAGES = [
 ];
 
 // Helper functions to get random messages
+export const getRandomMorningMotivation = (): string => {
+  return CADENCE_MORNING_MOTIVATIONS[
+    Math.floor(Math.random() * CADENCE_MORNING_MOTIVATIONS.length)
+  ];
+};
+
 export const getRandomMiddayReflection = (): string => {
   return CADENCE_MIDDAY_REFLECTIONS[
     Math.floor(Math.random() * CADENCE_MIDDAY_REFLECTIONS.length)

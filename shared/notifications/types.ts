@@ -30,6 +30,7 @@ export interface NotificationEvent {
 }
 
 export type NotificationType =
+  | "morning-motivation"
   | "midday-reflection"
   | "evening-reflection"
   | "streak-reminder"

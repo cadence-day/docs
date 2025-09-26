@@ -559,7 +559,7 @@ export default function TestNotifications() {
   const handleTestScheduleAll = async () => {
     try {
       setIsLoading(true);
-      await scheduleNotifications();
+      await notificationEngine.scheduleAllNotifications();
       Alert.alert("Success", "All notification preferences scheduled!");
       await loadScheduledNotifications();
     } catch (error) {

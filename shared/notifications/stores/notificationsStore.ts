@@ -6,11 +6,12 @@ import * as Notifications from "expo-notifications";
 import { AppState, AppStateStatus } from "react-native";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
+import { CADENCE_MORNING_MOTIVATIONS } from "../constants/CADENCE_MESSAGES";
 
 export interface CadenceMessage {
   id: string;
   text: string;
-  type: "midday" | "evening" | "streak";
+  type: "morning" | "midday" | "evening" | "streak";
 }
 
 export type NotificationType =
@@ -66,7 +67,7 @@ export interface NotificationStore extends BaseStoreState {
   // Additional Actions
   requestPermissions: () => Promise<boolean>;
   scheduleNotifications: () => Promise<void>;
-  getNextQuote: () => CadenceMessage;
+  getNextQuote: (messageType?: "morning" | "midday" | "evening" | "streak") => CadenceMessage;
   markQuoteUsed: (quoteId: string) => void;
   resetQuoteBacklog: () => void;
   deliverNotification: (quote: CadenceMessage, type: NotificationType) => void;
@@ -138,6 +139,11 @@ const CADENCE_STREAK_MESSAGES = [
 
 // Create unified cadenceMessages array
 export const cadenceMessages: CadenceMessage[] = [
+  ...CADENCE_MORNING_MOTIVATIONS.map((text, index) => ({
+    id: `morning_${index}`,
+    text,
+    type: "morning" as const,
+  })),
   ...CADENCE_MIDDAY_REFLECTIONS.map((text, index) => ({
     id: `midday_${index}`,
     text,
@@ -171,6 +177,8 @@ const initialTiming: NotificationTiming = {
 // Helper function for notification titles
 const getTitleForType = (type: NotificationType): string => {
   switch (type) {
+    case "morning-motivation":
+      return "Morning Inspiration";
     case "midday-reflection":
       return "Midday Pause";
     case "evening-reflection":
@@ -179,6 +187,22 @@ const getTitleForType = (type: NotificationType): string => {
       return "Weekly Progress";
     default:
       return "Cadence Reminder";
+  }
+};
+
+// Helper function for notification body text
+const getBodyForType = (type: NotificationType): string => {
+  switch (type) {
+    case "morning-motivation":
+      return "Start your day with intention";
+    case "midday-reflection":
+      return "Pause and reflect on your morning";
+    case "evening-reflection":
+      return "Tap to reflect on your day";
+    case "weekly-streaks":
+      return "Check your weekly progress";
+    default:
+      return "Tap to open Cadence";
   }
 };
 
@@ -236,8 +260,7 @@ export const useNotificationStore = create<NotificationStore>()(
             ...newPreferences,
           };
           await notificationStorage.setPreferences(updatedPreferences);
-          // Auto-reschedule notifications when preferences change
-          await get().scheduleNotifications();
+          // Note: Notification scheduling is now handled by NotificationEngine
         },
         "update notification preferences",
         (state) => ({
@@ -300,8 +323,7 @@ export const useNotificationStore = create<NotificationStore>()(
         async () => {
           const updatedTiming = { ...get().timing, ...newTiming };
           await notificationStorage.setTiming(updatedTiming);
-          // Auto-reschedule notifications when timing changes
-          await get().scheduleNotifications();
+          // Note: Notification scheduling is now handled by NotificationEngine
         },
         "update notification timing",
         (state) => ({
@@ -416,6 +438,10 @@ export const useNotificationStore = create<NotificationStore>()(
       }
     },
 
+    /**
+     * @deprecated Use NotificationEngine.scheduleAllNotifications() instead
+     * This method will be removed to avoid duplicate notifications
+     */
     scheduleNotifications: async (): Promise<void> => {
       const { preferences, timing, permissionStatus } = get();
 
@@ -442,10 +468,10 @@ export const useNotificationStore = create<NotificationStore>()(
 
         // Schedule morning reminders
         if (preferences.morningReminders) {
-          // Morning reminders can use midday quotes for motivation
+          // Morning reminders now use dedicated morning motivation messages
           const morningTime = timing.morningTime || "08:00"; // Fallback if undefined
           notifications.push({
-            type: "midday-reflection" as NotificationType,
+            type: "morning-motivation" as NotificationType,
             time: morningTime,
           });
         }
@@ -493,7 +519,7 @@ export const useNotificationStore = create<NotificationStore>()(
           await Notifications.scheduleNotificationAsync({
             content: {
               title: getTitleForType(notification.type),
-              body: "Tap to reflect on your day",
+              body: getBodyForType(notification.type),
               data: { type: notification.type },
             },
             trigger,
@@ -520,9 +546,15 @@ export const useNotificationStore = create<NotificationStore>()(
       }
     },
 
-    getNextQuote: (): CadenceMessage => {
+    getNextQuote: (messageType?: "morning" | "midday" | "evening" | "streak"): CadenceMessage => {
       const { usedQuoteIds, nextQuoteIndex } = get();
-      const availableQuotes = cadenceMessages.filter(
+
+      // Filter by message type if provided, otherwise use all messages
+      const typedMessages = messageType
+        ? cadenceMessages.filter((msg) => msg.type === messageType)
+        : cadenceMessages;
+
+      const availableQuotes = typedMessages.filter(
         (quote) => !usedQuoteIds.includes(quote.id),
       );
 
@@ -541,7 +573,7 @@ export const useNotificationStore = create<NotificationStore>()(
           );
         });
 
-        return cadenceMessages[0];
+        return typedMessages[0] || cadenceMessages[0];
       }
 
       // Return next unused quote
