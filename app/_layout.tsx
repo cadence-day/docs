@@ -1,6 +1,6 @@
 import { revenueCatService } from "@/features/purchases";
 import { SECRETS } from "@/shared/constants/SECRETS";
-import { EncryptionProvider, NetworkProvider } from "@/shared/context";
+import { EncryptionProvider, NetworkProvider, AppUpdateProvider } from "@/shared/context";
 import { ToastProvider } from "@/shared/context/ToastProvider";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { getIsDev } from "@/shared/hooks/useDev";
@@ -143,9 +143,11 @@ const RootLayout = function RootLayout() {
                   publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
                   tokenCache={tokenCache}
                 >
-                  <NotificationProvider>
-                    <Slot />
-                  </NotificationProvider>
+                  <AppUpdateProvider>
+                    <NotificationProvider>
+                      <Slot />
+                    </NotificationProvider>
+                  </AppUpdateProvider>
                 </ClerkProvider>
               </ToastProvider>
             </EncryptionProvider>

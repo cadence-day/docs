@@ -21,6 +21,7 @@ const ErrorBoundary: React.FC<{ children?: React.ReactNode }> = ({
 // Stores
 import { useI18n } from "@/shared/hooks/useI18n";
 import useDialogStore from "@/shared/stores/useDialogStore";
+import { generalStyles } from "../../shared/styles";
 
 export default function Today() {
   const { t } = useI18n();
@@ -63,14 +64,14 @@ export default function Today() {
   };
 
   return (
-    <View style={style.container}>
+    <View style={generalStyles.container}>
       <SignedIn>
         <LinearGradient
           colors={[
             backgroundLinearColors.primary.end,
             backgroundLinearColors.primary.end,
           ]}
-          style={style.container}
+          style={generalStyles.container}
         >
           <ScreenHeader
             title={title}
@@ -119,7 +120,11 @@ export default function Today() {
                         includeTime,
                       }
                     );
-                    return <Text style={style.header}>{displayed}</Text>;
+                    return (
+                      <Text style={generalStyles.clickableText}>
+                        {displayed}
+                      </Text>
+                    );
                   })()}
                 </TouchableOpacity>
                 {/* Back to Today button when a non-today date is selected */}
@@ -130,7 +135,7 @@ export default function Today() {
                   >
                     <View style={style.backToTodayButtonContainer}>
                       <Text style={style.backToTodayButtonText}>{" < "}</Text>
-                      <Text style={style.backToTodayButtonTextRight}>
+                      <Text style={generalStyles.clickableText}>
                         {t("back-to-today")}
                       </Text>
                     </View>
@@ -156,8 +161,8 @@ export default function Today() {
                 onPress={reopenActivityDialog}
                 variant="outline"
                 size="medium"
-                style={style.openActivityDialogButton}
-                textStyle={style.openActivityDialogButtonText}
+                style={generalStyles.outlineDiscreetButton}
+                textStyle={generalStyles.discreetText}
               />
             )}
           </View>
@@ -173,14 +178,6 @@ export default function Today() {
 }
 
 const style = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    fontSize: 14,
-    color: "#444",
-    textDecorationLine: "underline",
-  },
   backToTodayButton: {
     marginLeft: 12,
   },
@@ -190,28 +187,13 @@ const style = StyleSheet.create({
     gap: 4,
   },
   backToTodayButtonText: {
-    textTransform: "uppercase",
-    color: "#444",
-    fontSize: 12,
-    letterSpacing: 0.5,
+    ...generalStyles.clickableText,
+    textDecorationLine: "none",
   },
-  backToTodayButtonTextRight: {
-    textDecorationLine: "underline",
-    textTransform: "uppercase",
-    color: "#444",
-    fontSize: 12,
-    letterSpacing: 0.5,
-  },
+  // TODO: Remove this below an make it conditional.
   emptySpaceBelowTimeline: {
     height: DIALOG_HEIGHT_PLACEHOLDER,
     justifyContent: "center",
     alignItems: "center",
-  },
-  openActivityDialogButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderColor: "rgba(255, 255, 255, 0.3)",
-  },
-  openActivityDialogButtonText: {
-    color: "#333",
   },
 });

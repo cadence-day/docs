@@ -24,6 +24,8 @@ export const COLORS = {
   quinary: "#8FAD8E", // Sage green
   light: {
     text: "#11181C",
+    subtitle: "#444444",
+    disabled: "#cccccc",
     background: "#D9D9D9",
     border: "#ffffff",
     tint: tintColorLight,

@@ -9,6 +9,7 @@ import { useI18n } from "@/shared/hooks/useI18n";
 
 import SageIcon from "@/shared/components/icons/SageIcon";
 import LoadingScreen from "../(utils)/LoadingScreen";
+import { generalStyles } from "../../shared/styles";
 const ReflectionGrid = React.lazy(() =>
   import("@/features/reflection").then((m) => ({ default: m.ReflectionGrid }))
 );
@@ -90,10 +91,10 @@ export default function Reflection() {
         backgroundLinearColors.primary.start,
         backgroundLinearColors.primary.end,
       ]}
-      style={styles.container}
+      style={generalStyles.container}
     >
       <ScreenHeader
-        title={t("reflection.weekly-cadence")}
+        title={t("reflection.weekly-cadence")} // TODO: Make conditional with This Week Cadence or Weekly Cadence.
         OnRightElement={() => (
           <SageIcon
             size={40}
@@ -148,29 +149,23 @@ export default function Reflection() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   gridContainer: {
     flex: 1,
     marginHorizontal: 12,
-    marginBottom: 5,
   },
   dateNavigationContainer: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "flex-start",
   },
   dateRangeText: {
     marginHorizontal: 6,
-    fontSize: 14,
-    color: "#444",
+    ...generalStyles.subtitle,
   },
   dateRangeArrow: {
-    fontSize: 14,
-    color: "#444",
+    ...generalStyles.subtitle,
   },
   dateRangeArrowDisabled: {
+    ...generalStyles.subtitle,
     color: "#ccc",
   },
 });

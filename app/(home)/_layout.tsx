@@ -7,21 +7,22 @@ import useTranslation from "@/shared/hooks/useI18n";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
+import { generalStyles } from "@/shared/styles";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useRouter, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({ focused, label }: { focused: boolean; label: string }) {
   return (
-    <View style={styles.tabLabelContainer}>
+    <View style={generalStyles.container}>
       <Text
-        style={[styles.tabLabelText, focused && styles.tabLabelTextFocused]}
+        style={[generalStyles.smallText, focused && generalStyles.focusedText]}
       >
         {label}
       </Text>
@@ -174,10 +175,7 @@ export default function TabLayout() {
                 <TouchableOpacity
                   onPress={onPress}
                   hitSlop={HIT_SLOP_24}
-                  style={[
-                    styles.container,
-                    { justifyContent: "center", alignItems: "center" },
-                  ]}
+                  style={generalStyles.container}
                 >
                   {children}
                 </TouchableOpacity>
@@ -224,28 +222,3 @@ export default function TabLayout() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  tabLabelContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    minWidth: 90,
-  },
-  tabLabelText: {
-    fontSize: 10,
-    textTransform: "uppercase",
-    letterSpacing: 1.2,
-    color: COLORS.light.text,
-    textAlign: "center",
-    fontWeight: "400",
-    verticalAlign: "middle",
-  },
-  tabLabelTextFocused: {
-    textDecorationLine: "underline",
-    fontWeight: "700",
-  },
-});

@@ -1,7 +1,8 @@
 import { backgroundLinearColors } from "@/shared/constants/COLORS";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { generalStyles } from "../../shared/styles";
 
 const ProfileScreen = React.lazy(
   () => import("@/features/profile/components/ProfileScreen")
@@ -14,22 +15,11 @@ export default function ProfileRoute() {
         backgroundLinearColors.primary.end,
         backgroundLinearColors.primary.end,
       ]}
-      style={style.container}
+      style={generalStyles.container}
     >
-      <SafeAreaView style={style.safeAreaContainer}>
+      <SafeAreaView style={generalStyles.container}>
         <ProfileScreen />
       </SafeAreaView>
     </LinearGradient>
   );
 }
-
-const style = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeAreaContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-});
