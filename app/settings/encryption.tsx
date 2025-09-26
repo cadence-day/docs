@@ -26,6 +26,7 @@ import { COLORS } from "@/shared/constants/COLORS";
 import { useToast } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 
 export default function EncryptionSettings() {
   const { t } = useTranslation();
@@ -165,6 +166,7 @@ export default function EncryptionSettings() {
               <TouchableOpacity
                 onPress={() => setShowScanner(false)}
                 style={styles.backButton}
+                hitSlop={HIT_SLOP_10}
               >
                 <Ionicons
                   name="chevron-back"
@@ -207,6 +209,7 @@ export default function EncryptionSettings() {
             <TouchableOpacity
               onPress={() => router.push("/(home)/profile")}
               style={styles.backButton}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
               <Text style={styles.backText}>{t("back")}</Text>
@@ -321,6 +324,7 @@ export default function EncryptionSettings() {
                   ]}
                   onPress={handlePasteKey}
                   disabled={isLinking || !pasteValue.trim()}
+                  hitSlop={HIT_SLOP_10}
                 >
                   <Text
                     style={[

@@ -5,6 +5,17 @@
   "account-management": "Gestión de cuentas",
   "account-verified-successfully-welcome": "¡Cuenta verificada con éxito! ¡Bienvenido!",
   "active-activities": "Actividades activas",
+  "activities": {
+    "categories": {
+      "creative": "",
+      "health": "",
+      "learning": "",
+      "other": "",
+      "personal": "",
+      "social": "",
+      "work": ""
+    }
+  },
   "activity": {
     "color-picker": {
       "done": "Hecho",
@@ -156,6 +167,7 @@
   "fr": "Vie",
   "frequently-asked-questions": "Preguntas frecuentes",
   "get-help": "Obtener ayuda",
+  "go-back": "",
   "hi-cadence-day-support-team-pl": "Hola equipo de soporte de Cadence.day, describe tu problema o pregunta a continuación: [tu mensaje aquí] --- Versión de la aplicación: {0} ({1}) ID de usuario: {2} Correo electrónico del usuario: {3} dispositivo: {4}",
   "highly-energetic": "Muy enérgico",
   "home": {
@@ -180,6 +192,64 @@
   "make-cadence-yours": "Haz Cadence tuyo",
   "meet-sage": "Conoce a Sage",
   "midday-reflection": "Reflexión del mediodía",
+  "migration": {
+    "actions": {
+      "dry-run": "",
+      "full-run": "",
+      "migrate-activities": "",
+      "migrate-notes": "",
+      "migrate-states": "",
+      "migrate-timeslices": "",
+      "title": ""
+    },
+    "activities": {
+      "category": "",
+      "color": "",
+      "create-new": "",
+      "create-new-activity": "",
+      "enter-name": "",
+      "name": "",
+      "name-required": "",
+      "new": "",
+      "no-mappings": "",
+      "select-category": "",
+      "select-mapping": "",
+      "title": ""
+    },
+    "auth": {
+      "connect": "",
+      "email": "",
+      "email-placeholder": "",
+      "failed": "",
+      "fields-required": "",
+      "password": "",
+      "password-placeholder": "",
+      "subtitle": ""
+    },
+    "encryption": {
+      "checking": "",
+      "key-found": "",
+      "unable-to-decrypt": ""
+    },
+    "errors": {
+      "title": ""
+    },
+    "full-run": {
+      "confirm": "",
+      "title": ""
+    },
+    "logs": {
+      "title": ""
+    },
+    "progress": {
+      "activities": "",
+      "notes": "",
+      "states": "",
+      "timeslices": "",
+      "title": ""
+    },
+    "title": ""
+  },
   "mo": "Lun",
   "monthly": "Mensual",
   "mood": "Ánimo",
@@ -265,6 +335,7 @@
     }
   },
   "or-paste-encryption-key": "O pega la clave de cifrado:",
+  "page-not-found": "",
   "parent-activity": "Actividad principal",
   "password-changed": "Contraseña cambiada",
   "password-changed-successfully": "¡La contraseña se cambió con éxito!",
@@ -348,6 +419,7 @@
     "app-version": "Versión de la aplicación",
     "current-plan": "Plan actual",
     "customer-support": "Soporte al cliente",
+    "data": "",
     "deep-cadence": "Cadencia profunda",
     "deep-cadence-description": "Descripción de la cadencia profunda",
     "delete-account": "Eliminar cuenta",
@@ -388,6 +460,7 @@
       "take-photo": "Tomar foto"
     },
     "logout": "Cerrar sesión",
+    "migrate-data": "",
     "name": "Nombre",
     "notifications": "Notificaciones",
     "phone": "Número de teléfono",
@@ -546,6 +619,7 @@
   },
   "sign-up-now": "Registrarse ahora",
   "since-all-notification-types-a": "Dado que todos los tipos de notificación están deshabilitados, las notificaciones push se han apagado automáticamente.",
+  "sorry-the-page-you-are-looking": "",
   "start-free-trial": "Iniciar prueba gratis",
   "stay-in-sync-nwith-your-time": "Manténgase sincronizado con su tiempo",
   "steps-to-reproduce": "Pasos para reproducir",

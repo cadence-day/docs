@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 
 // Try dynamic import to avoid bundling issues
 const MigrationScreen = React.lazy(() =>
@@ -34,6 +35,7 @@ export default function MigrationRoute() {
             <TouchableOpacity
               onPress={() => router.push("/profile")}
               style={styles.backButton}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
               <Text style={styles.backText}>{t("settings.back")}</Text>

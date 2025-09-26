@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 
 type ExpoConfig = {
   ios?: { buildNumber?: string };
@@ -112,6 +113,7 @@ export default function CustomerSupportSettings() {
             <TouchableOpacity
               onPress={() => router.push("/(home)/profile")}
               style={styles.backButton}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
               <Text style={styles.backText}>{t("back")}</Text>

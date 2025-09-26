@@ -19,6 +19,7 @@ import { profileStyles } from "@/features/profile/styles";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
 import { CdButton } from "../../shared/components";
+import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 const FeatureRequestScreen = () => {
@@ -122,6 +123,7 @@ const FeatureRequestScreen = () => {
             <TouchableOpacity
               onPress={() => router.push("/settings/customer-support")}
               style={styles.backButton}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
               <Text style={styles.backText}>{t("settings.back")}</Text>

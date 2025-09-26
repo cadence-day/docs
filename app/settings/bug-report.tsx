@@ -20,6 +20,7 @@ import { CdButton } from "@/shared/components";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 
 export default function BugReportScreen() {
   const { t } = useTranslation();
@@ -182,6 +183,7 @@ export default function BugReportScreen() {
             <TouchableOpacity
               onPress={() => router.push("/settings/customer-support")}
               style={styles.backButton}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
               <Text style={styles.backText}>{t("back")}</Text>

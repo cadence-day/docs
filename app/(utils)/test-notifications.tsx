@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import HIT_SLOP_10 from "../../shared/constants/hitSlop";
 
 interface ScheduledNotificationData {
   identifier: string;
@@ -737,6 +738,7 @@ export default function TestNotifications() {
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={() => handleCancelScheduledNotification(item.identifier)}
+              hitSlop={HIT_SLOP_10}
             >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
@@ -773,12 +775,14 @@ export default function TestNotifications() {
               <TouchableOpacity
                 style={[styles.actionButton, styles.triggerButton]}
                 onPress={() => handleTriggerNotificationNow(item.id)}
+                hitSlop={HIT_SLOP_10}
               >
                 <Text style={styles.actionButtonText}>Trigger Now</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.actionButton, styles.cancelButton]}
                 onPress={() => handleCancelScheduledNotification(item.id, true)}
+                hitSlop={HIT_SLOP_10}
               >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
@@ -802,6 +806,7 @@ export default function TestNotifications() {
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => router.push("/profile")}
+              hitSlop={HIT_SLOP_10}
             >
               <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
@@ -811,6 +816,7 @@ export default function TestNotifications() {
               style={[styles.backButton, styles.refreshButton]}
               onPress={handleRefreshData}
               disabled={isLoading}
+              hitSlop={HIT_SLOP_10}
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color="#007AFF" />
@@ -883,6 +889,7 @@ export default function TestNotifications() {
                       styles.typeButtonSelected,
                   ]}
                   onPress={() => setSelectedNotificationType(type)}
+                  hitSlop={HIT_SLOP_10}
                 >
                   <Text
                     style={[
@@ -905,6 +912,7 @@ export default function TestNotifications() {
             style={styles.button}
             onPress={handleRequestPermissions}
             disabled={isLoading || permissionStatus === "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -927,6 +935,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonPrimary]}
             onPress={handleSendImmediate}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -941,6 +950,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonPrimary]}
             onPress={handleScheduleDelayed}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -955,6 +965,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonSecondary]}
             onPress={handleScheduleMultipleWithDelay}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -969,6 +980,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonTertiary]}
             onPress={handleTestBackgroundManager}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -981,6 +993,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonInfo]}
             onPress={handleTestVariousDelays}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -995,6 +1008,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonWarning]}
             onPress={handleTestImmediateVsDelayed}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1011,6 +1025,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonPrimary]}
             onPress={handleSchedule10Seconds}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1027,6 +1042,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonTertiary]}
             onPress={handleSendInAppNotification}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1039,6 +1055,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonInfo]}
             onPress={handleSendDelayedInAppNotification}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1053,6 +1070,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonTertiary]}
             onPress={handleSendMultipleInApp}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1065,6 +1083,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonQuaternary]}
             onPress={handleTestScheduleAll}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Schedule All Notifications</Text>
           </TouchableOpacity>
@@ -1079,6 +1098,7 @@ export default function TestNotifications() {
             disabled={
               isLoading || !isInitialized || permissionStatus !== "granted"
             }
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1093,6 +1113,7 @@ export default function TestNotifications() {
             disabled={
               isLoading || !isInitialized || permissionStatus !== "granted"
             }
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1111,6 +1132,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonSuccess]}
             onPress={handleTestToastSuccess}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Test Success Toast</Text>
           </TouchableOpacity>
@@ -1119,6 +1141,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonDanger]}
             onPress={handleTestToastError}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Test Error Toast</Text>
           </TouchableOpacity>
@@ -1127,6 +1150,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonWarning]}
             onPress={handleTestToastWarning}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Test Warning Toast</Text>
           </TouchableOpacity>
@@ -1135,6 +1159,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonInfo]}
             onPress={handleTestToastInfo}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Test Info Toast</Text>
           </TouchableOpacity>
@@ -1143,6 +1168,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonSecondary]}
             onPress={handleTestToastNavigation}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Toast with Navigation</Text>
           </TouchableOpacity>
@@ -1151,6 +1177,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonTertiary]}
             onPress={handleTestToastCustomAction}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Toast with Custom Action</Text>
           </TouchableOpacity>
@@ -1176,6 +1203,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonInfo]}
             onPress={handleRefreshData}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1187,6 +1215,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonWarning]}
             onPress={handleRepairTiming}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1198,6 +1227,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonWarning]}
             onPress={handleResetQuoteBacklog}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Reset Quote Backlog</Text>
           </TouchableOpacity>
@@ -1205,6 +1235,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonDanger]}
             onPress={handleCancelAll}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />

@@ -132,6 +132,7 @@ export default function Today() {
                   <TouchableOpacity
                     onPress={() => setSelectedDate(new Date())}
                     style={style.backToTodayButton}
+                    hitSlop={HIT_SLOP_10}
                   >
                     <View style={style.backToTodayButtonContainer}>
                       <Text style={style.backToTodayButtonText}>{" < "}</Text>

@@ -5,6 +5,17 @@
   "account-management": "Account Management",
   "account-verified-successfully-welcome": "Account verified successfully! Welcome!",
   "active-activities": "Active Activities",
+  "activities": {
+    "categories": {
+      "creative": "Creative",
+      "health": "Health",
+      "learning": "Learning",
+      "other": "Other",
+      "personal": "Personal",
+      "social": "Social",
+      "work": "Work"
+    }
+  },
   "activity": {
     "color-picker": {
       "done": "Done",
@@ -156,6 +167,7 @@
   "fr": "Fri",
   "frequently-asked-questions": "Frequently asked questions",
   "get-help": "Get Help",
+  "go-back": "Go back",
   "hi-cadence-day-support-team-pl": "Hi Cadence.day Support Team, Please describe your issue or question below: [Your message here] --- App Version: {0} ({1}) User ID: {2} User Email: {3} Device: {4}",
   "highly-energetic": "Highly Energetic",
   "home": {
@@ -180,6 +192,64 @@
   "make-cadence-yours": "Make Cadence Yours",
   "meet-sage": "Meet Sage",
   "midday-reflection": "Midday Reflection",
+  "migration": {
+    "actions": {
+      "dry-run": "Dry Run",
+      "full-run": "Full Migration",
+      "migrate-activities": "Migrate Activities",
+      "migrate-notes": "Migrate Notes",
+      "migrate-states": "Migrate States",
+      "migrate-timeslices": "Migrate Timeslices",
+      "title": "Migration Actions"
+    },
+    "activities": {
+      "category": "Category",
+      "color": "Color",
+      "create-new": "Create new activity",
+      "create-new-activity": "Create New Activity",
+      "enter-name": "Enter activity name",
+      "name": "Name",
+      "name-required": "Activity name is required",
+      "new": "New",
+      "no-mappings": "Please configure activity mappings first",
+      "select-category": "Select category...",
+      "select-mapping": "Select mapping...",
+      "title": "Activity Mapping"
+    },
+    "auth": {
+      "connect": "Connect & Migrate",
+      "email": "Email",
+      "email-placeholder": "Enter your email",
+      "failed": "Authentication failed. Please check your credentials.",
+      "fields-required": "Email and password are required",
+      "password": "Password",
+      "password-placeholder": "Enter your password",
+      "subtitle": "Sign in to your legacy account to migrate your data to the new system"
+    },
+    "encryption": {
+      "checking": "Checking encryption key...",
+      "key-found": "Encryption key found ✓",
+      "unable-to-decrypt": "Unable to decrypt encrypted notes"
+    },
+    "errors": {
+      "title": "Errors"
+    },
+    "full-run": {
+      "confirm": "This will migrate all your data from the source database to the target database. This action cannot be undone. Are you sure?",
+      "title": "Confirm Full Migration"
+    },
+    "logs": {
+      "title": "Logs"
+    },
+    "progress": {
+      "activities": "Activities",
+      "notes": "Notes",
+      "states": "States",
+      "timeslices": "Timeslices",
+      "title": "Progress"
+    },
+    "title": "Data Migration"
+  },
   "mo": "Mon",
   "monthly": "Monthly",
   "mood": "Mood",
@@ -265,6 +335,7 @@
     }
   },
   "or-paste-encryption-key": "Or paste encryption key:",
+  "page-not-found": "Page Not Found",
   "parent-activity": "Parent Activity",
   "password-changed": "Password Changed",
   "password-changed-successfully": "Password changed successfully!",
@@ -548,6 +619,7 @@
   },
   "sign-up-now": "Sign Up Now",
   "since-all-notification-types-a": "Since all notification types are disabled, push notifications have been turned off automatically.",
+  "sorry-the-page-you-are-looking": "Sorry, the page you are looking for does not exist.",
   "start-free-trial": "Start Free Trial",
   "stay-in-sync-nwith-your-time": "Stay in sync\\nwith your time",
   "steps-to-reproduce": "Steps to Reproduce",
@@ -616,74 +688,5 @@
   "your-email-address-for-follow": "• Your email address (for follow-up)",
   "your-encryption-key-protects-s": "Your encryption key protects sensitive data. Keep it secure and don't share it with others. You'll need this key to access your encrypted data on new devices.",
   "your-password-has-been-changed": "Your password has been changed successfully. For security reasons, you'll be signed out now.",
-  "your-time-is-yours-alone-every": "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection.",
-  "migration": {
-    "title": "Data Migration",
-    "auth": {
-      "subtitle": "Sign in to your legacy account to migrate your data to the new system",
-      "email": "Email",
-      "password": "Password",
-      "email-placeholder": "Enter your email",
-      "password-placeholder": "Enter your password",
-      "connect": "Connect & Migrate",
-      "fields-required": "Email and password are required",
-      "failed": "Authentication failed. Please check your credentials."
-    },
-    "encryption": {
-      "checking": "Checking encryption key...",
-      "key-found": "Encryption key found ✓",
-      "unable-to-decrypt": "Unable to decrypt encrypted notes"
-    },
-    "activities": {
-      "title": "Activity Mapping",
-      "name-required": "Activity name is required",
-      "select-mapping": "Select mapping...",
-      "new": "New",
-      "create-new": "Create new activity",
-      "create-new-activity": "Create New Activity",
-      "name": "Name",
-      "color": "Color",
-      "category": "Category",
-      "enter-name": "Enter activity name",
-      "select-category": "Select category...",
-      "no-mappings": "Please configure activity mappings first"
-    },
-    "actions": {
-      "title": "Migration Actions",
-      "dry-run": "Dry Run",
-      "migrate-activities": "Migrate Activities",
-      "migrate-timeslices": "Migrate Timeslices",
-      "migrate-notes": "Migrate Notes",
-      "migrate-states": "Migrate States",
-      "full-run": "Full Migration"
-    },
-    "progress": {
-      "title": "Progress",
-      "activities": "Activities",
-      "timeslices": "Timeslices",
-      "notes": "Notes",
-      "states": "States"
-    },
-    "errors": {
-      "title": "Errors"
-    },
-    "logs": {
-      "title": "Logs"
-    },
-    "full-run": {
-      "title": "Confirm Full Migration",
-      "confirm": "This will migrate all your data from the source database to the target database. This action cannot be undone. Are you sure?"
-    }
-  },
-  "activities": {
-    "categories": {
-      "work": "Work",
-      "personal": "Personal",
-      "health": "Health",
-      "learning": "Learning",
-      "social": "Social",
-      "creative": "Creative",
-      "other": "Other"
-    }
-  }
+  "your-time-is-yours-alone-every": "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection."
 }

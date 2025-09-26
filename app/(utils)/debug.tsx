@@ -18,6 +18,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import HIT_SLOP_10 from "../../shared/constants/hitSlop";
+import { debugStyles } from "../../shared/styles/debug";
 
 const StoreStateDisplay = ({
   storeName,
@@ -33,6 +35,7 @@ const StoreStateDisplay = ({
       <TouchableOpacity
         onPress={() => setIsOpen(!isOpen)}
         style={styles.storeHeader}
+        hitSlop={HIT_SLOP_10}
       >
         <Text style={styles.storeName}>{storeName}</Text>
         <Text>{isOpen ? "▼" : "▶"}</Text>
@@ -57,7 +60,7 @@ const DebugScreen = () => {
 
   if (!isDev) {
     return (
-      <View style={styles.container}>
+      <View style={debugStyles.container}>
         <Stack.Screen
           options={{
             title: "Debug",
@@ -71,7 +74,7 @@ const DebugScreen = () => {
           <TouchableOpacity
             onPress={() => router.push("/profile")}
             style={styles.backButton}
-            testID="debug-back-button"
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.backButtonText}>{"< Back"}</Text>
           </TouchableOpacity>
@@ -147,7 +150,7 @@ const DebugScreen = () => {
     }
   };
   return (
-    <View style={styles.container}>
+    <View style={debugStyles.container}>
       <Stack.Screen
         options={{
           headerShown: true,
@@ -159,6 +162,7 @@ const DebugScreen = () => {
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => router.push("/profile")}
+              hitSlop={HIT_SLOP_10}
             >
               <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
@@ -170,6 +174,7 @@ const DebugScreen = () => {
         <TouchableOpacity
           onPress={handleEncryptionKeyInfo}
           style={styles.button}
+          hitSlop={HIT_SLOP_10}
         >
           <Text style={styles.buttonText}>Show Encryption Key Info</Text>
         </TouchableOpacity>
@@ -177,6 +182,7 @@ const DebugScreen = () => {
         <TouchableOpacity
           onPress={handleRemoveEncryptionKey}
           style={[styles.button, styles.dangerButton]}
+          hitSlop={HIT_SLOP_10}
         >
           <Text style={[styles.buttonText, styles.dangerButtonText]}>
             Remove Encryption Key
@@ -207,11 +213,6 @@ const DebugScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
-  },
   button: {
     backgroundColor: "#007BFF",
     padding: 10,
