@@ -8,7 +8,6 @@ import ReassignActivityDialog from "@/features/activity/dialogs/ReassignActivity
 import CalendarDialog from "@/features/calendar/dialogs/CalendarDialog";
 import EncryptionLinkDialog from "@/features/encryption/dialogs/EncryptionLinkDialog";
 import { NoteDialog } from "@/features/notes/dialogs/NoteDialog";
-import OnboardingDialog from "@/features/onboarding/components/Onboarding";
 import { ReflectionTimesliceInfoDialog } from "@/features/reflection/dialogs";
 
 export const DialogRegistry: Record<string, React.ComponentType<any>> = {
@@ -28,8 +27,6 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   "encryption-link": EncryptionLinkDialog,
   // Reflection dialogs
   "reflection-timeslice-info": ReflectionTimesliceInfoDialog,
-  // Onboarding
-  onboarding: OnboardingDialog,
 };
 
 export default DialogRegistry;

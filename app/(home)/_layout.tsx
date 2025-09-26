@@ -1,7 +1,7 @@
 import { checkAndPromptEncryptionLinking } from "@/features/encryption/utils/detectNewDevice";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
-import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
+import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
 import useTranslation from "@/shared/hooks/useI18n";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
@@ -10,7 +10,7 @@ import useDialogStore from "@/shared/stores/useDialogStore";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-import { Tabs, useSegments } from "expo-router";
+import { Tabs, useRouter, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -36,6 +36,7 @@ interface TabBarIconProps {
 export default function TabLayout() {
   const { t } = useTranslation();
   const segments = useSegments();
+  const router = useRouter();
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
@@ -123,23 +124,8 @@ export default function TabLayout() {
           .getState()
           .getAllTimeslices();
         if (!timeslices || timeslices.length === 0) {
-          // Open onboarding dialog with requested props
-          useDialogStore.getState().openDialog({
-            type: "onboarding",
-            props: {
-              height: 85,
-              enableDragging: false,
-              headerProps: {
-                title: t("welcome-to-cadence"),
-                rightActionElement: t("common.close"),
-                onRightAction: () => {
-                  useDialogStore.getState().closeAll();
-                },
-              },
-            },
-            position: "dock",
-            viewSpecific: "profile",
-          });
+          // Navigate to full-screen onboarding instead of opening dialog
+          router.replace("/onboarding");
         }
       } catch (err) {
         // Ignore errors here - non-fatal
@@ -169,8 +155,10 @@ export default function TabLayout() {
               backgroundColor: COLORS.light.background,
               borderTopWidth: 1,
               borderTopColor: COLORS.light.border,
-              height: NAV_BAR_SIZE,
+              height: useNavBarSize(),
               ...getShadowStyle(ShadowLevel.Low),
+              justifyContent: "center", // Center content vertically
+              alignItems: "center", // Center content horizontally
             },
             tabBarItemStyle: {
               flex: 1,
@@ -178,17 +166,18 @@ export default function TabLayout() {
               alignItems: "center",
               alignSelf: "stretch",
               alignContent: "center",
-              marginTop: 12,
             },
             // Ensure each tab's touch target is larger via a custom tabBarButton
             tabBarButton: (props: BottomTabBarButtonProps) => {
-              // If the underlying component is provided we wrap it in a TouchableOpacity
               const { children, onPress } = props;
               return (
                 <TouchableOpacity
                   onPress={onPress}
                   hitSlop={HIT_SLOP_24}
-                  style={styles.container}
+                  style={[
+                    styles.container,
+                    { justifyContent: "center", alignItems: "center" },
+                  ]}
                 >
                   {children}
                 </TouchableOpacity>
@@ -244,8 +233,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    minHeight: NAV_BAR_SIZE,
-    minWidth: 80,
+    minWidth: 90,
   },
   tabLabelText: {
     fontSize: 10,

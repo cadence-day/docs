@@ -96,7 +96,7 @@ export default function NotificationsSettings() {
 
           // Initialize the notification engine and schedule notifications
           await notificationEngine.initialize();
-          await scheduleNotifications();
+          await notificationEngine.scheduleAllNotifications();
 
           showSuccess?.(t("push-notifications-have-been-e"));
         } else {

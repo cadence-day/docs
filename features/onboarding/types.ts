@@ -1,26 +1,38 @@
 export interface OnboardingPage {
-  title: string;
-  content: string;
-  icon?: React.ReactNode;
-  iconType?: "onboarding" | "sage" | null;
+  id: string;
+  type: string;
+  title?: string;
+  content?: string;
+  footer?: string;
   actionButton?: {
     text: string;
     onPress: () => void;
   };
-  linkText?: {
-    text: string;
-    onPress: () => void;
-  };
-  footer?: string;
 }
 
-export interface OnboardingDialogHandle {
-  confirm: () => void;
+export interface OnboardingScreenProps {
+  pageData: OnboardingPage;
+  onNext?: () => void;
+  onPrevious?: () => void;
+  onButtonPress?: () => void;
 }
 
-export interface OnboardingDialogProps {
-  confirm?: () => void;
-  headerProps?: Record<string, unknown>;
-  _dialogId?: string;
+export interface TimeSlot {
+  time: string;
+  activity?: string;
+  color?: string;
+  selected?: boolean;
 }
 
+export interface NotificationTime {
+  label: string;
+  time: string;
+  enabled: boolean;
+}
+
+export interface ActivityTag {
+  id: string;
+  label: string;
+  selected: boolean;
+  color?: string;
+}

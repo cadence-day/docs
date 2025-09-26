@@ -198,9 +198,71 @@
   "notification-types": "Notification Types",
   "ok": "OK",
   "onboarding": {
+    "activities": {
+      "admin": "Admin",
+      "caregiving": "Caregiving",
+      "chores": "Chores",
+      "commute": "Commute",
+      "cooking": "Cooking",
+      "creative-work": "Creative Work",
+      "doomscrolling": "Doomscrolling",
+      "email": "Email",
+      "exercise": "Exercise",
+      "family-time": "Family Time",
+      "friends": "Friends",
+      "groceries": "Groceries",
+      "health": "Health",
+      "hobby": "Hobby",
+      "home-admin": "Home Admin",
+      "learning": "Learning",
+      "meal": "Meal",
+      "meditation": "Meditation",
+      "meetings": "Meetings",
+      "nature": "Nature",
+      "planning": "Planning",
+      "reading": "Reading",
+      "reflection": "Reflection",
+      "relax": "Relax",
+      "sleep": "Sleep",
+      "tv": "TV",
+      "walking": "Walking",
+      "work": "Work"
+    },
+    "activity-selection": {
+      "content": "Pick activities that are relevant to you:",
+      "footer": "You can edit, add, remove activities later.",
+      "title": "Start by logging your daily activities and patterns will emerge"
+    },
     "missed-intro": "In case you missed the introduction",
+    "note-taking": {
+      "title": "Add a note to each activity to record your thoughts and feelings"
+    },
+    "notifications": {
+      "button": "Allow notifications",
+      "schedule": {
+        "evening": "Evening",
+        "morning": "Morning",
+        "noon": "Noon"
+      },
+      "title": "Turn on notifications for gentle reminders to log your activities throughout the day."
+    },
+    "pattern-view": {
+      "title": "As the daily patterns emerge you will be able to see weekly rhythm"
+    },
+    "privacy": {
+      "button": "Download the encryption key",
+      "content": "Text about encryption key.",
+      "title": "Your time is yours alone. Everything you log is encrypted and stored securely, so only you have access."
+    },
+    "time-logging": {
+      "content": "Select the activity and tap into a time slot.",
+      "title": "Start by logging your daily activities and patterns will emerge"
+    },
     "title": "Welcome to Cadence",
-    "view-again": "View Onboarding Again"
+    "view-again": "View Onboarding Again",
+    "welcome": {
+      "title": "Cadence helps you find the best rhythm of your life"
+    }
   },
   "or-paste-encryption-key": "Or paste encryption key:",
   "parent-activity": "Parent Activity",
@@ -522,6 +584,7 @@
   "to-modify-notification-permiss": "To modify notification permissions at the system level, please go to your device's Settings app and find this app's notification settings.",
   "today": "Today",
   "tu": "Tue",
+  "tuning-cadence-at-your-rhythm": "Tuning Cadence at your rhythm",
   "turn-on-notifications-for-gent": "Turn on notifications for gentle reminders to log your activities throughout the day. No pressure, just a daily nudge to help you stay aware of your time.\\n\\n✨ Your future self will thank you. Take a moment to log your day.",
   "unable-to-open-email-app-pleas": "Unable to open email app. Please send your support request to: dev@cadence.day",
   "unable-to-open-link": "Unable to Open Link",

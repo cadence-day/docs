@@ -1,3 +1,6 @@
-export { default as OnboardingIcon } from "./OnboardingIcon";
-export { default as OnboardingPageIndicators } from "./OnboardingPageIndicators";
-export { default as SageIconContainer } from "./SageIconContainer";
+export { ActivityPicker } from "./ActivityPicker";
+export { GridImage } from "./GridImage";
+export { ImageContainer } from "./ImageContainer";
+export { NoteImage } from "./NoteImage";
+export { NotificationTable } from "./NotificationTable";
+export { TimelineImage } from "./TimelineImage";

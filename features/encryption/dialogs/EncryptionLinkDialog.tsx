@@ -60,8 +60,14 @@ export const EncryptionLinkDialog = forwardRef<
         `Key imported (fp=${fingerprint}). You can now access encrypted data.`
       );
 
-      // Call onConfirm to notify the context
+      // Call onConfirm to notify the context (e.g., parent can close dialog or navigate)
       onConfirm?.();
+
+      // After confirming, refresh all stores to ensure app state is up to date
+      const { refreshAllStoresFromCore } = await import(
+        "@/shared/api/encryption/core"
+      );
+      await refreshAllStoresFromCore();
 
       setTimeout(() => closeSelf(), 900);
     } catch (err) {
