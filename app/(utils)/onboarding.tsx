@@ -8,6 +8,7 @@ import {
   PanGestureHandlerGestureEvent,
   State,
 } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   FinalOnboardingScreen,
   OnboardingScreenRenderer,
@@ -97,38 +98,40 @@ export default function OnboardingScreen() {
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#151414" />
-      <LinearGradient
-        colors={["#4A4747", "#151414"]}
-        locations={[0, 0.895]}
-        start={{ x: -0.663, y: -0.407 }}
-        end={{ x: 0.678, y: 0.841 }}
-        style={styles.gradientContainer}
-      >
-        <PanGestureHandler onHandlerStateChange={handleSwipeGesture}>
-          <View style={styles.container}>
-            {/* Pulsating SageIcon - Top Left (hide on final-animation screen) */}
-            {currentPageData.type !== "final-animation" && (
-              <View style={styles.iconContainer}>
-                <SageIcon status="pulsating" size={80} auto={false} />
+      <SafeAreaView style={{ flex: 1 }}>
+        <LinearGradient
+          colors={["#4A4747", "#151414"]}
+          locations={[0, 0.895]}
+          start={{ x: -0.663, y: -0.407 }}
+          end={{ x: 0.678, y: 0.841 }}
+          style={styles.gradientContainer}
+        >
+          <PanGestureHandler onHandlerStateChange={handleSwipeGesture}>
+            <View style={styles.container}>
+              {/* Pulsating SageIcon - Top Left (hide on final-animation screen) */}
+              {currentPageData.type !== "final-animation" && (
+                <View style={styles.iconContainer}>
+                  <SageIcon status="pulsating" size={80} auto={false} />
+                </View>
+              )}
+
+              <View style={styles.contentContainer}>
+                {/* Main Content */}
+                {renderScreen()}
               </View>
-            )}
+              {/* Side Progress Indicator - Right */}
+              <SideProgressIndicator
+                totalPages={pages.length}
+                currentPage={currentPage}
+                onPagePress={goToPage}
+              />
 
-            <View style={styles.contentContainer}>
-              {/* Main Content */}
-              {renderScreen()}
+              {/* CADENCE Text - Bottom Left */}
+              <Text style={styles.cadenceText}>CADENCE</Text>
             </View>
-            {/* Side Progress Indicator - Right */}
-            <SideProgressIndicator
-              totalPages={pages.length}
-              currentPage={currentPage}
-              onPagePress={goToPage}
-            />
-
-            {/* CADENCE Text - Bottom Left */}
-            <Text style={styles.cadenceText}>CADENCE</Text>
-          </View>
-        </PanGestureHandler>
-      </LinearGradient>
+          </PanGestureHandler>
+        </LinearGradient>
+      </SafeAreaView>
     </>
   );
 }

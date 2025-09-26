@@ -70,6 +70,13 @@ class RevenueCatService {
         "REVENUECAT_CONFIG",
       );
 
+      const CustomerInfo = await Purchases.getCustomerInfo();
+      GlobalErrorHandler.logDebug(
+        "Checking initial subscription status after configuration",
+        "REVENUECAT_CONFIG",
+        { customerInfo: JSON.stringify(CustomerInfo, null, 2) },
+      );
+
       // Don't sync subscription status during initial configuration
       // This will be handled when login() is called with a user ID
     } catch (error) {

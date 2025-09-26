@@ -25,7 +25,7 @@ export class BaseStorage {
    */
   protected async get<T>(
     key: string,
-    defaultValue: T
+    defaultValue: T,
   ): Promise<StorageResult<T>> {
     const namespacedKey = this.getKey(key);
 
@@ -35,20 +35,8 @@ export class BaseStorage {
       if (stored !== null) {
         const data = JSON.parse(stored) as T;
 
-        GlobalErrorHandler.logDebug(
-          `Storage retrieved: ${namespacedKey}`,
-          "STORAGE_GET",
-          { key: namespacedKey, hasData: true }
-        );
-
         return { success: true, data };
       }
-
-      GlobalErrorHandler.logDebug(
-        `Storage key not found, using default: ${namespacedKey}`,
-        "STORAGE_GET",
-        { key: namespacedKey, hasData: false }
-      );
 
       return { success: true, data: defaultValue };
     } catch (error) {
@@ -73,12 +61,6 @@ export class BaseStorage {
 
     try {
       await AsyncStorage.setItem(namespacedKey, JSON.stringify(data));
-
-      GlobalErrorHandler.logDebug(
-        `Storage saved: ${namespacedKey}`,
-        "STORAGE_SET",
-        { key: namespacedKey, dataType: typeof data }
-      );
 
       return { success: true, data };
     } catch (error) {
@@ -107,7 +89,7 @@ export class BaseStorage {
       GlobalErrorHandler.logDebug(
         `Storage removed: ${namespacedKey}`,
         "STORAGE_REMOVE",
-        { key: namespacedKey }
+        { key: namespacedKey },
       );
 
       return { success: true };
@@ -140,7 +122,7 @@ export class BaseStorage {
         GlobalErrorHandler.logDebug(
           `Storage namespace cleared: ${this.namespace}`,
           "STORAGE_CLEAR",
-          { namespace: this.namespace, keysRemoved: namespacedKeys.length }
+          { namespace: this.namespace, keysRemoved: namespacedKeys.length },
         );
       }
 

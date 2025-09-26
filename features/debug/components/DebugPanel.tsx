@@ -2,8 +2,8 @@ import useDetectNewDevice from "@/features/debug/hooks/useDetectNewDevice";
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useDialogStore from "@/shared/stores/useDialogStore";
-import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -19,7 +19,8 @@ const DebugPanel: React.FC = () => {
   const openDialog = useDialogStore((s) => s.openDialog);
   const { detect, isLoading, detectResult } = useDetectNewDevice();
   const [tasks, setTasks] = useState<ScheduledNotificationView[]>([]);
-  const [notificationStatus, setNotificationStatus] = useState<string>('unknown');
+  const [notificationStatus, setNotificationStatus] =
+    useState<string>("unknown");
 
   const loadTasks = async () => {
     try {
@@ -42,8 +43,8 @@ const DebugPanel: React.FC = () => {
     try {
       const { status } = await Notifications.getPermissionsAsync();
       setNotificationStatus(status);
-    } catch (error) {
-      setNotificationStatus('error');
+    } catch {
+      setNotificationStatus("error");
     }
   };
 
@@ -122,7 +123,10 @@ const DebugPanel: React.FC = () => {
               );
             } catch (error) {
               console.error("Failed to suppress notifications", error);
-              Alert.alert("Error", "Failed to suppress notification permissions");
+              Alert.alert(
+                "Error",
+                "Failed to suppress notification permissions"
+              );
             }
           },
         },

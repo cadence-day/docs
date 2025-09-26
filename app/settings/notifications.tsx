@@ -31,7 +31,7 @@ export default function NotificationsSettings() {
     updateTiming,
     permissionStatus,
     requestPermissions,
-    scheduleNotifications,
+    scheduleNotifications, // TODO: Why is this unused? Because we need to make sure notifications are scheduled when enabling push notifications
   } = useNotificationStore();
 
   const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(

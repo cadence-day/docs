@@ -249,64 +249,64 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
     }
   }, [notes.length]);
 
-  //! Deprecated - energy is not currently used - keep for future use
-  const handleEnergyChange = useCallback(
-    async (newValue: number) => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      const finalValue = newValue === energy ? 0 : newValue;
-      setEnergy(finalValue);
+  //? Deprecated - energy is not currently used - keep it eventually for future use.
+  // const handleEnergyChange = useCallback(
+  //   async (newValue: number) => {
+  //     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  //     const finalValue = newValue === energy ? 0 : newValue;
+  //     setEnergy(finalValue);
 
-      // Save energy to states store if we have a valid timeslice
-      if (ts_id) {
-        try {
-          // First check if we have a state for this timeslice in local store
-          let existingState = statesStore.states.find(
-            (state) => state.timeslice_id === ts_id
-          );
+  //     // Save energy to states store if we have a valid timeslice
+  //     if (ts_id) {
+  //       try {
+  //         // First check if we have a state for this timeslice in local store
+  //         let existingState = statesStore.states.find(
+  //           (state) => state.timeslice_id === ts_id
+  //         );
 
-          // If not found locally, try to fetch from database
-          if (!existingState) {
-            try {
-              const fetchedState = await statesStore.getStateByTimeslice(ts_id);
-              if (fetchedState) {
-                existingState = fetchedState;
-              }
-            } catch (fetchError) {
-              // If fetch fails, we'll create a new state below
-              GlobalErrorHandler.logError(
-                fetchError,
-                "handleEnergyChange_fetchState",
-                {
-                  timesliceId: ts_id,
-                }
-              );
-            }
-          }
+  //         // If not found locally, try to fetch from database
+  //         if (!existingState) {
+  //           try {
+  //             const fetchedState = await statesStore.getStateByTimeslice(ts_id);
+  //             if (fetchedState) {
+  //               existingState = fetchedState;
+  //             }
+  //           } catch (fetchError) {
+  //             // If fetch fails, we'll create a new state below
+  //             GlobalErrorHandler.logError(
+  //               fetchError,
+  //               "handleEnergyChange_fetchState",
+  //               {
+  //                 timesliceId: ts_id,
+  //               }
+  //             );
+  //           }
+  //         }
 
-          const stateData = existingState
-            ? {
-                ...existingState,
-                energy: finalValue || null, // Convert 0 to null for database
-              }
-            : {
-                energy: finalValue || null, // Convert 0 to null for database
-                mood: mood || null, // Preserve current mood value
-                timeslice_id: ts_id,
-                user_id: null, // Will be replaced by API with authenticated user's ID
-              };
+  //         const stateData = existingState
+  //           ? {
+  //               ...existingState,
+  //               energy: finalValue || null, // Convert 0 to null for database
+  //             }
+  //           : {
+  //               energy: finalValue || null, // Convert 0 to null for database
+  //               mood: mood || null, // Preserve current mood value
+  //               timeslice_id: ts_id,
+  //               user_id: null, // Will be replaced by API with authenticated user's ID
+  //             };
 
-          await statesStore.upsertState(stateData);
-        } catch (error) {
-          GlobalErrorHandler.logError(error, "saveEnergyState", {
-            timesliceId: ts_id,
-            energy: finalValue,
-          });
-          // Don't show error to user for energy saves - it's not critical
-        }
-      }
-    },
-    [energy, mood, ts_id, statesStore]
-  );
+  //         await statesStore.upsertState(stateData);
+  //       } catch (error) {
+  //         GlobalErrorHandler.logError(error, "saveEnergyState", {
+  //           timesliceId: ts_id,
+  //           energy: finalValue,
+  //         });
+  //         // Don't show error to user for energy saves - it's not critical
+  //       }
+  //     }
+  //   },
+  //   [energy, mood, ts_id, statesStore]
+  // );
 
   const handleMoodChange = useCallback(
     async (newValue: number) => {

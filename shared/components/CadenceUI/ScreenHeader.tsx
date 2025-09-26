@@ -60,8 +60,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 12,
     paddingTop: 10,
-    paddingBottom: 10,
-    margin: 12,
   },
   leftSection: {
     flex: 1,
