@@ -1,3 +1,15 @@
+// Re-export notification types for app-wide usage
+export type {
+    NotificationPreferences,
+    NotificationType,
+} from "@/shared/notifications/types";
+
+// NotificationTiming type for time-based notification settings
+export interface NotificationTiming {
+    morningTime: string;
+    middayTime: string;
+    eveningTime: string;
+}
 import * as notificationsApi from "@/shared/api/resources/notifications";
 import type { Notification } from "@/shared/types/models/notification";
 import { getClerkInstance } from "@clerk/clerk-expo";

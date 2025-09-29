@@ -224,7 +224,7 @@ export class useNotificationHandler {
     }
   }
 
-  private static async scheduleTimeBasedNotification(
+  static async scheduleTimeBasedNotification(
     time: string,
     title: string,
     body: string,
