@@ -7,6 +7,11 @@ on:
 jobs:
   preview:
     runs-on: ubuntu-latest
+    env:
+      # From repo SECRETS
+      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_KEY }}
+      EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY }}
     steps:
       - name: Check env variables
         run: env | grep EXPO_PUBLIC_
