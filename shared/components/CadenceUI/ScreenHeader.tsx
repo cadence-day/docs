@@ -67,11 +67,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     color: "#222",
+    fontFamily: "FoundersGrotesk-Regular",
   },
   subtitleContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 0,
     paddingVertical: 4,
     marginTop: 2,
   },

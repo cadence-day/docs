@@ -16,11 +16,13 @@ export const generalStyles = StyleSheet.create({
         fontSize: 20,
     },
     clickableText: {
+        fontFamily: "Graphik-Regular",
         fontSize: 14,
         color: "#444",
         textDecorationLine: "underline",
     },
     subtitle: {
+        fontFamily: "Graphik-Regular",
         fontSize: 14,
         color: COLORS.light.subtitle,
     },
@@ -33,7 +35,8 @@ export const generalStyles = StyleSheet.create({
         textTransform: "uppercase",
         letterSpacing: 1.2,
         color: COLORS.light.text,
-        verticalAlign: "middle",
+        textAlign: "center",
+        paddingHorizontal: 4,
     },
     focusedText: {
         textDecorationLine: "underline",
