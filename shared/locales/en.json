@@ -55,6 +55,16 @@
   "already-have-an-account": "Already have an account?",
   "already-subscribed-premium": "You are already subscribed to Premium!",
   "app-information": "App Information",
+  "app-update": {
+    "new-version-available": "New Version Available",
+    "update-required": "Update Required",
+    "update-description": "A new version ({{latestVersion}}) of the app is available. You're currently using version {{currentVersion}}.",
+    "update-required-description": "A critical update ({{latestVersion}}) is required to continue using the app. You're currently using version {{currentVersion}}.",
+    "update-benefits": "Update now to get the latest features, improvements, and bug fixes.",
+    "update-required-benefits": "This update includes important security fixes and compatibility improvements that are required for the app to function properly.",
+    "update-now": "Update Now",
+    "update-later": "Update Later"
+  },
   "app-version-and-platform": "• App version and platform",
   "are-you-sure-you-want-to-sign": "Are you sure you want to sign out?",
   "back": "Back",
