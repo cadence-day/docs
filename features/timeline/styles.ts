@@ -1,3 +1,4 @@
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { Platform, StyleSheet } from "react-native";
 import {
   TIMESLICE_BORDER_RADIUS,
@@ -7,16 +8,12 @@ import {
 
 export const styles = StyleSheet.create({
   currentTimeLabel: {
-    fontWeight: "800",
-    fontFamily: "FoundersGrotesk-Medium",
-    fontSize: 12,
+    ...TYPOGRAPHY.specialized.time.regular,
     marginBottom: 4,
   },
   // Slightly smaller variants for 12-hour time strings so AM/PM fits on one line
   currentTimeLabel12: {
-    fontWeight: "800",
-    fontFamily: "FoundersGrotesk-Medium",
-    fontSize: 9,
+    ...TYPOGRAPHY.specialized.time.compact,
     marginBottom: 4,
   },
   emptyTimeslice: {
@@ -34,15 +31,13 @@ export const styles = StyleSheet.create({
     overflow: Platform.OS === "android" ? "visible" : "visible",
   },
   timeSliceText: {
+    ...TYPOGRAPHY.specialized.time.regular,
     color: "#222",
-    fontFamily: "FoundersGrotesk-Medium",
-    fontSize: 12,
     marginBottom: 4,
   },
   timeSliceText12: {
+    ...TYPOGRAPHY.specialized.time.compact,
     color: "#222",
-    fontFamily: "FoundersGrotesk-Medium",
-    fontSize: 9,
     marginBottom: 4,
   },
   timeSliceBox: {
@@ -104,13 +99,11 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   metadataCountText: {
+    ...TYPOGRAPHY.specialized.metadata,
     marginLeft: 6,
-    fontSize: 10,
-    fontWeight: "700",
   },
   metadataEnergyText: {
+    ...TYPOGRAPHY.specialized.metadata,
     marginLeft: 4,
-    fontSize: 10,
-    fontWeight: "700",
   },
 });

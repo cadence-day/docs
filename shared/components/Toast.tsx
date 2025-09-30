@@ -3,14 +3,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { RelativePathString, router } from "expo-router";
 import React, { useCallback, useEffect, useRef } from "react";
-import {
-  Animated,
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, Text, TouchableOpacity, View } from "react-native";
+import { sharedComponentStyles } from "./styles";
 
 import { ToastType } from "@/shared/types/toast.types";
 import { useNavBarSize } from "../constants/VIEWPORT";
@@ -32,8 +26,6 @@ interface ToastProps {
   href?: string; // Expo Router path to navigate to on tap
   onPress?: () => void; // Custom action on tap
 }
-
-const { width: screenWidth } = Dimensions.get("window");
 
 const Toast: React.FC<ToastProps> = ({
   // Accept either `message` or `title`/`body`. Prefer explicit title/body.
@@ -199,7 +191,7 @@ const Toast: React.FC<ToastProps> = ({
   return (
     <Animated.View
       style={[
-        styles.container,
+        sharedComponentStyles.toastContainer,
         {
           transform: [{ translateY }],
           opacity,
@@ -211,10 +203,10 @@ const Toast: React.FC<ToastProps> = ({
         colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.gradientContainer}
+        style={sharedComponentStyles.toastGradientContainer}
       >
-        <View style={styles.content}>
-          <View style={styles.iconContainer}>
+        <View style={sharedComponentStyles.toastContent}>
+          <View style={sharedComponentStyles.toastIconContainer}>
             <Ionicons
               name={iconConfig.name}
               size={24}
@@ -223,15 +215,15 @@ const Toast: React.FC<ToastProps> = ({
           </View>
 
           <TouchableOpacity
-            style={styles.textContainer}
+            style={sharedComponentStyles.toastTextContainer}
             onPress={handleToastPress}
             disabled={!href && !onPress}
             activeOpacity={href || onPress ? 0.7 : 1}
           >
-            <Text style={styles.title} numberOfLines={1}>
+            <Text style={sharedComponentStyles.toastTitle} numberOfLines={1}>
               {resolvedTitle}
             </Text>
-            <Text style={styles.body} numberOfLines={2}>
+            <Text style={sharedComponentStyles.toastBody} numberOfLines={2}>
               {resolvedBody}
             </Text>
           </TouchableOpacity>
@@ -239,7 +231,7 @@ const Toast: React.FC<ToastProps> = ({
           {(dismissible || duration === 0) && (
             <TouchableOpacity
               onPress={handleDismiss}
-              style={styles.dismissButton}
+              style={sharedComponentStyles.toastDismissButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Ionicons name="close" size={20} color={COLORS.white} />
@@ -250,64 +242,5 @@ const Toast: React.FC<ToastProps> = ({
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 9999,
-    width: screenWidth,
-  },
-  gradientContainer: {
-    borderRadius: 0,
-    marginHorizontal: 0,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 10,
-  },
-  content: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    minHeight: 64,
-  },
-  iconContainer: {
-    marginRight: 12,
-    marginTop: 2, // Slight adjustment to align with title
-  },
-  textContainer: {
-    flex: 1,
-    marginRight: 12,
-  },
-  title: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "600",
-    lineHeight: 20,
-    marginBottom: 4,
-  },
-  body: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: "400",
-    lineHeight: 18,
-    opacity: 0.9,
-  },
-  dismissButton: {
-    padding: 8,
-    borderRadius: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default Toast;

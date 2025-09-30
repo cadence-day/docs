@@ -1,3 +1,4 @@
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 
 export const onboardingStyles = StyleSheet.create({
@@ -28,7 +29,7 @@ export const onboardingStyles = StyleSheet.create({
     height: 12,
   },
   title: {
-    fontSize: 18,
+    fontSize: TYPOGRAPHY.sizes.xl,
     color: "white",
     textAlign: "left",
     marginTop: 20,
@@ -40,7 +41,7 @@ export const onboardingStyles = StyleSheet.create({
     marginBottom: 8,
   },
   content: {
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     color: "white",
     textAlign: "left",
     lineHeight: 20,
@@ -58,8 +59,8 @@ export const onboardingStyles = StyleSheet.create({
   },
   actionButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "500",
+    fontSize: TYPOGRAPHY.sizes.lg,
+    fontWeight: TYPOGRAPHY.weights.medium,
   },
   linkButton: {
     marginTop: 62,
@@ -67,12 +68,12 @@ export const onboardingStyles = StyleSheet.create({
   },
   linkText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     opacity: 0.8,
     textAlign: "center",
   },
   footerText: {
-    fontSize: 14,
+    fontSize: TYPOGRAPHY.sizes.md,
     color: "#CCCCCC",
     textAlign: "left",
     marginTop: 16,
@@ -87,7 +88,7 @@ export const onboardingStyles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: TYPOGRAPHY.sizes.base,
     color: "white",
     textAlign: "left",
     alignSelf: "flex-start",
@@ -119,14 +120,12 @@ export const onboardingStyles = StyleSheet.create({
     opacity: 0.4,
   },
   activityTagText: {
+    ...TYPOGRAPHY.specialized.tag,
     color: "white",
-    fontSize: 7,
-    fontWeight: "400",
-    letterSpacing: 0.98,
-    textTransform: "uppercase",
+    fontWeight: TYPOGRAPHY.weights.normal,
   },
   activityTagTextSelected: {
-    fontWeight: "500",
+    fontWeight: TYPOGRAPHY.weights.medium,
   },
   activityTagTextDimmed: {
     opacity: 0.6,
@@ -150,13 +149,13 @@ export const onboardingStyles = StyleSheet.create({
     minHeight: 50,
   },
   notificationLabel: {
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     color: "white",
     opacity: 0.9,
   },
   notificationTime: {
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     color: "white",
-    fontWeight: "bold",
+    fontWeight: TYPOGRAPHY.weights.bold,
   },
 });

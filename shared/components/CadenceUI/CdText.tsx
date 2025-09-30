@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, Text, TextStyle } from "react-native";
+import { Text, TextStyle } from "react-native";
+import { cadenceUIStyles } from "./styles";
 
 interface CdTextProps {
   children: React.ReactNode;
@@ -20,26 +21,31 @@ export const CdText: React.FC<CdTextProps> = ({
     NonNullable<CdTextProps["variant"]>,
     TextStyle | undefined
   > = {
-    title: localStyles.titleText,
-    body: localStyles.bodyText,
-    caption: localStyles.captionText,
-    error: localStyles.errorText,
-    message: localStyles.messageText,
-    link: localStyles.linkText,
+    title: cadenceUIStyles.cdTextTitle,
+    body: cadenceUIStyles.cdTextBody,
+    caption: cadenceUIStyles.cdTextCaption,
+    error: cadenceUIStyles.cdTextError,
+    message: cadenceUIStyles.cdTextMessage,
+    link: cadenceUIStyles.cdTextLink,
   };
 
   const sizeStyleMap: Record<
     NonNullable<CdTextProps["size"]>,
     TextStyle | undefined
   > = {
-    small: localStyles.smallText,
-    medium: localStyles.mediumText,
-    large: localStyles.largeText,
+    small: cadenceUIStyles.cdTextSmall,
+    medium: cadenceUIStyles.cdTextMedium,
+    large: cadenceUIStyles.cdTextLarge,
   };
 
   const variantStyle = variantStyleMap[variant];
   const sizeStyle = sizeStyleMap[size];
-  const textStyle = [localStyles.text, variantStyle, sizeStyle, style];
+  const textStyle = [
+    cadenceUIStyles.cdTextBase,
+    variantStyle,
+    sizeStyle,
+    style,
+  ];
 
   return (
     <Text style={textStyle} numberOfLines={numberOfLines}>
@@ -47,42 +53,3 @@ export const CdText: React.FC<CdTextProps> = ({
     </Text>
   );
 };
-
-const localStyles = StyleSheet.create({
-  text: {
-    color: "#FFFFFF",
-  },
-  titleText: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  bodyText: {
-    fontSize: 16,
-    fontWeight: "normal",
-  },
-  captionText: {
-    fontSize: 12,
-    color: "#AAAAAA",
-  },
-  errorText: {
-    color: "#FF4D4F",
-    fontWeight: "bold",
-  },
-  messageText: {
-    fontSize: 15,
-    color: "#00B894",
-  },
-  linkText: {
-    color: "#3498DB",
-    textDecorationLine: "underline",
-  },
-  smallText: {
-    fontSize: 12,
-  },
-  mediumText: {
-    fontSize: 16,
-  },
-  largeText: {
-    fontSize: 20,
-  },
-});

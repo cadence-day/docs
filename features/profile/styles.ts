@@ -1,4 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 
 export const profileStyles = StyleSheet.create({
@@ -159,7 +160,7 @@ export const profileStyles = StyleSheet.create({
   },
 
   planName: {
-    fontSize: 18,
+    fontSize: TYPOGRAPHY.sizes.xl,
     fontWeight: "600",
     color: COLORS.light.text,
   },

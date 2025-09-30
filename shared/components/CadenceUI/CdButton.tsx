@@ -1,11 +1,6 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  ViewStyle,
-} from "react-native";
+import { Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native";
+import { cadenceUIStyles } from "./styles";
 
 interface CdButtonProps {
   title: string;
@@ -31,77 +26,77 @@ export const CdButton: React.FC<CdButtonProps> = ({
   const getVariantButtonStyle = (variant: CdButtonProps["variant"]) => {
     switch (variant) {
       case "primary":
-        return localStyles.primaryButton;
+        return cadenceUIStyles.cdButtonPrimary;
       case "secondary":
-        return localStyles.secondaryButton;
+        return cadenceUIStyles.cdButtonSecondary;
       case "outline":
-        return localStyles.outlineButton;
+        return cadenceUIStyles.cdButtonOutline;
       case "text":
-        return localStyles.textButton;
+        return cadenceUIStyles.cdButtonText;
       case "destructive":
-        return localStyles.destructiveButton;
+        return cadenceUIStyles.cdButtonDestructive;
       default:
-        return localStyles.outlineButton;
+        return cadenceUIStyles.cdButtonOutline;
     }
   };
 
   const getSizeButtonStyle = (size: CdButtonProps["size"]) => {
     switch (size) {
       case "small":
-        return localStyles.smallButton;
+        return cadenceUIStyles.cdButtonSmall;
       case "medium":
-        return localStyles.mediumButton;
+        return cadenceUIStyles.cdButtonMedium;
       case "large":
-        return localStyles.largeButton;
+        return cadenceUIStyles.cdButtonLarge;
       default:
-        return localStyles.mediumButton;
+        return cadenceUIStyles.cdButtonMedium;
     }
   };
 
   const getVariantButtonTextStyle = (variant: CdButtonProps["variant"]) => {
     switch (variant) {
       case "primary":
-        return localStyles.primaryButtonText;
+        return cadenceUIStyles.cdButtonTextPrimary;
       case "secondary":
-        return localStyles.secondaryButtonText;
+        return cadenceUIStyles.cdButtonTextSecondary;
       case "outline":
-        return localStyles.outlineButtonText;
+        return cadenceUIStyles.cdButtonTextOutline;
       case "text":
-        return localStyles.textButtonText;
+        return cadenceUIStyles.cdButtonTextText;
       case "destructive":
-        return localStyles.destructiveButtonText;
+        return cadenceUIStyles.cdButtonTextDestructive;
       default:
-        return localStyles.outlineButtonText;
+        return cadenceUIStyles.cdButtonTextOutline;
     }
   };
 
   const getSizeButtonTextStyle = (size: CdButtonProps["size"]) => {
     switch (size) {
       case "small":
-        return localStyles.smallButtonText;
+        return cadenceUIStyles.cdButtonTextSmall;
       case "medium":
-        return localStyles.mediumButtonText;
+        return cadenceUIStyles.cdButtonTextMedium;
       case "large":
-        return localStyles.largeButtonText;
+        return cadenceUIStyles.cdButtonTextLarge;
       default:
-        return localStyles.mediumButtonText;
+        return cadenceUIStyles.cdButtonTextMedium;
     }
   };
 
   const buttonStyle = [
-    localStyles.button,
+    cadenceUIStyles.cdButtonBase,
     getVariantButtonStyle(variant),
     getSizeButtonStyle(size),
-    fullWidth && localStyles.fullWidth,
-    disabled && localStyles.disabledButton,
+    fullWidth && cadenceUIStyles.cdButtonFullWidth,
+    disabled && cadenceUIStyles.cdButtonDisabled,
     style,
   ];
 
   const buttonTextStyle = [
-    localStyles.buttonText,
+    cadenceUIStyles.cdButtonTextBase,
     getVariantButtonTextStyle(variant),
     getSizeButtonTextStyle(size),
-    disabled && localStyles.disabledButtonText,
+    disabled && cadenceUIStyles.cdButtonTextDisabled,
     textStyle,
   ];
 
@@ -116,104 +111,3 @@ export const CdButton: React.FC<CdButtonProps> = ({
     </TouchableOpacity>
   );
 };
-
-const localStyles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  // Variant styles
-  outlineButton: {
-    borderWidth: 1,
-    borderColor: "#FFFFFF",
-    backgroundColor: "transparent",
-  },
-  primaryButton: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 0,
-  },
-  secondaryButton: {
-    backgroundColor: "#2B2B2B",
-    borderWidth: 1,
-    borderColor: "#FFFFFF",
-  },
-  textButton: {
-    borderWidth: 0,
-    padding: 0,
-  },
-
-  // Size styles
-  smallButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    minWidth: 100,
-  },
-  mediumButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    minWidth: 140,
-  },
-  largeButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    minWidth: 160,
-  },
-
-  // Width styles
-  fullWidth: {
-    width: "100%",
-  },
-
-  // Disabled styles
-  disabledButton: {
-    opacity: 0.5,
-  },
-
-  // Text styles
-  buttonText: {
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "500",
-  },
-
-  // Variant text styles
-  outlineButtonText: {
-    color: "#FFFFFF",
-  },
-  primaryButtonText: {
-    color: "#2B2B2B",
-  },
-  secondaryButtonText: {
-    color: "#FFFFFF",
-  },
-  textButtonText: {
-    color: "#FFFFFF",
-    textDecorationLine: "underline",
-  },
-
-  // Size text styles
-  smallButtonText: {
-    fontSize: 14,
-  },
-  mediumButtonText: {
-    fontSize: 16,
-  },
-  largeButtonText: {
-    fontSize: 18,
-  },
-
-  // Disabled text styles
-  disabledButtonText: {
-    opacity: 0.7,
-  },
-
-  // Destructive styles
-  destructiveButton: {
-    backgroundColor: "#FF3B30",
-    borderWidth: 0,
-  },
-  destructiveButtonText: {
-    color: "#FFFFFF",
-  },
-});

@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  StyleSheet,
   Text,
   TextStyle,
   TouchableOpacity,
@@ -8,6 +7,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { cadenceUIStyles } from "./styles";
 
 export interface ScreenHeaderProps {
   title: string;
@@ -29,17 +29,23 @@ export const ScreenHeader: React.FC<ScreenHeaderProps> = ({
   titleStyle,
 }) => {
   return (
-    <SafeAreaView style={[styles.container, style]}>
-      <View style={styles.leftSection}>
-        <Text style={[styles.title, titleStyle]}>{title}</Text>
+    <SafeAreaView style={[cadenceUIStyles.screenHeaderContainer, style]}>
+      <View style={cadenceUIStyles.screenHeaderLeftSection}>
+        <Text style={[cadenceUIStyles.screenHeaderTitle, titleStyle]}>
+          {title}
+        </Text>
         {subtitle && (
           <TouchableOpacity
             onPress={onSubtitlePress}
             disabled={!onSubtitlePress}
-            style={styles.subtitleContainer}
+            style={cadenceUIStyles.screenHeaderSubtitleContainer}
           >
             {typeof subtitle === "string" ? (
-              <Text style={[styles.subtitle, subtitleStyle]}>{subtitle}</Text>
+              <Text
+                style={[cadenceUIStyles.screenHeaderSubtitle, subtitleStyle]}
+              >
+                {subtitle}
+              </Text>
             ) : (
               subtitle
             )}
@@ -47,41 +53,10 @@ export const ScreenHeader: React.FC<ScreenHeaderProps> = ({
         )}
       </View>
       {OnRightElement && (
-        <View style={styles.rightSection}>{OnRightElement()}</View>
+        <View style={cadenceUIStyles.screenHeaderRightSection}>
+          {OnRightElement()}
+        </View>
       )}
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 12,
-    paddingTop: 10,
-  },
-  leftSection: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 24,
-    color: "#222",
-    fontFamily: "FoundersGrotesk-Regular",
-  },
-  subtitleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 4,
-    marginTop: 2,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#444",
-  },
-  rightSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-});

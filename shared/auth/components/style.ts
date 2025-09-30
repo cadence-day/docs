@@ -1,3 +1,5 @@
+import { CONTAINER } from "@/shared/constants/CONTAINER";
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -37,19 +39,19 @@ export const styles = StyleSheet.create({
 
   // Title styles
   title: {
-    fontSize: 20,
-    fontWeight: "normal",
+    fontSize: TYPOGRAPHY.sizes["2xl"],
+    fontWeight: TYPOGRAPHY.weights.normal,
     marginBottom: 20,
     marginTop: 0,
     textAlign: "center",
     color: "#FFFFFF",
   },
   titleLarge: {
-    fontSize: 24,
+    fontSize: TYPOGRAPHY.sizes["4xl"],
     marginBottom: 30,
     marginTop: 20,
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: TYPOGRAPHY.weights.semibold,
   },
 
   // Input styles
@@ -58,7 +60,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#B9B9B9",
     color: "#fff",
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     paddingVertical: 8,
     paddingHorizontal: 4,
   },
@@ -100,7 +102,7 @@ export const styles = StyleSheet.create({
   },
   passwordMismatchText: {
     color: "#ff6b6b",
-    fontSize: 12,
+    fontSize: TYPOGRAPHY.sizes.base,
     marginTop: 4,
     marginBottom: 4,
   },
@@ -111,8 +113,8 @@ export const styles = StyleSheet.create({
     marginBottom: 30,
   },
   forgotPasswordText: {
-    fontSize: 14,
-    fontWeight: "normal",
+    fontSize: TYPOGRAPHY.sizes.md,
+    fontWeight: TYPOGRAPHY.weights.normal,
     textDecorationLine: "underline",
     color: "#FFFFFF",
   },
@@ -134,7 +136,7 @@ export const styles = StyleSheet.create({
   },
   socialButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
   },
 
   // Sign up/in text styles
@@ -157,7 +159,7 @@ export const styles = StyleSheet.create({
   },
   signInText: {
     color: "#B9B9B9",
-    fontSize: 14,
+    fontSize: TYPOGRAPHY.sizes.md,
     marginTop: 20,
     marginBottom: 20,
     textAlign: "left",
@@ -186,8 +188,8 @@ export const styles = StyleSheet.create({
   },
   signupButtonText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: TYPOGRAPHY.sizes.lg,
+    fontWeight: TYPOGRAPHY.weights.semibold,
   },
   verifyButton: {
     width: "100%",
@@ -204,7 +206,7 @@ export const styles = StyleSheet.create({
   },
   verificationInput: {
     textAlign: "center",
-    fontSize: 18,
+    fontSize: TYPOGRAPHY.sizes.xl,
     color: "#FFFFFF",
   },
   resendContainer: {
@@ -219,7 +221,7 @@ export const styles = StyleSheet.create({
   },
   resendText: {
     color: "#6646EC",
-    fontWeight: "600",
+    fontWeight: TYPOGRAPHY.weights.semibold,
   },
   placeholderText: {
     color: "#B9B9B9",
@@ -252,12 +254,12 @@ export const styles = StyleSheet.create({
   },
   checkboxCheck: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: TYPOGRAPHY.sizes.lg,
+    fontWeight: TYPOGRAPHY.weights.bold,
   },
   checkboxText: {
     color: "#B9B9B9",
-    fontSize: 14,
+    fontSize: TYPOGRAPHY.sizes.md,
     marginLeft: 12,
     flex: 1,
     flexWrap: "wrap",
@@ -278,7 +280,7 @@ export const styles = StyleSheet.create({
   },
   requirementText: {
     color: "#FFFFFF",
-    fontSize: 14,
+    fontSize: TYPOGRAPHY.sizes.md,
     marginTop: 2,
     marginBottom: 2,
   },
@@ -288,31 +290,67 @@ export const styles = StyleSheet.create({
   },
   termsText: {
     color: "#B9B9B9",
-    fontSize: 12,
+    fontSize: TYPOGRAPHY.sizes.base,
     textAlign: "left",
     lineHeight: 18,
   },
   termsLink: {
     textDecorationLine: "underline",
     color: "#FFFFFF",
-    fontSize: 12,
+    fontSize: TYPOGRAPHY.sizes.base,
     marginBottom: 6,
+  },
+
+  // Terms checkbox styles
+  termsContainer: {
+    width: "100%",
+    ...CONTAINER.gap.base,
+    ...CONTAINER.margin.vertical.base,
+  },
+  termsCheckboxRow: {
+    ...CONTAINER.basic.row,
+    alignItems: "flex-start",
+    ...CONTAINER.gap.base,
+  },
+  termsCheckboxBox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    ...CONTAINER.margin.top.xs,
+  },
+  termsCheckboxBoxChecked: {
+    borderColor: "#6646EC", // COLORS.primary
+    backgroundColor: "#6646EC", // COLORS.primary
+  },
+  termsCheckboxBoxUnchecked: {
+    borderColor: "#FFFFFF", // COLORS.white
+    backgroundColor: "#666",
+  },
+  termsTextContainer: {
+    flex: 1,
+  },
+  termsTextRow: {
+    ...CONTAINER.basic.row,
+    flexWrap: "wrap",
+    alignItems: "flex-start",
   },
 
   // Loading and success styles
   loadingText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     marginTop: 16,
   },
   successTitle: {
     color: "#fff",
-    fontSize: 24,
+    fontSize: TYPOGRAPHY.sizes["4xl"],
     marginBottom: 16,
   },
   successText: {
     color: "grey",
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     marginBottom: 20,
     textAlign: "center",
   },
