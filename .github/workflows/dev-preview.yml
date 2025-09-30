@@ -8,6 +8,9 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     steps:
+      - name: Check env variables
+        run: env | grep EXPO_PUBLIC_
+        
       - name: 🏗 Setup repo
         uses: actions/checkout@v3
 
