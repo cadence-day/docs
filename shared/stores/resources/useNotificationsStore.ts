@@ -1,5 +1,18 @@
+// Re-export notification types for app-wide usage
+export type {
+    NotificationPreferences,
+    NotificationType,
+} from "@/shared/notifications/types";
+
+// NotificationTiming type for time-based notification settings
+export interface NotificationTiming {
+    morningTime: string;
+    middayTime: string;
+    eveningTime: string;
+}
 import * as notificationsApi from "@/shared/api/resources/notifications";
 import type { Notification } from "@/shared/types/models/notification";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { getClerkInstance } from "@clerk/clerk-expo";
 import { create } from "zustand";
 import {
@@ -154,9 +167,13 @@ const useNotificationSettingsStore = create<NotificationSettingsStore>((
     initializeForCurrentUser: async () => {
         const userId = getClerkInstance().user?.id;
         if (!userId) {
-            throw new Error(
-                "User must be authenticated to initialize notification settings",
+            // User not yet authenticated, skip initialization
+            // This can happen during app startup before Clerk is ready
+            GlobalErrorHandler.logDebug(
+                "User not authenticated yet, skipping notification initialization",
+                "initializeForCurrentUser",
             );
+            return;
         }
 
         return handleVoidApiCallWithResult(

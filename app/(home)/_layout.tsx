@@ -1,4 +1,5 @@
 import { checkAndPromptEncryptionLinking } from "@/features/encryption/utils/detectNewDevice";
+import { revenueCatService } from "@/features/purchases";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useNavBarSize } from "@/shared/constants/VIEWPORT";
@@ -22,7 +23,11 @@ function TabLabel({ focused, label }: { focused: boolean; label: string }) {
   return (
     <View style={generalStyles.container}>
       <Text
-        style={[generalStyles.smallText, focused && generalStyles.focusedText]}
+        style={[
+          generalStyles.smallText,
+          focused && generalStyles.focusedText,
+          { minWidth: 80 },
+        ]}
       >
         {label}
       </Text>
@@ -41,6 +46,44 @@ export default function TabLayout() {
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
+
+  // Initialize RevenueCat when user is signed in
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const initializeRevenueCat = async () => {
+      try {
+        await revenueCatService.configure();
+        GlobalErrorHandler.logDebug(
+          "RevenueCat configured successfully for signed-in user",
+          "REVENUECAT_INIT",
+          { userId: user.id }
+        );
+      } catch (error) {
+        GlobalErrorHandler.logError(
+          error,
+          "Failed to initialize RevenueCat for signed-in user",
+          { userId: user.id }
+        );
+      }
+    };
+
+    initializeRevenueCat();
+    // Fetch activities on sign-in so the home screen has up-to-date data
+    try {
+      // Non-blocking: fire-and-forget refresh of activities store
+      // Use the store directly to avoid rendering dependencies
+      require("@/shared/stores/resources/useActivitiesStore")
+        .default.getState()
+        .refresh();
+    } catch (err) {
+      GlobalErrorHandler.logWarning(
+        "Failed to kick off activities refresh on sign-in",
+        "ACTIVITIES_REFRESH",
+        { error: err, userId: user.id }
+      );
+    }
+  }, [user?.id]);
 
   // Consolidated effect to track view and manage ActivityLegendDialog
   useEffect(() => {
@@ -165,7 +208,6 @@ export default function TabLayout() {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
-              alignSelf: "stretch",
               alignContent: "center",
             },
             // Ensure each tab's touch target is larger via a custom tabBarButton

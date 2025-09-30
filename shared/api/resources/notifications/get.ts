@@ -5,6 +5,8 @@ import type { Notification } from "@/shared/types/models/notification";
 
 /**
  * Fetch notification settings for a user.
+ * Handles the case where there might be multiple rows (takes the most recent one)
+ * or no rows (returns null).
  */
 export async function getNotificationSettings(
     userId: string,
@@ -16,25 +18,11 @@ export async function getNotificationSettings(
                 .select("*")
                 .eq("user_id", userId)
                 .single();
-            return { data, error };
+
+            // Return the first row or null if no rows exist
+            return { data: data ?? null, error };
         });
     } catch (error) {
         handleApiError("getNotificationSettings", error);
-    }
-}
-
-/**
- * Fetch all notification settings.
- */
-export async function getAllNotificationSettings(): Promise<Notification[]> {
-    try {
-        return await apiCall(async () => {
-            const { data, error } = await supabaseClient
-                .from("notifications")
-                .select("*");
-            return { data: data ?? [], error };
-        });
-    } catch (error) {
-        handleApiError("getAllNotificationSettings", error);
     }
 }

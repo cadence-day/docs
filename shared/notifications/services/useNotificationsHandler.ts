@@ -12,7 +12,7 @@ export { default as useNotificationSettingsStore } from "@/shared/stores/resourc
 export type { Notification } from "@/shared/types/models/notification";
 
 // Helper functions for notification management
-export class NotificationManager {
+export class useNotificationHandler {
   private static store = useNotificationSettingsStore;
 
   /**
@@ -32,7 +32,6 @@ export class NotificationManager {
       );
     }
   }
-
   /**
    * Request notification permissions
    */
@@ -61,6 +60,15 @@ export class NotificationManager {
    */
   static async updatePushToken(token: string): Promise<void> {
     try {
+      // Check if user is authenticated first
+      if (!getClerkInstance().user?.id) {
+        GlobalErrorHandler.logDebug(
+          "User not authenticated yet, deferring push token update",
+          "useNotificationHandler.updatePushToken",
+        );
+        return;
+      }
+
       const currentSettings = this.store.getState().notificationSettings;
       if (currentSettings) {
         await this.store.getState().updateNotificationSettings({
@@ -225,7 +233,7 @@ export class NotificationManager {
     }
   }
 
-  private static async scheduleTimeBasedNotification(
+  static async scheduleTimeBasedNotification(
     time: string,
     title: string,
     body: string,
@@ -261,7 +269,7 @@ export const useNotificationStore = useNotificationSettingsStore;
 // Auto-initialize when imported (like the original)
 (async () => {
   try {
-    await NotificationManager.initialize();
+    await useNotificationHandler.initialize();
   } catch (error) {
     GlobalErrorHandler.logError(
       error,

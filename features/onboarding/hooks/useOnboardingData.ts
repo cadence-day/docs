@@ -1,9 +1,9 @@
 import useTranslation from "@/shared/hooks/useI18n";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Notifications from "expo-notifications";
 import { useEffect, useMemo, useState } from "react";
 import { OnboardingPage } from "../types";
 import { useNotificationActions } from "./useNotificationActions";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
 export function useOnboardingData() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -30,7 +30,7 @@ export function useOnboardingData() {
   }, []);
 
   const pages: OnboardingPage[] = useMemo(() => {
-    const basePages = [
+    const basePages: OnboardingPage[] = [
       {
         id: "welcome",
         type: "welcome",

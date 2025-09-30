@@ -91,7 +91,8 @@ export default function Reflection() {
         backgroundLinearColors.primary.start,
         backgroundLinearColors.primary.end,
       ]}
-      style={generalStyles.container}
+      // Keep general container behavior but allow children to stretch and start at the top
+      style={[generalStyles.container, styles.containerOverride]}
     >
       <ScreenHeader
         title={t("reflection.weekly-cadence")} // TODO: Make conditional with This Week Cadence or Weekly Cadence.
@@ -151,7 +152,10 @@ export default function Reflection() {
 const styles = StyleSheet.create({
   gridContainer: {
     flex: 1,
-    marginHorizontal: 12,
+  },
+  containerOverride: {
+    alignItems: "stretch",
+    justifyContent: "flex-start",
   },
   dateNavigationContainer: {
     flexDirection: "row",
