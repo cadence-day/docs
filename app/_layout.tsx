@@ -1,6 +1,5 @@
-import { revenueCatService } from "@/features/purchases";
 import { SECRETS } from "@/shared/constants/SECRETS";
-import { EncryptionProvider, NetworkProvider, AppUpdateProvider } from "@/shared/context";
+import { EncryptionProvider, NetworkProvider } from "@/shared/context";
 import { ToastProvider } from "@/shared/context/ToastProvider";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { getIsDev } from "@/shared/hooks/useDev";
@@ -17,7 +16,6 @@ import * as Sentry from "@sentry/react-native";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -108,24 +106,11 @@ const RootLayout = function RootLayout() {
     "FoundersGrotesk-Medium": require("../assets/fonts/FoundersGrotesk-Medium-BF66175e972d694.otf"),
     "FoundersGrotesk-Semibold": require("../assets/fonts/FoundersGrotesk-Semibold-BF66175e972c958.otf"),
     "FoundersGrotesk-Bold": require("../assets/fonts/FoundersGrotesk-Bold-BF66175e9700615.otf"),
+    "Graphik-Regular": require("../assets/fonts/Graphik-Regular.otf"),
+    "Graphik-Semibold": require("../assets/fonts/Graphik-Semibold.otf"),
+    "Graphik-Bold": require("../assets/fonts/Graphik-Bold.otf"),
+    "Graphik-Extralight": require("../assets/fonts/Graphik-Extralight.otf"),
   });
-
-  // Initialize RevenueCat on app startup
-  useEffect(() => {
-    const initializeRevenueCat = async () => {
-      try {
-        await revenueCatService.configure();
-        GlobalErrorHandler.logDebug(
-          "RevenueCat configured successfully",
-          "REVENUECAT_INIT"
-        );
-      } catch (error) {
-        GlobalErrorHandler.logError(error, "Failed to initialize RevenueCat");
-      }
-    };
-
-    initializeRevenueCat();
-  }, []);
 
   if (!loaded) {
     // Async font loading only occurs in development.
@@ -143,11 +128,9 @@ const RootLayout = function RootLayout() {
                   publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
                   tokenCache={tokenCache}
                 >
-                  <AppUpdateProvider>
-                    <NotificationProvider>
-                      <Slot />
-                    </NotificationProvider>
-                  </AppUpdateProvider>
+                  <NotificationProvider>
+                    <Slot />
+                  </NotificationProvider>
                 </ClerkProvider>
               </ToastProvider>
             </EncryptionProvider>

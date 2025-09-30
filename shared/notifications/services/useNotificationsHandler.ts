@@ -60,6 +60,15 @@ export class useNotificationHandler {
    */
   static async updatePushToken(token: string): Promise<void> {
     try {
+      // Check if user is authenticated first
+      if (!getClerkInstance().user?.id) {
+        GlobalErrorHandler.logDebug(
+          "User not authenticated yet, deferring push token update",
+          "useNotificationHandler.updatePushToken",
+        );
+        return;
+      }
+
       const currentSettings = this.store.getState().notificationSettings;
       if (currentSettings) {
         await this.store.getState().updateNotificationSettings({

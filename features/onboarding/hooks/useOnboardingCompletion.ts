@@ -1,9 +1,10 @@
 import useTranslation from "@/shared/hooks/useI18n";
-import { notificationStorage } from "@/shared/storage/notifications";
+import { notificationEngine } from "@/shared/notifications/NotificationEngine";
 import {
   useActivitiesStore,
   useActivityCategoriesStore,
 } from "@/shared/stores";
+import useNotificationSettingsStore from "@/shared/stores/resources/useNotificationsStore";
 import type { Activity } from "@/shared/types/models/activity";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
@@ -31,6 +32,12 @@ export function useOnboardingCompletion() {
   const { resetStore } = useOnboardingStore();
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Use the new notification store
+  const {
+    upsertNotificationSettings,
+    initializeForCurrentUser,
+  } = useNotificationSettingsStore();
+
   const requestNotificationPermissions = async (): Promise<boolean> => {
     try {
       GlobalErrorHandler.logDebug(
@@ -55,20 +62,41 @@ export function useOnboardingCompletion() {
           "Notification permissions granted, setting default preferences",
           "onboarding:requestNotificationPermissions",
         );
-        // Set default notification preferences
-        await notificationStorage.setPreferences({
-          morningReminders: true,
-          middayReflection: true,
-          eveningReminders: true,
-          weeklyStreaks: true,
-        });
 
-        // Set default timing
-        await notificationStorage.setTiming({
-          morningTime: "08:00",
-          middayTime: "12:00",
-          eveningTime: "19:00",
-        });
+        try {
+          // Initialize notification settings for the current user (creates defaults if none exist)
+          await initializeForCurrentUser();
+
+          // Get push token
+          const pushToken = await Notifications.getExpoPushTokenAsync();
+
+          // Update with onboarding-specific preferences
+          await upsertNotificationSettings({
+            user_id: user?.id || null,
+            push_enabled: true,
+            email_enabled: false,
+            notification_type: [
+              "morning-reminders",
+              "evening-reminders",
+              "midday-checkins",
+            ],
+            wake_up_time: "08:00:00",
+            sleep_time: "19:00:00",
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            expo_push_token: pushToken.data,
+            hours_of_reminders: ["08:00", "12:00", "19:00"],
+          });
+
+          // Initialize and schedule notifications
+          await notificationEngine.initialize();
+          await notificationEngine.scheduleAllNotifications();
+        } catch (error) {
+          GlobalErrorHandler.logError(
+            error,
+            "onboarding:requestNotificationPermissions:setup",
+          );
+          // Don't fail onboarding if notification setup fails
+        }
 
         return true;
       }

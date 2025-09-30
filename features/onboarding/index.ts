@@ -7,11 +7,21 @@ export { useOnboardingStore } from "./store";
 
 // Types (public interfaces only)
 export type {
-  OnboardingPage,
   NotificationTime,
+  OnboardingPage,
   OnboardingScreenProps,
 } from "./types";
 
 // Components (if needed by other features)
-export { OnboardingPageIndicators } from "./components/ui";
-export { WelcomeScreen, ActivitySelectionScreen, NotificationScreen, OnboardingScreenRenderer } from "./components/screens";
+export {
+  FinalOnboardingScreen,
+  OnboardingScreenRenderer,
+} from "./components/screens";
+export {
+  ActivityPicker,
+  GridImage,
+  ImageContainer,
+  NoteImage,
+  NotificationTable,
+  TimelineImage,
+} from "./components/ui";

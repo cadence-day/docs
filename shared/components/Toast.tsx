@@ -1,16 +1,17 @@
 import { COLORS } from "@/shared/constants/COLORS";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { RelativePathString, router } from "expo-router";
+import { RelativePathString, router, useSegments } from "expo-router";
 import React, { useCallback, useEffect, useRef } from "react";
 import {
   Animated,
-  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ToastType } from "@/shared/types/toast.types";
 import { useNavBarSize } from "../constants/VIEWPORT";
@@ -33,7 +34,7 @@ interface ToastProps {
   onPress?: () => void; // Custom action on tap
 }
 
-const { width: screenWidth } = Dimensions.get("window");
+// Dimensions not required for current placement logic; keep import for future use.
 
 const Toast: React.FC<ToastProps> = ({
   // Accept either `message` or `title`/`body`. Prefer explicit title/body.
@@ -50,9 +51,22 @@ const Toast: React.FC<ToastProps> = ({
 }) => {
   // Resolve display values: if explicit title/body are missing, use `message` as the body.
   const NavBarSize = useNavBarSize();
+  const insets = useSafeAreaInsets();
+  const segments = useSegments();
+
+  // Determine if the current route is inside the bottom-tabbed (home) layout.
+  // Our tab group lives under the (home) route group, so presence of that
+  // segment indicates bottom tabs are visible.
+  const hasBottomTabs = Boolean(
+    segments && segments.length > 0 && segments[0] === "(home)"
+  );
   const resolvedTitle = title ?? "";
   const resolvedBody = body ?? message ?? "";
-  const translateY = useRef(new Animated.Value(100)).current;
+  // Start off-screen. For bottom placement we'll animate from +100 -> 0,
+  // for top placement we'll animate from -100 -> 0.
+  const translateY = useRef(
+    new Animated.Value(hasBottomTabs ? 100 : -100)
+  ).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
@@ -71,7 +85,7 @@ const Toast: React.FC<ToastProps> = ({
 
     animationRef.current = Animated.parallel([
       Animated.timing(translateY, {
-        toValue: 100,
+        toValue: hasBottomTabs ? 100 : -100,
         duration: 300,
         useNativeDriver: true,
       }),
@@ -88,12 +102,13 @@ const Toast: React.FC<ToastProps> = ({
       }
       animationRef.current = null;
     });
-  }, [translateY, opacity, onHide]);
+  }, [translateY, opacity, onHide, hasBottomTabs]);
 
   useEffect(() => {
     if (isVisible) {
-      // Reset values when showing
-      translateY.setValue(100);
+      // Reset values when showing. Use placement-aware start positions so
+      // the animation slides in from the appropriate direction.
+      translateY.setValue(hasBottomTabs ? 100 : -100);
       opacity.setValue(0);
 
       // Animate in with spring effect
@@ -131,7 +146,7 @@ const Toast: React.FC<ToastProps> = ({
         animationRef.current = null;
       }
     };
-  }, [isVisible, duration, hideToast, translateY, opacity]);
+  }, [isVisible, duration, hideToast, translateY, opacity, hasBottomTabs]);
 
   // Cleanup effect when component unmounts
   useEffect(() => {
@@ -143,10 +158,10 @@ const Toast: React.FC<ToastProps> = ({
         animationRef.current.stop();
       }
       // Reset animated values to prevent memory leaks
-      translateY.setValue(100);
+      translateY.setValue(hasBottomTabs ? 100 : -100);
       opacity.setValue(0);
     };
-  }, [translateY, opacity]);
+  }, [translateY, opacity, hasBottomTabs]);
 
   const handleDismiss = () => {
     if (dismissible) {
@@ -196,22 +211,38 @@ const Toast: React.FC<ToastProps> = ({
 
   if (!isVisible) return null;
 
+  // Compute placement styles: when bottom tabs exist we anchor to bottom
+  // (full width). Otherwise anchor to the top with inset spacing and rounded
+  // corners.
+  const placementStyle: ViewStyle = hasBottomTabs
+    ? {
+        left: 0,
+        right: 0,
+        bottom: NavBarSize,
+      }
+    : {
+        left: 16,
+        right: 16,
+        top: Math.max(8, insets.top + 8),
+      };
+
   return (
     <Animated.View
       style={[
-        styles.container,
-        {
-          transform: [{ translateY }],
-          opacity,
-        },
-        { bottom: NavBarSize },
+        styles.animatedContainer,
+        { transform: [{ translateY }], opacity },
+        placementStyle,
       ]}
     >
       <LinearGradient
         colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.gradientContainer}
+        style={
+          hasBottomTabs
+            ? styles.gradientContainer
+            : [styles.gradientContainer, styles.topGradientContainer]
+        }
       >
         <View style={styles.content}>
           <View style={styles.iconContainer}>
@@ -252,13 +283,9 @@ const Toast: React.FC<ToastProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
+  animatedContainer: {
     position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
     zIndex: 9999,
-    width: screenWidth,
   },
   gradientContainer: {
     borderRadius: 0,
@@ -271,6 +298,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 10,
+  },
+  topGradientContainer: {
+    borderRadius: 12,
+    marginHorizontal: 0,
+    // higher elevation for top toast
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 12,
   },
   content: {
     flexDirection: "row",
