@@ -15,20 +15,15 @@ import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useRouter, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({ focused, label }: { focused: boolean; label: string }) {
   return (
-    <View style={generalStyles.container}>
+    <View style={styles.tabLabelContainer}>
       <Text
-        style={[
-          generalStyles.smallText,
-          focused && generalStyles.focusedText,
-          { minWidth: 90 },
-        ]}
+        style={[styles.tabLabelText, focused && styles.tabLabelTextFocused]}
       >
         {label}
       </Text>
@@ -190,76 +185,75 @@ export default function TabLayout() {
   return (
     <>
       <SignedIn>
-        <SafeAreaView style={generalStyles.container} edges={["top"]}>
-          <Tabs
-            screenOptions={{
-              tabBarActiveTintColor: COLORS.light.text.primary,
-              tabBarInactiveTintColor: COLORS.light.text.tertiary,
-              tabBarShowLabel: false,
-              headerShown: false,
-              tabBarHideOnKeyboard: false,
-              tabBarStyle: {
-                backgroundColor: COLORS.light.background.primary,
-                borderTopWidth: 2,
-                borderTopColor: COLORS.light.ui.border,
-                height: useNavBarSize(),
-                ...getShadowStyle(ShadowLevel.Low),
-                justifyContent: "center", // Center content vertically
-                alignItems: "center", // Center content horizontally
-              },
-              tabBarItemStyle: {
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                alignContent: "center",
-              },
-              // Ensure each tab's touch target is larger via a custom tabBarButton
-              tabBarButton: (props: BottomTabBarButtonProps) => {
-                const { children, onPress } = props;
-                return (
-                  <TouchableOpacity
-                    onPress={onPress}
-                    hitSlop={HIT_SLOP_24}
-                    style={[generalStyles.container]}
-                  >
-                    {children}
-                  </TouchableOpacity>
-                );
-              },
+        <Tabs
+          screenOptions={{
+            tabBarActiveTintColor: COLORS.light.text.primary,
+            tabBarInactiveTintColor: COLORS.light.text.tertiary,
+            tabBarShowLabel: false,
+            headerShown: false,
+            tabBarHideOnKeyboard: false,
+            tabBarStyle: {
+              backgroundColor: COLORS.light.background.primary,
+              borderTopWidth: 2,
+              borderTopColor: COLORS.light.ui.border,
+              height: useNavBarSize(),
+              ...getShadowStyle(ShadowLevel.Low),
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            tabBarItemStyle: {
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              alignSelf: "stretch",
+              alignContent: "center",
+            },
+            // Ensure each tab's touch target is larger via a custom tabBarButton
+            tabBarButton: (props: BottomTabBarButtonProps) => {
+              const { children, onPress } = props;
+              return (
+                <TouchableOpacity
+                  onPress={onPress}
+                  hitSlop={HIT_SLOP_24}
+                  style={styles.tabBarButton}
+                >
+                  {children}
+                </TouchableOpacity>
+              );
+            },
+          }}
+        >
+          <Tabs.Screen
+            name="index"
+            options={{
+              title: t("today"),
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("today")} />
+              ),
             }}
-          >
-            <Tabs.Screen
-              name="index"
-              options={{
-                title: t("today"),
-                tabBarIcon: ({ focused }: TabBarIconProps) => (
-                  <TabLabel focused={focused} label={t("today")} />
-                ),
-              }}
-            />
+          />
 
-            <Tabs.Screen
-              name="reflection"
-              options={{
-                title: t("reflection.title"),
-                tabBarIcon: ({ focused }: TabBarIconProps) => (
-                  <TabLabel focused={focused} label={t("reflection.title")} />
-                ),
-              }}
-            />
+          <Tabs.Screen
+            name="reflection"
+            options={{
+              title: t("reflection.title"),
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("reflection.title")} />
+              ),
+            }}
+          />
 
-            <Tabs.Screen
-              name="profile"
-              options={{
-                title: t("profile.title"),
-                tabBarIcon: ({ focused }: TabBarIconProps) => (
-                  <TabLabel focused={focused} label={t("profile.title")} />
-                ),
-              }}
-            />
-          </Tabs>
-          <DialogHost />
-        </SafeAreaView>
+          <Tabs.Screen
+            name="profile"
+            options={{
+              title: t("profile.title"),
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("profile.title")} />
+              ),
+            }}
+          />
+        </Tabs>
+        <DialogHost />
       </SignedIn>
 
       <SignedOut>
@@ -268,3 +262,23 @@ export default function TabLayout() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBarButton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tabLabelContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 90,
+  },
+  tabLabelText: {
+    ...generalStyles.smallText,
+  },
+  tabLabelTextFocused: {
+    ...generalStyles.focusedText,
+  },
+});
