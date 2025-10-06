@@ -76,48 +76,49 @@ export const generalStyles = StyleSheet.create({
     // BODY TEXT STYLES
     bodyLarge: {
         ...TYPOGRAPHY.body.large,
-        color: COLORS.light.text,
+        color: COLORS.light.text.primary,
     },
     bodyMedium: {
         ...TYPOGRAPHY.body.medium,
-        color: COLORS.light.text,
+        color: COLORS.light.text.primary,
     },
     bodySmall: {
         ...TYPOGRAPHY.body.small,
-        color: COLORS.light.text,
+        color: COLORS.light.text.secondary,
     },
 
     // LEGACY STYLES (maintained for compatibility)
     clickableText: {
         ...TYPOGRAPHY.interactive.clickable,
-        color: "#444",
+        color: COLORS.light.text.secondary,
     },
     subtitle: {
         ...TYPOGRAPHY.body.medium,
-        color: COLORS.light.subtitle,
+        color: COLORS.light.text.secondary,
     },
     smallText: {
         ...TYPOGRAPHY.label.small,
-        color: COLORS.light.text,
+        color: COLORS.light.text.tertiary,
         textAlign: "center",
         paddingHorizontal: 4,
     },
     focusedText: {
         ...TYPOGRAPHY.interactive.focused,
+        color: COLORS.light.text.primary,
     },
 
     // LABEL STYLES
     labelLarge: {
         ...TYPOGRAPHY.label.large,
-        color: COLORS.light.text,
+        color: COLORS.light.text.primary,
     },
     labelMedium: {
         ...TYPOGRAPHY.label.medium,
-        color: COLORS.light.text,
+        color: COLORS.light.text.secondary,
     },
     labelSmall: {
         ...TYPOGRAPHY.label.small,
-        color: COLORS.light.text,
+        color: COLORS.light.text.tertiary,
     },
 
     // BUTTON TEXT STYLES
@@ -134,80 +135,81 @@ export const generalStyles = StyleSheet.create({
     // INTERACTIVE TEXT STYLES
     linkText: {
         ...TYPOGRAPHY.interactive.link,
-        color: COLORS.primary,
+        color: COLORS.light.text.link,
     },
     clickableTextPrimary: {
         ...TYPOGRAPHY.interactive.clickable,
-        color: COLORS.primary,
+        color: COLORS.brand.primary,
     },
     clickableTextSecondary: {
         ...TYPOGRAPHY.interactive.clickable,
-        color: COLORS.secondary,
+        color: COLORS.brand.secondary,
     },
 
     // STATUS TEXT STYLES
     errorText: {
         ...TYPOGRAPHY.specialized.status.error,
-        color: COLORS.error,
+        color: COLORS.semantic.error,
     },
     successText: {
         ...TYPOGRAPHY.specialized.status.success,
-        color: COLORS.quinary, // sage green
+        color: COLORS.semantic.success,
     },
     warningText: {
         ...TYPOGRAPHY.specialized.status.error,
-        color: COLORS.tertiary, // coral red
+        color: COLORS.semantic.warning,
     },
 
     // SPECIALIZED TEXT STYLES
     timeText: {
         ...TYPOGRAPHY.specialized.time.regular,
-        color: COLORS.light.text,
+        color: COLORS.light.text.primary,
     },
     timeTextCompact: {
         ...TYPOGRAPHY.specialized.time.compact,
-        color: COLORS.light.text,
+        color: COLORS.light.text.secondary,
     },
     tagText: {
         ...TYPOGRAPHY.specialized.tag,
-        color: COLORS.white,
+        color: COLORS.neutral.white,
     },
     metadataText: {
         ...TYPOGRAPHY.specialized.metadata,
-        color: COLORS.bodyText,
+        color: COLORS.light.text.tertiary,
     },
     codeText: {
         ...TYPOGRAPHY.specialized.code,
-        color: COLORS.light.text,
+        color: COLORS.light.text.primary,
     },
     inputText: {
         ...TYPOGRAPHY.specialized.input,
-        color: COLORS.light.text,
+        color: COLORS.light.text.primary,
     },
     placeholderText: {
         ...TYPOGRAPHY.specialized.placeholder,
-        color: COLORS.placeholderText,
+        color: COLORS.light.text.tertiary,
     },
 
     // STATE-BASED TEXT STYLES
     disabledText: {
-        color: COLORS.light.disabled,
+        color: COLORS.light.ui.disabled,
     },
     selectedText: {
         fontWeight: TYPOGRAPHY.weights.semibold,
+        color: COLORS.light.text.primary,
     },
     highlightedText: {
-        backgroundColor: "rgba(102, 70, 236, 0.1)", // primary color with low opacity
+        backgroundColor: COLORS.light.interactive.hover,
         borderRadius: 4,
         paddingHorizontal: 2,
     },
 
     // UTILITY BUTTON STYLES (non-text)
     outlineDiscreetButton: {
-        borderColor: "rgba(255, 255, 255, 0.3)",
+        borderColor: COLORS.light.ui.borderSubtle,
     },
     discreetText: {
-        color: "rgba(255, 255, 255, 0.3)",
+        color: COLORS.light.text.tertiary,
     },
 
     // TEXT ALIGNMENT UTILITIES

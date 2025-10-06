@@ -116,6 +116,7 @@ export default function TabLayout() {
             type: "activity-legend",
             props: {
               preventClose: true,
+              enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas
             },
             position: "dock",
           });
@@ -190,15 +191,15 @@ export default function TabLayout() {
       <SignedIn>
         <Tabs
           screenOptions={{
-            tabBarActiveTintColor: COLORS.light.text,
-            tabBarInactiveTintColor: COLORS.light.text,
+            tabBarActiveTintColor: COLORS.light.text.primary,
+            tabBarInactiveTintColor: COLORS.light.text.tertiary,
             tabBarShowLabel: false,
             headerShown: false,
             tabBarHideOnKeyboard: false,
             tabBarStyle: {
-              backgroundColor: COLORS.light.background,
+              backgroundColor: COLORS.light.background.secondary,
               borderTopWidth: 1,
-              borderTopColor: COLORS.light.border,
+              borderTopColor: COLORS.light.ui.border,
               height: useNavBarSize(),
               ...getShadowStyle(ShadowLevel.Low),
               justifyContent: "center", // Center content vertically

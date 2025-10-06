@@ -209,7 +209,7 @@ const FeatureRequestScreen = () => {
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"
             style={styles.SubmitButtonStyle}
-            textStyle={{ color: COLORS.primary }}
+            textStyle={styles.submitButtonText}
           />
         </ScrollView>
       </View>
@@ -267,6 +267,9 @@ const styles = StyleSheet.create({
   SubmitButtonStyle: {
     borderColor: COLORS.primary,
     marginHorizontal: 24,
+  },
+  submitButtonText: {
+    color: COLORS.primary,
   },
   backButton: {
     flexDirection: "row",

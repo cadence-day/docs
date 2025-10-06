@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 16,
-    color: "rgba(255, 255, 255, 0.6)",
+    color: COLORS.dark.text.secondary,
     textAlign: "center",
     lineHeight: 24,
     marginBottom: 24,

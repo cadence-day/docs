@@ -5,6 +5,7 @@
  * This file contains all style definitions that were previously inline in component files.
  */
 
+import { COLORS } from "@/shared/constants/COLORS";
 import { CONTAINER } from "@/shared/constants/CONTAINER";
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
@@ -15,14 +16,13 @@ export const cadenceUIStyles = StyleSheet.create({
         ...CONTAINER.basic.row,
         ...CONTAINER.basic.spaceBetween,
         ...CONTAINER.padding.horizontal.md,
-        paddingTop: 40, // Extra padding to look more elegant
+        ...CONTAINER.padding.vertical.header,
     },
     screenHeaderLeftSection: {
-        flex: 1,
+        ...CONTAINER.basic.view,
     },
     screenHeaderTitle: {
-        ...TYPOGRAPHY.heading.h2,
-        color: "#222",
+        ...TYPOGRAPHY.heading.h1,
     },
     screenHeaderSubtitleContainer: {
         ...CONTAINER.basic.row,
@@ -31,7 +31,7 @@ export const cadenceUIStyles = StyleSheet.create({
     },
     screenHeaderSubtitle: {
         ...TYPOGRAPHY.body.small,
-        color: "#444",
+        color: COLORS.dark.text.secondary,
     },
     screenHeaderRightSection: {
         ...CONTAINER.basic.row,
@@ -50,20 +50,20 @@ export const cadenceUIStyles = StyleSheet.create({
     },
     cdTextCaption: {
         ...TYPOGRAPHY.body.small,
-        color: "#AAAAAA",
+        color: COLORS.dark.text.secondary,
     },
     cdTextError: {
         ...TYPOGRAPHY.specialized.status.error,
-        color: "#FF4D4F",
+        color: COLORS.semantic.error,
         fontWeight: TYPOGRAPHY.weights.bold,
     },
     cdTextMessage: {
         fontSize: TYPOGRAPHY.sizes.md,
-        color: "#00B894",
+        color: COLORS.semantic.success,
     },
     cdTextLink: {
         ...TYPOGRAPHY.interactive.link,
-        color: "#3498DB",
+        color: COLORS.semantic.info,
     },
     cdTextSmall: {
         fontSize: TYPOGRAPHY.sizes.base,
@@ -100,7 +100,7 @@ export const cadenceUIStyles = StyleSheet.create({
         padding: 0,
     },
     cdButtonDestructive: {
-        backgroundColor: "#FF3B30",
+        backgroundColor: COLORS.semantic.destructive,
         borderWidth: 0,
     },
     // CdButton size styles
@@ -165,11 +165,11 @@ export const cadenceUIStyles = StyleSheet.create({
     // CdDialog styles
     cdDialogOverlay: {
         flex: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        backgroundColor: COLORS.dark.background.overlay,
         justifyContent: "flex-end",
     },
     cdDialogContainer: {
-        backgroundColor: "#1a1a1a",
+        backgroundColor: COLORS.dark.background.secondary,
         ...CONTAINER.border.radius.lg,
         ...CONTAINER.padding.lg,
         maxHeight: "90%",
@@ -214,7 +214,7 @@ export const cadenceUIStyles = StyleSheet.create({
         borderColor: "#6366F1",
     },
     cdTextInputError: {
-        borderColor: "#EF4444",
+        borderColor: COLORS.semantic.error,
     },
     cdTextInputErrorText: {
         ...TYPOGRAPHY.body.small,

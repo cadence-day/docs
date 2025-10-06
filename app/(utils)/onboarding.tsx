@@ -98,14 +98,15 @@ export default function OnboardingScreen() {
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#151414" />
-      <SafeAreaView style={{ flex: 1 }}>
-        <LinearGradient
-          colors={["#4A4747", "#151414"]}
-          locations={[0, 0.895]}
-          start={{ x: -0.663, y: -0.407 }}
-          end={{ x: 0.678, y: 0.841 }}
-          style={styles.gradientContainer}
-        >
+
+      <LinearGradient
+        colors={["#4A4747", "#151414"]}
+        locations={[0, 0.895]}
+        start={{ x: -0.663, y: -0.407 }}
+        end={{ x: 0.678, y: 0.841 }}
+        style={styles.container}
+      >
+        <SafeAreaView style={styles.container}>
           <PanGestureHandler onHandlerStateChange={handleSwipeGesture}>
             <View style={styles.container}>
               {/* Pulsating SageIcon - Top Left (hide on final-animation screen) */}
@@ -130,17 +131,14 @@ export default function OnboardingScreen() {
               <Text style={styles.cadenceText}>CADENCE</Text>
             </View>
           </PanGestureHandler>
-        </LinearGradient>
-      </SafeAreaView>
+        </SafeAreaView>
+      </LinearGradient>
     </>
   );
 }
 
 const styles = StyleSheet.create({
   iconContainer: { position: "absolute", top: 40, left: 30 },
-  gradientContainer: {
-    flex: 1,
-  },
   container: {
     flex: 1,
   },

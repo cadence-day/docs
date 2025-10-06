@@ -66,6 +66,7 @@ export const PADDING = {
         xl: { paddingVertical: SPACING.xl },
         "2xl": { paddingVertical: SPACING["2xl"] },
         "3xl": { paddingVertical: SPACING["3xl"] },
+        header: { paddingTop: 18 }, // Special padding for headers
     },
     top: {
         none: { paddingTop: SPACING.none },

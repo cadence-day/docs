@@ -1,11 +1,10 @@
 import { useProfileStore } from "@/features/profile/stores/useProfileStore";
-import { backgroundLinearColors } from "@/shared/constants/COLORS";
+import { COLORS } from "@/shared/constants/COLORS";
 import useI18n from "@/shared/hooks/useI18n";
 import { useDialogStore } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useFocusEffect } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import React, {
   useCallback,
   useEffect,
@@ -583,12 +582,8 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
   return (
     <View style={reflectionStyles.reflectionGridRoot}>
       <View style={reflectionStyles.reflectionGridFixedDateAxisContainer}>
-        <LinearGradient
-          colors={[
-            backgroundLinearColors.primary.start,
-            backgroundLinearColors.primary.end,
-          ]}
-          style={styles.container}
+        <View
+          style={[styles.container, { backgroundColor: COLORS.background }]}
         >
           <ReflectionDateAxis
             dates={dates}
@@ -596,7 +591,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
             toggleColumn={toggleColumn}
             resetSelectedColumns={resetSelectedColumns}
           />
-        </LinearGradient>
+        </View>
       </View>
 
       {/* Scrollable Content */}

@@ -13,6 +13,8 @@
  * }
  */
 
+import { COLORS } from "./COLORS";
+
 // Font Family Constants
 export const FONT_FAMILIES = {
     // Primary font family - FoundersGrotesk (used for headings, labels, and primary text)
@@ -110,6 +112,7 @@ export const TYPOGRAPHY = {
             fontSize: FONT_SIZES["4xl"],
             fontWeight: FONT_WEIGHTS.normal,
             lineHeight: LINE_HEIGHTS.relaxed,
+            color: COLORS.h1,
         },
         h2: {
             fontFamily: FONT_FAMILIES.primary,

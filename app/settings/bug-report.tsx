@@ -355,7 +355,7 @@ export default function BugReportScreen() {
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"
             style={styles.SubmitButtonStyle}
-            textStyle={{ color: COLORS.primary }}
+            textStyle={styles.submitButtonText}
           />
         </ScrollView>
         {/* Fixed Info Section */}
@@ -452,6 +452,9 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     marginHorizontal: 24,
     marginBottom: 32,
+  },
+  submitButtonText: {
+    color: COLORS.primary,
   },
   infoContainer: {
     flexDirection: "row",

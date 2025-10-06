@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ToastType } from "@/shared/types/toast.types";
 import { useNavBarSize } from "../constants/VIEWPORT";
+import { sharedComponentStyles } from "./styles";
 
 interface ToastProps {
   // Backwards compatible: some callers provide a single `message` string
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
   gradientContainer: {
     borderRadius: 0,
     marginHorizontal: 0,
-    shadowColor: "#000",
+    shadowColor: COLORS.neutral.black,
     shadowOffset: {
       width: 0,
       height: -2,
@@ -310,42 +311,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 12,
-  },
-  content: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    minHeight: 64,
-  },
-  iconContainer: {
-    marginRight: 12,
-    marginTop: 2, // Slight adjustment to align with title
-  },
-  textContainer: {
-    flex: 1,
-    marginRight: 12,
-  },
-  title: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "600",
-    lineHeight: 20,
-    marginBottom: 4,
-  },
-  body: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: "400",
-    lineHeight: 18,
-    opacity: 0.9,
-  },
-  dismissButton: {
-    padding: 8,
-    borderRadius: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 

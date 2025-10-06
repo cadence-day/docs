@@ -1,4 +1,9 @@
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
+import {
+  withDebugBorder,
+  withDebugBorderDashed,
+  withDebugBorderThick,
+} from "@/shared/constants/isDev";
 import { Platform, StyleSheet } from "react-native";
 import {
   TIMESLICE_BORDER_RADIUS,
@@ -21,7 +26,7 @@ export const styles = StyleSheet.create({
   },
 
   // TimeSlice component styles
-  timeSliceContainer: {
+  timeSliceContainer: withDebugBorderThick({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
@@ -29,7 +34,7 @@ export const styles = StyleSheet.create({
     marginHorizontal: TIMESLICE_MARGIN_HORIZONTAL,
     // Ensure shadows can render on Android (avoid overflow hidden in parents)
     overflow: Platform.OS === "android" ? "visible" : "visible",
-  },
+  }),
   timeSliceText: {
     ...TYPOGRAPHY.specialized.time.regular,
     color: "#222",
@@ -40,7 +45,7 @@ export const styles = StyleSheet.create({
     color: "#222",
     marginBottom: 4,
   },
-  timeSliceBox: {
+  timeSliceBox: withDebugBorder({
     flex: 1,
     width: "100%",
     borderRadius: TIMESLICE_BORDER_RADIUS,
@@ -49,7 +54,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 4,
     // Use a small elevation baseline to prevent harsh Android shadow jumps
     elevation: 1,
-  },
+  }),
   timeSliceIconContainer: {
     width: "100%",
     alignItems: "center",
@@ -60,9 +65,9 @@ export const styles = StyleSheet.create({
     right: 0,
   },
   // Timeline container wrappers
-  scrollWrapper: {
+  scrollWrapper: withDebugBorderDashed({
     flex: 1,
-  },
+  }),
   scrollWrapperContent: {
     flex: 1,
   },
@@ -73,7 +78,6 @@ export const styles = StyleSheet.create({
   },
   horizontalContent: {
     alignItems: "stretch",
-    paddingVertical: 6,
   },
   // TimeSlice overlay used for metadata vertical placement
   timeSliceOverlay: {

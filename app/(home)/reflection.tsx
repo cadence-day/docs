@@ -1,10 +1,9 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ScreenHeader } from "@/shared/components/CadenceUI";
-import { backgroundLinearColors } from "@/shared/constants/COLORS";
+import { COLORS } from "@/shared/constants/COLORS";
 import { useI18n } from "@/shared/hooks/useI18n";
 
 import SageIcon from "@/shared/components/icons/SageIcon";
@@ -86,13 +85,13 @@ export default function Reflection() {
   };
 
   return (
-    <LinearGradient
-      colors={[
-        backgroundLinearColors.primary.start,
-        backgroundLinearColors.primary.end,
-      ]}
+    <View
       // Keep general container behavior but allow children to stretch and start at the top
-      style={[generalStyles.container, styles.containerOverride]}
+      style={[
+        generalStyles.container,
+        styles.containerOverride,
+        { backgroundColor: COLORS.background },
+      ]}
     >
       <ScreenHeader
         title={t("reflection.weekly-cadence")} // TODO: Make conditional with This Week Cadence or Weekly Cadence.
@@ -145,7 +144,7 @@ export default function Reflection() {
           />
         </React.Suspense>
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 

@@ -1,12 +1,11 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { SignedIn, SignedOut } from "@clerk/clerk-expo";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
-import { backgroundLinearColors } from "@/shared/constants/COLORS";
+import { COLORS } from "@/shared/constants/COLORS";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import SignIn from "../(auth)/sign-in";
@@ -58,6 +57,7 @@ export default function Today() {
       type: "activity-legend",
       props: {
         preventClose: true,
+        enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas
       },
       position: "dock",
     });
@@ -66,12 +66,11 @@ export default function Today() {
   return (
     <View style={generalStyles.container}>
       <SignedIn>
-        <LinearGradient
-          colors={[
-            backgroundLinearColors.primary.end,
-            backgroundLinearColors.primary.end,
+        <View
+          style={[
+            generalStyles.container,
+            { backgroundColor: COLORS.background },
           ]}
-          style={generalStyles.container}
         >
           <ScreenHeader
             title={title}
@@ -169,7 +168,7 @@ export default function Today() {
           </View>
 
           {/* Share modal could be added here when available */}
-        </LinearGradient>
+        </View>
       </SignedIn>
       <SignedOut>
         <SignIn />
