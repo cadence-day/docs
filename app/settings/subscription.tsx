@@ -1,4 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
@@ -16,6 +17,7 @@ import { profileStyles } from "../../features/profile/styles";
 export default function SubscriptionSettings() {
   const { t } = useTranslation();
   const router = useRouter();
+  const theme = useTheme();
   const [selectedPlan, setSelectedPlan] = useState<
     "free" | "supporter" | "premium"
   >("free");
@@ -39,7 +41,7 @@ export default function SubscriptionSettings() {
           title: t("profile.subscription"),
           headerShown: true,
           headerStyle: {
-            backgroundColor: COLORS.light.background,
+            backgroundColor: theme.background.primary,
           },
           headerShadowVisible: true,
           headerLeft: () => (
@@ -201,14 +203,14 @@ function PlanCard({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
   },
   scrollableContent: {
     flex: 1,
     paddingTop: 16,
   },
   fixedInfoSection: {
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
     paddingHorizontal: 24,
     paddingVertical: 24,
     borderTopWidth: 1,
@@ -244,7 +246,6 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   contentPadding: {
-    paddingHorizontal: 24,
     paddingBottom: 24,
   },
   paywallTitle: {
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.light.border,
+    borderColor: COLORS.light.ui.border,
   },
   cardSelected: {
     borderColor: COLORS.primary,
@@ -320,7 +321,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: COLORS.light.border,
+    borderColor: COLORS.light.ui.border,
   },
   purchaseInfo: {},
   purchasePlanLabel: {

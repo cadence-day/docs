@@ -17,8 +17,10 @@ import {
 
 import { profileStyles } from "@/features/profile/styles";
 import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { CdButton } from "../../shared/components";
+import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 const FeatureRequestScreen = () => {
@@ -29,6 +31,7 @@ const FeatureRequestScreen = () => {
   const [descriptionFocused, setDescriptionFocused] = useState(false);
   const { t } = useTranslation();
   const { user } = useUser();
+  const theme = useTheme();
   const appVersion =
     Constants.expoConfig?.version || t("settings.support.version-unknown");
 
@@ -115,13 +118,14 @@ const FeatureRequestScreen = () => {
           title: t("profile.support.feature"),
           headerShown: true,
           headerStyle: {
-            backgroundColor: COLORS.light.background,
+            backgroundColor: theme.background.primary,
           },
           headerShadowVisible: true,
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.push("/settings/customer-support")}
               style={styles.backButton}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
               <Text style={styles.backText}>{t("settings.back")}</Text>
@@ -207,7 +211,7 @@ const FeatureRequestScreen = () => {
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"
             style={styles.SubmitButtonStyle}
-            textStyle={{ color: COLORS.primary }}
+            textStyle={styles.submitButtonText}
           />
         </ScrollView>
       </View>
@@ -218,7 +222,7 @@ const FeatureRequestScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
   },
   scrollableContent: {
     flex: 1,
@@ -264,7 +268,9 @@ const styles = StyleSheet.create({
   },
   SubmitButtonStyle: {
     borderColor: COLORS.primary,
-    marginHorizontal: 24,
+  },
+  submitButtonText: {
+    color: COLORS.primary,
   },
   backButton: {
     flexDirection: "row",

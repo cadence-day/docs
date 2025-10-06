@@ -3,7 +3,7 @@ import { profileStyles } from "@/features/profile/styles";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import Toast from "@/shared/components/Toast";
 import { COLORS } from "@/shared/constants/COLORS";
-import { useToast } from "@/shared/hooks";
+import { useTheme, useToast } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import {
   useActivitiesStore,
@@ -35,6 +35,7 @@ export default function SecuritySettings() {
   const { signOut } = useAuth();
   const { toast, showError, showSuccess, hideToast } = useToast();
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const theme = useTheme();
 
   // Store reset functions
   const resetProfileStore = useProfileStore((state) => state.reset);
@@ -226,7 +227,7 @@ export default function SecuritySettings() {
           title: t("profile.security"),
           headerShown: true,
           headerStyle: {
-            backgroundColor: COLORS.light.background,
+            backgroundColor: theme.background.primary,
           },
           headerShadowVisible: true,
           headerLeft: () => (
@@ -322,14 +323,14 @@ export default function SecuritySettings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
   },
   scrollableContent: {
     flex: 1,
     paddingTop: 16,
   },
   fixedInfoSection: {
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
     paddingHorizontal: 24,
     paddingVertical: 24,
     borderTopWidth: 1,

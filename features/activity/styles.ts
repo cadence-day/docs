@@ -1,3 +1,4 @@
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { StyleSheet } from "react-native";
 
@@ -20,8 +21,8 @@ export const styles = StyleSheet.create({
     borderRadius: 2,
   },
   activityLabel: {
+    ...TYPOGRAPHY.body.small,
     color: "#fff",
-    fontSize: 12,
     marginTop: 4,
     marginBottom: 16,
     width: "100%",
@@ -43,8 +44,8 @@ export const styles = StyleSheet.create({
   },
   // Text-style placeholder used for labels
   placeholderTextLabel: {
+    ...TYPOGRAPHY.body.small,
     color: "#999",
-    fontSize: 12,
     textAlign: "center",
   },
   // Block-style placeholder used as gray bars in skeletons
@@ -70,17 +71,14 @@ export const styles = StyleSheet.create({
     minHeight: 28,
   },
   plusIcon: {
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     color: "#A1A1A1",
     textAlign: "center",
   },
   addText: {
+    ...TYPOGRAPHY.label.small,
     color: "#A1A1A1",
-    fontSize: 11,
-    fontWeight: "600",
     textAlign: "left",
-    textTransform: "uppercase",
-    fontFamily: "FoundersGrotesk-Regular",
   },
   editContainer: {
     flex: 1,
@@ -102,9 +100,9 @@ export const styles = StyleSheet.create({
     ...getShadowStyle(ShadowLevel.Medium),
   },
   deleteButtonText: {
+    ...TYPOGRAPHY.body.medium,
     color: "#fff",
-    fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: TYPOGRAPHY.weights.bold,
   },
   // ActivityForm styles (flattened)
   formContainer: {
@@ -117,12 +115,9 @@ export const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   label: {
-    fontSize: 11,
-    fontWeight: "600",
+    ...TYPOGRAPHY.label.small,
     color: "#fff",
     marginBottom: 6,
-    textTransform: "uppercase",
-    fontFamily: "FoundersGrotesk-Regular",
   },
   inputContainer: {
     flexDirection: "row",
@@ -133,14 +128,14 @@ export const styles = StyleSheet.create({
     minWidth: "100%",
   },
   textInput: {
+    ...TYPOGRAPHY.specialized.input,
     flex: 1,
-    fontSize: 14,
     color: "#fff",
     paddingVertical: 6,
     backgroundColor: "transparent",
   },
   errorText: {
-    fontSize: 12,
+    ...TYPOGRAPHY.specialized.status.error,
     color: "#EF4444",
     marginTop: 6,
     marginLeft: 4,
@@ -154,9 +149,9 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
   },
   colorButtonText: {
+    ...TYPOGRAPHY.body.medium,
     color: "#fff",
-    fontSize: 14,
-    fontWeight: "500",
+    fontWeight: TYPOGRAPHY.weights.medium,
     textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
@@ -190,8 +185,8 @@ export const styles = StyleSheet.create({
     borderBottomColor: "#333",
   },
   pickerItemText: {
+    ...TYPOGRAPHY.body.medium,
     color: "#fff",
-    fontSize: 14,
   },
   sliderLabelsContainer: {
     flexDirection: "row",
@@ -201,9 +196,9 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   sliderLabel: {
-    fontSize: 12,
+    ...TYPOGRAPHY.body.small,
     color: "#9CA3AF",
-    fontWeight: "500",
+    fontWeight: TYPOGRAPHY.weights.medium,
   },
   sliderContainer: {
     position: "relative",
@@ -251,10 +246,10 @@ export const styles = StyleSheet.create({
     backgroundColor: "#5B56F0",
   },
   weightDescription: {
-    fontSize: 12,
+    ...TYPOGRAPHY.body.small,
     color: "#fff",
     textAlign: "center",
     marginTop: 8,
-    fontWeight: "500",
+    fontWeight: TYPOGRAPHY.weights.medium,
   },
 });

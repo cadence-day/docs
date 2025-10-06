@@ -5,7 +5,8 @@ import useDialogStore from "@/shared/stores/useDialogStore";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { debugStyles } from "../styles";
 
 type ScheduledNotificationView = {
   id: string;
@@ -135,52 +136,70 @@ const DebugPanel: React.FC = () => {
   };
 
   return (
-    <View style={styles.body}>
+    <View style={debugStyles.debugPanelBody}>
       {/* Notification Status Display */}
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>
+      <View style={debugStyles.debugPanelStatusContainer}>
+        <Text style={debugStyles.debugPanelStatusText}>
           Notification Status: {notificationStatus}
         </Text>
         <TouchableOpacity
-          style={[styles.button, { paddingVertical: 6, paddingHorizontal: 12 }]}
+          style={[
+            debugStyles.debugPanelButton,
+            debugStyles.debugPanelCompactButton,
+          ]}
           onPress={() => checkNotificationStatus()}
         >
-          <Text style={[styles.buttonText, { fontSize: 14 }]}>Refresh</Text>
+          <Text
+            style={[
+              debugStyles.debugPanelButtonText,
+              debugStyles.debugPanelButtonTextSmall,
+            ]}
+          >
+            Refresh
+          </Text>
         </TouchableOpacity>
       </View>
 
       {/* List of buttons using TouchableOpacity for custom styling */}
       <TouchableOpacity
-        style={styles.button}
+        style={debugStyles.debugPanelButton}
         onPress={handleShowOnboardingDebug}
       >
-        <Text style={styles.buttonText}>Show Onboarding</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleOpenDebugPage}>
-        <Text style={styles.buttonText}>Open Debug</Text>
+        <Text style={debugStyles.debugPanelButtonText}>Show Onboarding</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.button}
+        style={debugStyles.debugPanelButton}
+        onPress={handleOpenDebugPage}
+      >
+        <Text style={debugStyles.debugPanelButtonText}>Open Debug</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={debugStyles.debugPanelButton}
         onPress={() => router.push("/test-notifications")}
       >
-        <Text style={styles.buttonText}>Test Notifications</Text>
+        <Text style={debugStyles.debugPanelButtonText}>Test Notifications</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#cc6600" }]}
+        style={[
+          debugStyles.debugPanelButton,
+          debugStyles.debugPanelWarningButton,
+        ]}
         onPress={handleSuppressNotificationPermissions}
       >
-        <Text style={styles.buttonText}>Suppress Notification Permissions</Text>
+        <Text style={debugStyles.debugPanelButtonText}>
+          Suppress Notification Permissions
+        </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={detect} style={styles.button}>
-        <Text style={styles.buttonText}>
+      <TouchableOpacity onPress={detect} style={debugStyles.debugPanelButton}>
+        <Text style={debugStyles.debugPanelButtonText}>
           {isLoading ? "Checking..." : "Test Encryption New Device"}
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={debugStyles.debugPanelButton}
         onPress={() =>
           openDialog({
             type: "encryption-link",
@@ -195,65 +214,66 @@ const DebugPanel: React.FC = () => {
           })
         }
       >
-        <Text style={styles.buttonText}>Open Encryption Link Dialog</Text>
+        <Text style={debugStyles.debugPanelButtonText}>
+          Open Encryption Link Dialog
+        </Text>
       </TouchableOpacity>
       {detectResult ? (
-        <Text style={styles.resultText}>{detectResult}</Text>
+        <Text style={debugStyles.debugPanelResultText}>{detectResult}</Text>
       ) : null}
       {/* Background tasks list */}
-      <View style={{ marginTop: 12 }}>
-        <Text style={{ color: "#fff", marginBottom: 8 }}>Background Tasks</Text>
+      <View style={debugStyles.debugPanelSectionContainer}>
+        <Text style={debugStyles.debugPanelSectionTitle}>Background Tasks</Text>
         {tasks.length === 0 ? (
-          <Text style={styles.resultText}>No scheduled background tasks</Text>
+          <Text style={debugStyles.debugPanelResultText}>
+            No scheduled background tasks
+          </Text>
         ) : (
           tasks.map((t) => (
             <View
               key={t.id}
-              style={{
-                backgroundColor: "#0056b3",
-                padding: 8,
-                borderRadius: 6,
-                marginBottom: 8,
-              }}
+              style={debugStyles.debugPanelNotificationContainer}
             >
-              <Text style={{ color: "#fff", fontWeight: "600" }}>
+              <Text style={debugStyles.debugPanelNotificationTitle}>
                 {t.title}
               </Text>
-              <Text style={{ color: "#fff", fontSize: 12 }}>
+              <Text style={debugStyles.debugPanelNotificationText}>
                 {new Date(t.scheduledFor).toLocaleString()}
               </Text>
-              <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
+              <View style={debugStyles.debugPanelButtonRow}>
                 <TouchableOpacity
                   style={[
-                    styles.button,
-                    { paddingVertical: 8, paddingHorizontal: 12 },
+                    debugStyles.debugPanelButton,
+                    debugStyles.debugPanelCompactButton,
                   ]}
                   onPress={() => void handleTriggerNow(t.id)}
                 >
-                  <Text style={styles.buttonText}>Trigger Now</Text>
+                  <Text style={debugStyles.debugPanelButtonText}>
+                    Trigger Now
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[
-                    styles.button,
-                    {
-                      paddingVertical: 8,
-                      paddingHorizontal: 12,
-                      backgroundColor: "#cc0000",
-                    },
+                    debugStyles.debugPanelButton,
+                    debugStyles.debugPanelCompactButton,
+                    debugStyles.debugPanelDangerButton,
                   ]}
                   onPress={() => void handleRemove(t.id)}
                 >
-                  <Text style={styles.buttonText}>Remove</Text>
+                  <Text style={debugStyles.debugPanelButtonText}>Remove</Text>
                 </TouchableOpacity>
               </View>
             </View>
           ))
         )}
         <TouchableOpacity
-          style={[styles.button, { marginTop: 8 }]}
+          style={[
+            debugStyles.debugPanelButton,
+            debugStyles.debugPanelButtonWithTopMargin,
+          ]}
           onPress={() => void loadTasks()}
         >
-          <Text style={styles.buttonText}>Refresh Tasks</Text>
+          <Text style={debugStyles.debugPanelButtonText}>Refresh Tasks</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -261,43 +281,3 @@ const DebugPanel: React.FC = () => {
 };
 
 export default DebugPanel;
-
-const styles = StyleSheet.create({
-  body: {
-    gap: 12,
-    marginTop: 8,
-    backgroundColor: "#007bff66",
-    padding: 12,
-    borderRadius: 8,
-  },
-  statusContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#0056b3",
-    padding: 8,
-    borderRadius: 6,
-  },
-  statusText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "500",
-    flex: 1,
-  },
-  button: {
-    backgroundColor: "#007bff",
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  resultText: {
-    color: "#fff",
-    marginTop: 6,
-  },
-});

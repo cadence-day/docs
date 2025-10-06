@@ -107,6 +107,9 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
   // Ref to the horizontal ScrollView so we can programmatically scroll
   const horizontalScrollRef = useRef<ScrollView | null>(null);
 
+  // Track the last date we auto-scrolled for, to prevent re-scrolling when timeslices are inserted
+  const lastAutoScrolledDateRef = useRef<string | null>(null);
+
   // Expose a scrollToCurrentTime method via the forwarded ref.
   useImperativeHandle(ref, () => ({
     scrollToCurrentTime: () => {
@@ -127,7 +130,7 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
 
         if (idx >= 0) {
           scrollToIndexAtOneThird(
-            horizontalScrollRef as any,
+            horizontalScrollRef as React.RefObject<ScrollView>,
             idx,
             TIMESLICE_WIDTH,
             TIMESLICE_MARGIN_HORIZONTAL
@@ -163,21 +166,29 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
     return slots;
   }, []);
 
-  // Auto-scroll to current timeslice whenever the displayed date or
-  // timeslices change — this covers opening today's screen and date
-  // navigation changes.
+  // Auto-scroll to current timeslice only on initial load or when the date changes.
+  // This prevents auto-scrolling when timeslices are inserted/updated.
   React.useEffect(() => {
     // The scroll should run after interactions/layout have finished so the
     // horizontal ScrollView has measured its content. Use InteractionManager
     // and a short timeout to avoid races on various platforms.
-    let interactionHandle: any = null;
-    let timeoutId: any = null;
+    let interactionHandle: ReturnType<
+      typeof InteractionManager.runAfterInteractions
+    > | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     try {
       if (!dateForDisplay) return;
       const displayDate = new Date(dateForDisplay);
       const isToday = displayDate.toDateString() === new Date().toDateString();
       if (!isToday) return;
+
+      // Check if we've already auto-scrolled for this date
+      const currentDateKey = displayDate.toDateString();
+      if (lastAutoScrolledDateRef.current === currentDateKey) {
+        // Already scrolled for this date, skip
+        return;
+      }
 
       const runScroll = () => {
         try {
@@ -203,11 +214,13 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
 
           if (idx >= 0) {
             scrollToIndexAtOneThird(
-              horizontalScrollRef as any,
+              horizontalScrollRef as React.RefObject<ScrollView>,
               idx,
               TIMESLICE_WIDTH,
               TIMESLICE_MARGIN_HORIZONTAL
             );
+            // Mark that we've scrolled for this date
+            lastAutoScrolledDateRef.current = currentDateKey;
           }
         } catch {
           // swallow
@@ -217,7 +230,7 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
       // Wait for interactions/layout
       interactionHandle = InteractionManager.runAfterInteractions(() => {
         // small delay to let layout settle on some devices
-        timeoutId = setTimeout(runScroll, 50) as any;
+        timeoutId = setTimeout(runScroll, 50);
       });
     } catch {
       // swallow
@@ -230,9 +243,12 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
           interactionHandle.cancel();
         } catch {}
       }
-      if (timeoutId) clearTimeout(timeoutId as any);
+      if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [dateForDisplay, dateTimeslices, date, generatePlaceholders, targetDate]);
+    // Note: dateTimeslices is intentionally NOT in the dependency array
+    // to prevent auto-scrolling when timeslices are inserted/updated
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateForDisplay, date, generatePlaceholders, targetDate]);
 
   const displayDateTimeslices =
     dateTimeslices && dateTimeslices.length > 0

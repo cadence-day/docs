@@ -467,7 +467,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
           label="MOOD"
           value={mood}
           onChange={handleMoodChange}
-          style={{ marginTop: 16 }}
+          style={styles.moodSelectorWithMargin}
         />
 
         <ScrollView

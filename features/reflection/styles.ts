@@ -1,4 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 import { REFLECTION_LAYOUT } from "./constants/layout";
 
@@ -22,12 +23,12 @@ export const reflectionStyles = StyleSheet.create({
     padding: 1,
   },
   navigationArrow: {
-    fontSize: 18,
+    fontSize: TYPOGRAPHY.sizes.xl,
     color: "#000",
   },
   dateRangeText: {
+    ...TYPOGRAPHY.body.medium,
     marginHorizontal: 10,
-    fontSize: 14,
     color: "#000",
   },
   errorContainer: {
@@ -37,7 +38,7 @@ export const reflectionStyles = StyleSheet.create({
     padding: 20,
   },
   errorText: {
-    fontSize: 16,
+    ...TYPOGRAPHY.specialized.input,
     color: COLORS.error || "#ff6b6b",
     textAlign: "center",
     marginBottom: 20,
@@ -49,9 +50,9 @@ export const reflectionStyles = StyleSheet.create({
     borderRadius: 8,
   },
   retryButtonText: {
+    ...TYPOGRAPHY.specialized.input,
     color: "white",
-    fontSize: 16,
-    fontWeight: "600",
+    fontWeight: TYPOGRAPHY.weights.semibold,
   },
 
   // LineItem component styles
@@ -66,18 +67,18 @@ export const reflectionStyles = StyleSheet.create({
     marginBottom: 18,
   },
   lineItemLabel: {
-    fontSize: 14,
+    ...TYPOGRAPHY.body.medium,
     color: "#A1A1A1",
   },
   lineItemValue: {
-    fontSize: 14,
+    ...TYPOGRAPHY.body.medium,
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: TYPOGRAPHY.weights.bold,
   },
   lineItemNote: {
-    fontSize: 12,
+    ...TYPOGRAPHY.body.small,
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: TYPOGRAPHY.weights.bold,
     marginTop: 10,
   },
 
@@ -123,9 +124,9 @@ export const reflectionStyles = StyleSheet.create({
     marginLeft: 2,
   },
   cellEnergyText: {
-    fontSize: 7,
+    fontSize: TYPOGRAPHY.sizes.micro,
     color: "rgba(255, 255, 255, 0.9)",
-    fontWeight: "600" as const,
+    fontWeight: TYPOGRAPHY.weights.semibold,
     marginLeft: 1,
     lineHeight: 8,
   },
@@ -139,7 +140,7 @@ export const reflectionStyles = StyleSheet.create({
     opacity: 0.7,
   },
   energyText: {
-    fontSize: 8,
+    fontSize: TYPOGRAPHY.sizes.tiny,
     color: "white",
     textAlign: "center",
   },
@@ -165,14 +166,14 @@ export const reflectionStyles = StyleSheet.create({
   },
   dayHeader: {
     color: "black",
-    fontSize: 10,
-    fontWeight: "bold",
+    fontSize: TYPOGRAPHY.sizes.xs,
+    fontWeight: TYPOGRAPHY.weights.bold,
     marginBottom: 2,
     textAlign: "left",
   },
   dateHeader: {
     color: "black",
-    fontSize: 9,
+    fontSize: TYPOGRAPHY.sizes.mini,
     textAlign: "left",
   },
   selectedDateText: {
@@ -256,7 +257,7 @@ export const reflectionStyles = StyleSheet.create({
   },
   hourText: {
     color: "black",
-    fontSize: 10,
+    fontSize: TYPOGRAPHY.sizes.xs,
   },
 
   // ReflectionTimesliceInfo component styles
@@ -274,7 +275,7 @@ export const reflectionStyles = StyleSheet.create({
   timesliceInfoNoDataText: {
     textAlign: "center",
     color: "#666",
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     marginTop: 20,
   },
   timesliceInfoNotesHeader: {
@@ -285,8 +286,8 @@ export const reflectionStyles = StyleSheet.create({
     borderTopColor: COLORS.secondary,
   },
   timesliceInfoNotesHeaderText: {
-    fontSize: 16,
-    fontWeight: "600" as const,
+    fontSize: TYPOGRAPHY.sizes.lg,
+    fontWeight: TYPOGRAPHY.weights.semibold,
     color: COLORS.textIcons,
     marginBottom: 4,
   },
@@ -298,8 +299,8 @@ export const reflectionStyles = StyleSheet.create({
     borderTopColor: COLORS.secondary,
   },
   timesliceInfoStatsHeaderText: {
-    fontSize: 16,
-    fontWeight: "600" as const,
+    fontSize: TYPOGRAPHY.sizes.lg,
+    fontWeight: TYPOGRAPHY.weights.semibold,
     color: COLORS.textIcons,
     marginBottom: 4,
   },

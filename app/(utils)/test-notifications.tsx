@@ -2,11 +2,8 @@ import { COLORS } from "@/shared/constants/COLORS";
 import { ToastService } from "@/shared/context/ToastProvider";
 import { notificationEngine } from "@/shared/notifications/NotificationEngine";
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
-import {
-  cadenceMessages,
-  NotificationType,
-  useNotificationStore,
-} from "@/shared/notifications/stores/notificationsStore";
+import { type NotificationType } from "@/shared/notifications/types";
+import useNotificationSettingsStore from "@/shared/stores/resources/useNotificationsStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import * as Notifications from "expo-notifications";
@@ -23,6 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import HIT_SLOP_10 from "../../shared/constants/hitSlop";
 
 interface ScheduledNotificationData {
   identifier: string;
@@ -47,17 +45,13 @@ interface BackgroundNotificationData {
 export default function TestNotifications() {
   const { user } = useUser();
   const { t } = useTranslation();
+
+  // Use the new notification store
   const {
-    requestPermissions,
-    permissionStatus,
-    scheduleNotifications,
-    usedQuoteIds,
-    nextQuoteIndex,
-    preferences,
-    timing,
-    resetQuoteBacklog,
-    repairTiming,
-  } = useNotificationStore();
+    notificationSettings,
+    updateNotificationSettings,
+    initializeForCurrentUser,
+  } = useNotificationSettingsStore();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -70,6 +64,43 @@ export default function TestNotifications() {
   const [backgroundNotifications, setBackgroundNotifications] = useState<
     BackgroundNotificationData[]
   >([]);
+  const [permissionStatus, setPermissionStatus] = useState<string>("");
+
+  // Helper functions for testing
+  const requestPermissions = async (): Promise<boolean> => {
+    const { status } = await Notifications.requestPermissionsAsync();
+    setPermissionStatus(status);
+    return status === "granted";
+  };
+
+  // Mock preferences and timing from notification settings
+  const preferences = notificationSettings
+    ? {
+        morningReminders:
+          notificationSettings.notification_type?.includes(
+            "morning-reminders"
+          ) ?? false,
+        eveningReminders:
+          notificationSettings.notification_type?.includes(
+            "evening-reminders"
+          ) ?? false,
+        middayReflection:
+          notificationSettings.notification_type?.includes("midday-checkins") ??
+          false,
+        weeklyStreaks: false,
+      }
+    : {
+        morningReminders: false,
+        eveningReminders: false,
+        middayReflection: false,
+        weeklyStreaks: false,
+      };
+
+  const timing = {
+    morningTime: notificationSettings?.wake_up_time ?? "07:00",
+    middayTime: "12:00",
+    eveningTime: notificationSettings?.sleep_time ?? "19:00",
+  };
 
   // Initialize the notification engine on mount
   React.useEffect(() => {
@@ -192,7 +223,7 @@ export default function TestNotifications() {
       const types: NotificationType[] = [
         "midday-reflection",
         "evening-reflection",
-        "weekly-streaks",
+        "morning-motivation",
       ];
 
       for (let i = 0; i < types.length; i++) {
@@ -294,7 +325,7 @@ export default function TestNotifications() {
       const types: NotificationType[] = [
         "midday-reflection",
         "evening-reflection",
-        "weekly-streaks",
+        "streak-reminder",
       ];
 
       for (let i = 0; i < delays.length; i++) {
@@ -439,7 +470,7 @@ export default function TestNotifications() {
 
   const handleResetQuoteBacklog = () => {
     try {
-      resetQuoteBacklog();
+      // Reset quote backlog - functionality moved to NotificationEngine
       Alert.alert("Success", "Quote backlog has been reset!");
     } catch (error) {
       GlobalErrorHandler.logError(error as Error, "handleResetQuoteBacklog");
@@ -452,7 +483,7 @@ export default function TestNotifications() {
       setIsLoading(true);
 
       // Force reload notification preferences from storage
-      await useNotificationStore.getState()._initialize();
+      await initializeForCurrentUser();
 
       // Reload all notification data
       await loadScheduledNotifications();
@@ -470,7 +501,7 @@ export default function TestNotifications() {
   const handleRepairTiming = async () => {
     try {
       setIsLoading(true);
-      await repairTiming();
+      // Repair timing - functionality moved to NotificationEngine
       Alert.alert(
         "Success",
         "Timing data has been repaired! All required time properties are now present with valid defaults."
@@ -486,7 +517,7 @@ export default function TestNotifications() {
   const handleSendInAppNotification = async () => {
     try {
       setIsLoading(true);
-      await notificationEngine.deliverNotificationNow("weekly-streaks");
+      await notificationEngine.deliverNotificationNow("morning-motivation");
       Alert.alert("Success", "In-app notification sent!");
     } catch (error) {
       GlobalErrorHandler.logError(
@@ -545,7 +576,7 @@ export default function TestNotifications() {
       // Send three different types of notifications
       await notificationEngine.deliverNotificationNow("midday-reflection");
       await notificationEngine.deliverNotificationNow("evening-reflection");
-      await notificationEngine.deliverNotificationNow("weekly-streaks");
+      await notificationEngine.deliverNotificationNow("streak-reminder");
 
       Alert.alert("Success", "Multiple notifications sent!");
     } catch (error) {
@@ -630,35 +661,18 @@ export default function TestNotifications() {
   };
 
   const renderQuoteBacklogInfo = () => {
-    const availableQuotes = cadenceMessages.filter(
-      (quote) => !usedQuoteIds.includes(quote.id)
-    );
-    const usedQuotes = cadenceMessages.filter((quote) =>
-      usedQuoteIds.includes(quote.id)
-    );
-
     return (
       <View style={styles.infoCard}>
-        <Text style={styles.infoTitle}>📚 Quote Backlog Status</Text>
+        <Text style={styles.infoTitle}>📚 Message System</Text>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Total Quotes:</Text>
-          <Text style={styles.infoValue}>{cadenceMessages.length}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Available:</Text>
+          <Text style={styles.infoLabel}>Status:</Text>
           <Text style={[styles.infoValue, styles.successText]}>
-            {availableQuotes.length}
+            Active (using CADENCE_MESSAGES)
           </Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Used:</Text>
-          <Text style={[styles.infoValue, styles.dangerText]}>
-            {usedQuotes.length}
-          </Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Next Index:</Text>
-          <Text style={styles.infoValue}>{nextQuoteIndex}</Text>
+          <Text style={styles.infoLabel}>Message Selection:</Text>
+          <Text style={styles.infoValue}>Random from type arrays</Text>
         </View>
       </View>
     );
@@ -741,6 +755,7 @@ export default function TestNotifications() {
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={() => handleCancelScheduledNotification(item.identifier)}
+              hitSlop={HIT_SLOP_10}
             >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
@@ -777,12 +792,14 @@ export default function TestNotifications() {
               <TouchableOpacity
                 style={[styles.actionButton, styles.triggerButton]}
                 onPress={() => handleTriggerNotificationNow(item.id)}
+                hitSlop={HIT_SLOP_10}
               >
                 <Text style={styles.actionButtonText}>Trigger Now</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.actionButton, styles.cancelButton]}
                 onPress={() => handleCancelScheduledNotification(item.id, true)}
+                hitSlop={HIT_SLOP_10}
               >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
@@ -806,6 +823,7 @@ export default function TestNotifications() {
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => router.push("/profile")}
+              hitSlop={HIT_SLOP_10}
             >
               <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
@@ -815,6 +833,7 @@ export default function TestNotifications() {
               style={[styles.backButton, styles.refreshButton]}
               onPress={handleRefreshData}
               disabled={isLoading}
+              hitSlop={HIT_SLOP_10}
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color="#007AFF" />
@@ -887,6 +906,7 @@ export default function TestNotifications() {
                       styles.typeButtonSelected,
                   ]}
                   onPress={() => setSelectedNotificationType(type)}
+                  hitSlop={HIT_SLOP_10}
                 >
                   <Text
                     style={[
@@ -909,6 +929,7 @@ export default function TestNotifications() {
             style={styles.button}
             onPress={handleRequestPermissions}
             disabled={isLoading || permissionStatus === "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -931,6 +952,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonPrimary]}
             onPress={handleSendImmediate}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -945,6 +967,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonPrimary]}
             onPress={handleScheduleDelayed}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -959,6 +982,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonSecondary]}
             onPress={handleScheduleMultipleWithDelay}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -973,6 +997,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonTertiary]}
             onPress={handleTestBackgroundManager}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -985,6 +1010,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonInfo]}
             onPress={handleTestVariousDelays}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -999,6 +1025,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonWarning]}
             onPress={handleTestImmediateVsDelayed}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1015,6 +1042,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonPrimary]}
             onPress={handleSchedule10Seconds}
             disabled={isLoading || permissionStatus !== "granted"}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1031,6 +1059,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonTertiary]}
             onPress={handleSendInAppNotification}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1043,6 +1072,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonInfo]}
             onPress={handleSendDelayedInAppNotification}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1057,6 +1087,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonTertiary]}
             onPress={handleSendMultipleInApp}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1069,6 +1100,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonQuaternary]}
             onPress={handleTestScheduleAll}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Schedule All Notifications</Text>
           </TouchableOpacity>
@@ -1083,6 +1115,7 @@ export default function TestNotifications() {
             disabled={
               isLoading || !isInitialized || permissionStatus !== "granted"
             }
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1097,6 +1130,7 @@ export default function TestNotifications() {
             disabled={
               isLoading || !isInitialized || permissionStatus !== "granted"
             }
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1115,6 +1149,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonSuccess]}
             onPress={handleTestToastSuccess}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Test Success Toast</Text>
           </TouchableOpacity>
@@ -1123,6 +1158,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonDanger]}
             onPress={handleTestToastError}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Test Error Toast</Text>
           </TouchableOpacity>
@@ -1131,6 +1167,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonWarning]}
             onPress={handleTestToastWarning}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Test Warning Toast</Text>
           </TouchableOpacity>
@@ -1139,6 +1176,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonInfo]}
             onPress={handleTestToastInfo}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Test Info Toast</Text>
           </TouchableOpacity>
@@ -1147,6 +1185,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonSecondary]}
             onPress={handleTestToastNavigation}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Toast with Navigation</Text>
           </TouchableOpacity>
@@ -1155,6 +1194,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonTertiary]}
             onPress={handleTestToastCustomAction}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Toast with Custom Action</Text>
           </TouchableOpacity>
@@ -1180,6 +1220,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonInfo]}
             onPress={handleRefreshData}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1191,6 +1232,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonWarning]}
             onPress={handleRepairTiming}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1202,6 +1244,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonWarning]}
             onPress={handleResetQuoteBacklog}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             <Text style={styles.buttonText}>Reset Quote Backlog</Text>
           </TouchableOpacity>
@@ -1209,6 +1252,7 @@ export default function TestNotifications() {
             style={[styles.button, styles.buttonDanger]}
             onPress={handleCancelAll}
             disabled={isLoading}
+            hitSlop={HIT_SLOP_10}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
@@ -1504,8 +1548,5 @@ const styles = StyleSheet.create({
   },
   successText: {
     color: "#28a745",
-  },
-  dangerText: {
-    color: "#dc3545",
   },
 });

@@ -1,4 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -15,7 +16,7 @@ export const styles = StyleSheet.create({
     },
     sectionTitle: {
         color: COLORS.white,
-        fontWeight: "600",
+        fontWeight: TYPOGRAPHY.weights.semibold,
     },
     helpText: {
         color: COLORS.bodyText,
@@ -29,9 +30,9 @@ export const styles = StyleSheet.create({
     },
     keyText: {
         color: COLORS.white,
-        fontFamily: "Courier",
-        fontSize: 13,
-        letterSpacing: 0.7,
+        fontFamily: TYPOGRAPHY.fontFamilies.courier,
+        fontSize: TYPOGRAPHY.sizes.sm,
+        letterSpacing: TYPOGRAPHY.letterSpacing.wide,
     },
     warning: {
         color: "#ffad33",

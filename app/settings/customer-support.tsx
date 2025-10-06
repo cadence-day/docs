@@ -1,6 +1,7 @@
 import { profileStyles } from "@/features/profile/styles";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,6 +19,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 
 type ExpoConfig = {
   ios?: { buildNumber?: string };
@@ -29,6 +31,7 @@ export default function CustomerSupportSettings() {
   const { t } = useTranslation();
   const router = useRouter();
   const { user } = useUser();
+  const theme = useTheme();
 
   const appVersion =
     Constants.expoConfig?.version || t("settings.support.version-unknown");
@@ -105,13 +108,14 @@ export default function CustomerSupportSettings() {
           title: t("profile.customer-support"),
           headerShown: true,
           headerStyle: {
-            backgroundColor: COLORS.light.background,
+            backgroundColor: theme.background.primary,
           },
           headerShadowVisible: true,
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.push("/(home)/profile")}
               style={styles.backButton}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
               <Text style={styles.backText}>{t("back")}</Text>
@@ -250,14 +254,14 @@ export default function CustomerSupportSettings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
   },
   scrollableContent: {
     flex: 1,
     paddingTop: 16,
   },
   fixedInfoSection: {
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
     paddingHorizontal: 24,
     paddingVertical: 24,
     borderTopWidth: 1,

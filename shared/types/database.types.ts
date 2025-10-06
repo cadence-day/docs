@@ -99,6 +99,51 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          email_enabled: boolean | null
+          expo_push_token: string | null
+          hours_of_reminders: string[] | null
+          id: string | null
+          notification_type:
+            | ("morning-reminders" | "evening-reminders" | "midday-checkins")[]
+            | null
+          push_enabled: boolean | null
+          sleep_time: string | null
+          timezone: string | null
+          user_id: string | null
+          wake_up_time: string | null
+        }
+        Insert: {
+          email_enabled?: boolean | null
+          expo_push_token?: string | null
+          hours_of_reminders?: string[] | null
+          id?: string | null
+          notification_type?:
+            | ("morning-reminders" | "evening-reminders" | "midday-checkins")[]
+            | null
+          push_enabled?: boolean | null
+          sleep_time?: string | null
+          timezone?: string | null
+          user_id?: string | null
+          wake_up_time?: string | null
+        }
+        Update: {
+          email_enabled?: boolean | null
+          expo_push_token?: string | null
+          hours_of_reminders?: string[] | null
+          id?: string | null
+          notification_type?:
+            | ("morning-reminders" | "evening-reminders" | "midday-checkins")[]
+            | null
+          push_enabled?: boolean | null
+          sleep_time?: string | null
+          timezone?: string | null
+          user_id?: string | null
+          wake_up_time?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

@@ -1,12 +1,16 @@
 import { checkAndPromptEncryptionLinking } from "@/features/encryption/utils/detectNewDevice";
+import { revenueCatService } from "@/features/purchases";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
+import { generalStyles } from "@/shared/styles";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
@@ -14,7 +18,6 @@ import { Tabs, useRouter, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({ focused, label }: { focused: boolean; label: string }) {
@@ -40,6 +43,45 @@ export default function TabLayout() {
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
+  const theme = useTheme();
+
+  // Initialize RevenueCat when user is signed in
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const initializeRevenueCat = async () => {
+      try {
+        await revenueCatService.configure();
+        GlobalErrorHandler.logDebug(
+          "RevenueCat configured successfully for signed-in user",
+          "REVENUECAT_INIT",
+          { userId: user.id }
+        );
+      } catch (error) {
+        GlobalErrorHandler.logError(
+          error,
+          "Failed to initialize RevenueCat for signed-in user",
+          { userId: user.id }
+        );
+      }
+    };
+
+    initializeRevenueCat();
+    // Fetch activities on sign-in so the home screen has up-to-date data
+    try {
+      // Non-blocking: fire-and-forget refresh of activities store
+      // Use the store directly to avoid rendering dependencies
+      require("@/shared/stores/resources/useActivitiesStore")
+        .default.getState()
+        .refresh();
+    } catch (err) {
+      GlobalErrorHandler.logWarning(
+        "Failed to kick off activities refresh on sign-in",
+        "ACTIVITIES_REFRESH",
+        { error: err, userId: user.id }
+      );
+    }
+  }, [user?.id]);
 
   // Consolidated effect to track view and manage ActivityLegendDialog
   useEffect(() => {
@@ -72,6 +114,7 @@ export default function TabLayout() {
             type: "activity-legend",
             props: {
               preventClose: true,
+              enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas
             },
             position: "dock",
           });
@@ -146,19 +189,19 @@ export default function TabLayout() {
       <SignedIn>
         <Tabs
           screenOptions={{
-            tabBarActiveTintColor: COLORS.light.text,
-            tabBarInactiveTintColor: COLORS.light.text,
+            tabBarActiveTintColor: COLORS.light.text.primary,
+            tabBarInactiveTintColor: COLORS.light.text.tertiary,
             tabBarShowLabel: false,
             headerShown: false,
             tabBarHideOnKeyboard: false,
             tabBarStyle: {
-              backgroundColor: COLORS.light.background,
-              borderTopWidth: 1,
-              borderTopColor: COLORS.light.border,
+              backgroundColor: theme.background.primary,
+              borderTopWidth: 2,
+              borderTopColor: COLORS.light.ui.border,
               height: useNavBarSize(),
               ...getShadowStyle(ShadowLevel.Low),
-              justifyContent: "center", // Center content vertically
-              alignItems: "center", // Center content horizontally
+              justifyContent: "center",
+              alignItems: "center",
             },
             tabBarItemStyle: {
               flex: 1,
@@ -174,10 +217,7 @@ export default function TabLayout() {
                 <TouchableOpacity
                   onPress={onPress}
                   hitSlop={HIT_SLOP_24}
-                  style={[
-                    styles.container,
-                    { justifyContent: "center", alignItems: "center" },
-                  ]}
+                  style={styles.tabBarButton}
                 >
                   {children}
                 </TouchableOpacity>
@@ -226,8 +266,10 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  tabBarButton: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   tabLabelContainer: {
     flex: 1,
@@ -236,16 +278,9 @@ const styles = StyleSheet.create({
     minWidth: 90,
   },
   tabLabelText: {
-    fontSize: 10,
-    textTransform: "uppercase",
-    letterSpacing: 1.2,
-    color: COLORS.light.text,
-    textAlign: "center",
-    fontWeight: "400",
-    verticalAlign: "middle",
+    ...generalStyles.smallText,
   },
   tabLabelTextFocused: {
-    textDecorationLine: "underline",
-    fontWeight: "700",
+    ...generalStyles.focusedText,
   },
 });

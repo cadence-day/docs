@@ -5,6 +5,17 @@
   "account-management": "Account Management",
   "account-verified-successfully-welcome": "Account verified successfully! Welcome!",
   "active-activities": "Active Activities",
+  "activities": {
+    "categories": {
+      "creative": "Creative",
+      "health": "Health",
+      "learning": "Learning",
+      "other": "Other",
+      "personal": "Personal",
+      "social": "Social",
+      "work": "Work"
+    }
+  },
   "activity": {
     "color-picker": {
       "done": "Done",
@@ -44,6 +55,16 @@
   "already-have-an-account": "Already have an account?",
   "already-subscribed-premium": "You are already subscribed to Premium!",
   "app-information": "App Information",
+  "app-update": {
+    "new-version-available": "New Version Available",
+    "update-required": "Update Required",
+    "update-description": "A new version ({{latestVersion}}) of the app is available. You're currently using version {{currentVersion}}.",
+    "update-required-description": "A critical update ({{latestVersion}}) is required to continue using the app. You're currently using version {{currentVersion}}.",
+    "update-benefits": "Update now to get the latest features, improvements, and bug fixes.",
+    "update-required-benefits": "This update includes important security fixes and compatibility improvements that are required for the app to function properly.",
+    "update-now": "Update Now",
+    "update-later": "Update Later"
+  },
   "app-version-and-platform": "• App version and platform",
   "are-you-sure-you-want-to-sign": "Are you sure you want to sign out?",
   "back": "Back",
@@ -156,6 +177,7 @@
   "fr": "Fri",
   "frequently-asked-questions": "Frequently asked questions",
   "get-help": "Get Help",
+  "go-back": "Go back",
   "hi-cadence-day-support-team-pl": "Hi Cadence.day Support Team, Please describe your issue or question below: [Your message here] --- App Version: {0} ({1}) User ID: {2} User Email: {3} Device: {4}",
   "highly-energetic": "Highly Energetic",
   "home": {
@@ -180,6 +202,64 @@
   "make-cadence-yours": "Make Cadence Yours",
   "meet-sage": "Meet Sage",
   "midday-reflection": "Midday Reflection",
+  "migration": {
+    "actions": {
+      "dry-run": "Dry Run",
+      "full-run": "Full Migration",
+      "migrate-activities": "Migrate Activities",
+      "migrate-notes": "Migrate Notes",
+      "migrate-states": "Migrate States",
+      "migrate-timeslices": "Migrate Timeslices",
+      "title": "Migration Actions"
+    },
+    "activities": {
+      "category": "Category",
+      "color": "Color",
+      "create-new": "Create new activity",
+      "create-new-activity": "Create New Activity",
+      "enter-name": "Enter activity name",
+      "name": "Name",
+      "name-required": "Activity name is required",
+      "new": "New",
+      "no-mappings": "Please configure activity mappings first",
+      "select-category": "Select category...",
+      "select-mapping": "Select mapping...",
+      "title": "Activity Mapping"
+    },
+    "auth": {
+      "connect": "Connect & Migrate",
+      "email": "Email",
+      "email-placeholder": "Enter your email",
+      "failed": "Authentication failed. Please check your credentials.",
+      "fields-required": "Email and password are required",
+      "password": "Password",
+      "password-placeholder": "Enter your password",
+      "subtitle": "Sign in to your legacy account to migrate your data to the new system"
+    },
+    "encryption": {
+      "checking": "Checking encryption key...",
+      "key-found": "Encryption key found ✓",
+      "unable-to-decrypt": "Unable to decrypt encrypted notes"
+    },
+    "errors": {
+      "title": "Errors"
+    },
+    "full-run": {
+      "confirm": "This will migrate all your data from the source database to the target database. This action cannot be undone. Are you sure?",
+      "title": "Confirm Full Migration"
+    },
+    "logs": {
+      "title": "Logs"
+    },
+    "progress": {
+      "activities": "Activities",
+      "notes": "Notes",
+      "states": "States",
+      "timeslices": "Timeslices",
+      "title": "Progress"
+    },
+    "title": "Data Migration"
+  },
   "mo": "Mon",
   "monthly": "Monthly",
   "mood": "Mood",
@@ -265,6 +345,7 @@
     }
   },
   "or-paste-encryption-key": "Or paste encryption key:",
+  "page-not-found": "Page Not Found",
   "parent-activity": "Parent Activity",
   "password-changed": "Password Changed",
   "password-changed-successfully": "Password changed successfully!",
@@ -348,6 +429,7 @@
     "app-version": "App Version",
     "current-plan": "Current Plan",
     "customer-support": "Customer Support",
+    "data": "Data",
     "deep-cadence": "Deep Cadence",
     "deep-cadence-description": "Deep Cadence Description",
     "delete-account": "Delete Account",
@@ -360,7 +442,7 @@
     "development": {
       "test-notifications": "Test Notifications"
     },
-    "edit-photo": "Edit Photo",
+    "edit-photo": "Edit Profile Photo",
     "email": "Email",
     "error-messages": {
       "sleep-time-range": "Sleep time should be between 8:00 PM and 2:00 AM",
@@ -388,6 +470,7 @@
       "take-photo": "Take Photo"
     },
     "logout": "Log Out",
+    "migrate-data": "Migrate Data",
     "name": "Name",
     "notifications": "Notifications",
     "phone": "Phone Number",
@@ -546,6 +629,7 @@
   },
   "sign-up-now": "Sign Up Now",
   "since-all-notification-types-a": "Since all notification types are disabled, push notifications have been turned off automatically.",
+  "sorry-the-page-you-are-looking": "Sorry, the page you are looking for does not exist.",
   "start-free-trial": "Start Free Trial",
   "stay-in-sync-nwith-your-time": "Stay in sync\\nwith your time",
   "steps-to-reproduce": "Steps to Reproduce",

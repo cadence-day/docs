@@ -1,14 +1,14 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ScreenHeader } from "@/shared/components/CadenceUI";
-import { backgroundLinearColors } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 
 import SageIcon from "@/shared/components/icons/SageIcon";
 import LoadingScreen from "../(utils)/LoadingScreen";
+import { generalStyles } from "../../shared/styles";
 const ReflectionGrid = React.lazy(() =>
   import("@/features/reflection").then((m) => ({ default: m.ReflectionGrid }))
 );
@@ -18,6 +18,7 @@ export default function Reflection() {
   const [toDate, setToDate] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useI18n();
+  const theme = useTheme();
 
   const getStartOfWeek = (date: Date) => {
     const localDate = new Date(date);
@@ -85,15 +86,16 @@ export default function Reflection() {
   };
 
   return (
-    <LinearGradient
-      colors={[
-        backgroundLinearColors.primary.start,
-        backgroundLinearColors.primary.end,
+    <View
+      // Keep general container behavior but allow children to stretch and start at the top
+      style={[
+        generalStyles.container,
+        styles.containerOverride,
+        { backgroundColor: theme.background.primary },
       ]}
-      style={styles.container}
     >
       <ScreenHeader
-        title={t("reflection.weekly-cadence")}
+        title={t("reflection.weekly-cadence")} // TODO: Make conditional with This Week Cadence or Weekly Cadence.
         OnRightElement={() => (
           <SageIcon
             size={40}
@@ -133,7 +135,7 @@ export default function Reflection() {
         }
       />
 
-      <View style={styles.gridContainer}>
+      <View style={generalStyles.flexContainerWithMargins}>
         <React.Suspense fallback={<LoadingScreen />}>
           <ReflectionGrid
             fromDate={fromDate}
@@ -143,34 +145,28 @@ export default function Reflection() {
           />
         </React.Suspense>
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  gridContainer: {
-    flex: 1,
-    marginHorizontal: 12,
-    marginBottom: 5,
+  containerOverride: {
+    alignItems: "stretch",
+    justifyContent: "flex-start",
   },
   dateNavigationContainer: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "flex-start",
   },
   dateRangeText: {
     marginHorizontal: 6,
-    fontSize: 14,
-    color: "#444",
+    ...generalStyles.subtitle,
   },
   dateRangeArrow: {
-    fontSize: 14,
-    color: "#444",
+    ...generalStyles.subtitle,
   },
   dateRangeArrowDisabled: {
+    ...generalStyles.subtitle,
     color: "#ccc",
   },
 });

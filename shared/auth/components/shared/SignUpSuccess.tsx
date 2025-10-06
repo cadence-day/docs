@@ -1,8 +1,8 @@
 import { CdText } from "@/shared/components/CadenceUI";
 import { Star5 } from "@/shared/components/icons/SageIcon";
+import { useI18n } from "@/shared/hooks/useI18n";
 import { View } from "react-native";
 import { styles } from "../style";
-import { useI18n } from "@/shared/hooks/useI18n";
 
 const SignUpSuccess = () => {
   const { t } = useI18n();
@@ -18,7 +18,7 @@ const SignUpSuccess = () => {
 
       <Star5 width={100} height={100} />
 
-      <View style={{ height: 20 }} />
+      <View style={styles.spacer20} />
 
       <CdText variant="title" size="medium" style={styles.title}>
         {t("cadence-is-in-beta")}

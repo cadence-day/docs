@@ -1,6 +1,8 @@
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
+import { generalStyles } from "@/shared/styles";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -16,6 +18,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { GlobalErrorHandler } from "../../../shared/utils/errorHandler";
 import DebugPanel from "../../debug/components/DebugPanel";
 import { ProfileImageService } from "../services/ProfileImageService";
@@ -32,6 +35,7 @@ export const ProfileScreen: React.FC = () => {
   const { user } = useUser();
   const { t } = useTranslation();
   const router = useRouter();
+  const theme = useTheme();
   const { profileData, settings, updateProfileData, updateSettings } =
     useProfileStore();
   // Time input state for validation
@@ -350,163 +354,176 @@ export const ProfileScreen: React.FC = () => {
   const isDev = __DEV__;
 
   return (
-    <ScrollView style={profileStyles.container}>
-      {/* Profile Header */}
-      <View style={profileStyles.profileHeader}>
-        <TouchableOpacity
-          style={profileStyles.profileImageContainer}
-          activeOpacity={0.8}
-          onPress={handleProfileImagePress}
-          disabled={isUploadingImage}
-        >
-          <View style={profileStyles.profileImageInner}>
-            {user?.imageUrl || profileData.avatarUrl ? (
-              <Image
-                source={{ uri: user?.imageUrl || profileData.avatarUrl }}
-                style={[
-                  profileStyles.profileImage,
-                  isUploadingImage && profileStyles.uploadingImageOpacity,
-                ]}
-              />
-            ) : (
-              <View
-                style={[
-                  profileStyles.profileImage,
-                  isUploadingImage && profileStyles.uploadingImageOpacity,
-                ]}
-              >
-                <Ionicons name="person" size={40} color={COLORS.textIcons} />
-              </View>
-            )}
-            {isUploadingImage && (
-              <View style={profileStyles.uploadingOverlay}>
-                <Ionicons name="cloud-upload" size={24} color={COLORS.white} />
-              </View>
-            )}
-          </View>
-        </TouchableOpacity>
+    <SafeAreaView
+      style={[
+        generalStyles.flexContainer,
+        { backgroundColor: theme.background.primary },
+      ]}
+      edges={["bottom", "top"]}
+    >
+      <ScrollView style={generalStyles.flexContainer}>
+        {/* Profile Header */}
+        <View style={profileStyles.profileHeader}>
+          <TouchableOpacity
+            style={profileStyles.profileImageContainer}
+            activeOpacity={0.8}
+            onPress={handleProfileImagePress}
+            disabled={isUploadingImage}
+          >
+            <View style={profileStyles.profileImageInner}>
+              {user?.imageUrl || profileData.avatarUrl ? (
+                <Image
+                  source={{ uri: user?.imageUrl || profileData.avatarUrl }}
+                  style={[
+                    profileStyles.profileImage,
+                    isUploadingImage && profileStyles.uploadingImageOpacity,
+                  ]}
+                />
+              ) : (
+                <View
+                  style={[
+                    profileStyles.profileImage,
+                    isUploadingImage && profileStyles.uploadingImageOpacity,
+                  ]}
+                >
+                  <Ionicons name="person" size={40} color={COLORS.textIcons} />
+                </View>
+              )}
+              {isUploadingImage && (
+                <View style={profileStyles.uploadingOverlay}>
+                  <Ionicons
+                    name="cloud-upload"
+                    size={24}
+                    color={COLORS.white}
+                  />
+                </View>
+              )}
+            </View>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={profileStyles.editPhotoButton}
-          onPress={handleProfileImagePress}
-          disabled={isUploadingImage}
-        >
-          <Text style={profileStyles.editPhotoText}>
-            {isUploadingImage
-              ? t("profile.uploading")
-              : t("profile.edit-photo")}
-          </Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={handleProfileImagePress}
+            disabled={isUploadingImage}
+          >
+            <Text style={[profileStyles.editPhotoText]}>
+              {isUploadingImage
+                ? t("profile.uploading")
+                : t("profile.edit-photo")}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Profile Information */}
-      <View style={profileStyles.formSection}>
-        <CdTextInputOneLine
-          label={t("profile.name")}
-          value={
-            profileData.name || user?.fullName || t("profile.fallbacks.name")
-          }
-          onSave={handleNameUpdate}
-          placeholder={t("profile.placeholders.name")}
-        />
-
-        <CdTextInputOneLine
-          label={t("profile.email")}
-          value={
-            profileData.email ||
-            user?.emailAddresses[0]?.emailAddress ||
-            t("profile.fallbacks.email")
-          }
-          editable={false}
-          placeholder={t("profile.placeholders.email")}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        {(user?.phoneNumbers?.[0]?.phoneNumber || profileData.phoneNumber) && (
+        {/* Profile Information */}
+        <View style={profileStyles.formSection}>
           <CdTextInputOneLine
-            label={t("profile.phone")}
+            label={t("profile.name")}
             value={
-              user?.phoneNumbers?.[0]?.phoneNumber ||
-              profileData.phoneNumber ||
-              ""
+              profileData.name || user?.fullName || t("profile.fallbacks.name")
+            }
+            onSave={handleNameUpdate}
+            placeholder={t("profile.placeholders.name")}
+          />
+
+          <CdTextInputOneLine
+            label={t("profile.email")}
+            value={
+              profileData.email ||
+              user?.emailAddresses[0]?.emailAddress ||
+              t("profile.fallbacks.email")
             }
             editable={false}
-            placeholder={t("profile.placeholders.phone")}
-            keyboardType="phone-pad"
+            placeholder={t("profile.placeholders.email")}
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
-        )}
-      </View>
 
-      {/* Settings Section */}
-      <View style={profileStyles.settingsSection}>
-        <CdTextInputOneLine
-          label={t("profile.notifications")}
-          showValueText={false}
-          isButton
-          onPress={handleNotificationsPress}
-          showChevron={true}
-        />
+          {(user?.phoneNumbers?.[0]?.phoneNumber ||
+            profileData.phoneNumber) && (
+            <CdTextInputOneLine
+              label={t("profile.phone")}
+              value={
+                user?.phoneNumbers?.[0]?.phoneNumber ||
+                profileData.phoneNumber ||
+                ""
+              }
+              editable={false}
+              placeholder={t("profile.placeholders.phone")}
+              keyboardType="phone-pad"
+            />
+          )}
+        </View>
 
-        <CdTextInputOneLine
-          label={t("profile.wake-time")}
-          value={settings.wakeTime}
-          onSave={(input) => handleTimeSubmit("wake", input)}
-          onChangeText={(input) => handleTimeChange("wake", input)}
-          placeholder={t("profile.placeholders.wake-time")}
-          keyboardType="numeric"
-        />
-        {timeInputErrors.wake && (
-          <Text style={profileStyles.errorText}>{timeInputErrors.wake}</Text>
-        )}
+        {/* Settings Section */}
+        <View style={profileStyles.settingsSection}>
+          <CdTextInputOneLine
+            label={t("profile.notifications")}
+            showValueText={false}
+            isButton
+            onPress={handleNotificationsPress}
+            showChevron={true}
+          />
 
-        <CdTextInputOneLine
-          label={t("profile.sleep-time")}
-          value={settings.sleepTime}
-          onSave={(input) => handleTimeSubmit("sleep", input)}
-          onChangeText={(input) => handleTimeChange("sleep", input)}
-          placeholder={t("profile.placeholders.sleep-time")}
-          keyboardType="numeric"
-        />
-        {timeInputErrors.sleep && (
-          <Text style={profileStyles.errorText}>{timeInputErrors.sleep}</Text>
-        )}
+          <CdTextInputOneLine
+            label={t("profile.wake-time")}
+            value={settings.wakeTime}
+            onSave={(input) => handleTimeSubmit("wake", input)}
+            onChangeText={(input) => handleTimeChange("wake", input)}
+            placeholder={t("profile.placeholders.wake-time")}
+            keyboardType="numeric"
+          />
+          {timeInputErrors.wake && (
+            <Text style={profileStyles.errorText}>{timeInputErrors.wake}</Text>
+          )}
 
-        <CdTextInputOneLine
-          label={t("profile.subscription")}
-          value={
-            settings.subscriptionPlan === "free"
-              ? t("profile.free")
-              : t("profile.deep-cadence")
-          }
-          isButton
-          onPress={() => router.push("/settings/subscription")}
-          showChevron={true}
-        />
-      </View>
+          <CdTextInputOneLine
+            label={t("profile.sleep-time")}
+            value={settings.sleepTime}
+            onSave={(input) => handleTimeSubmit("sleep", input)}
+            onChangeText={(input) => handleTimeChange("sleep", input)}
+            placeholder={t("profile.placeholders.sleep-time")}
+            keyboardType="numeric"
+          />
+          {timeInputErrors.sleep && (
+            <Text style={profileStyles.errorText}>{timeInputErrors.sleep}</Text>
+          )}
 
-      {/* Security Section */}
-      <View style={profileStyles.settingsSection}>
-        <Text style={profileStyles.sectionTitle}>{t("profile.security")}</Text>
+          <CdTextInputOneLine
+            label={t("profile.subscription")}
+            value={
+              settings.subscriptionPlan === "free"
+                ? t("profile.free")
+                : t("profile.deep-cadence")
+            }
+            isButton
+            onPress={() => router.push("/settings/subscription")}
+            showChevron={true}
+          />
+        </View>
 
-        <CdTextInputOneLine
-          label={t("profile.security-settings")}
-          showValueText={false}
-          isButton
-          onPress={handleSecurityPress}
-          showChevron={true}
-        />
-        {/* Encryption Section */}
-        <CdTextInputOneLine
-          label={t("profile.actions.link-new-device")}
-          showValueText={false}
-          isButton={true}
-          onPress={() => router.push("/settings/encryption")}
-          showChevron={true}
-        />
+        {/* Security Section */}
+        <View style={profileStyles.settingsSection}>
+          <Text style={profileStyles.sectionTitle}>
+            {t("profile.security")}
+          </Text>
 
-        {/* Encryption Visualization Toggle */}
-        {/* <CdTextInputOneLine
+          <CdTextInputOneLine
+            label={t("profile.security-settings")}
+            showValueText={false}
+            isButton
+            onPress={handleSecurityPress}
+            showChevron={true}
+          />
+          {/* Encryption Section */}
+          <CdTextInputOneLine
+            label={t("profile.actions.link-new-device")}
+            showValueText={false}
+            isButton={true}
+            onPress={() => router.push("/settings/encryption")}
+            showChevron={true}
+          />
+
+          {/* Encryption Visualization Toggle */}
+          {/* <CdTextInputOneLine
           label="Encryption Visualization"
           value={isVisualizationMode ? "ON" : "OFF"}
           showValueText={true}
@@ -517,31 +534,58 @@ export const ProfileScreen: React.FC = () => {
           }}
           showChevron={false}
         /> */}
-      </View>
-
-      {/* Support Section */}
-      <View style={profileStyles.settingsSection}>
-        <Text style={profileStyles.sectionTitle}>
-          {t("profile.customer-support")}
-        </Text>
-
-        <CdTextInputOneLine
-          label={t("profile.customer-support")}
-          showValueText={false}
-          isButton
-          onPress={handleSupportPress}
-          showChevron={true}
-        />
-      </View>
-
-      {/* Debug Section */}
-      {isDev && (
-        <View style={profileStyles.settingsSection}>
-          <Text style={profileStyles.sectionTitle}>Debug</Text>
-          <DebugPanel />
         </View>
-      )}
-    </ScrollView>
+
+        {/* Support Section */}
+        <View style={profileStyles.settingsSection}>
+          <Text style={profileStyles.sectionTitle}>
+            {t("profile.customer-support")}
+          </Text>
+
+          <CdTextInputOneLine
+            label={t("profile.customer-support")}
+            showValueText={false}
+            isButton
+            onPress={handleSupportPress}
+            showChevron={true}
+          />
+        </View>
+
+        {/* Data Migration Section */}
+        <View style={profileStyles.settingsSection}>
+          <Text style={profileStyles.sectionTitle}>{t("profile.data")}</Text>
+
+          <CdTextInputOneLine
+            label={t("profile.migrate-data")}
+            showValueText={false}
+            isButton
+            onPress={() => router.push("/settings/migration")}
+            showChevron={true}
+          />
+        </View>
+
+        {/* Data Migration Section */}
+        <View style={profileStyles.settingsSection}>
+          <Text style={profileStyles.sectionTitle}>{t("profile.data")}</Text>
+
+          <CdTextInputOneLine
+            label={t("profile.migrate-data")}
+            showValueText={false}
+            isButton
+            onPress={() => router.push("/settings/migration")}
+            showChevron={true}
+          />
+        </View>
+
+        {/* Debug Section */}
+        {isDev && (
+          <View style={profileStyles.settingsSection}>
+            <Text style={profileStyles.sectionTitle}>Debug</Text>
+            <DebugPanel />
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

@@ -38,7 +38,7 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
           useDialogStore.getState().closeDialog(_dialogId);
         },
       },
-      height: 85,
+      height: 100,
     });
   }, [_dialogId, t]);
 

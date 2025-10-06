@@ -5,6 +5,17 @@
   "account-management": "Kontoadministration",
   "account-verified-successfully-welcome": "Konto bekræftet med succes! Velkommen!",
   "active-activities": "Aktive aktiviteter",
+  "activities": {
+    "categories": {
+      "creative": "",
+      "health": "",
+      "learning": "",
+      "other": "",
+      "personal": "",
+      "social": "",
+      "work": ""
+    }
+  },
   "activity": {
     "color-picker": {
       "done": "Færdig",
@@ -156,6 +167,7 @@
   "fr": "Fre",
   "frequently-asked-questions": "Ofte stillede spørgsmål",
   "get-help": "Få hjælp",
+  "go-back": "",
   "hi-cadence-day-support-team-pl": "Hej Cadence.day supportteam, beskriv venligst dit problem eller spørgsmål nedenfor: [Din besked her] --- App-version: {0} ({1}) Bruger-ID: {2} Bruger e-mail: {3} Enhed: {4}",
   "highly-energetic": "Meget energisk",
   "home": {
@@ -180,6 +192,64 @@
   "make-cadence-yours": "Gør Cadence din",
   "meet-sage": "Mød Sage",
   "midday-reflection": "Middagsreflektion",
+  "migration": {
+    "actions": {
+      "dry-run": "",
+      "full-run": "",
+      "migrate-activities": "",
+      "migrate-notes": "",
+      "migrate-states": "",
+      "migrate-timeslices": "",
+      "title": ""
+    },
+    "activities": {
+      "category": "",
+      "color": "",
+      "create-new": "",
+      "create-new-activity": "",
+      "enter-name": "",
+      "name": "",
+      "name-required": "",
+      "new": "",
+      "no-mappings": "",
+      "select-category": "",
+      "select-mapping": "",
+      "title": ""
+    },
+    "auth": {
+      "connect": "",
+      "email": "",
+      "email-placeholder": "",
+      "failed": "",
+      "fields-required": "",
+      "password": "",
+      "password-placeholder": "",
+      "subtitle": ""
+    },
+    "encryption": {
+      "checking": "",
+      "key-found": "",
+      "unable-to-decrypt": ""
+    },
+    "errors": {
+      "title": ""
+    },
+    "full-run": {
+      "confirm": "",
+      "title": ""
+    },
+    "logs": {
+      "title": ""
+    },
+    "progress": {
+      "activities": "",
+      "notes": "",
+      "states": "",
+      "timeslices": "",
+      "title": ""
+    },
+    "title": ""
+  },
   "mo": "Man",
   "monthly": "Månedlig",
   "mood": "Humør",
@@ -265,6 +335,7 @@
     }
   },
   "or-paste-encryption-key": "Eller indsæt krypteringsnøgle:",
+  "page-not-found": "",
   "parent-activity": "Forældreaktivitet",
   "password-changed": "Adgangskode ændret",
   "password-changed-successfully": "Adgangskode ændrede sig med succes!",
@@ -348,6 +419,7 @@
     "app-version": "App-version",
     "current-plan": "Nuværende plan",
     "customer-support": "Kundesupport",
+    "data": "",
     "deep-cadence": "Dyb Cadence",
     "deep-cadence-description": "Dyb Cadence beskrivelse",
     "delete-account": "Slet konto",
@@ -388,6 +460,7 @@
       "take-photo": "Tag foto"
     },
     "logout": "Log ud",
+    "migrate-data": "",
     "name": "Navn",
     "notifications": "Notifikationer",
     "phone": "Telefonnummer",
@@ -546,6 +619,7 @@
   },
   "sign-up-now": "Tilmeld dig nu",
   "since-all-notification-types-a": "Da alle notifikationstyper er deaktiveret, er push-notifikationer automatisk slukket.",
+  "sorry-the-page-you-are-looking": "",
   "start-free-trial": "Start gratis prøve",
   "stay-in-sync-nwith-your-time": "Bliv synkroniseret \nmed din tid",
   "steps-to-reproduce": "Trin til at gengive",

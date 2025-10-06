@@ -5,7 +5,6 @@ import { useI18n } from "@/shared/hooks/useI18n";
 import { useSignUp } from "@clerk/clerk-expo";
 import React, { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { COLORS } from "../../../constants/COLORS";
 import { handleAuthError, parseClerkErrors } from "../../utils";
 import { styles } from "../style";
 import DirectToSignIn from "./DirectToSignIn";
@@ -145,14 +144,10 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         {t("verify-your-email")}
       </CdText>
 
-      <CdText
-        variant="body"
-        size="medium"
-        style={{ color: "#B9B9B9", marginBottom: 20, textAlign: "center" }}
-      >
+      <CdText variant="body" size="medium" style={styles.emailBody}>
         {t("weve-sent-a-verification-code-to")}{" "}
         {userEmail && (
-          <CdText variant="body" size="medium" style={{ fontWeight: "600" }}>
+          <CdText variant="body" size="medium" style={styles.emailBold}>
             {userEmail}
           </CdText>
         )}
@@ -183,11 +178,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         onSubmitEditing={onVerifyPress}
         maxLength={6}
         letterSpacing={2}
-        style={{
-          textAlign: "center",
-          fontSize: 18,
-          color: COLORS.white,
-        }}
+        style={styles.verificationInput}
       />
 
       <CdButton
@@ -196,28 +187,24 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         variant="outline"
         size="medium"
         disabled={isSubmitting || code.length !== 6}
-        style={{ width: "100%", marginTop: 20 }}
+        style={styles.verifyButton}
       />
 
-      <View style={{ marginTop: 20, alignItems: "center" }}>
-        <CdText
-          variant="body"
-          size="small"
-          style={{ color: COLORS.placeholderText, marginBottom: 10 }}
-        >
+      <View style={styles.resendContainer}>
+        <CdText variant="body" size="small" style={styles.placeholderText}>
           {t("didnt-receive-the-code")}
         </CdText>
 
         <TouchableOpacity
           onPress={onResendPress}
           disabled={isResending || resendCooldown > 0}
-          style={{ opacity: isResending || resendCooldown > 0 ? 0.5 : 1 }}
+          style={
+            isResending || resendCooldown > 0
+              ? styles.resendTouchableDisabled
+              : styles.resendTouchableEnabled
+          }
         >
-          <CdText
-            variant="body"
-            size="medium"
-            style={{ color: COLORS.primary, fontWeight: "600" }}
-          >
+          <CdText variant="body" size="medium" style={styles.resendText}>
             {isResending
               ? t("sending")
               : resendCooldown > 0

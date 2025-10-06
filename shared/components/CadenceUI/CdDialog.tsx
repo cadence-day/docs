@@ -94,7 +94,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       );
       return Math.max(minHeightPercent, Math.min(effectiveMax, newHeight));
     },
-    [enableDragging, screenHeight, maxHeight, insets.top]
+    [enableDragging, screenHeight, maxHeight, insets.top, NavBarSize]
   );
 
   const updateHeight = useCallback(
@@ -224,21 +224,14 @@ export const CdDialog: React.FC<CdDialogProps> = ({
           accessibilityLabel={String(pullLabel)}
           style={[
             styles.pullIndicator,
-            {
-              opacity: isDragging ? 1.0 : 0.8,
-            },
+            isDragging
+              ? styles.pullIndicatorDragging
+              : styles.pullIndicatorNormal,
           ]}
           {...panResponder.panHandlers}
         >
           <View
-            style={[
-              styles.pullHandle,
-              {
-                backgroundColor: isDragging ? "#333" : "#000",
-                width: isDragging ? 50 : 40,
-                height: isDragging ? 5 : 4,
-              },
-            ]}
+            style={[styles.pullHandle, isDragging && styles.pullHandleDragging]}
           />
         </View>
       )}
@@ -247,14 +240,10 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
-        style={{
-          flex: 1,
-          borderTopLeftRadius: 10,
-          borderTopRightRadius: 10,
-          borderBottomLeftRadius: 0,
-          borderBottomRightRadius: 0,
-          marginTop: enableDragging ? 10 : 0, // Only add space for pull handle when dragging is enabled
-        }}
+        style={[
+          styles.gradientContainer,
+          enableDragging && styles.gradientContainerWithDragging,
+        ]}
       >
         {/* Make the entire top area draggable when header is not present */}
         {!headerProps && enableDragging && (
@@ -289,7 +278,9 @@ export const CdDialog: React.FC<CdDialogProps> = ({
             }}
           />
         )}
-        <View style={[styles.content, { marginTop: enableDragging ? 10 : 0 }]}>
+        <View
+          style={[styles.content, enableDragging && styles.contentWithDragging]}
+        >
           {children}
         </View>
       </LinearGradient>
@@ -308,6 +299,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
     zIndex: 1000,
   },
+  gradientContainer: {
+    flex: 1,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  gradientContainerWithDragging: {
+    marginTop: 10,
+  },
   pullIndicator: {
     position: "absolute",
     top: -10, // Position above the modal
@@ -317,6 +318,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 30,
     zIndex: 20, // Higher z-index to ensure it's above everything
+  },
+  pullIndicatorDragging: {
+    opacity: 1.0,
+  },
+  pullIndicatorNormal: {
+    opacity: 0.8,
   },
   topDragArea: {
     position: "absolute",
@@ -330,11 +337,20 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
+    backgroundColor: "#000",
+  },
+  pullHandleDragging: {
+    width: 50,
+    height: 5,
+    backgroundColor: "#333",
   },
   content: {
     flex: 1,
     alignSelf: "center",
     paddingVertical: "2%",
     width: "90%",
+  },
+  contentWithDragging: {
+    marginTop: 10,
   },
 });

@@ -177,6 +177,7 @@ export const useTimelineActions = (opts?: {
             props: {
               isPickingMode: true,
               preventClose: true,
+              enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas
             },
             position: "dock" as const,
           };

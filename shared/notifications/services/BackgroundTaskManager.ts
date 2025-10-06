@@ -1,4 +1,4 @@
-import { useNotificationStore } from "@/shared/notifications/stores/notificationsStore";
+import useNotificationStore from "@/shared/stores/resources/useNotificationsStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
@@ -265,10 +265,10 @@ export class BackgroundTaskManager {
   async updatePreferences(): Promise<void> {
     try {
       const notificationStore = useNotificationStore.getState();
-      const { preferences } = notificationStore;
+      const { notificationSettings } = notificationStore;
 
-      // Check if notifications are disabled
-      if (!preferences.morningReminders && !preferences.eveningReminders) {
+      // Check if notifications are disabled (using database structure)
+      if (!notificationSettings?.push_enabled) {
         await this.cancelAllNotifications();
         await this.unregisterBackgroundTask();
       } else {
@@ -284,9 +284,10 @@ export class BackgroundTaskManager {
         "Preferences updated successfully",
         "BackgroundTaskManager.updatePreferences",
         {
-          morningReminders: preferences.morningReminders,
-          eveningReminders: preferences.eveningReminders,
-          weeklyStreaks: preferences.weeklyStreaks,
+          pushEnabled: notificationSettings?.push_enabled,
+          emailEnabled: notificationSettings?.email_enabled,
+          wakeUpTime: notificationSettings?.wake_up_time,
+          sleepTime: notificationSettings?.sleep_time,
         },
       );
     } catch (error) {

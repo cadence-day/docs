@@ -1,11 +1,10 @@
 import { useProfileStore } from "@/features/profile/stores/useProfileStore";
-import { backgroundLinearColors } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useI18n from "@/shared/hooks/useI18n";
 import { useDialogStore } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { useFocusEffect } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import React, {
   useCallback,
   useEffect,
@@ -142,6 +141,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
   setRefreshing,
 }) => {
   const { t, getCurrentLanguage } = useI18n();
+  const theme = useTheme();
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const { parsedTimeslices, isLoading, error, refetch, getDateRange } =
@@ -583,12 +583,11 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
   return (
     <View style={reflectionStyles.reflectionGridRoot}>
       <View style={reflectionStyles.reflectionGridFixedDateAxisContainer}>
-        <LinearGradient
-          colors={[
-            backgroundLinearColors.primary.start,
-            backgroundLinearColors.primary.end,
+        <View
+          style={[
+            styles.container,
+            { backgroundColor: theme.background.primary },
           ]}
-          style={styles.container}
         >
           <ReflectionDateAxis
             dates={dates}
@@ -596,7 +595,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
             toggleColumn={toggleColumn}
             resetSelectedColumns={resetSelectedColumns}
           />
-        </LinearGradient>
+        </View>
       </View>
 
       {/* Scrollable Content */}

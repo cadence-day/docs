@@ -8,6 +8,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { COLORS } from "../../constants/COLORS";
+import HIT_SLOP_10 from "../../constants/hitSlop";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -89,6 +90,7 @@ export const CdMoodSelector: React.FC<CdMoodSelectorProps> = ({
                   onLongPress={() => onChange(0)} // Reset to 0 on long press
                   activeOpacity={0.7}
                   style={[styles.circleTouchable, { borderRadius: circleSize }]}
+                  hitSlop={HIT_SLOP_10}
                 >
                   <View
                     style={[
