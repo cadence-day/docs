@@ -18,9 +18,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm install -g eas-cli jq
-      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
+          node-version: 18.x
+          cache: npm
 
       - name: Bump build number
         run: |
@@ -30,14 +29,23 @@ jobs:
           git add app.json
           git commit -m "ci: bump build number (staging)"
           git push
+          
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: EAS Update (staging)
+      - name: 📦 Install dependencies
+        run: npm install
+          
+      - name: EAS Update (preview)
         run: |
-          eas update --profile preview             --message "Automated update from PR #${{ github.event.pull_request.number }}"
+          eas update --profile preview --message "Automated update from PR #${{ github.event.pull_request.number }}"
 
       - name: EAS Build iOS (no submit)
         run: |
-          eas build --platform ios --profile preview --non-interactive --wait
+          eas build -p ios --non-interactive
 
   submit-on-merge:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
@@ -52,9 +60,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm install -g eas-cli jq
-      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
+          node-version: 18.x
+          cache: npm
 
       - name: Bump build number
         run: |
@@ -64,10 +71,19 @@ jobs:
           git add app.json
           git commit -m "ci: bump build number (staging merged)"
           git push
+          
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm install
 
       - name: EAS Build iOS
         run: |
-          eas build --platform ios --profile production --non-interactive --wait
+          eas build -p ios --non-interactive
 
       - name: Submit to App Store Connect
         run: |
