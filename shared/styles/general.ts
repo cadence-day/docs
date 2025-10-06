@@ -92,6 +92,10 @@ export const generalStyles = StyleSheet.create({
         ...TYPOGRAPHY.interactive.clickable,
         color: COLORS.light.text.secondary,
     },
+    textButton: {
+        ...TYPOGRAPHY.interactive.clickable,
+        color: COLORS.light.text.primary,
+    },
     subtitle: {
         ...TYPOGRAPHY.body.medium,
         color: COLORS.light.text.secondary,

@@ -8,6 +8,7 @@ import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
+import { generalStyles } from "@/shared/styles";
 import LoadingScreen from "../(utils)/LoadingScreen";
 const Timeline = React.lazy(() => import("@/features/timeline/Timeline"));
 
@@ -19,7 +20,6 @@ const ErrorBoundary: React.FC<{ children?: React.ReactNode }> = ({
 // Stores
 import { useI18n } from "@/shared/hooks/useI18n";
 import useDialogStore from "@/shared/stores/useDialogStore";
-import { generalStyles } from "../../shared/styles";
 
 export default function Today() {
   const { t } = useI18n();
@@ -63,7 +63,7 @@ export default function Today() {
   };
 
   return (
-    <View style={style.container}>
+    <View style={generalStyles.flexContainer}>
       <SignedIn>
         <ScreenHeader
           title={title}
@@ -121,7 +121,6 @@ export default function Today() {
               {selectedDate.toDateString() !== new Date().toDateString() && (
                 <TouchableOpacity
                   onPress={() => setSelectedDate(new Date())}
-                  style={style.backToTodayButton}
                   hitSlop={HIT_SLOP_10}
                 >
                   <View style={style.backToTodayButtonContainer}>
@@ -168,12 +167,6 @@ export default function Today() {
 }
 
 const style = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  backToTodayButton: {
-    marginLeft: 12,
-  },
   backToTodayButtonContainer: {
     flexDirection: "row",
     alignItems: "center",
