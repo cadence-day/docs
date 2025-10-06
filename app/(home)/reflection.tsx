@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ScreenHeader } from "@/shared/components/CadenceUI";
-import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 
 import SageIcon from "@/shared/components/icons/SageIcon";
@@ -18,6 +18,7 @@ export default function Reflection() {
   const [toDate, setToDate] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useI18n();
+  const theme = useTheme();
 
   const getStartOfWeek = (date: Date) => {
     const localDate = new Date(date);
@@ -90,7 +91,7 @@ export default function Reflection() {
       style={[
         generalStyles.container,
         styles.containerOverride,
-        { backgroundColor: COLORS.background },
+        { backgroundColor: theme.background.primary },
       ]}
     >
       <ScreenHeader

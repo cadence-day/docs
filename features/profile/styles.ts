@@ -14,6 +14,7 @@ export const profileStyles = StyleSheet.create({
   profileHeader: {
     ...CONTAINER.basic.centeredView,
     ...CONTAINER.padding.vertical["3xl"],
+    ...CONTAINER.padding.horizontal["2xl"],
   },
 
   profileImageContainer: {
@@ -59,6 +60,7 @@ export const profileStyles = StyleSheet.create({
   formSection: {
     ...CONTAINER.margin.bottom["3xl"],
     ...CONTAINER.gap.lg,
+    ...CONTAINER.padding.horizontal["2xl"],
   },
 
   fieldContainer: {
@@ -90,6 +92,7 @@ export const profileStyles = StyleSheet.create({
   settingsSection: {
     ...CONTAINER.margin.bottom["3xl"],
     ...CONTAINER.gap.lg,
+    ...CONTAINER.padding.horizontal["2xl"],
   },
 
   sectionTitle: {

@@ -12,6 +12,7 @@ export const generalStyles = StyleSheet.create({
     // Common container patterns
     flexContainer: {
         ...CONTAINER.basic.view,
+        backgroundColor: COLORS.light.background.primary,
     },
     centeredContainer: {
         ...CONTAINER.basic.centeredView,

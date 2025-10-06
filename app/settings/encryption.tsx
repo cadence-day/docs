@@ -23,7 +23,7 @@ import {
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import Toast from "@/shared/components/Toast";
 import { COLORS } from "@/shared/constants/COLORS";
-import { useToast } from "@/shared/hooks";
+import { useTheme, useToast } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
@@ -32,6 +32,7 @@ export default function EncryptionSettings() {
   const { t } = useTranslation();
   const router = useRouter();
   const { toast, showError, showSuccess, hideToast } = useToast();
+  const theme = useTheme();
 
   const [hasKeyOnDevice, setHasKeyOnDevice] = useState<boolean>(false);
   const [exportedKey, setExportedKey] = useState<string | null>(null);
@@ -161,7 +162,7 @@ export default function EncryptionSettings() {
           options={{
             title: t("scan-qr-code"),
             headerShown: true,
-            headerStyle: { backgroundColor: COLORS.light.background },
+            headerStyle: { backgroundColor: theme.background.primary },
             headerLeft: () => (
               <TouchableOpacity
                 onPress={() => setShowScanner(false)}
@@ -203,7 +204,7 @@ export default function EncryptionSettings() {
         options={{
           title: t("encryption"),
           headerShown: true,
-          headerStyle: { backgroundColor: COLORS.light.background },
+          headerStyle: { backgroundColor: theme.background.primary },
           headerShadowVisible: true,
           headerLeft: () => (
             <TouchableOpacity
@@ -375,14 +376,14 @@ export default function EncryptionSettings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
   },
   scrollableContent: {
     flex: 1,
     paddingTop: 16,
   },
   fixedInfoSection: {
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
     paddingHorizontal: 24,
     paddingVertical: 24,
     borderTopWidth: 1,
@@ -409,7 +410,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: COLORS.white,
     borderRadius: 8,
-    marginHorizontal: 24,
   },
   statusIcon: {
     marginRight: 12,
@@ -420,7 +420,6 @@ const styles = StyleSheet.create({
     color: COLORS.bodyText,
   },
   inputContainer: {
-    marginHorizontal: 24,
     marginVertical: 8,
   },
   inputLabel: {
@@ -462,7 +461,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF3E6",
     padding: 12,
     borderRadius: 8,
-    marginHorizontal: 24,
     marginVertical: 8,
   },
   warningIcon: {
@@ -478,7 +476,6 @@ const styles = StyleSheet.create({
   qrContainer: {
     alignItems: "center",
     paddingVertical: 20,
-    marginHorizontal: 24,
     backgroundColor: COLORS.white,
     borderRadius: 8,
   },
@@ -486,7 +483,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.bodyText,
     textAlign: "center",
-    marginHorizontal: 24,
     marginVertical: 8,
   },
   scannerContainer: {

@@ -7,6 +7,7 @@ import SignIn from "../(auth)/sign-in";
 import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
+import { useTheme } from "@/shared/hooks";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import { generalStyles } from "@/shared/styles";
 import LoadingScreen from "../(utils)/LoadingScreen";
@@ -24,6 +25,7 @@ import useDialogStore from "@/shared/stores/useDialogStore";
 export default function Today() {
   const { t } = useI18n();
   const { getDateTimeSeparator, displayDateTime } = useDeviceDateTime();
+  const theme = useTheme();
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -63,7 +65,12 @@ export default function Today() {
   };
 
   return (
-    <View style={generalStyles.flexContainer}>
+    <View
+      style={[
+        generalStyles.flexContainer,
+        { backgroundColor: theme.background.primary },
+      ]}
+    >
       <SignedIn>
         <ScreenHeader
           title={title}

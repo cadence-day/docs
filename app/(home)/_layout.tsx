@@ -4,11 +4,13 @@ import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { generalStyles } from "@/shared/styles";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
@@ -16,7 +18,6 @@ import { Tabs, useRouter, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({ focused, label }: { focused: boolean; label: string }) {
@@ -42,6 +43,7 @@ export default function TabLayout() {
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
+  const theme = useTheme();
 
   // Initialize RevenueCat when user is signed in
   useEffect(() => {
@@ -193,7 +195,7 @@ export default function TabLayout() {
             headerShown: false,
             tabBarHideOnKeyboard: false,
             tabBarStyle: {
-              backgroundColor: COLORS.light.background.primary,
+              backgroundColor: theme.background.primary,
               borderTopWidth: 2,
               borderTopColor: COLORS.light.ui.border,
               height: useNavBarSize(),

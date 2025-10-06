@@ -1,7 +1,8 @@
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
-import { CONTAINER, generalStyles } from "@/shared/styles";
+import { generalStyles } from "@/shared/styles";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -34,6 +35,7 @@ export const ProfileScreen: React.FC = () => {
   const { user } = useUser();
   const { t } = useTranslation();
   const router = useRouter();
+  const theme = useTheme();
   const { profileData, settings, updateProfileData, updateSettings } =
     useProfileStore();
   // Time input state for validation
@@ -352,10 +354,14 @@ export const ProfileScreen: React.FC = () => {
   const isDev = __DEV__;
 
   return (
-    <SafeAreaView style={generalStyles.flexContainer} edges={["bottom", "top"]}>
-      <ScrollView
-        style={[generalStyles.flexContainer, CONTAINER.margin.horizontal.lg]}
-      >
+    <SafeAreaView
+      style={[
+        generalStyles.flexContainer,
+        { backgroundColor: theme.background.primary },
+      ]}
+      edges={["bottom", "top"]}
+    >
+      <ScrollView style={generalStyles.flexContainer}>
         {/* Profile Header */}
         <View style={profileStyles.profileHeader}>
           <TouchableOpacity

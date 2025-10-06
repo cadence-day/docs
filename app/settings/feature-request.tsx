@@ -17,6 +17,7 @@ import {
 
 import { profileStyles } from "@/features/profile/styles";
 import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { CdButton } from "../../shared/components";
 import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
@@ -30,6 +31,7 @@ const FeatureRequestScreen = () => {
   const [descriptionFocused, setDescriptionFocused] = useState(false);
   const { t } = useTranslation();
   const { user } = useUser();
+  const theme = useTheme();
   const appVersion =
     Constants.expoConfig?.version || t("settings.support.version-unknown");
 
@@ -116,7 +118,7 @@ const FeatureRequestScreen = () => {
           title: t("profile.support.feature"),
           headerShown: true,
           headerStyle: {
-            backgroundColor: COLORS.light.background,
+            backgroundColor: theme.background.primary,
           },
           headerShadowVisible: true,
           headerLeft: () => (
@@ -220,7 +222,7 @@ const FeatureRequestScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
   },
   scrollableContent: {
     flex: 1,
@@ -266,7 +268,6 @@ const styles = StyleSheet.create({
   },
   SubmitButtonStyle: {
     borderColor: COLORS.primary,
-    marginHorizontal: 24,
   },
   submitButtonText: {
     color: COLORS.primary,

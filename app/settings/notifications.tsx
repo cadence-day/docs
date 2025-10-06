@@ -5,6 +5,7 @@ import {
 } from "@/features/profile/utils";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { notificationEngine } from "@/shared/notifications/NotificationEngine";
 import useNotificationSettingsStore from "@/shared/stores/resources/useNotificationsStore";
@@ -26,6 +27,7 @@ export default function NotificationsSettings() {
   const { t } = useTranslation();
   const router = useRouter();
   const { showError, showSuccess, showInfo } = useToast();
+  const theme = useTheme();
 
   // Use the new notification store
   const {
@@ -261,7 +263,7 @@ export default function NotificationsSettings() {
           title: t("profile.notifications"),
           headerShown: true,
           headerStyle: {
-            backgroundColor: COLORS.light.background,
+            backgroundColor: theme.background.primary,
           },
           headerShadowVisible: true,
           headerLeft: () => (
@@ -480,14 +482,14 @@ export default function NotificationsSettings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
   },
   scrollableContent: {
     flex: 1,
     paddingTop: 16,
   },
   fixedInfoSection: {
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
     paddingHorizontal: 24,
     paddingVertical: 24,
     borderTopWidth: 1,

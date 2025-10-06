@@ -1,5 +1,5 @@
 import { useProfileStore } from "@/features/profile/stores/useProfileStore";
-import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useI18n from "@/shared/hooks/useI18n";
 import { useDialogStore } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
@@ -141,6 +141,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
   setRefreshing,
 }) => {
   const { t, getCurrentLanguage } = useI18n();
+  const theme = useTheme();
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const { parsedTimeslices, isLoading, error, refetch, getDateRange } =
@@ -583,7 +584,10 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
     <View style={reflectionStyles.reflectionGridRoot}>
       <View style={reflectionStyles.reflectionGridFixedDateAxisContainer}>
         <View
-          style={[styles.container, { backgroundColor: COLORS.background }]}
+          style={[
+            styles.container,
+            { backgroundColor: theme.background.primary },
+          ]}
         >
           <ReflectionDateAxis
             dates={dates}
