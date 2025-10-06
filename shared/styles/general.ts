@@ -100,7 +100,6 @@ export const generalStyles = StyleSheet.create({
         ...TYPOGRAPHY.label.small,
         color: COLORS.light.text.tertiary,
         textAlign: "center",
-        paddingHorizontal: 4,
     },
     focusedText: {
         ...TYPOGRAPHY.interactive.focused,

@@ -1,6 +1,7 @@
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
+import { generalStyles } from "@/shared/styles";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -350,7 +351,7 @@ export const ProfileScreen: React.FC = () => {
   const isDev = __DEV__;
 
   return (
-    <ScrollView style={profileStyles.container}>
+    <ScrollView style={generalStyles.flexContainer}>
       {/* Profile Header */}
       <View style={profileStyles.profileHeader}>
         <TouchableOpacity

@@ -1,12 +1,13 @@
 import { COLORS } from "@/shared/constants/COLORS";
+import { CONTAINER } from "@/shared/constants/CONTAINER";
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 
 export const profileStyles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...CONTAINER.basic.view,
   },
-  uploadingImageOpacity: { opacity: 0.5 },
+  uploadingImageOpacity: { ...CONTAINER.opacity.high },
 
   // Profile Header Section
   profileHeader: {
@@ -21,7 +22,7 @@ export const profileStyles = StyleSheet.create({
     borderRadius: 60,
     borderWidth: 3, // Increased to accommodate two rings
     borderColor: COLORS.primary, // Outer ring - primary color
-    marginBottom: 16,
+    ...CONTAINER.margin.bottom.lg,
     overflow: "hidden",
   },
 
@@ -30,7 +31,7 @@ export const profileStyles = StyleSheet.create({
     height: "100%",
     borderRadius: 80, // Slightly smaller radius for inner content
     borderWidth: 3,
-    borderColor: COLORS.light.background, // Inner transparent ring
+    borderColor: COLORS.light.background.primary, // Inner transparent ring
     overflow: "hidden",
   },
 
@@ -40,11 +41,7 @@ export const profileStyles = StyleSheet.create({
   },
 
   uploadingOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    ...CONTAINER.layout.positioning.absolute.fill,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
@@ -52,57 +49,51 @@ export const profileStyles = StyleSheet.create({
   },
 
   editPhotoButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    ...CONTAINER.padding.vertical.base,
+    ...CONTAINER.padding.horizontal.lg,
   },
 
   editPhotoText: {
-    color: COLORS.textIcons,
-    fontSize: 14,
-    fontWeight: "500",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
+    ...TYPOGRAPHY.heading.h3,
   },
 
   // Form Fields Section
   formSection: {
-    paddingHorizontal: 24,
-    marginBottom: 32,
-    gap: 16,
+    ...CONTAINER.padding.horizontal["2xl"],
+    ...CONTAINER.margin.bottom["3xl"],
+    ...CONTAINER.gap.lg,
   },
 
   fieldContainer: {
-    marginBottom: 24,
+    ...CONTAINER.margin.bottom["2xl"],
   },
 
   fieldLabel: {
     fontSize: 16,
     color: COLORS.textIcons,
-    marginBottom: 8,
+    ...CONTAINER.margin.bottom.base,
     fontWeight: "400",
   },
 
   fieldValue: {
     fontSize: 16,
-    color: COLORS.light.text,
+    color: COLORS.light.text.primary,
     textAlign: "right",
     fontWeight: "500",
   },
 
   fieldRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 16,
-    borderBottomWidth: 1,
+    ...CONTAINER.basic.spaceBetween,
+    ...CONTAINER.padding.vertical.lg,
+    ...CONTAINER.border.bottom.thin,
     borderBottomColor: "#E5E5E5",
   },
 
   // Settings Sections
   settingsSection: {
-    paddingHorizontal: 24,
-    marginBottom: 32,
-    gap: 16,
+    ...CONTAINER.padding.horizontal["2xl"],
+    ...CONTAINER.margin.bottom["3xl"],
+    ...CONTAINER.gap.lg,
   },
 
   sectionTitle: {
@@ -114,30 +105,27 @@ export const profileStyles = StyleSheet.create({
   },
 
   settingRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 16,
-    borderBottomWidth: 1,
+    ...CONTAINER.basic.spaceBetween,
+    ...CONTAINER.padding.vertical.lg,
+    ...CONTAINER.border.bottom.thin,
     borderBottomColor: "#E5E5E5",
   },
 
   settingLabel: {
     fontSize: 16,
-    color: COLORS.light.text,
+    color: COLORS.light.text.primary,
     fontWeight: "400",
   },
 
   settingValue: {
-    flexDirection: "row",
-    alignItems: "center",
+    ...CONTAINER.basic.row,
   },
 
   settingValueText: {
     fontSize: 16,
     color: COLORS.textIcons,
     fontWeight: "500",
-    marginRight: 8,
+    ...CONTAINER.margin.right.base,
   },
 
   chevronIcon: {
@@ -147,22 +135,20 @@ export const profileStyles = StyleSheet.create({
   // Subscription Plan
   planContainer: {
     backgroundColor: "#F8F8F8",
-    borderRadius: 12,
-    padding: 20,
-    marginVertical: 16,
+    ...CONTAINER.border.radius.lg,
+    ...CONTAINER.padding.xl,
+    ...CONTAINER.margin.vertical.lg,
   },
 
   planHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
+    ...CONTAINER.basic.spaceBetween,
+    ...CONTAINER.margin.bottom.lg,
   },
 
   planName: {
     fontSize: TYPOGRAPHY.sizes.xl,
     fontWeight: "600",
-    color: COLORS.light.text,
+    color: COLORS.light.text.primary,
   },
 
   planPrice: {
@@ -175,17 +161,17 @@ export const profileStyles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.textIcons,
     lineHeight: 20,
-    marginBottom: 16,
+    ...CONTAINER.margin.bottom.lg,
   },
 
   featuresList: {
-    marginBottom: 20,
+    ...CONTAINER.margin.bottom.xl,
   },
 
   featureItem: {
-    flexDirection: "row",
+    ...CONTAINER.layout.direction.row,
     alignItems: "flex-start",
-    marginBottom: 8,
+    ...CONTAINER.margin.bottom.base,
   },
 
   featureBullet: {
@@ -194,21 +180,21 @@ export const profileStyles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: COLORS.primary,
     marginTop: 7,
-    marginRight: 12,
+    ...CONTAINER.margin.right.md,
   },
 
   featureText: {
     flex: 1,
     fontSize: 14,
-    color: COLORS.light.text,
+    color: COLORS.light.text.primary,
     lineHeight: 20,
   },
 
   upgradeButton: {
     backgroundColor: COLORS.primary,
     paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    ...CONTAINER.padding.horizontal["2xl"],
+    ...CONTAINER.border.radius.md,
     alignItems: "center",
   },
 
@@ -220,15 +206,15 @@ export const profileStyles = StyleSheet.create({
 
   // Security Section
   securitySection: {
-    paddingHorizontal: 24,
-    marginBottom: 32,
+    ...CONTAINER.padding.horizontal["2xl"],
+    ...CONTAINER.margin.bottom["3xl"],
   },
 
   dangerZone: {
     backgroundColor: "#FFF5F5",
-    borderRadius: 8,
-    padding: 16,
-    marginTop: 24,
+    ...CONTAINER.border.radius.md,
+    ...CONTAINER.padding.lg,
+    ...CONTAINER.margin.top["2xl"],
   },
 
   dangerButton: {
@@ -240,19 +226,17 @@ export const profileStyles = StyleSheet.create({
 
   // App Info
   appInfoSection: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 32,
-    borderTopWidth: 1,
+    ...CONTAINER.padding.horizontal["2xl"],
+    ...CONTAINER.padding.top.lg,
+    ...CONTAINER.padding.bottom["3xl"],
+    ...CONTAINER.border.top.thin,
     borderTopColor: "#E5E5E5",
-    gap: 16,
+    ...CONTAINER.gap.lg,
   },
 
   appInfoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
+    ...CONTAINER.basic.spaceBetween,
+    ...CONTAINER.padding.vertical.md,
   },
 
   appInfoLabel: {
@@ -268,20 +252,20 @@ export const profileStyles = StyleSheet.create({
 
   // Support Form Styles
   supportFormContainer: {
-    padding: 20,
+    ...CONTAINER.padding.xl,
   },
 
   categorySelector: {
-    flexDirection: "row",
-    marginBottom: 20,
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.margin.bottom.xl,
   },
 
   categoryButton: {
     flex: 1,
-    marginHorizontal: 4,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    ...CONTAINER.margin.horizontal.sm,
+    ...CONTAINER.padding.vertical.md,
+    ...CONTAINER.padding.horizontal.lg,
+    ...CONTAINER.border.radius.md,
     alignItems: "center",
     backgroundColor: "#F0F0F0",
   },
@@ -301,25 +285,25 @@ export const profileStyles = StyleSheet.create({
   },
 
   messageInput: {
-    borderWidth: 1,
+    ...CONTAINER.border.width.thin,
     borderColor: "#DDD",
-    borderRadius: 8,
-    padding: 12,
+    ...CONTAINER.border.radius.md,
+    ...CONTAINER.padding.md,
     height: 120,
     textAlignVertical: "top",
-    marginBottom: 20,
+    ...CONTAINER.margin.bottom.xl,
     fontSize: 16,
   },
 
   submitButton: {
     backgroundColor: COLORS.primary,
     paddingVertical: 14,
-    borderRadius: 8,
+    ...CONTAINER.border.radius.md,
     alignItems: "center",
   },
 
   submitButtonDisabled: {
-    opacity: 0.5,
+    ...CONTAINER.opacity.high,
   },
 
   submitButtonText: {
@@ -328,9 +312,9 @@ export const profileStyles = StyleSheet.create({
     fontWeight: "600",
   },
   actionsSection: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderTopWidth: 1,
+    ...CONTAINER.padding.horizontal["2xl"],
+    ...CONTAINER.padding.vertical.lg,
+    ...CONTAINER.border.top.thin,
     borderTopColor: "#E5E5E5",
   },
 
@@ -338,15 +322,15 @@ export const profileStyles = StyleSheet.create({
   errorText: {
     fontSize: 12,
     color: COLORS.error,
-    marginTop: 4,
-    marginBottom: 8,
-    paddingHorizontal: 4,
+    ...CONTAINER.margin.top.sm,
+    ...CONTAINER.margin.bottom.base,
+    ...CONTAINER.padding.horizontal.sm,
   },
 
   developerSection: {
     backgroundColor: "#F0F0F0",
-    borderRadius: 24,
+    ...CONTAINER.border.radius["3xl"],
     alignItems: "center",
-    margin: 24,
+    ...CONTAINER.margin["2xl"],
   },
 });

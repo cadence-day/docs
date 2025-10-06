@@ -1,5 +1,4 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -8,7 +7,6 @@ import SageIcon from "@/shared/components/icons/SageIcon";
 import { COLORS } from "@/shared/constants/COLORS";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
-import SignIn from "../(auth)/sign-in";
 import LoadingScreen from "../(utils)/LoadingScreen";
 const Timeline = React.lazy(() => import("@/features/timeline/Timeline"));
 
@@ -64,115 +62,103 @@ export default function Today() {
   };
 
   return (
-    <View style={generalStyles.container}>
-      <SignedIn>
-        <View
-          style={[
-            generalStyles.container,
-            { backgroundColor: COLORS.background },
-          ]}
-        >
-          <ScreenHeader
-            title={title}
-            OnRightElement={() => (
-              <SageIcon size={40} status="pulsating" auto={false} />
+    <View
+      style={[generalStyles.container, { backgroundColor: COLORS.background }]}
+    >
+      <ScreenHeader
+        title={title}
+        OnRightElement={() => (
+          <SageIcon size={40} status="pulsating" auto={false} />
+        )}
+        subtitle={
+          <>
+            {/* Tappable date: opens calendar modal */}
+            <TouchableOpacity
+              hitSlop={HIT_SLOP_10}
+              onPress={() => {
+                const idHolder: { id?: string } = {};
+                const id = useDialogStore.getState().openDialog({
+                  type: "calendar",
+                  props: {
+                    selectedDate,
+                    height: 60,
+                    enableDragging: false,
+                    headerProps: {
+                      title: t("calendarDialog.pick-a-date"),
+                    },
+                    onSelect: (d: Date) => setSelectedDate(d),
+                    onConfirm: () => {
+                      if (idHolder.id)
+                        useDialogStore.getState().closeDialog(idHolder.id);
+                    },
+                  },
+                });
+                idHolder.id = id;
+              }}
+            >
+              {(() => {
+                const includeTime =
+                  selectedDate.toDateString() === new Date().toDateString();
+                const displayed = displayDateTime(
+                  (selectedDate.toDateString() === new Date().toDateString()
+                    ? currentTime
+                    : selectedDate
+                  ).toISOString(),
+                  {
+                    weekdayFormat: "long",
+                    weekdayPosition: "before",
+                    monthFormat: "long",
+                    dateTimeSeparator: getDateTimeSeparator(),
+                    includeTime,
+                  }
+                );
+                return (
+                  <Text style={generalStyles.clickableText}>{displayed}</Text>
+                );
+              })()}
+            </TouchableOpacity>
+            {/* Back to Today button when a non-today date is selected */}
+            {selectedDate.toDateString() !== new Date().toDateString() && (
+              <TouchableOpacity
+                onPress={() => setSelectedDate(new Date())}
+                style={style.backToTodayButton}
+                hitSlop={HIT_SLOP_10}
+              >
+                <View style={style.backToTodayButtonContainer}>
+                  <Text style={style.backToTodayButtonText}>{" < "}</Text>
+                  <Text style={generalStyles.clickableText}>
+                    {t("back-to-today")}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             )}
-            subtitle={
-              <>
-                {/* Tappable date: opens calendar modal */}
-                <TouchableOpacity
-                  hitSlop={HIT_SLOP_10}
-                  onPress={() => {
-                    const idHolder: { id?: string } = {};
-                    const id = useDialogStore.getState().openDialog({
-                      type: "calendar",
-                      props: {
-                        selectedDate,
-                        height: 60,
-                        enableDragging: false,
-                        headerProps: {
-                          title: t("calendarDialog.pick-a-date"),
-                        },
-                        onSelect: (d: Date) => setSelectedDate(d),
-                        onConfirm: () => {
-                          if (idHolder.id)
-                            useDialogStore.getState().closeDialog(idHolder.id);
-                        },
-                      },
-                    });
-                    idHolder.id = id;
-                  }}
-                >
-                  {(() => {
-                    const includeTime =
-                      selectedDate.toDateString() === new Date().toDateString();
-                    const displayed = displayDateTime(
-                      (selectedDate.toDateString() === new Date().toDateString()
-                        ? currentTime
-                        : selectedDate
-                      ).toISOString(),
-                      {
-                        weekdayFormat: "long",
-                        weekdayPosition: "before",
-                        monthFormat: "long",
-                        dateTimeSeparator: getDateTimeSeparator(),
-                        includeTime,
-                      }
-                    );
-                    return (
-                      <Text style={generalStyles.clickableText}>
-                        {displayed}
-                      </Text>
-                    );
-                  })()}
-                </TouchableOpacity>
-                {/* Back to Today button when a non-today date is selected */}
-                {selectedDate.toDateString() !== new Date().toDateString() && (
-                  <TouchableOpacity
-                    onPress={() => setSelectedDate(new Date())}
-                    style={style.backToTodayButton}
-                    hitSlop={HIT_SLOP_10}
-                  >
-                    <View style={style.backToTodayButtonContainer}>
-                      <Text style={style.backToTodayButtonText}>{" < "}</Text>
-                      <Text style={generalStyles.clickableText}>
-                        {t("back-to-today")}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-              </>
-            }
+          </>
+        }
+      />
+
+      <ErrorBoundary>
+        {/* Pass selected date into the timeline so it renders the chosen day */}
+        <React.Suspense fallback={<LoadingScreen />}>
+          <Timeline date={selectedDate} />
+        </React.Suspense>
+      </ErrorBoundary>
+
+      {/* Spacer to ensure there's room below the timeline (e.g., above nav) */}
+      <View style={style.emptySpaceBelowTimeline}>
+        {/* Reopen Activity Dialog Button - shown when dialog is closed */}
+        {!isActivityDialogOpen && (
+          <CdButton
+            title={t("activity.legend.reopen")}
+            onPress={reopenActivityDialog}
+            variant="outline"
+            size="medium"
+            style={generalStyles.outlineDiscreetButton}
+            textStyle={generalStyles.discreetText}
           />
+        )}
+      </View>
 
-          <ErrorBoundary>
-            {/* Pass selected date into the timeline so it renders the chosen day */}
-            <React.Suspense fallback={<LoadingScreen />}>
-              <Timeline date={selectedDate} />
-            </React.Suspense>
-          </ErrorBoundary>
-
-          {/* Spacer to ensure there's room below the timeline (e.g., above nav) */}
-          <View style={style.emptySpaceBelowTimeline}>
-            {/* Reopen Activity Dialog Button - shown when dialog is closed */}
-            {!isActivityDialogOpen && (
-              <CdButton
-                title={t("activity.legend.reopen")}
-                onPress={reopenActivityDialog}
-                variant="outline"
-                size="medium"
-                style={generalStyles.outlineDiscreetButton}
-                textStyle={generalStyles.discreetText}
-              />
-            )}
-          </View>
-
-          {/* Share modal could be added here when available */}
-        </View>
-      </SignedIn>
-      <SignedOut>
-        <SignIn />
-      </SignedOut>
+      {/* Share modal could be added here when available */}
     </View>
   );
 }

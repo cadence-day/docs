@@ -50,8 +50,8 @@ export const COLORS = {
 
     // Text Colors
     text: {
-      primary: "#11181C", // Main text
-      secondary: "#444444", // Subtitles, secondary text
+      primary: "#363636", // Headers, main text
+      secondary: "#575453", // Subtitles, secondary text
       tertiary: "#6B7280", // Placeholder text, disabled
       inverse: "#FFFFFF", // Text on dark backgrounds
       link: "#6646EC", // Links
@@ -59,7 +59,7 @@ export const COLORS = {
 
     // UI Elements
     ui: {
-      border: "#E5E7EB", // Borders, dividers
+      border: "#E4E4E4", // Borders, dividers
       borderSubtle: "rgba(0, 0, 0, 0.1)", // Subtle borders
       icon: "#687076", // Default icons
       iconActive: "#6646EC", // Active/selected icons
