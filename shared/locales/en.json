@@ -442,7 +442,7 @@
     "development": {
       "test-notifications": "Test Notifications"
     },
-    "edit-photo": "Edit Photo",
+    "edit-photo": "Edit Profile Photo",
     "email": "Email",
     "error-messages": {
       "sleep-time-range": "Sleep time should be between 8:00 PM and 2:00 AM",

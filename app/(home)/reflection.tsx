@@ -134,7 +134,7 @@ export default function Reflection() {
         }
       />
 
-      <View style={styles.gridContainer}>
+      <View style={generalStyles.flexContainerWithMargins}>
         <React.Suspense fallback={<LoadingScreen />}>
           <ReflectionGrid
             fromDate={fromDate}
@@ -149,9 +149,6 @@ export default function Reflection() {
 }
 
 const styles = StyleSheet.create({
-  gridContainer: {
-    flex: 1,
-  },
   containerOverride: {
     alignItems: "stretch",
     justifyContent: "flex-start",

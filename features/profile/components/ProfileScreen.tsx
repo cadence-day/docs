@@ -1,7 +1,7 @@
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import { COLORS } from "@/shared/constants/COLORS";
 import useTranslation from "@/shared/hooks/useI18n";
-import { generalStyles } from "@/shared/styles";
+import { CONTAINER, generalStyles } from "@/shared/styles";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -353,7 +353,9 @@ export const ProfileScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={generalStyles.flexContainer} edges={["bottom", "top"]}>
-      <ScrollView style={generalStyles.flexContainer}>
+      <ScrollView
+        style={[generalStyles.flexContainer, CONTAINER.margin.horizontal.lg]}
+      >
         {/* Profile Header */}
         <View style={profileStyles.profileHeader}>
           <TouchableOpacity
@@ -394,11 +396,10 @@ export const ProfileScreen: React.FC = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={profileStyles.editPhotoButton}
             onPress={handleProfileImagePress}
             disabled={isUploadingImage}
           >
-            <Text style={profileStyles.editPhotoText}>
+            <Text style={[profileStyles.editPhotoText]}>
               {isUploadingImage
                 ? t("profile.uploading")
                 : t("profile.edit-photo")}

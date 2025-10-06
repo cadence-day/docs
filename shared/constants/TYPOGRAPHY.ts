@@ -125,7 +125,7 @@ export const TYPOGRAPHY = {
         h3: {
             color: COLORS.light.text.secondary,
             fontFamily: FONT_FAMILIES.secondary,
-            fontSize: FONT_SIZES["lg"],
+            fontSize: FONT_SIZES["base"],
             fontWeight: FONT_WEIGHTS.medium,
             lineHeight: LINE_HEIGHTS.normal,
         },

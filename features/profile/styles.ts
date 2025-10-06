@@ -2,6 +2,7 @@ import { COLORS } from "@/shared/constants/COLORS";
 import { CONTAINER } from "@/shared/constants/CONTAINER";
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
+import { generalStyles } from "../../shared/styles";
 
 export const profileStyles = StyleSheet.create({
   container: {
@@ -11,9 +12,8 @@ export const profileStyles = StyleSheet.create({
 
   // Profile Header Section
   profileHeader: {
-    alignItems: "center",
-    paddingVertical: 32,
-    paddingHorizontal: 24,
+    ...CONTAINER.basic.centeredView,
+    ...CONTAINER.padding.vertical["3xl"],
   },
 
   profileImageContainer: {
@@ -48,18 +48,15 @@ export const profileStyles = StyleSheet.create({
     borderRadius: 60,
   },
 
-  editPhotoButton: {
-    ...CONTAINER.padding.vertical.base,
-    ...CONTAINER.padding.horizontal.lg,
-  },
-
   editPhotoText: {
     ...TYPOGRAPHY.heading.h3,
+    ...generalStyles.textUppercase,
+    includeFontPadding: false,
+    textAlignVertical: "center",
   },
 
   // Form Fields Section
   formSection: {
-    ...CONTAINER.padding.horizontal["2xl"],
     ...CONTAINER.margin.bottom["3xl"],
     ...CONTAINER.gap.lg,
   },
@@ -91,7 +88,6 @@ export const profileStyles = StyleSheet.create({
 
   // Settings Sections
   settingsSection: {
-    ...CONTAINER.padding.horizontal["2xl"],
     ...CONTAINER.margin.bottom["3xl"],
     ...CONTAINER.gap.lg,
   },
@@ -193,7 +189,6 @@ export const profileStyles = StyleSheet.create({
   upgradeButton: {
     backgroundColor: COLORS.primary,
     paddingVertical: 14,
-    ...CONTAINER.padding.horizontal["2xl"],
     ...CONTAINER.border.radius.md,
     alignItems: "center",
   },
@@ -206,7 +201,6 @@ export const profileStyles = StyleSheet.create({
 
   // Security Section
   securitySection: {
-    ...CONTAINER.padding.horizontal["2xl"],
     ...CONTAINER.margin.bottom["3xl"],
   },
 
@@ -226,7 +220,6 @@ export const profileStyles = StyleSheet.create({
 
   // App Info
   appInfoSection: {
-    ...CONTAINER.padding.horizontal["2xl"],
     ...CONTAINER.padding.top.lg,
     ...CONTAINER.padding.bottom["3xl"],
     ...CONTAINER.border.top.thin,
@@ -262,9 +255,7 @@ export const profileStyles = StyleSheet.create({
 
   categoryButton: {
     flex: 1,
-    ...CONTAINER.margin.horizontal.sm,
     ...CONTAINER.padding.vertical.md,
-    ...CONTAINER.padding.horizontal.lg,
     ...CONTAINER.border.radius.md,
     alignItems: "center",
     backgroundColor: "#F0F0F0",
@@ -312,7 +303,6 @@ export const profileStyles = StyleSheet.create({
     fontWeight: "600",
   },
   actionsSection: {
-    ...CONTAINER.padding.horizontal["2xl"],
     ...CONTAINER.padding.vertical.lg,
     ...CONTAINER.border.top.thin,
     borderTopColor: "#E5E5E5",
@@ -324,7 +314,6 @@ export const profileStyles = StyleSheet.create({
     color: COLORS.error,
     ...CONTAINER.margin.top.sm,
     ...CONTAINER.margin.bottom.base,
-    ...CONTAINER.padding.horizontal.sm,
   },
 
   developerSection: {

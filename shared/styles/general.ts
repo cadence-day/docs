@@ -16,6 +16,10 @@ export const generalStyles = StyleSheet.create({
     centeredContainer: {
         ...CONTAINER.basic.centeredView,
     },
+    flexContainerWithMargins: {
+        ...CONTAINER.basic.view,
+        ...CONTAINER.margin.horizontal.base,
+    },
     rowContainer: {
         ...CONTAINER.basic.row,
     },
