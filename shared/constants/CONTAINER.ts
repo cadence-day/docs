@@ -459,6 +459,11 @@ export const CONTAINER = {
             flex: 1,
             ...PADDING.lg,
         },
+        screenWithBottomBar: {
+            flex: 1,
+            ...PADDING.lg,
+            paddingBottom: SPACING["3xl"], // Extra padding for bottom tab bar
+        },
         section: {
             ...MARGIN.bottom.lg,
         },

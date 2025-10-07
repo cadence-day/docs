@@ -95,7 +95,7 @@ export default function Reflection() {
         { backgroundColor: theme.background.primary },
       ]}
     >
-      <SafeAreaView style={generalStyles.flexContainer}>
+      <SafeAreaView style={generalStyles.flexContainer} edges={["top"]}>
         <ScreenHeader
           title={t("reflection.weekly-cadence")} // TODO: Make conditional with This Week Cadence or Weekly Cadence.
           OnRightElement={() => (

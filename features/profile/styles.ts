@@ -8,6 +8,9 @@ export const profileStyles = StyleSheet.create({
   container: {
     ...CONTAINER.basic.view,
   },
+  scrollViewContent: {
+    paddingBottom: CONTAINER.spacing["2xl"], // 24px padding at bottom for tab bar
+  },
   uploadingImageOpacity: { ...CONTAINER.opacity.high },
 
   // Profile Header Section

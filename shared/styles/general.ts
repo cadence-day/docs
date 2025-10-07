@@ -40,6 +40,9 @@ export const generalStyles = StyleSheet.create({
     screenContainer: withDebugBorder({
         ...CONTAINER.content.screen,
     }),
+    screenContainerWithBottomBar: withDebugBorder({
+        ...CONTAINER.content.screenWithBottomBar,
+    }),
     sectionContainer: withDebugBorder({
         ...CONTAINER.content.section,
     }),

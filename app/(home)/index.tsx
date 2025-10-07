@@ -6,7 +6,6 @@ import SignIn from "../(auth)/sign-in";
 
 import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
-import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useTheme } from "@/shared/hooks";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import { generalStyles } from "@/shared/styles";
@@ -73,7 +72,7 @@ export default function Today() {
       ]}
     >
       <SignedIn>
-        <SafeAreaView style={generalStyles.flexContainer}>
+        <SafeAreaView style={generalStyles.flexContainer} edges={["top"]}>
           <ScreenHeader
             title={title}
             OnRightElement={() => (
@@ -153,10 +152,9 @@ export default function Today() {
             </React.Suspense>
           </ErrorBoundary>
 
-          {/* Spacer to ensure there's room below the timeline (e.g., above nav) */}
-          <View style={style.emptySpaceBelowTimeline}>
-            {/* Reopen Activity Dialog Button - shown when dialog is closed */}
-            {!isActivityDialogOpen && (
+          {/* Reopen Activity Dialog Button - shown when dialog is closed */}
+          {!isActivityDialogOpen && (
+            <View style={style.reopenButtonContainer}>
               <CdButton
                 title={t("activity.legend.reopen")}
                 onPress={reopenActivityDialog}
@@ -165,8 +163,8 @@ export default function Today() {
                 style={generalStyles.outlineDiscreetButton}
                 textStyle={generalStyles.discreetText}
               />
-            )}
-          </View>
+            </View>
+          )}
 
           {/* Share modal could be added here when available */}
         </SafeAreaView>
@@ -187,9 +185,9 @@ const style = StyleSheet.create({
     ...generalStyles.clickableText,
     textDecorationLine: "none",
   },
-  // TODO: Remove this below an make it conditional.
-  emptySpaceBelowTimeline: {
-    height: DIALOG_HEIGHT_PLACEHOLDER,
+  reopenButtonContainer: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     justifyContent: "center",
     alignItems: "center",
   },

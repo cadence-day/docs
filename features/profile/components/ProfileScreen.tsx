@@ -359,9 +359,12 @@ export const ProfileScreen: React.FC = () => {
         generalStyles.flexContainer,
         { backgroundColor: theme.background.primary },
       ]}
-      edges={["bottom", "top"]}
+      edges={["top"]}
     >
-      <ScrollView style={generalStyles.flexContainer}>
+      <ScrollView 
+        style={generalStyles.flexContainer}
+        contentContainerStyle={profileStyles.scrollViewContent}
+      >
         {/* Profile Header */}
         <View style={profileStyles.profileHeader}>
           <TouchableOpacity
