@@ -23,7 +23,7 @@ export async function insertEncryptionKey(
             );
         }
 
-        // Add user_id to the state
+        // Add user_id to the encryptionKey object
         const encryptionKeyWithUserId = {
             ...encryptionKey,
             user_id: currentUserId,
