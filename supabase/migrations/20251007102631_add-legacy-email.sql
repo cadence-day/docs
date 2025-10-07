@@ -7,4 +7,3 @@ ALTER TABLE IF EXISTS "internal"."encryption_legacy"
 CREATE OR REPLACE VIEW "public"."encryption_legacy" WITH (security_invoker=on) AS
     SELECT user_id, encryption_key, legacy_email
     FROM "internal"."encryption_legacy";
-    
