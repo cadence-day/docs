@@ -1,4 +1,5 @@
 import useDetectNewDevice from "@/features/debug/hooks/useDetectNewDevice";
+import { AppUpdateDialog } from "@/shared/components/AppUpdateDialog";
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useDialogStore from "@/shared/stores/useDialogStore";
@@ -22,6 +23,8 @@ const DebugPanel: React.FC = () => {
   const [tasks, setTasks] = useState<ScheduledNotificationView[]>([]);
   const [notificationStatus, setNotificationStatus] =
     useState<string>("unknown");
+  const [showAppUpdateDialog, setShowAppUpdateDialog] = useState(false);
+  const [updateRequired, setUpdateRequired] = useState(false);
 
   const loadTasks = async () => {
     try {
@@ -135,8 +138,27 @@ const DebugPanel: React.FC = () => {
     );
   };
 
+  const handleShowAppUpdateDialog = (required: boolean) => {
+    setUpdateRequired(required);
+    setShowAppUpdateDialog(true);
+  };
+
   return (
     <View style={debugStyles.debugPanelBody}>
+      {/* App Update Dialog Component */}
+      <AppUpdateDialog
+        visible={showAppUpdateDialog}
+        onClose={() => setShowAppUpdateDialog(false)}
+        versionInfo={{
+          updateAvailable: true,
+          updateRequired: updateRequired,
+          currentVersion: "2.0.0",
+          latestVersion: "2.1.0",
+          storeUrl: "https://apps.apple.com/app/cadence-day/id123456789",
+        }}
+        onUpdateLater={() => setShowAppUpdateDialog(false)}
+      />
+
       {/* Notification Status Display */}
       <View style={debugStyles.debugPanelStatusContainer}>
         <Text style={debugStyles.debugPanelStatusText}>
@@ -178,6 +200,27 @@ const DebugPanel: React.FC = () => {
         onPress={() => router.push("/test-notifications")}
       >
         <Text style={debugStyles.debugPanelButtonText}>Test Notifications</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={debugStyles.debugPanelButton}
+        onPress={() => handleShowAppUpdateDialog(false)}
+      >
+        <Text style={debugStyles.debugPanelButtonText}>
+          Show App Update (Optional)
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[
+          debugStyles.debugPanelButton,
+          debugStyles.debugPanelWarningButton,
+        ]}
+        onPress={() => handleShowAppUpdateDialog(true)}
+      >
+        <Text style={debugStyles.debugPanelButtonText}>
+          Show App Update (Required)
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
