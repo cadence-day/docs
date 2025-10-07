@@ -361,7 +361,7 @@ export const ProfileScreen: React.FC = () => {
       ]}
       edges={["top"]}
     >
-      <ScrollView 
+      <ScrollView
         style={generalStyles.flexContainer}
         contentContainerStyle={profileStyles.scrollViewContent}
       >
