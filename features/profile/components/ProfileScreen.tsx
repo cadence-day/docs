@@ -559,20 +559,7 @@ export const ProfileScreen: React.FC = () => {
           <Text style={profileStyles.sectionTitle}>{t("profile.data")}</Text>
 
           <CdTextInputOneLine
-            label={t("profile.migrate-data")}
-            showValueText={false}
-            isButton
-            onPress={() => router.push("/settings/migration")}
-            showChevron={true}
-          />
-        </View>
-
-        {/* Data Migration Section */}
-        <View style={profileStyles.settingsSection}>
-          <Text style={profileStyles.sectionTitle}>{t("profile.data")}</Text>
-
-          <CdTextInputOneLine
-            label={t("profile.migrate-data")}
+            label={t("migration.title")}
             showValueText={false}
             isButton
             onPress={() => router.push("/settings/migration")}

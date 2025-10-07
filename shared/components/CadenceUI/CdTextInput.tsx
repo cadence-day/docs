@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   TextInputProps,
+  TextStyle,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -18,6 +19,7 @@ interface CdTextInputProps extends TextInputProps {
   letterSpacing?: number;
   onChangeText: (text: string) => void;
   value: string;
+  style?: TextStyle;
 }
 
 export const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
@@ -30,6 +32,7 @@ export const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
       letterSpacing,
       onChangeText,
       value,
+      style,
       ...textInputProps
     },
     ref
@@ -60,6 +63,7 @@ export const CdTextInput = forwardRef<TextInput, CdTextInputProps>(
               styles.input,
               hasError && styles.inputError,
               letterSpacing !== undefined && { letterSpacing },
+              style,
             ]}
             value={value}
             onChangeText={onChangeText}
