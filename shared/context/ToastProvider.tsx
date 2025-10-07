@@ -1,4 +1,7 @@
 import Toast from "@/shared/components/Toast";
+import { COLORS } from "@/shared/constants/COLORS";
+import { CONTAINER } from "@/shared/constants/CONTAINER";
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import {
   ToastOptions as SharedToastOptions,
   ToastType,
@@ -224,51 +227,49 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 
 const confirmStyles = StyleSheet.create({
   overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
+    ...CONTAINER.layout.flex.grow,
+    backgroundColor: COLORS.dark.background.overlay,
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.padding["2xl"],
   },
   container: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: 20,
-    width: "100%",
+    backgroundColor: COLORS.neutral.white,
+    ...CONTAINER.border.radius.md,
+    ...CONTAINER.padding.xl,
+    ...CONTAINER.size.width.full,
     maxWidth: 520,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 8,
+    ...TYPOGRAPHY.heading.h2,
+    ...CONTAINER.margin.bottom.base,
   },
   body: {
-    fontSize: 14,
-    color: "#333",
-    marginBottom: 16,
+    ...TYPOGRAPHY.body.medium,
+    color: COLORS.light.text.secondary,
+    ...CONTAINER.margin.bottom.lg,
   },
   actions: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.justify.end,
   },
   cancelButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    marginRight: 8,
+    ...CONTAINER.padding.vertical.md,
+    ...CONTAINER.padding.horizontal.md,
+    ...CONTAINER.margin.right.base,
   },
   cancelText: {
-    color: "#444",
-    fontSize: 14,
+    color: COLORS.light.text.secondary,
+    ...TYPOGRAPHY.body.medium,
   },
   confirmButton: {
-    backgroundColor: "#1E88E5",
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 6,
+    backgroundColor: COLORS.brand.primary,
+    ...CONTAINER.padding.vertical.md,
+    ...CONTAINER.padding.horizontal.md,
+    ...CONTAINER.border.radius.sm,
   },
   confirmText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "600",
+    color: COLORS.neutral.white,
+    ...TYPOGRAPHY.button.small,
   },
 });

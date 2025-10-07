@@ -1,22 +1,25 @@
 import { StyleSheet } from "react-native";
 import { COLORS } from "../constants/COLORS";
+import { CONTAINER } from "../constants/CONTAINER";
 import { generalStyles } from "./general";
 
 export const debugStyles = StyleSheet.create({
     container: {
         ...generalStyles.container,
-        backgroundColor: "#fff",
-        padding: 20,
+        backgroundColor: COLORS.neutral.white,
+        ...CONTAINER.padding.xl,
         borderColor: COLORS.primary,
-        borderWidth: 1,
+        ...CONTAINER.border.width.thin,
         borderStyle: "dotted",
     },
     debugButton: {
-        backgroundColor: "#007BFF",
-        padding: 10,
-        borderRadius: 5,
-        alignItems: "center",
-        marginBottom: 10,
+        backgroundColor: COLORS.brand.primary,
+        ...CONTAINER.padding.md,
+        ...CONTAINER.border.radius.sm,
+        ...CONTAINER.layout.align.center,
+        ...CONTAINER.margin.bottom.md,
     },
-    dangerButton: { backgroundColor: "#DC3545" },
+    dangerButton: {
+        backgroundColor: COLORS.semantic.error,
+    },
 });

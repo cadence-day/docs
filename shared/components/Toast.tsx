@@ -1,4 +1,5 @@
 import { COLORS } from "@/shared/constants/COLORS";
+import { CONTAINER } from "@/shared/constants/CONTAINER";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { RelativePathString, router, useSegments } from "expo-router";
@@ -285,12 +286,12 @@ const Toast: React.FC<ToastProps> = ({
 
 const styles = StyleSheet.create({
   animatedContainer: {
-    position: "absolute",
+    ...CONTAINER.layout.position.absolute,
     zIndex: 9999,
   },
   gradientContainer: {
-    borderRadius: 0,
-    marginHorizontal: 0,
+    ...CONTAINER.border.radius.none,
+    ...CONTAINER.margin.horizontal.none,
     shadowColor: COLORS.neutral.black,
     shadowOffset: {
       width: 0,
@@ -301,8 +302,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   topGradientContainer: {
-    borderRadius: 12,
-    marginHorizontal: 0,
+    ...CONTAINER.border.radius.md,
+    ...CONTAINER.margin.horizontal.none,
     // higher elevation for top toast
     shadowOffset: {
       width: 0,

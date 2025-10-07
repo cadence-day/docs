@@ -6,22 +6,23 @@
  */
 
 import { COLORS } from "@/shared/constants/COLORS";
+import { CONTAINER } from "@/shared/constants/CONTAINER";
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 
 export const sharedComponentStyles = StyleSheet.create({
     // Toast styles
     toastContainer: {
-        position: "absolute",
+        ...CONTAINER.layout.position.absolute,
         bottom: 0,
         left: 0,
         right: 0,
         zIndex: 9999,
-        width: "100%",
+        ...CONTAINER.size.width.full,
     },
     toastGradientContainer: {
-        borderRadius: 0,
-        marginHorizontal: 0,
+        ...CONTAINER.border.radius.none,
+        ...CONTAINER.margin.horizontal.none,
         shadowColor: COLORS.neutral.black,
         shadowOffset: {
             width: 0,
@@ -32,86 +33,84 @@ export const sharedComponentStyles = StyleSheet.create({
         elevation: 10,
     },
     toastContent: {
-        flexDirection: "row",
-        alignItems: "flex-start",
-        paddingHorizontal: 24,
-        paddingVertical: 16,
+        ...CONTAINER.layout.direction.row,
+        ...CONTAINER.layout.align.start,
+        ...CONTAINER.padding.horizontal["2xl"],
+        ...CONTAINER.padding.vertical.lg,
         minHeight: 64,
     },
     toastIconContainer: {
-        marginRight: 16,
-        marginTop: 4,
+        ...CONTAINER.margin.right.lg,
+        ...CONTAINER.margin.top.sm,
     },
     toastTextContainer: {
-        flex: 1,
-        marginRight: 16,
+        ...CONTAINER.layout.flex.grow,
+        ...CONTAINER.margin.right.lg,
     },
     toastTitle: {
         color: COLORS.neutral.white,
-        fontSize: 16,
-        fontWeight: "600",
-        lineHeight: 20,
-        marginBottom: 4,
+        ...TYPOGRAPHY.button.medium,
+        lineHeight: TYPOGRAPHY.lineHeights.normal,
+        ...CONTAINER.margin.bottom.sm,
     },
     toastBody: {
         color: COLORS.neutral.white,
-        fontSize: 14,
-        fontWeight: "400",
-        lineHeight: 18,
-        opacity: 0.9,
+        ...TYPOGRAPHY.body.medium,
+        lineHeight: TYPOGRAPHY.lineHeights.base,
+        ...CONTAINER.opacity.mostVisible,
     },
     toastDismissButton: {
-        padding: 12,
-        borderRadius: 24,
+        ...CONTAINER.padding.md,
+        ...CONTAINER.border.radius["2xl"],
         backgroundColor: COLORS.dark.interactive.hover,
-        justifyContent: "center",
-        alignItems: "center",
+        ...CONTAINER.layout.justify.center,
+        ...CONTAINER.layout.align.center,
     },
 
     // DialogHost styles
     dialogHostOverlay: {
-        flex: 1,
+        ...CONTAINER.layout.flex.grow,
         backgroundColor: COLORS.dark.background.overlay,
-        justifyContent: "center",
-        alignItems: "center",
+        ...CONTAINER.layout.justify.center,
+        ...CONTAINER.layout.align.center,
     },
     dialogHostContainer: {
-        padding: 24,
-        borderRadius: 24,
+        ...CONTAINER.padding["2xl"],
+        ...CONTAINER.border.radius["2xl"],
         backgroundColor: COLORS.dark.background.secondary,
-        marginHorizontal: 24,
+        ...CONTAINER.margin.horizontal["2xl"],
         maxWidth: 400,
-        width: "100%",
+        ...CONTAINER.size.width.full,
     },
     dialogHostTitle: {
         ...TYPOGRAPHY.heading.h3,
         color: COLORS.dark.text.primary,
-        marginBottom: 16,
+        ...CONTAINER.margin.bottom.lg,
         textAlign: "center",
     },
     dialogHostMessage: {
         ...TYPOGRAPHY.body.medium,
         color: COLORS.dark.text.primary,
-        marginBottom: 24,
+        ...CONTAINER.margin.bottom["2xl"],
         textAlign: "center",
     },
     dialogHostButtonContainer: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        gap: 16,
+        ...CONTAINER.layout.direction.row,
+        ...CONTAINER.layout.justify.around,
+        ...CONTAINER.gap.lg,
     },
     dialogHostButton: {
-        flex: 1,
-        paddingVertical: 16,
-        borderRadius: 12,
-        alignItems: "center",
+        ...CONTAINER.layout.flex.grow,
+        ...CONTAINER.padding.vertical.lg,
+        ...CONTAINER.border.radius.md,
+        ...CONTAINER.layout.align.center,
     },
     dialogHostButtonPrimary: {
         backgroundColor: COLORS.brand.primary,
     },
     dialogHostButtonSecondary: {
         backgroundColor: "transparent",
-        borderWidth: 1,
+        ...CONTAINER.border.width.thin,
         borderColor: COLORS.brand.primary,
     },
     dialogHostButtonText: {

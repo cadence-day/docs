@@ -1,12 +1,14 @@
-import React from "react";
-import { View, StyleSheet, Platform, Linking } from "react-native";
+import { CONTAINER } from "@/shared/constants/CONTAINER";
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
+import { useI18n } from "@/shared/hooks/useI18n";
+import type { AppVersionInfo } from "@/shared/services/AppUpdateService";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as WebBrowser from "expo-web-browser";
+import React from "react";
+import { Linking, Platform, StyleSheet, View } from "react-native";
+import { CdButton } from "./CadenceUI/CdButton";
 import { CdDialog } from "./CadenceUI/CdDialog";
 import { CdText } from "./CadenceUI/CdText";
-import { CdButton } from "./CadenceUI/CdButton";
-import { useI18n } from "@/shared/hooks/useI18n";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
-import type { AppVersionInfo } from "@/shared/services/AppUpdateService";
 
 interface AppUpdateDialogProps {
   visible: boolean;
@@ -87,8 +89,8 @@ export const AppUpdateDialog: React.FC<AppUpdateDialogProps> = ({
         title: isUpdateRequired
           ? t("app-update.update-required")
           : t("app-update.new-version-available"),
-        showCloseButton: !isUpdateRequired,
-        onClose: isUpdateRequired ? undefined : onClose,
+        backAction: !isUpdateRequired,
+        onBackAction: isUpdateRequired ? undefined : onClose,
       }}
       enableCloseOnBackgroundPress={!isUpdateRequired}
       isGlobal={true}
@@ -104,15 +106,13 @@ export const AppUpdateDialog: React.FC<AppUpdateDialogProps> = ({
               : t("app-update.update-description", {
                   currentVersion: versionInfo.currentVersion,
                   latestVersion: versionInfo.latestVersion || "latest",
-                })
-            }
+                })}
           </CdText>
 
           <CdText variant="body" size="small" style={styles.benefits}>
             {isUpdateRequired
               ? t("app-update.update-required-benefits")
-              : t("app-update.update-benefits")
-            }
+              : t("app-update.update-benefits")}
           </CdText>
         </View>
 
@@ -142,13 +142,13 @@ export const AppUpdateDialog: React.FC<AppUpdateDialogProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "space-between",
-    paddingVertical: 16,
+    ...CONTAINER.layout.flex.grow,
+    ...CONTAINER.layout.justify.between,
+    ...CONTAINER.padding.vertical.lg,
   },
   content: {
-    flex: 1,
-    gap: 16,
+    ...CONTAINER.layout.flex.grow,
+    ...CONTAINER.gap.lg,
   },
   description: {
     textAlign: "center",
@@ -156,17 +156,17 @@ const styles = StyleSheet.create({
   },
   benefits: {
     textAlign: "center",
-    opacity: 0.8,
-    lineHeight: 18,
+    ...CONTAINER.opacity.high,
+    lineHeight: TYPOGRAPHY.lineHeights.base,
   },
   buttonContainer: {
-    gap: 12,
-    paddingTop: 20,
+    ...CONTAINER.gap.md,
+    ...CONTAINER.padding.top.xl,
   },
   updateButton: {
-    borderRadius: 8,
+    ...CONTAINER.border.radius.base,
   },
   laterButton: {
-    borderRadius: 8,
+    ...CONTAINER.border.radius.base,
   },
 });

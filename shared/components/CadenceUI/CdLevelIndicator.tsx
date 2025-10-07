@@ -7,6 +7,8 @@ import {
   ViewStyle,
 } from "react-native";
 import { COLORS } from "../../constants/COLORS";
+import { CONTAINER } from "../../constants/CONTAINER";
+import { TYPOGRAPHY } from "../../constants/TYPOGRAPHY";
 
 interface CdLevelIndicatorProps {
   label: string;
@@ -97,41 +99,40 @@ export const CdLevelIndicator: React.FC<CdLevelIndicatorProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "flex-start",
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.align.start,
   },
   labelText: {
-    color: "#bbb",
-    fontSize: 10,
-    fontWeight: "400",
-    letterSpacing: 2,
+    color: COLORS.light.text.tertiary,
+    ...TYPOGRAPHY.specialized.metadata,
+    letterSpacing: TYPOGRAPHY.letterSpacing.wider,
     width: 60, // Fixed width for label
-    marginRight: 18,
+    ...CONTAINER.margin.right.lg,
     flexShrink: 0, // Prevent label from shrinking
     textTransform: "uppercase",
   },
   indicatorSection: {
-    flex: 1,
-    flexDirection: "column",
+    ...CONTAINER.layout.flex.grow,
+    ...CONTAINER.layout.direction.column,
   },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start", // Align circles to the start
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.layout.justify.start, // Align circles to the start
   },
   labelRow: {
-    flexDirection: "row",
-    marginTop: 6,
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.margin.top.sm,
   },
   labelContainer: {
-    alignItems: "center",
+    ...CONTAINER.layout.align.center,
   },
   labelSpacer: {
-    flex: 1, // Same flex as line to maintain spacing
-    marginHorizontal: 6,
+    ...CONTAINER.layout.flex.grow, // Same flex as line to maintain spacing
+    marginHorizontal: CONTAINER.spacing.sm,
   },
   circleTouchable: {
-    borderRadius: 999,
+    ...CONTAINER.border.radius.full,
   },
   circle: {
     width: 16,
@@ -139,18 +140,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   line: {
-    flex: 1, // Dynamic width to fill available space
+    ...CONTAINER.layout.flex.grow, // Dynamic width to fill available space
     height: 2,
     backgroundColor: LINE_COLOR,
-    marginHorizontal: 6,
-    opacity: 0.4,
+    marginHorizontal: CONTAINER.spacing.sm,
+    ...CONTAINER.opacity.high,
   },
   endLabel: {
-    fontSize: 10,
-    fontWeight: "400",
-    letterSpacing: 1,
+    ...TYPOGRAPHY.specialized.metadata,
+    letterSpacing: TYPOGRAPHY.letterSpacing.normal,
     textAlign: "center",
     flexShrink: 0, // Prevent text from shrinking
-    color: "#fff",
+    color: COLORS.neutral.white,
   },
 });
