@@ -5,9 +5,9 @@ import type { EncryptionLegacy } from "@/shared/types/models";
 import { getClerkInstance } from "@clerk/clerk-expo";
 
 /**
- * Inserts a new EncryptionKey into the database.
- * @param encryptionKey - The encryptionKey object to insert.
- * @returns A promise that resolves to the inserted encryptionKey or null if insertion fails.
+ * Inserts a new EncryptionLegacy object into the database.
+ * @param encryptionKey - The EncryptionLegacy object to insert (without user_id).
+ * @returns A promise that resolves to the inserted EncryptionLegacy object or null if insertion fails.
  */
 export async function insertEncryptionKey(
     encryptionKey: Omit<EncryptionLegacy, "user_id">,
