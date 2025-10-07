@@ -211,7 +211,6 @@ export const reflectionStyles = StyleSheet.create({
   },
   reflectionGridRoot: {
     flex: 1,
-    marginBottom: 8,
   },
   reflectionGridContentContainer: {
     flex: 1,

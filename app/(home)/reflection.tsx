@@ -7,6 +7,7 @@ import { useTheme } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 
 import SageIcon from "@/shared/components/icons/SageIcon";
+import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingScreen from "../(utils)/LoadingScreen";
 import { generalStyles } from "../../shared/styles";
 const ReflectionGrid = React.lazy(() =>
@@ -94,57 +95,59 @@ export default function Reflection() {
         { backgroundColor: theme.background.primary },
       ]}
     >
-      <ScreenHeader
-        title={t("reflection.weekly-cadence")} // TODO: Make conditional with This Week Cadence or Weekly Cadence.
-        OnRightElement={() => (
-          <SageIcon
-            size={40}
-            status="pulsating"
-            auto={false}
-            isLoggedIn={true}
-          />
-        )}
-        subtitle={
-          <View style={styles.dateNavigationContainer}>
-            <TouchableOpacity
-              onPress={handlePreviousWeek}
-              hitSlop={HIT_SLOP_10}
-            >
-              <Text style={styles.dateRangeArrow}>←</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.dateRangeText}>
-              {fromDate.toLocaleDateString()} to {toDate.toLocaleDateString()}
-            </Text>
-
-            <TouchableOpacity
-              onPress={handleNextWeek}
-              disabled={isAtCurrentWeek()}
-              hitSlop={HIT_SLOP_10}
-            >
-              <Text
-                style={[
-                  styles.dateRangeArrow,
-                  isAtCurrentWeek() && styles.dateRangeArrowDisabled,
-                ]}
+      <SafeAreaView style={generalStyles.flexContainer}>
+        <ScreenHeader
+          title={t("reflection.weekly-cadence")} // TODO: Make conditional with This Week Cadence or Weekly Cadence.
+          OnRightElement={() => (
+            <SageIcon
+              size={40}
+              status="pulsating"
+              auto={false}
+              isLoggedIn={true}
+            />
+          )}
+          subtitle={
+            <View style={styles.dateNavigationContainer}>
+              <TouchableOpacity
+                onPress={handlePreviousWeek}
+                hitSlop={HIT_SLOP_10}
               >
-                →
-              </Text>
-            </TouchableOpacity>
-          </View>
-        }
-      />
+                <Text style={styles.dateRangeArrow}>←</Text>
+              </TouchableOpacity>
 
-      <View style={generalStyles.flexContainerWithMargins}>
-        <React.Suspense fallback={<LoadingScreen />}>
-          <ReflectionGrid
-            fromDate={fromDate}
-            toDate={toDate}
-            refreshing={refreshing}
-            setRefreshing={setRefreshing}
-          />
-        </React.Suspense>
-      </View>
+              <Text style={styles.dateRangeText}>
+                {fromDate.toLocaleDateString()} to {toDate.toLocaleDateString()}
+              </Text>
+
+              <TouchableOpacity
+                onPress={handleNextWeek}
+                disabled={isAtCurrentWeek()}
+                hitSlop={HIT_SLOP_10}
+              >
+                <Text
+                  style={[
+                    styles.dateRangeArrow,
+                    isAtCurrentWeek() && styles.dateRangeArrowDisabled,
+                  ]}
+                >
+                  →
+                </Text>
+              </TouchableOpacity>
+            </View>
+          }
+        />
+
+        <View style={generalStyles.flexContainerWithMargins}>
+          <React.Suspense fallback={<LoadingScreen />}>
+            <ReflectionGrid
+              fromDate={fromDate}
+              toDate={toDate}
+              refreshing={refreshing}
+              setRefreshing={setRefreshing}
+            />
+          </React.Suspense>
+        </View>
+      </SafeAreaView>
     </View>
   );
 }

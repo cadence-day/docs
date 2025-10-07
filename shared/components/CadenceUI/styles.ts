@@ -7,36 +7,38 @@
 
 import { COLORS } from "@/shared/constants/COLORS";
 import { CONTAINER } from "@/shared/constants/CONTAINER";
+import { withDebugBorder } from "@/shared/constants/isDev";
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 
 export const cadenceUIStyles = StyleSheet.create({
     // ScreenHeader styles
-    screenHeaderContainer: {
+    screenHeaderContainer: withDebugBorder({
         ...CONTAINER.basic.row,
         ...CONTAINER.basic.spaceBetween,
         ...CONTAINER.padding.horizontal.md,
-        ...CONTAINER.padding.vertical.header,
-    },
-    screenHeaderLeftSection: {
+        ...CONTAINER.padding.top["2xl"],
+        ...CONTAINER.padding.bottom.xl,
+    }),
+    screenHeaderLeftSection: withDebugBorder({
         ...CONTAINER.basic.view,
-    },
-    screenHeaderTitle: {
+    }),
+    screenHeaderTitle: withDebugBorder({
         ...TYPOGRAPHY.heading.h1,
-    },
-    screenHeaderSubtitleContainer: {
+    }),
+    screenHeaderSubtitleContainer: withDebugBorder({
         ...CONTAINER.basic.row,
         ...CONTAINER.padding.vertical.xs,
         ...CONTAINER.margin.top.xs,
-    },
-    screenHeaderSubtitle: {
+    }),
+    screenHeaderSubtitle: withDebugBorder({
         ...TYPOGRAPHY.body.small,
         color: COLORS.dark.text.secondary,
-    },
-    screenHeaderRightSection: {
+    }),
+    screenHeaderRightSection: withDebugBorder({
         ...CONTAINER.basic.row,
-        ...CONTAINER.gap.md,
-    },
+        ...CONTAINER.gap.xs,
+    }),
 
     // CdText styles
     cdTextBase: {

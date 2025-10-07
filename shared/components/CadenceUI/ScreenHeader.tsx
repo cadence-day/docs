@@ -6,7 +6,6 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { cadenceUIStyles } from "./styles";
 
 export interface ScreenHeaderProps {
@@ -29,7 +28,7 @@ export const ScreenHeader: React.FC<ScreenHeaderProps> = ({
   titleStyle,
 }) => {
   return (
-    <SafeAreaView style={[cadenceUIStyles.screenHeaderContainer, style]}>
+    <View style={[cadenceUIStyles.screenHeaderContainer, style]}>
       <View style={cadenceUIStyles.screenHeaderLeftSection}>
         <Text style={[cadenceUIStyles.screenHeaderTitle, titleStyle]}>
           {title}
@@ -57,6 +56,6 @@ export const ScreenHeader: React.FC<ScreenHeaderProps> = ({
           {OnRightElement()}
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 };

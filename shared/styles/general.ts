@@ -1,3 +1,8 @@
+import {
+    withDebugBorder,
+    withDebugBorderDashed,
+    withDebugBorderThick,
+} from "@/shared/constants/isDev";
 import { StyleSheet } from "react-native";
 import { COLORS } from "../constants/COLORS";
 import { CONTAINER } from "../constants/CONTAINER";
@@ -5,39 +10,39 @@ import { TYPOGRAPHY } from "../constants/TYPOGRAPHY";
 
 export const generalStyles = StyleSheet.create({
     // LAYOUT CONTAINERS
-    container: {
+    container: withDebugBorder({
         ...CONTAINER.basic.centeredView,
-    },
+    }),
 
     // Common container patterns
-    flexContainer: {
+    flexContainer: withDebugBorderDashed({
         ...CONTAINER.basic.view,
         backgroundColor: COLORS.light.background.primary,
-    },
-    centeredContainer: {
+    }),
+    centeredContainer: withDebugBorder({
         ...CONTAINER.basic.centeredView,
-    },
-    flexContainerWithMargins: {
+    }),
+    flexContainerWithMargins: withDebugBorderThick({
         ...CONTAINER.basic.view,
         ...CONTAINER.margin.horizontal.base,
-    },
-    rowContainer: {
+    }),
+    rowContainer: withDebugBorder({
         ...CONTAINER.basic.row,
-    },
-    columnContainer: {
+    }),
+    columnContainer: withDebugBorder({
         ...CONTAINER.basic.column,
-    },
-    spaceBetweenContainer: {
+    }),
+    spaceBetweenContainer: withDebugBorder({
         ...CONTAINER.basic.spaceBetween,
-    },
+    }),
 
     // Content containers
-    screenContainer: {
+    screenContainer: withDebugBorder({
         ...CONTAINER.content.screen,
-    },
-    sectionContainer: {
+    }),
+    sectionContainer: withDebugBorder({
         ...CONTAINER.content.section,
-    },
+    }),
     cardContainer: {
         ...CONTAINER.content.card,
     },
