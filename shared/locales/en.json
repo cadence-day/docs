@@ -57,13 +57,13 @@
   "app-information": "App Information",
   "app-update": {
     "new-version-available": "New Version Available",
-    "update-required": "Update Required",
-    "update-description": "A new version ({{latestVersion}}) of the app is available. You're currently using version {{currentVersion}}.",
-    "update-required-description": "A critical update ({{latestVersion}}) is required to continue using the app. You're currently using version {{currentVersion}}.",
     "update-benefits": "Update now to get the latest features, improvements, and bug fixes.",
-    "update-required-benefits": "This update includes important security fixes and compatibility improvements that are required for the app to function properly.",
+    "update-description": "A new version ({{latestVersion}}) of the app is available. You're currently using version {{currentVersion}}.",
+    "update-later": "Update Later",
     "update-now": "Update Now",
-    "update-later": "Update Later"
+    "update-required": "Update Required",
+    "update-required-benefits": "This update includes important security fixes and compatibility improvements that are required for the app to function properly.",
+    "update-required-description": "A critical update ({{latestVersion}}) is required to continue using the app. You're currently using version {{currentVersion}}."
   },
   "app-version-and-platform": "• App version and platform",
   "are-you-sure-you-want-to-sign": "Are you sure you want to sign out?",
@@ -258,7 +258,7 @@
       "timeslices": "Timeslices",
       "title": "Progress"
     },
-    "title": "Data Migration"
+    "title": "Migrate V1 Account"
   },
   "mo": "Mon",
   "monthly": "Monthly",
@@ -470,7 +470,7 @@
       "take-photo": "Take Photo"
     },
     "logout": "Log Out",
-    "migrate-data": "Migrate Data",
+    "migrate-data": "Migrate Previous Account",
     "name": "Name",
     "notifications": "Notifications",
     "phone": "Phone Number",
@@ -675,6 +675,22 @@
   "unable-to-submit-bug-report-pl": "Unable to submit bug report. Please try again or contact support.",
   "use-camera-to-scan-qr-code": "Use camera to scan QR code",
   "user-not-found-please-sign-in": "User not found. Please sign in again.",
+  "v2-welcome": {
+    "close": "Close",
+    "go-to-profile": "Go to Profile",
+    "how-to-migrate": "How to Migrate Your Data",
+    "important-changes": "Important Changes",
+    "legacy-users-description": "If you previously used Cadence 1.0 and want to migrate your data, you can do so from your Profile screen. You'll need your old account email address to initiate the migration process.",
+    "legacy-users-title": "For Previous Cadence Users",
+    "new-account-required": "Cadence 2.0 uses a new authentication system. If you had an account with Cadence 1.0, you'll need to create a new account.",
+    "new-features": "Cadence 2.0 brings a completely redesigned experience with improved security, better performance, and new features to help you track your time more effectively.",
+    "step-1": "Go to your Profile screen",
+    "step-2": "Find the 'Migrate V1 Account' section",
+    "step-3": "Enter your old Cadence 1.0 email address",
+    "step-4": "Click 'Start Migration' to begin the process",
+    "title": "Welcome to Cadence 2.0",
+    "whats-new": "What's New?"
+  },
   "validate": "Validate",
   "verification-code-sent-check-your-email": "Verification code sent. Check your email.",
   "verification-incomplete": "Verification incomplete.",

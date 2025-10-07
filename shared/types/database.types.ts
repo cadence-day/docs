@@ -78,6 +78,24 @@ export type Database = {
         }
         Relationships: []
       }
+      encryption_legacy: {
+        Row: {
+          encryption_key: string | null
+          legacy_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          encryption_key?: string | null
+          legacy_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          encryption_key?: string | null
+          legacy_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
           id: string | null

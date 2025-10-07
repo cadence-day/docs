@@ -1,69 +1,76 @@
-import { backgroundLinearColors, COLORS } from "@/shared/constants/COLORS";
+import { LegacyMigrationSection } from "@/features/migration/components/LegacyMigrationSection";
+import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { router, Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 
-// Try dynamic import to avoid bundling issues
-const MigrationScreen = React.lazy(() =>
-  import("@/features/migration/MigrationScreen").catch(
-    () => import("../../features/migration/MigrationScreen")
-  )
-);
-
-export default function MigrationRoute() {
+export default function MigrationSettings() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const theme = useTheme();
+
   return (
-    <LinearGradient
-      colors={[
-        backgroundLinearColors.secondary.start,
-        backgroundLinearColors.secondary.end,
-      ]}
-      style={styles.backgroundGradient}
-    >
+    <>
       <Stack.Screen
         options={{
           title: t("migration.title"),
           headerShown: true,
-          headerShadowVisible: false,
-          headerTransparent: true,
-          headerTitleStyle: { color: COLORS.primary, fontSize: 18 },
+          headerStyle: {
+            backgroundColor: theme.background.primary,
+          },
+          headerShadowVisible: true,
           headerLeft: () => (
             <TouchableOpacity
-              onPress={() => router.push("/profile")}
+              onPress={() => router.push("/(home)/profile")}
               style={styles.backButton}
               hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
-              <Text style={styles.backText}>{t("settings.back")}</Text>
+              <Text style={styles.backText}>{t("back")}</Text>
             </TouchableOpacity>
           ),
         }}
       />
 
-      <View style={styles.contentContainer}>
-        <MigrationScreen />
+      <View style={styles.headerBorder} />
+
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollableContent}>
+          {/* Migration Section */}
+          <LegacyMigrationSection />
+        </ScrollView>
       </View>
-    </LinearGradient>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundGradient: {
+  container: {
     flex: 1,
+    backgroundColor: COLORS.light.background.primary,
   },
-  contentContainer: {
+  scrollableContent: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    paddingTop: 16,
+  },
+  headerBorder: {
+    height: 1,
+    backgroundColor: COLORS.white,
   },
   backButton: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
   },
   backText: {
     color: COLORS.primary,
