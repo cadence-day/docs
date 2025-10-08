@@ -48,160 +48,77 @@ type TimelineProps = {
   bottomPadding?: number;
 };
 
-const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date, bottomPadding = 0 }, ref) => {
-  // Use centralized dialog store instead of local state
-  const openDialog = useDialogStore((s) => s.openDialog);
-  const getDialogs = useDialogStore((s) => s.dialogs);
-  const closeDialog = useDialogStore((s) => s.closeDialog);
-  const toggleCollapse = useDialogStore((s) => s.toggleCollapse);
+const Timeline = forwardRef<TimelineRef, TimelineProps>(
+  ({ date, bottomPadding = 0 }, ref) => {
+    // Use centralized dialog store instead of local state
+    const openDialog = useDialogStore((s) => s.openDialog);
+    const getDialogs = useDialogStore((s) => s.dialogs);
+    const closeDialog = useDialogStore((s) => s.closeDialog);
+    const toggleCollapse = useDialogStore((s) => s.toggleCollapse);
 
-  // Custom hooks for data management and actions
-  // Use provided date if available; create a normalized Date object to avoid mutation
-  const targetDate = React.useMemo(() => {
-    if (!date) return new Date();
-    if (typeof date === "number" || typeof date === "string")
-      return new Date(date);
-    if (date instanceof Date) return new Date(date.getTime());
-    GlobalErrorHandler.logWarning(
-      "Timeline received unexpected date type",
-      "Timeline:targetDate",
-      { type: typeof date, value: date }
-    );
-    return new Date();
-  }, [date]);
+    // Custom hooks for data management and actions
+    // Use provided date if available; create a normalized Date object to avoid mutation
+    const targetDate = React.useMemo(() => {
+      if (!date) return new Date();
+      if (typeof date === "number" || typeof date === "string")
+        return new Date(date);
+      if (date instanceof Date) return new Date(date.getTime());
+      GlobalErrorHandler.logWarning(
+        "Timeline received unexpected date type",
+        "Timeline:targetDate",
+        { type: typeof date, value: date }
+      );
+      return new Date();
+    }, [date]);
 
-  // Get timeslices for today from the data hook
-  const {
-    Timeslices: dateTimeslices,
-    activities,
-    dateForDisplay,
-  } = useTimelineData(targetDate);
+    // Get timeslices for today from the data hook
+    const {
+      Timeslices: dateTimeslices,
+      activities,
+      dateForDisplay,
+    } = useTimelineData(targetDate);
 
-  // Get setTimesliceId form
-  const setTimesliceId = useSelectionStore((s) => s.setSelectedTimesliceId);
+    // Get setTimesliceId form
+    const setTimesliceId = useSelectionStore((s) => s.setSelectedTimesliceId);
 
-  const { handleTimeslicePress, handleTimesliceLongPress } =
-    useTimelineActions();
+    const { handleTimeslicePress, handleTimesliceLongPress } =
+      useTimelineActions();
 
-  // Enable automatic timeslice creation when activity is selected
-  useAutomaticTimesliceCreation();
+    // Enable automatic timeslice creation when activity is selected
+    useAutomaticTimesliceCreation();
 
-  // Enhanced delete handler with explosion effect
-  const handleTimesliceLongPressWithExplosion = (timeslice: Timeslice) => {
-    const timesliceId = timeslice.id;
+    // Enhanced delete handler with explosion effect
+    const handleTimesliceLongPressWithExplosion = (timeslice: Timeslice) => {
+      const timesliceId = timeslice.id;
 
-    if (timesliceId) {
-      // If no ID (empty timeslice), call original handler directly
-      handleTimesliceLongPress(timeslice);
-    }
-  };
-  const { isRefreshing, onRefresh } = useTimelineRefresh();
-
-  // use wheel haptics hook
-  const {
-    handleScroll: handleWheelScroll,
-    handleScrollEndDrag,
-    handleMomentumScrollBegin,
-    handleMomentumScrollEnd,
-  } = useWheelHaptics();
-
-  // Ref to the horizontal ScrollView so we can programmatically scroll
-  const horizontalScrollRef = useRef<ScrollView | null>(null);
-
-  // Track the last date we auto-scrolled for, to prevent re-scrolling when timeslices are inserted
-  const lastAutoScrolledDateRef = useRef<string | null>(null);
-
-  // Expose a scrollToCurrentTime method via the forwarded ref.
-  useImperativeHandle(ref, () => ({
-    scrollToCurrentTime: () => {
-      try {
-        // Find the index of the timeslice that contains the current time
-        const now = Date.now();
-        const idx = (dateTimeslices || []).findIndex((ts) => {
-          if (!ts.start_time || !ts.end_time) return false;
-          const start = Date.parse(String(ts.start_time));
-          const end = Date.parse(String(ts.end_time));
-          return (
-            !Number.isNaN(start) &&
-            !Number.isNaN(end) &&
-            now >= start &&
-            now < end
-          );
-        });
-
-        if (idx >= 0) {
-          scrollToIndexAtOneThird(
-            horizontalScrollRef as React.RefObject<ScrollView>,
-            idx,
-            TIMESLICE_WIDTH,
-            TIMESLICE_MARGIN_HORIZONTAL
-          );
-        }
-      } catch {
-        // swallow errors
+      if (timesliceId) {
+        // If no ID (empty timeslice), call original handler directly
+        handleTimesliceLongPress(timeslice);
       }
-    },
-  }));
+    };
+    const { isRefreshing, onRefresh } = useTimelineRefresh();
 
-  // If there are no timeslices for today (rare), generate empty placeholders
-  // so the timeline still shows the empty timeslice containers (48 slots)
-  const generatePlaceholders = React.useCallback((date: Date) => {
-    const slots: Timeslice[] = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const localStartTime = new Date(date);
-        localStartTime.setHours(hour, minute, 0, 0);
-        const localEndTime = new Date(localStartTime);
-        localEndTime.setMinutes(localEndTime.getMinutes() + 30);
-        slots.push({
-          id: null,
-          start_time: localStartTime.toISOString(),
-          end_time: localEndTime.toISOString(),
-          activity_id: null,
-          state_id: null,
-          user_id: null,
-          note_ids: null,
-        } as Timeslice);
-      }
-    }
-    return slots;
-  }, []);
+    // use wheel haptics hook
+    const {
+      handleScroll: handleWheelScroll,
+      handleScrollEndDrag,
+      handleMomentumScrollBegin,
+      handleMomentumScrollEnd,
+    } = useWheelHaptics();
 
-  // Auto-scroll to current timeslice only on initial load or when the date changes.
-  // This prevents auto-scrolling when timeslices are inserted/updated.
-  React.useEffect(() => {
-    // The scroll should run after interactions/layout have finished so the
-    // horizontal ScrollView has measured its content. Use InteractionManager
-    // and a short timeout to avoid races on various platforms.
-    let interactionHandle: ReturnType<
-      typeof InteractionManager.runAfterInteractions
-    > | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    // Ref to the horizontal ScrollView so we can programmatically scroll
+    const horizontalScrollRef = useRef<ScrollView | null>(null);
 
-    try {
-      if (!dateForDisplay) return;
-      const displayDate = new Date(dateForDisplay);
-      const isToday = displayDate.toDateString() === new Date().toDateString();
-      if (!isToday) return;
+    // Track the last date we auto-scrolled for, to prevent re-scrolling when timeslices are inserted
+    const lastAutoScrolledDateRef = useRef<string | null>(null);
 
-      // Check if we've already auto-scrolled for this date
-      const currentDateKey = displayDate.toDateString();
-      if (lastAutoScrolledDateRef.current === currentDateKey) {
-        // Already scrolled for this date, skip
-        return;
-      }
-
-      const runScroll = () => {
+    // Expose a scrollToCurrentTime method via the forwarded ref.
+    useImperativeHandle(ref, () => ({
+      scrollToCurrentTime: () => {
         try {
-          // Use the display array (placeholders when empty) so we always
-          // have a stable length to compute the index from.
-          const displayDateTimeslicesLocal =
-            dateTimeslices && dateTimeslices.length > 0
-              ? dateTimeslices
-              : generatePlaceholders(dateForDisplay ?? targetDate);
-
+          // Find the index of the timeslice that contains the current time
           const now = Date.now();
-          const idx = (displayDateTimeslicesLocal || []).findIndex((ts) => {
+          const idx = (dateTimeslices || []).findIndex((ts) => {
             if (!ts.start_time || !ts.end_time) return false;
             const start = Date.parse(String(ts.start_time));
             const end = Date.parse(String(ts.end_time));
@@ -220,219 +137,309 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date, bottomPadding =
               TIMESLICE_WIDTH,
               TIMESLICE_MARGIN_HORIZONTAL
             );
-            // Mark that we've scrolled for this date
-            lastAutoScrolledDateRef.current = currentDateKey;
           }
         } catch {
-          // swallow
+          // swallow errors
         }
-      };
+      },
+    }));
 
-      // Wait for interactions/layout
-      interactionHandle = InteractionManager.runAfterInteractions(() => {
-        // small delay to let layout settle on some devices
-        timeoutId = setTimeout(runScroll, 50);
-      });
-    } catch {
-      // swallow
-    }
-
-    return () => {
-      // cancel pending interaction and timeout
-      if (interactionHandle && typeof interactionHandle.cancel === "function") {
-        try {
-          interactionHandle.cancel();
-        } catch {}
+    // If there are no timeslices for today (rare), generate empty placeholders
+    // so the timeline still shows the empty timeslice containers (48 slots)
+    const generatePlaceholders = React.useCallback((date: Date) => {
+      const slots: Timeslice[] = [];
+      for (let hour = 0; hour < 24; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+          const localStartTime = new Date(date);
+          localStartTime.setHours(hour, minute, 0, 0);
+          const localEndTime = new Date(localStartTime);
+          localEndTime.setMinutes(localEndTime.getMinutes() + 30);
+          slots.push({
+            id: null,
+            start_time: localStartTime.toISOString(),
+            end_time: localEndTime.toISOString(),
+            activity_id: null,
+            state_id: null,
+            user_id: null,
+            note_ids: null,
+          } as Timeslice);
+        }
       }
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-    // Note: dateTimeslices is intentionally NOT in the dependency array
-    // to prevent auto-scrolling when timeslices are inserted/updated
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateForDisplay, date, generatePlaceholders, targetDate]);
+      return slots;
+    }, []);
 
-  const displayDateTimeslices =
-    dateTimeslices && dateTimeslices.length > 0
-      ? dateTimeslices
-      : generatePlaceholders(dateForDisplay ?? targetDate);
+    // Auto-scroll to current timeslice only on initial load or when the date changes.
+    // This prevents auto-scrolling when timeslices are inserted/updated.
+    React.useEffect(() => {
+      // The scroll should run after interactions/layout have finished so the
+      // horizontal ScrollView has measured its content. Use InteractionManager
+      // and a short timeout to avoid races on various platforms.
+      let interactionHandle: ReturnType<
+        typeof InteractionManager.runAfterInteractions
+      > | null = null;
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  // Fetch timeslices when the timeline is loading or date changes
-  useEffect(() => {
-    let mounted = true;
-    let fetchTimeoutId: number;
-
-    const fetchTimeslicesForDate = async () => {
       try {
-        // Calculate date range: from start of day to start of next day
-        const startOfDay = new Date(targetDate);
-        startOfDay.setHours(0, 0, 0, 0);
-        const startOfNextDay = new Date(startOfDay);
-        startOfNextDay.setDate(startOfNextDay.getDate() + 1);
+        if (!dateForDisplay) return;
+        const displayDate = new Date(dateForDisplay);
+        const isToday =
+          displayDate.toDateString() === new Date().toDateString();
+        if (!isToday) return;
 
-        // Get the current store state
-        const timeslicesStore = useTimeslicesStore.getState();
+        // Check if we've already auto-scrolled for this date
+        const currentDateKey = displayDate.toDateString();
+        if (lastAutoScrolledDateRef.current === currentDateKey) {
+          // Already scrolled for this date, skip
+          return;
+        }
 
-        // Check if we already have timeslices for this date
-        const existingTimeslicesForDate = timeslicesStore.timeslices.filter(
-          (ts) => {
-            if (!ts.start_time) return false;
-            const tsDate = new Date(ts.start_time);
-            const dayStart = new Date(targetDate);
-            dayStart.setHours(0, 0, 0, 0);
-            const dayEnd = new Date(targetDate);
-            dayEnd.setHours(23, 59, 59, 999);
-            return tsDate >= dayStart && tsDate <= dayEnd;
-          }
-        );
+        const runScroll = () => {
+          try {
+            // Use the display array (placeholders when empty) so we always
+            // have a stable length to compute the index from.
+            const displayDateTimeslicesLocal =
+              dateTimeslices && dateTimeslices.length > 0
+                ? dateTimeslices
+                : generatePlaceholders(dateForDisplay ?? targetDate);
 
-        // Only fetch if we don't have data for this date
-        if (existingTimeslicesForDate.length === 0) {
-          GlobalErrorHandler.logDebug(
-            `Fetching timeslices for date: ${targetDate.toDateString()}`,
-            "Timeline:fetch",
-            { date: targetDate.toDateString() }
-          );
-
-          // Set loading state
-          timeslicesStore.setLoading(true);
-
-          // Fetch timeslices for the date range
-          const fetchedTimeslices = await timeslicesStore.getTimeslicesFromTo(
-            startOfDay,
-            startOfNextDay
-          );
-
-          if (mounted && fetchedTimeslices && fetchedTimeslices.length > 0) {
-            GlobalErrorHandler.logDebug(
-              `Fetched ${fetchedTimeslices.length} timeslices for ${targetDate.toDateString()}`,
-              "Timeline:fetch",
-              {
-                count: fetchedTimeslices.length,
-                date: targetDate.toDateString(),
-              }
-            );
-
-            // Filter out duplicates
-            const currentTimeslices = useTimeslicesStore.getState().timeslices;
-            const newTimeslices = fetchedTimeslices.filter((fetched) => {
-              return !currentTimeslices.some(
-                (existing) => existing.id === fetched.id
+            const now = Date.now();
+            const idx = (displayDateTimeslicesLocal || []).findIndex((ts) => {
+              if (!ts.start_time || !ts.end_time) return false;
+              const start = Date.parse(String(ts.start_time));
+              const end = Date.parse(String(ts.end_time));
+              return (
+                !Number.isNaN(start) &&
+                !Number.isNaN(end) &&
+                now >= start &&
+                now < end
               );
             });
 
-            if (newTimeslices.length > 0) {
-              // Use a micro-task to avoid concurrent rendering issues
-              fetchTimeoutId = setTimeout(() => {
-                if (mounted) {
-                  useTimeslicesStore.setState((state) => ({
-                    timeslices: [...state.timeslices, ...newTimeslices],
-                    isLoading: false,
-                  }));
-                }
-              }, 0) as unknown as number;
-            } else {
-              timeslicesStore.setLoading(false);
+            if (idx >= 0) {
+              scrollToIndexAtOneThird(
+                horizontalScrollRef as React.RefObject<ScrollView>,
+                idx,
+                TIMESLICE_WIDTH,
+                TIMESLICE_MARGIN_HORIZONTAL
+              );
+              // Mark that we've scrolled for this date
+              lastAutoScrolledDateRef.current = currentDateKey;
             }
-          } else {
-            if (mounted) {
-              timeslicesStore.setLoading(false);
+          } catch {
+            // swallow
+          }
+        };
+
+        // Wait for interactions/layout
+        interactionHandle = InteractionManager.runAfterInteractions(() => {
+          // small delay to let layout settle on some devices
+          timeoutId = setTimeout(runScroll, 50);
+        });
+      } catch {
+        // swallow
+      }
+
+      return () => {
+        // cancel pending interaction and timeout
+        if (
+          interactionHandle &&
+          typeof interactionHandle.cancel === "function"
+        ) {
+          try {
+            interactionHandle.cancel();
+          } catch {}
+        }
+        if (timeoutId) clearTimeout(timeoutId);
+      };
+      // Note: dateTimeslices is intentionally NOT in the dependency array
+      // to prevent auto-scrolling when timeslices are inserted/updated
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dateForDisplay, date, generatePlaceholders, targetDate]);
+
+    const displayDateTimeslices =
+      dateTimeslices && dateTimeslices.length > 0
+        ? dateTimeslices
+        : generatePlaceholders(dateForDisplay ?? targetDate);
+
+    // Fetch timeslices when the timeline is loading or date changes
+    useEffect(() => {
+      let mounted = true;
+      let fetchTimeoutId: number;
+
+      const fetchTimeslicesForDate = async () => {
+        try {
+          // Calculate date range: from start of day to start of next day
+          const startOfDay = new Date(targetDate);
+          startOfDay.setHours(0, 0, 0, 0);
+          const startOfNextDay = new Date(startOfDay);
+          startOfNextDay.setDate(startOfNextDay.getDate() + 1);
+
+          // Get the current store state
+          const timeslicesStore = useTimeslicesStore.getState();
+
+          // Check if we already have timeslices for this date
+          const existingTimeslicesForDate = timeslicesStore.timeslices.filter(
+            (ts) => {
+              if (!ts.start_time) return false;
+              const tsDate = new Date(ts.start_time);
+              const dayStart = new Date(targetDate);
+              dayStart.setHours(0, 0, 0, 0);
+              const dayEnd = new Date(targetDate);
+              dayEnd.setHours(23, 59, 59, 999);
+              return tsDate >= dayStart && tsDate <= dayEnd;
+            }
+          );
+
+          // Only fetch if we don't have data for this date
+          if (existingTimeslicesForDate.length === 0) {
+            GlobalErrorHandler.logDebug(
+              `Fetching timeslices for date: ${targetDate.toDateString()}`,
+              "Timeline:fetch",
+              { date: targetDate.toDateString() }
+            );
+
+            // Set loading state
+            timeslicesStore.setLoading(true);
+
+            // Fetch timeslices for the date range
+            const fetchedTimeslices = await timeslicesStore.getTimeslicesFromTo(
+              startOfDay,
+              startOfNextDay
+            );
+
+            if (mounted && fetchedTimeslices && fetchedTimeslices.length > 0) {
+              GlobalErrorHandler.logDebug(
+                `Fetched ${fetchedTimeslices.length} timeslices for ${targetDate.toDateString()}`,
+                "Timeline:fetch",
+                {
+                  count: fetchedTimeslices.length,
+                  date: targetDate.toDateString(),
+                }
+              );
+
+              // Filter out duplicates
+              const currentTimeslices =
+                useTimeslicesStore.getState().timeslices;
+              const newTimeslices = fetchedTimeslices.filter((fetched) => {
+                return !currentTimeslices.some(
+                  (existing) => existing.id === fetched.id
+                );
+              });
+
+              if (newTimeslices.length > 0) {
+                // Use a micro-task to avoid concurrent rendering issues
+                fetchTimeoutId = setTimeout(() => {
+                  if (mounted) {
+                    useTimeslicesStore.setState((state) => ({
+                      timeslices: [...state.timeslices, ...newTimeslices],
+                      isLoading: false,
+                    }));
+                  }
+                }, 0) as unknown as number;
+              } else {
+                timeslicesStore.setLoading(false);
+              }
+            } else {
+              if (mounted) {
+                timeslicesStore.setLoading(false);
+              }
             }
           }
+        } catch (err) {
+          GlobalErrorHandler.logError(err as Error, "Timeline:fetch", {});
+          if (mounted) {
+            const timeslicesStore = useTimeslicesStore.getState();
+            timeslicesStore.setLoading(false);
+            timeslicesStore.setError(
+              err instanceof Error ? err.message : "Failed to fetch timeslices"
+            );
+          }
         }
-      } catch (err) {
-        GlobalErrorHandler.logError(err as Error, "Timeline:fetch", {});
-        if (mounted) {
-          const timeslicesStore = useTimeslicesStore.getState();
-          timeslicesStore.setLoading(false);
-          timeslicesStore.setError(
-            err instanceof Error ? err.message : "Failed to fetch timeslices"
-          );
+      };
+
+      fetchTimeslicesForDate();
+
+      return () => {
+        mounted = false;
+        if (fetchTimeoutId) {
+          clearTimeout(fetchTimeoutId);
         }
-      }
+      };
+    }, [date, targetDate]);
+
+    // Handle note dialog - ensure only one container is expanded at a time
+    const handleIconPress = (timeslice: Timeslice) => {
+      setTimesliceId(timeslice.id);
+
+      // Collapse all persistent dialogs (like activity dialogs) and close non-persistent ones
+      Object.entries(getDialogs).forEach(([id, dialog]) => {
+        if (dialog.props?.preventClose) {
+          // Collapse persistent dialogs if they're not already collapsed
+          if (!dialog.collapsed) {
+            toggleCollapse(id);
+          }
+        } else {
+          // Close non-persistent dialogs
+          closeDialog(id);
+        }
+      });
+
+      // Then open the note dialog (even though it doesn't exist yet, this is the intended behavior)
+      openDialog({
+        type: "note",
+        props: { timeslice },
+        position: "dock",
+      });
     };
 
-    fetchTimeslicesForDate();
-
-    return () => {
-      mounted = false;
-      if (fetchTimeoutId) {
-        clearTimeout(fetchTimeoutId);
-      }
-    };
-  }, [date, targetDate]);
-
-  // Handle note dialog - ensure only one container is expanded at a time
-  const handleIconPress = (timeslice: Timeslice) => {
-    setTimesliceId(timeslice.id);
-
-    // Collapse all persistent dialogs (like activity dialogs) and close non-persistent ones
-    Object.entries(getDialogs).forEach(([id, dialog]) => {
-      if (dialog.props?.preventClose) {
-        // Collapse persistent dialogs if they're not already collapsed
-        if (!dialog.collapsed) {
-          toggleCollapse(id);
-        }
-      } else {
-        // Close non-persistent dialogs
-        closeDialog(id);
-      }
-    });
-
-    // Then open the note dialog (even though it doesn't exist yet, this is the intended behavior)
-    openDialog({
-      type: "note",
-      props: { timeslice },
-      position: "dock",
-    });
-  };
-
-  return (
-    <ScrollView
-      style={styles.scrollWrapper}
-      contentContainerStyle={[
-        styles.scrollWrapperContent,
-        bottomPadding > 0 && { paddingBottom: bottomPadding },
-      ]}
-      showsVerticalScrollIndicator={false}
-      // Allow vertical scrolling so RefreshControl (pull-to-refresh) can be used
-      scrollEnabled={true}
-      refreshControl={
-        <RefreshControl
-          refreshing={isRefreshing}
-          onRefresh={onRefresh}
-          tintColor={COLORS.primary}
-          colors={[COLORS.primary]}
-          progressBackgroundColor={COLORS.white}
-        />
-      }
-    >
-      <View style={styles.horizontalContainer}>
-        <ScrollView
-          horizontal
-          ref={horizontalScrollRef}
-          nestedScrollEnabled={true}
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={16}
-          onScroll={handleWheelScroll}
-          onScrollEndDrag={handleScrollEndDrag}
-          onMomentumScrollBegin={handleMomentumScrollBegin}
-          onMomentumScrollEnd={handleMomentumScrollEnd}
-          contentContainerStyle={styles.horizontalContent}
-        >
-          {/* Timeslices for the requested date */}
-          <TimelineTimeslices
-            timeslices={displayDateTimeslices}
-            activities={activities}
-            onTimeslicePress={handleTimeslicePress}
-            onTimesliceLongPress={handleTimesliceLongPressWithExplosion}
-            onIconPress={handleIconPress}
-            keyPrefix="date"
-            dateForDisplay={dateForDisplay}
+    return (
+      <ScrollView
+        style={styles.scrollWrapper}
+        contentContainerStyle={[
+          styles.scrollWrapperContent,
+          bottomPadding > 0 && { paddingBottom: bottomPadding },
+        ]}
+        showsVerticalScrollIndicator={false}
+        // Allow vertical scrolling so RefreshControl (pull-to-refresh) can be used
+        scrollEnabled={true}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.primary}
+            colors={[COLORS.primary]}
+            progressBackgroundColor={COLORS.white}
           />
-        </ScrollView>
-      </View>
-    </ScrollView>
-  );
-});
+        }
+      >
+        <View style={styles.horizontalContainer}>
+          <ScrollView
+            horizontal
+            ref={horizontalScrollRef}
+            nestedScrollEnabled={true}
+            showsHorizontalScrollIndicator={false}
+            scrollEventThrottle={16}
+            onScroll={handleWheelScroll}
+            onScrollEndDrag={handleScrollEndDrag}
+            onMomentumScrollBegin={handleMomentumScrollBegin}
+            onMomentumScrollEnd={handleMomentumScrollEnd}
+            contentContainerStyle={styles.horizontalContent}
+          >
+            {/* Timeslices for the requested date */}
+            <TimelineTimeslices
+              timeslices={displayDateTimeslices}
+              activities={activities}
+              onTimeslicePress={handleTimeslicePress}
+              onTimesliceLongPress={handleTimesliceLongPressWithExplosion}
+              onIconPress={handleIconPress}
+              keyPrefix="date"
+              dateForDisplay={dateForDisplay}
+            />
+          </ScrollView>
+        </View>
+      </ScrollView>
+    );
+  }
+);
 
 export default Timeline;
