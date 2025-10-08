@@ -38,8 +38,7 @@ export const FinalOnboardingScreen: React.FC<FinalOnboardingScreenProps> = ({
       await pushOnboarding();
       onFinish();
     });
-    // eslint-disable-next-line
-  }, []);
+  }, [iconScale, fadeOut, pushOnboarding, onFinish]);
 
   return (
     <Animated.View

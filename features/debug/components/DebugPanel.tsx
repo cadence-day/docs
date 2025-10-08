@@ -1,8 +1,8 @@
 import useDetectNewDevice from "@/features/debug/hooks/useDetectNewDevice";
-import { AppUpdateDialog } from "@/shared/components/AppUpdateDialog";
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
 import useDialogStore from "@/shared/stores/useDialogStore";
+import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -23,8 +23,6 @@ const DebugPanel: React.FC = () => {
   const [tasks, setTasks] = useState<ScheduledNotificationView[]>([]);
   const [notificationStatus, setNotificationStatus] =
     useState<string>("unknown");
-  const [showAppUpdateDialog, setShowAppUpdateDialog] = useState(false);
-  const [updateRequired, setUpdateRequired] = useState(false);
 
   const loadTasks = async () => {
     try {
@@ -38,8 +36,7 @@ const DebugPanel: React.FC = () => {
       }));
       setTasks(view);
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to load background tasks", err);
+      GlobalErrorHandler.logError(err, "Failed to load background tasks");
     }
   };
 
@@ -63,8 +60,10 @@ const DebugPanel: React.FC = () => {
       await mgr.removeScheduledNotificationById(id);
       await loadTasks();
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to remove scheduled notification", err);
+      GlobalErrorHandler.logError(
+        err,
+        "Failed to remove scheduled notification"
+      );
     }
   };
 
@@ -74,8 +73,10 @@ const DebugPanel: React.FC = () => {
       await mgr.triggerScheduledNotificationNow(id);
       await loadTasks();
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to trigger scheduled notification", err);
+      GlobalErrorHandler.logError(
+        err,
+        "Failed to trigger scheduled notification"
+      );
     }
   };
 
@@ -83,8 +84,7 @@ const DebugPanel: React.FC = () => {
     try {
       await userOnboardingStorage.clearShown();
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("clear onboarding storage failed", error);
+      GlobalErrorHandler.logError(error, "clear onboarding storage failed");
     }
 
     router.push("/onboarding");
@@ -94,8 +94,7 @@ const DebugPanel: React.FC = () => {
     try {
       router.push("/debug");
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("open debug page failed", error);
+      GlobalErrorHandler.logError(error, "open debug page failed");
     }
   };
 
@@ -126,7 +125,10 @@ const DebugPanel: React.FC = () => {
                 ]
               );
             } catch (error) {
-              console.error("Failed to suppress notifications", error);
+              GlobalErrorHandler.logError(
+                error,
+                "Failed to suppress notification permissions"
+              );
               Alert.alert(
                 "Error",
                 "Failed to suppress notification permissions"
@@ -139,26 +141,38 @@ const DebugPanel: React.FC = () => {
   };
 
   const handleShowAppUpdateDialog = (required: boolean) => {
-    setUpdateRequired(required);
-    setShowAppUpdateDialog(true);
+    try {
+      openDialog({
+        type: "app-update",
+        props: {
+          versionInfo: {
+            updateAvailable: true,
+            updateRequired: required,
+            currentVersion: "2.0.0",
+            latestVersion: "2.1.0",
+            storeUrl: "https://apps.apple.com/app/cadence-day/id123456789",
+          },
+          onUpdateLater: () => {
+            GlobalErrorHandler.logDebug(
+              "User chose to update later",
+              "DEBUG_PANEL"
+            );
+          },
+          headerProps: {
+            title: required ? "Update Required" : "New Version Available",
+            backAction: !required,
+          },
+          enableDragging: false,
+        },
+        position: "dock",
+      });
+    } catch (error) {
+      GlobalErrorHandler.logError(error, "Failed to show app update dialog");
+    }
   };
 
   return (
     <View style={debugStyles.debugPanelBody}>
-      {/* App Update Dialog Component */}
-      <AppUpdateDialog
-        visible={showAppUpdateDialog}
-        onClose={() => setShowAppUpdateDialog(false)}
-        versionInfo={{
-          updateAvailable: true,
-          updateRequired: updateRequired,
-          currentVersion: "2.0.0",
-          latestVersion: "2.1.0",
-          storeUrl: "https://apps.apple.com/app/cadence-day/id123456789",
-        }}
-        onUpdateLater={() => setShowAppUpdateDialog(false)}
-      />
-
       {/* Notification Status Display */}
       <View style={debugStyles.debugPanelStatusContainer}>
         <Text style={debugStyles.debugPanelStatusText}>

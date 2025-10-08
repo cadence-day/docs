@@ -5,6 +5,7 @@
 
 import { COLORS } from "@/shared/constants/COLORS";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
+import { GlobalErrorHandler } from "../utils";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -53,8 +54,12 @@ export function useNestedThemeColor(
     }
   } catch (error) {
     // Console warn is needed for debugging color issues
-    // eslint-disable-next-line no-console
-    console.warn(`Failed to resolve color path "${colorPath}":`, error);
+    GlobalErrorHandler.logWarning(
+      `Failed to resolve color path "${colorPath}": ${
+        (error as Error).message
+      }`,
+      "USE_NESTED_THEME_COLOR",
+    );
     return fallback || COLORS[theme].text.primary;
   }
 }

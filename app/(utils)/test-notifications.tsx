@@ -96,10 +96,22 @@ export default function TestNotifications() {
         weeklyStreaks: false,
       };
 
+  // Helper to convert HH:MM:SS to HH:MM for display
+  const formatTimeForDisplay = (time: string | null | undefined): string => {
+    if (!time) return "07:00";
+    // If time is already in HH:MM format, return it
+    if (time.length === 5 && time.includes(":")) return time;
+    // If time is in HH:MM:SS format, strip the seconds
+    if (time.length === 8 && time.split(":").length === 3) {
+      return time.substring(0, 5);
+    }
+    return time;
+  };
+
   const timing = {
-    morningTime: notificationSettings?.wake_up_time ?? "07:00",
-    middayTime: "12:00",
-    eveningTime: notificationSettings?.sleep_time ?? "19:00",
+    morningTime: formatTimeForDisplay(notificationSettings?.wake_up_time),
+    middayTime: formatTimeForDisplay(notificationSettings?.midday_time),
+    eveningTime: formatTimeForDisplay(notificationSettings?.sleep_time),
   };
 
   // Initialize the notification engine on mount
@@ -893,9 +905,10 @@ export default function TestNotifications() {
             <View style={styles.typeSelector}>
               {(
                 [
+                  "morning-motivation",
                   "midday-reflection",
                   "evening-reflection",
-                  "weekly-streaks",
+                  "streak-reminder",
                 ] as NotificationType[]
               ).map((type) => (
                 <TouchableOpacity
@@ -915,7 +928,7 @@ export default function TestNotifications() {
                         styles.typeButtonTextSelected,
                     ]}
                   >
-                    {type.replace("-", " ")}
+                    {type.replace(/-/g, " ")}
                   </Text>
                 </TouchableOpacity>
               ))}

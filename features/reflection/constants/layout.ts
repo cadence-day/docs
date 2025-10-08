@@ -16,6 +16,7 @@ export const REFLECTION_LAYOUT = {
   HEADER_HEIGHT: 35,
   CELL_HEIGHT: 18,
   CELL_MARGIN: 2,
+  CELL_BORDER_RADIUS: 9,
 
   // Computed dimensions for consistency
   get ROW_HEIGHT() {

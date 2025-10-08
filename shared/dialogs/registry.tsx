@@ -9,6 +9,7 @@ import CalendarDialog from "@/features/calendar/dialogs/CalendarDialog";
 import EncryptionLinkDialog from "@/features/encryption/dialogs/EncryptionLinkDialog";
 import { NoteDialog } from "@/features/notes/dialogs/NoteDialog";
 import { ReflectionTimesliceInfoDialog } from "@/features/reflection/dialogs";
+import AppUpdateDialog from "@/features/update/AppUpdateDialog";
 
 export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   // Legacy mapping for backward compatibility
@@ -27,6 +28,8 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   "encryption-link": EncryptionLinkDialog,
   // Reflection dialogs
   "reflection-timeslice-info": ReflectionTimesliceInfoDialog,
+  // App update dialog
+  "app-update": AppUpdateDialog,
 };
 
 export default DialogRegistry;

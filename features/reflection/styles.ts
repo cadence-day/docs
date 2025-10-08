@@ -91,6 +91,7 @@ export const reflectionStyles = StyleSheet.create({
     height: REFLECTION_LAYOUT.CELL_HEIGHT,
     flex: 1,
     position: "relative" as const,
+    borderRadius: REFLECTION_LAYOUT.CELL_BORDER_RADIUS,
   },
   cellContent: {
     flex: 1,

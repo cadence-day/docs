@@ -198,6 +198,7 @@ const useNotificationSettingsStore = create<NotificationSettingsStore>((
                         hours_of_reminders: [],
                         notification_type: [],
                     };
+                    // Note: midday_time will be added by the database migration with default value 12:00:00
 
                     settings = await notificationsApi
                         .insertNotificationSettings(defaultSettings);

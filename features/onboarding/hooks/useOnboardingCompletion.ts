@@ -71,7 +71,8 @@ export function useOnboardingCompletion() {
           const pushToken = await Notifications.getExpoPushTokenAsync();
 
           // Update with onboarding-specific preferences
-          await upsertNotificationSettings({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const notificationPreferences: any = {
             user_id: user?.id || null,
             push_enabled: true,
             email_enabled: false,
@@ -85,7 +86,12 @@ export function useOnboardingCompletion() {
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             expo_push_token: pushToken.data,
             hours_of_reminders: ["08:00", "12:00", "19:00"],
-          });
+          };
+
+          // Note: midday_time will be set by the database migration (default: 12:00:00)
+          // We don't include it here to avoid errors if migration hasn't been run yet
+
+          await upsertNotificationSettings(notificationPreferences);
 
           // Initialize and schedule notifications
           await notificationEngine.initialize();

@@ -22,6 +22,7 @@ import {
 } from "react-native";
 import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 import { useToast } from "../../shared/hooks";
+import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
 
 export default function NotificationsSettings() {
   const { t } = useTranslation();
@@ -34,6 +35,7 @@ export default function NotificationsSettings() {
     notificationSettings,
     updateNotificationSettings,
     initializeForCurrentUser,
+    refresh,
   } = useNotificationSettingsStore();
 
   const [pushNotificationsEnabled, setPushNotificationsEnabled] =
@@ -50,7 +52,15 @@ export default function NotificationsSettings() {
         setPermissionStatus(status);
         setPushNotificationsEnabled(status === "granted");
       } catch (error) {
-        console.error("Failed to initialize notifications:", error);
+        GlobalErrorHandler.logError(
+          error,
+          "Failed to initialize notifications"
+        );
+        showError?.(
+          error instanceof Error
+            ? error.message
+            : "Failed to initialize notifications"
+        );
       }
     };
     initialize();
@@ -79,10 +89,23 @@ export default function NotificationsSettings() {
         weeklyStreaks: false,
       };
 
+  // Helper to convert HH:MM:SS to HH:MM for display
+  const formatTimeForDisplay = (time: string | null | undefined, defaultTime: string = "07:00"): string => {
+    if (!time) return defaultTime;
+    // If time is already in HH:MM format, return it
+    if (time.length === 5 && time.includes(":")) return time;
+    // If time is in HH:MM:SS format, strip the seconds
+    if (time.length === 8 && time.split(":").length === 3) {
+      return time.substring(0, 5);
+    }
+    return time;
+  };
+
   const timing = {
-    morningTime: notificationSettings?.wake_up_time ?? "07:00",
-    middayTime: "12:00", // Default midday time
-    eveningTime: notificationSettings?.sleep_time ?? "19:00",
+    morningTime: formatTimeForDisplay(notificationSettings?.wake_up_time, "07:00"),
+    // @ts-ignore - midday_time may not exist until migration is run
+    middayTime: formatTimeForDisplay(notificationSettings?.midday_time, "12:00"),
+    eveningTime: formatTimeForDisplay(notificationSettings?.sleep_time, "22:00"),
   };
 
   // Helper functions
@@ -138,6 +161,15 @@ export default function NotificationsSettings() {
     });
   };
 
+  // Helper to convert HH:MM to HH:MM:SS for database storage
+  const formatTimeForDatabase = (time: string): string => {
+    // If already in HH:MM:SS format, return it
+    if (time.length === 8 && time.split(":").length === 3) return time;
+    // If in HH:MM format, append :00 for seconds
+    if (time.length === 5 && time.split(":").length === 2) return `${time}:00`;
+    return time;
+  };
+
   const updateTiming = async (timeUpdates: {
     morningTime?: string;
     middayTime?: string;
@@ -145,16 +177,35 @@ export default function NotificationsSettings() {
   }) => {
     if (!notificationSettings) return;
 
-    const updates = { ...notificationSettings };
-    if (timeUpdates.morningTime) {
-      updates.wake_up_time = timeUpdates.morningTime;
-    }
-    if (timeUpdates.eveningTime) {
-      updates.sleep_time = timeUpdates.eveningTime;
-    }
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updates: any = { ...notificationSettings };
+      if (timeUpdates.morningTime) {
+        updates.wake_up_time = formatTimeForDatabase(timeUpdates.morningTime);
+      }
+      if (timeUpdates.middayTime) {
+        // Only update midday_time if the column exists in the current settings (migration has been run)
+        // @ts-ignore - midday_time may not exist until migration is run
+        if ('midday_time' in notificationSettings) {
+          updates.midday_time = formatTimeForDatabase(timeUpdates.middayTime);
+        }
+      }
+      if (timeUpdates.eveningTime) {
+        updates.sleep_time = formatTimeForDatabase(timeUpdates.eveningTime);
+      }
 
-    await updateNotificationSettings(updates);
-    await notificationEngine.scheduleAllNotifications();
+      await updateNotificationSettings(updates);
+      await notificationEngine.scheduleAllNotifications();
+
+      // Refresh the settings to ensure UI updates
+      await refresh();
+    } catch (error) {
+      GlobalErrorHandler.logError(
+        error,
+        "updateTiming",
+      );
+      throw error;
+    }
   };
 
   const handleNotificationToggle = async (
@@ -373,85 +424,89 @@ export default function NotificationsSettings() {
                 />
               </View>
 
-              {/* Timing Settings Section - Show if any time-based notifications are enabled */}
-              {(preferences.morningReminders ||
-                preferences.middayReflection ||
-                preferences.eveningReminders) && (
-                <View style={profileStyles.settingsSection}>
-                  <Text style={profileStyles.sectionTitle}>
-                    {t("notification-schedule")}
-                  </Text>
+              {/* Timing Settings Section - Always show all three times in logical order */}
+              <View style={profileStyles.settingsSection}>
+                <Text style={profileStyles.sectionTitle}>
+                  {t("notification-schedule")}
+                </Text>
 
-                  {/* Show Morning time if morning reminders are enabled */}
-                  {preferences.morningReminders && (
-                    <CdTextInputOneLine
-                      label={t("morning-time")}
-                      value={timing.morningTime}
-                      showValueText={true}
-                      onSave={async (newTime) => {
-                        const formatted = formatTimeInput(newTime);
-                        if (formatted) {
-                          await updateTiming({ morningTime: formatted });
-                        } else {
-                          const msg =
-                            getTimeValidationError(newTime, "wake", t) ||
-                            t("invalid-time") +
-                              "\n" +
-                              t("please-enter-time-in-hh-mm-for");
-                          showInfo?.(msg);
-                        }
-                      }}
-                      placeholder="07:00"
-                    />
-                  )}
+                {/* Morning time - always shown */}
+                <CdTextInputOneLine
+                  label={t("morning-time")}
+                  value={timing.morningTime}
+                  showValueText={true}
+                  onSave={async (newTime) => {
+                    const formatted = formatTimeInput(newTime);
+                    if (formatted) {
+                      try {
+                        await updateTiming({ morningTime: formatted });
+                        showSuccess?.(t("success"));
+                      } catch (error) {
+                        showError?.(error instanceof Error ? error.message : String(error));
+                      }
+                    } else {
+                      const msg =
+                        getTimeValidationError(newTime, "wake", t) ||
+                        t("invalid-time") +
+                          "\n" +
+                          t("please-enter-time-in-hh-mm-for");
+                      showInfo?.(msg);
+                    }
+                  }}
+                  placeholder="07:00"
+                />
 
-                  {/* Show Midday time if midday reflection is enabled */}
-                  {preferences.middayReflection && (
-                    <CdTextInputOneLine
-                      label={t("midday-reflection")}
-                      value={timing.middayTime}
-                      showValueText={true}
-                      onSave={async (newTime) => {
-                        const formatted = formatTimeInput(newTime);
-                        if (formatted) {
-                          await updateTiming({ middayTime: formatted });
-                        } else {
-                          const msg =
-                            getTimeValidationError(newTime, "wake", t) ||
-                            t("invalid-time") +
-                              "\n" +
-                              t("please-enter-time-in-hh-mm-for");
-                          showInfo?.(msg);
-                        }
-                      }}
-                      placeholder="12:00"
-                    />
-                  )}
+                {/* Midday time - always shown */}
+                <CdTextInputOneLine
+                  label={t("midday-time")}
+                  value={timing.middayTime}
+                  showValueText={true}
+                  onSave={async (newTime) => {
+                    const formatted = formatTimeInput(newTime);
+                    if (formatted) {
+                      try {
+                        await updateTiming({ middayTime: formatted });
+                        showSuccess?.(t("success"));
+                      } catch (error) {
+                        showError?.(error instanceof Error ? error.message : String(error));
+                      }
+                    } else {
+                      const msg =
+                        t("invalid-time") +
+                        "\n" +
+                        t("please-enter-time-in-hh-mm-for");
+                      showInfo?.(msg);
+                    }
+                  }}
+                  placeholder="12:00"
+                />
 
-                  {/* Show Evening time if evening reminders are enabled */}
-                  {preferences.eveningReminders && (
-                    <CdTextInputOneLine
-                      label={t("evening-reflection")}
-                      value={timing.eveningTime}
-                      showValueText={true}
-                      onSave={async (newTime) => {
-                        const formatted = formatTimeInput(newTime);
-                        if (formatted) {
-                          await updateTiming({ eveningTime: formatted });
-                        } else {
-                          const msg =
-                            getTimeValidationError(newTime, "sleep", t) ||
-                            t("invalid-time") +
-                              "\n" +
-                              t("please-enter-time-in-hh-mm-for-0");
-                          showInfo?.(msg);
-                        }
-                      }}
-                      placeholder="19:00"
-                    />
-                  )}
-                </View>
-              )}
+                {/* Evening time - always shown */}
+                <CdTextInputOneLine
+                  label={t("evening-time")}
+                  value={timing.eveningTime}
+                  showValueText={true}
+                  onSave={async (newTime) => {
+                    const formatted = formatTimeInput(newTime);
+                    if (formatted) {
+                      try {
+                        await updateTiming({ eveningTime: formatted });
+                        showSuccess?.(t("success"));
+                      } catch (error) {
+                        showError?.(error instanceof Error ? error.message : String(error));
+                      }
+                    } else {
+                      const msg =
+                        getTimeValidationError(newTime, "sleep", t) ||
+                        t("invalid-time") +
+                          "\n" +
+                          t("please-enter-time-in-hh-mm-for-0");
+                      showInfo?.(msg);
+                    }
+                  }}
+                  placeholder="22:00"
+                />
+              </View>
             </>
           )}
         </ScrollView>

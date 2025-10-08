@@ -308,12 +308,14 @@ export class NotificationEngine {
       }
 
       if (settings.notification_type?.includes("midday-checkins")) {
-        const middayTime = this.parseTimeString("12:00:00");
+        // @ts-ignore - midday_time may not exist until migration is run
+        const middayTimeValue = settings.midday_time || "12:00:00";
+        const middayTime = this.parseTimeString(middayTimeValue);
         await this.scheduleRecurringNotification(
           middayTime,
           "midday-reflection",
         );
-        scheduledNotifications.push(`Midday at 12:00`);
+        scheduledNotifications.push(`Midday at ${middayTimeValue}`);
       }
 
       if (

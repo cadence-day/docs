@@ -6,20 +6,16 @@ import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
 import { Linking, Platform, StyleSheet, View } from "react-native";
-import { CdButton } from "./CadenceUI/CdButton";
-import { CdDialog } from "./CadenceUI/CdDialog";
-import { CdText } from "./CadenceUI/CdText";
+import { CdButton } from "../../shared/components/CadenceUI/CdButton";
+import { CdText } from "../../shared/components/CadenceUI/CdText";
 
-interface AppUpdateDialogProps {
-  visible: boolean;
-  onClose: () => void;
+export interface AppUpdateDialogProps {
   versionInfo: AppVersionInfo;
   onUpdateLater?: () => void;
+  _dialogId?: string; // Injected by DialogHost
 }
 
 export const AppUpdateDialog: React.FC<AppUpdateDialogProps> = ({
-  visible,
-  onClose,
   versionInfo,
   onUpdateLater,
 }) => {
@@ -68,11 +64,9 @@ export const AppUpdateDialog: React.FC<AppUpdateDialogProps> = ({
   };
 
   const handleUpdateLater = () => {
-    if (!isUpdateRequired) {
-      onUpdateLater?.();
-      onClose();
+    if (!isUpdateRequired && onUpdateLater) {
+      onUpdateLater();
     }
-    // If update is required, don't close the dialog
   };
 
   if (!versionInfo.updateAvailable) {
@@ -80,63 +74,47 @@ export const AppUpdateDialog: React.FC<AppUpdateDialogProps> = ({
   }
 
   return (
-    <CdDialog
-      visible={visible}
-      onClose={onClose}
-      height={40}
-      enableDragging={false}
-      headerProps={{
-        title: isUpdateRequired
-          ? t("app-update.update-required")
-          : t("app-update.new-version-available"),
-        backAction: !isUpdateRequired,
-        onBackAction: isUpdateRequired ? undefined : onClose,
-      }}
-      enableCloseOnBackgroundPress={!isUpdateRequired}
-      isGlobal={true}
-    >
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <CdText variant="body" size="medium" style={styles.description}>
-            {isUpdateRequired
-              ? t("app-update.update-required-description", {
-                  currentVersion: versionInfo.currentVersion,
-                  latestVersion: versionInfo.latestVersion || "latest",
-                })
-              : t("app-update.update-description", {
-                  currentVersion: versionInfo.currentVersion,
-                  latestVersion: versionInfo.latestVersion || "latest",
-                })}
-          </CdText>
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <CdText variant="body" size="medium" style={styles.description}>
+          {isUpdateRequired
+            ? t("app-update.update-required-description", {
+                currentVersion: versionInfo.currentVersion,
+                latestVersion: versionInfo.latestVersion || "latest",
+              })
+            : t("app-update.update-description", {
+                currentVersion: versionInfo.currentVersion,
+                latestVersion: versionInfo.latestVersion || "latest",
+              })}
+        </CdText>
 
-          <CdText variant="body" size="small" style={styles.benefits}>
-            {isUpdateRequired
-              ? t("app-update.update-required-benefits")
-              : t("app-update.update-benefits")}
-          </CdText>
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <CdButton
-            title={t("app-update.update-now")}
-            onPress={handleUpdateNow}
-            variant="primary"
-            size="medium"
-            style={styles.updateButton}
-          />
-
-          {!isUpdateRequired && (
-            <CdButton
-              title={t("app-update.update-later")}
-              onPress={handleUpdateLater}
-              variant="outline"
-              size="medium"
-              style={styles.laterButton}
-            />
-          )}
-        </View>
+        <CdText variant="body" size="small" style={styles.benefits}>
+          {isUpdateRequired
+            ? t("app-update.update-required-benefits")
+            : t("app-update.update-benefits")}
+        </CdText>
       </View>
-    </CdDialog>
+
+      <View style={styles.buttonContainer}>
+        <CdButton
+          title={t("app-update.update-now")}
+          onPress={handleUpdateNow}
+          variant="primary"
+          size="medium"
+          style={styles.updateButton}
+        />
+
+        {!isUpdateRequired && (
+          <CdButton
+            title={t("app-update.update-later")}
+            onPress={handleUpdateLater}
+            variant="outline"
+            size="medium"
+            style={styles.laterButton}
+          />
+        )}
+      </View>
+    </View>
   );
 };
 
@@ -170,3 +148,5 @@ const styles = StyleSheet.create({
     ...CONTAINER.border.radius.base,
   },
 });
+
+export default AppUpdateDialog;
