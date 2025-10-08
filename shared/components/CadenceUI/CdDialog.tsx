@@ -251,8 +251,11 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       {canUseGlassEffect ? (
         <GlassView
           glassEffectStyle="regular"
+          isInteractive={true}
+          tintColor={COLORS.linearGradient.start}
           style={[
             styles.gradientContainer,
+            styles.glassContainer,
             enableDragging && styles.gradientContainerWithDragging,
           ]}
         >
@@ -368,10 +371,14 @@ const styles = StyleSheet.create({
   },
   gradientContainer: {
     flex: 1,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
+  },
+  glassContainer: {
+    borderRadius: 20,
+    overflow: "hidden",
   },
   gradientContainerWithDragging: {
     marginTop: 10,
