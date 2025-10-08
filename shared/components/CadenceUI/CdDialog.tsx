@@ -1,12 +1,14 @@
 import { COLORS } from "@/shared/constants/COLORS";
 import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   Animated,
   PanResponder,
+  Platform,
   StyleSheet,
   useWindowDimensions,
   View,
@@ -82,6 +84,13 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   });
 
   const lastTap = React.useRef<number | null>(null);
+
+  // Check if glass effect is available
+  const canUseGlassEffect = useMemo(() => {
+    // Only available on iOS 18+ (iOS 26 refers to internal version)
+    if (Platform.OS !== "ios") return false;
+    return isLiquidGlassAvailable();
+  }, []);
 
   // Check if dialog should be visible in current view
   const shouldShowInView =
@@ -239,54 +248,109 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         </View>
       )}
 
-      <LinearGradient
-        colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={[
-          styles.gradientContainer,
-          enableDragging && styles.gradientContainerWithDragging,
-        ]}
-      >
-        {/* Make the entire top area draggable when header is not present */}
-        {!headerProps && enableDragging && (
-          <View style={styles.topDragArea} {...panResponder.panHandlers} />
-        )}
-
-        {headerProps && (
-          <CdDialogHeader
-            {...headerProps}
-            onTitleDoubleTap={enableDragging ? handleDoubleTap : undefined}
-            onTitlePress={() => {
-              // Cycle between collapsed -> default -> full-screen
-              // collapsed: small header-only height (12%),
-              // default: originalHeight.current
-              // full: 100% minus safe area (we treat as 100)
-              const collapsedHeight = 0;
-              const defaultHeight = originalHeight.current || height;
-              // Full-screen state should be a maximum of 80% height per spec
-              const fullHeight = 100;
-
-              const current = currentHeight.current;
-              if (Math.abs(current - collapsedHeight) < 1) {
-                // collapsed -> default
-                updateHeightClamped(defaultHeight);
-              } else if (Math.abs(current - defaultHeight) < 1) {
-                // default -> full
-                updateHeightClamped(fullHeight);
-              } else {
-                // full -> collapsed
-                updateHeightClamped(collapsedHeight);
-              }
-            }}
-          />
-        )}
-        <View
-          style={[styles.content, enableDragging && styles.contentWithDragging]}
+      {canUseGlassEffect ? (
+        <GlassView
+          glassEffectStyle="regular"
+          style={[
+            styles.gradientContainer,
+            enableDragging && styles.gradientContainerWithDragging,
+          ]}
         >
-          {children}
-        </View>
-      </LinearGradient>
+          {/* Make the entire top area draggable when header is not present */}
+          {!headerProps && enableDragging && (
+            <View style={styles.topDragArea} {...panResponder.panHandlers} />
+          )}
+
+          {headerProps && (
+            <CdDialogHeader
+              {...headerProps}
+              onTitleDoubleTap={enableDragging ? handleDoubleTap : undefined}
+              onTitlePress={() => {
+                // Cycle between collapsed -> default -> full-screen
+                // collapsed: small header-only height (12%),
+                // default: originalHeight.current
+                // full: 100% minus safe area (we treat as 100)
+                const collapsedHeight = 0;
+                const defaultHeight = originalHeight.current || height;
+                // Full-screen state should be a maximum of 80% height per spec
+                const fullHeight = 100;
+
+                const current = currentHeight.current;
+                if (Math.abs(current - collapsedHeight) < 1) {
+                  // collapsed -> default
+                  updateHeightClamped(defaultHeight);
+                } else if (Math.abs(current - defaultHeight) < 1) {
+                  // default -> full
+                  updateHeightClamped(fullHeight);
+                } else {
+                  // full -> collapsed
+                  updateHeightClamped(collapsedHeight);
+                }
+              }}
+            />
+          )}
+          <View
+            style={[
+              styles.content,
+              enableDragging && styles.contentWithDragging,
+            ]}
+          >
+            {children}
+          </View>
+        </GlassView>
+      ) : (
+        <LinearGradient
+          colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={[
+            styles.gradientContainer,
+            enableDragging && styles.gradientContainerWithDragging,
+          ]}
+        >
+          {/* Make the entire top area draggable when header is not present */}
+          {!headerProps && enableDragging && (
+            <View style={styles.topDragArea} {...panResponder.panHandlers} />
+          )}
+
+          {headerProps && (
+            <CdDialogHeader
+              {...headerProps}
+              onTitleDoubleTap={enableDragging ? handleDoubleTap : undefined}
+              onTitlePress={() => {
+                // Cycle between collapsed -> default -> full-screen
+                // collapsed: small header-only height (12%),
+                // default: originalHeight.current
+                // full: 100% minus safe area (we treat as 100)
+                const collapsedHeight = 0;
+                const defaultHeight = originalHeight.current || height;
+                // Full-screen state should be a maximum of 80% height per spec
+                const fullHeight = 100;
+
+                const current = currentHeight.current;
+                if (Math.abs(current - collapsedHeight) < 1) {
+                  // collapsed -> default
+                  updateHeightClamped(defaultHeight);
+                } else if (Math.abs(current - defaultHeight) < 1) {
+                  // default -> full
+                  updateHeightClamped(fullHeight);
+                } else {
+                  // full -> collapsed
+                  updateHeightClamped(collapsedHeight);
+                }
+              }}
+            />
+          )}
+          <View
+            style={[
+              styles.content,
+              enableDragging && styles.contentWithDragging,
+            ]}
+          >
+            {children}
+          </View>
+        </LinearGradient>
+      )}
     </Animated.View>
   );
 };

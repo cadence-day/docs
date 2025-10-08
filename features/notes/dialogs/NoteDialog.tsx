@@ -445,7 +445,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
         headerAsButton: true,
         onHeaderPress: handleClose,
       },
-      height: 85,
+      height: 100,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_dialogId, noteActivity?.name, noteActivity?.id]); // Only when dialog ID or activity changes

@@ -112,6 +112,7 @@ export default function TabLayout() {
         if (!activityLegendDialog) {
           dialogStore.openDialog({
             type: "activity-legend",
+            id: "activity-legend-home", // Fixed ID for height persistence
             props: {
               preventClose: true,
               enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas

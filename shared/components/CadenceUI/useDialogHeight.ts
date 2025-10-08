@@ -68,6 +68,17 @@ export const useDialogHeight = ({
     const [effectiveHeight] = useState(() => {
         if (persistHeight && dialogId) {
             const savedHeight = getDialogHeight(dialogId);
+            GlobalErrorHandler.logDebug(
+                "Checking for persisted dialog height",
+                "DIALOG_HEIGHT_PERSISTENCE",
+                {
+                    dialogId,
+                    savedHeight,
+                    propHeight: height,
+                    persistHeight,
+                    allHeights: useActivityDialogHeightStore.getState().dialogHeights,
+                },
+            );
             if (savedHeight !== null) {
                 const clamped = clampHeight(savedHeight);
                 GlobalErrorHandler.logDebug(
@@ -82,7 +93,7 @@ export const useDialogHeight = ({
         GlobalErrorHandler.logDebug(
             "Using prop height (no persisted height found)",
             "DIALOG_HEIGHT_PERSISTENCE",
-            { dialogId, propHeight: height, clamped },
+            { dialogId, propHeight: height, clamped, persistHeight },
         );
         return clamped;
     });
@@ -114,7 +125,11 @@ export const useDialogHeight = ({
                     GlobalErrorHandler.logDebug(
                         "Persisted dialog height",
                         "DIALOG_HEIGHT_PERSISTENCE",
-                        { dialogId, newHeight },
+                        {
+                            dialogId,
+                            newHeight,
+                            allHeights: useActivityDialogHeightStore.getState().dialogHeights,
+                        },
                     );
                 } catch (error) {
                     GlobalErrorHandler.logError(error, "persistDialogHeight", {
@@ -138,10 +153,18 @@ export const useDialogHeight = ({
         if (persistHeight && dialogId) {
             const savedHeight = getDialogHeight(dialogId);
             // Only update from prop if there's no saved height
+            // If saved height exists, it takes priority over prop changes
             if (savedHeight === null) {
                 const clampedHeight = clampHeight(height);
                 updateHeight(clampedHeight, false); // Don't persist when setting from prop
                 originalHeight.current = clampedHeight;
+            } else {
+                // Saved height exists - ignore prop changes completely
+                GlobalErrorHandler.logDebug(
+                    "Ignoring prop height change - using persisted height",
+                    "DIALOG_HEIGHT_PERSISTENCE",
+                    { dialogId, propHeight: height, savedHeight },
+                );
             }
         } else {
             // Not persisting, just use the prop

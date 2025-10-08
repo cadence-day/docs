@@ -12,7 +12,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import {
+  Dimensions,
+  InteractionManager,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
 import { REFLECTION_LAYOUT } from "../constants/layout";
 import { useReflectionData } from "../hooks/useReflectionData";
 import { useTimesliceStatistics } from "../hooks/useTimesliceStatistics";
@@ -351,7 +357,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
     [dates.length, timeSlots.length, getDateRange]
   );
 
-  // Function to scroll to wake time
+  // Function to scroll to wake time (similar to Timeline's scrollToIndexAtOneThird)
   const scrollToWakeTime = useCallback(() => {
     if (
       hoursScrollViewRef.current &&
@@ -370,16 +376,45 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
       });
 
       if (wakeTimeIndex !== -1) {
-        // Calculate scroll position (each row has a specific height from layout)
-        const scrollY = wakeTimeIndex * REFLECTION_LAYOUT.ROW_HEIGHT;
+        // Use InteractionManager similar to Timeline for better timing
+        const interactionHandle = InteractionManager.runAfterInteractions(() => {
+          // Position wake time at 1/3 of screen height (similar to Timeline)
+          const screenHeight = Dimensions.get("window").height;
+          const desiredCenterY = screenHeight / 3;
 
-        // Scroll with a small delay to ensure the component is fully mounted
-        setTimeout(() => {
-          hoursScrollViewRef.current?.scrollTo({
-            y: scrollY,
-            animated: true,
-          });
-        }, 300);
+          // Calculate scroll position
+          const itemCenter =
+            wakeTimeIndex * REFLECTION_LAYOUT.ROW_HEIGHT +
+            REFLECTION_LAYOUT.ROW_HEIGHT / 2;
+          const targetScrollY = Math.max(0, itemCenter - desiredCenterY);
+
+          // Small delay to ensure component is fully mounted
+          setTimeout(() => {
+            try {
+              hoursScrollViewRef.current?.scrollTo({
+                y: targetScrollY,
+                animated: true,
+              });
+            } catch (err) {
+              GlobalErrorHandler.logWarning(
+                "Failed to scroll to wake time",
+                "ReflectionGrid:scrollToWakeTime",
+                { error: err }
+              );
+            }
+          }, 50);
+        });
+
+        return () => {
+          if (
+            interactionHandle &&
+            typeof interactionHandle.cancel === "function"
+          ) {
+            try {
+              interactionHandle.cancel();
+            } catch {}
+          }
+        };
       }
     }
   }, [timeSlots, settings.wakeTime]);

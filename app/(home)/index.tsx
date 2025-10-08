@@ -56,6 +56,7 @@ export default function Today() {
   const reopenActivityDialog = () => {
     useDialogStore.getState().openDialog({
       type: "activity-legend",
+      id: "activity-legend-home", // Fixed ID for height persistence
       props: {
         preventClose: true,
         enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas
@@ -90,7 +91,7 @@ export default function Today() {
                       type: "calendar",
                       props: {
                         selectedDate,
-                        height: 60,
+                        height: 85,
                         enableDragging: false,
                         headerProps: {
                           title: t("calendarDialog.pick-a-date"),
