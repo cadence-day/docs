@@ -137,6 +137,7 @@ export const reflectionStyles = StyleSheet.create({
     marginBottom: REFLECTION_LAYOUT.CELL_MARGIN,
     marginRight: REFLECTION_LAYOUT.CELL_MARGIN,
     height: REFLECTION_LAYOUT.CELL_HEIGHT,
+    borderRadius: REFLECTION_LAYOUT.CELL_BORDER_RADIUS,
     flex: 1,
     opacity: 0.7,
   },

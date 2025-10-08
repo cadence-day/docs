@@ -1,6 +1,7 @@
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { StyleSheet } from "react-native";
+import { GRID_CONFIG } from "./constants";
 
 export const styles = StyleSheet.create({
   container: {
@@ -18,7 +19,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   activityBox: {
-    borderRadius: 2,
+    borderRadius: GRID_CONFIG.BORDER_RADIUS,
   },
   activityLabel: {
     ...TYPOGRAPHY.body.small,

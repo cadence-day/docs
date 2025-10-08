@@ -55,6 +55,9 @@ export const DialogHost: React.FC = () => {
             // enabling dragging even when a dialog is initially collapsed so
             // the user can pull it up (useful for activity dialog on Today).
             enableDragging={d.props?.enableDragging ?? true}
+            // Pass dialog ID for height persistence
+            dialogId={d.id}
+            persistHeight={d.props?.persistHeight ?? false}
           >
             {Component ? (
               <Component {...(d.props ?? {})} _dialogId={d.id} />

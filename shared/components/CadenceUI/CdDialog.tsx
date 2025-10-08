@@ -3,10 +3,9 @@ import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Animated,
-  Dimensions,
   PanResponder,
   StyleSheet,
   useWindowDimensions,
@@ -14,6 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CdDialogHeader, CdDialogHeaderProps } from "./CdDialogHeader";
+import { useDialogHeight } from "./useDialogHeight";
 interface CdDialogProps {
   visible: boolean;
   onClose: () => void;
@@ -34,6 +34,10 @@ interface CdDialogProps {
   id?: string;
   zIndex?: number;
   collapsed?: boolean;
+
+  // Height persistence
+  dialogId?: string; // Dialog ID for persisting height (unique per dialog instance)
+  persistHeight?: boolean; // Whether to persist height changes to storage
 }
 
 export const CdDialog: React.FC<CdDialogProps> = ({
@@ -49,70 +53,48 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   currentView = "",
   isGlobal = false,
   zIndex,
+  dialogId,
+  persistHeight = false,
 }) => {
   const NavBarSize = useNavBarSize();
   const [isDragging, setIsDragging] = useState(false);
-  const animatedHeight = useRef(new Animated.Value(height)).current;
-  const dragStartHeight = useRef(0);
-  const currentHeight = useRef(height);
-  const originalHeight = useRef(height); // Store original height
-  const lastTap = useRef<number | null>(null);
   const { height: screenHeight } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+
+  // Use custom hook for height management
+  const {
+    animatedHeight,
+    currentHeight,
+    originalHeight,
+    updateHeight,
+    dragStartHeight,
+    clampHeight,
+  } = useDialogHeight({
+    height,
+    maxHeight,
+    dialogId,
+    persistHeight,
+    onHeightChange,
+    enableDragging,
+    screenHeight,
+    topInset: insets.top,
+    navBarSize: NavBarSize,
+  });
+
+  const lastTap = React.useRef<number | null>(null);
 
   // Check if dialog should be visible in current view
   const shouldShowInView =
     isGlobal || allowedViews.length === 0 || allowedViews.includes(currentView);
   const shouldRender = visible && shouldShowInView;
 
-  // Update height when prop changes
-  React.useEffect(() => {
-    originalHeight.current = height; // Update original height when prop changes
-    currentHeight.current = height;
-    Animated.timing(animatedHeight, {
-      toValue: height,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  }, [height, animatedHeight]);
-
-  const clampHeight = useCallback(
-    (newHeight: number) => {
-      const headerHeight = 35; // Height of DialogHeader in pixels
-      const pullIndicatorHeight = enableDragging ? 30 : 0; // Height of pull indicator
-      const minHeightRequired = headerHeight + pullIndicatorHeight;
-      const minHeightPercent = (minHeightRequired / screenHeight) * 100;
-      // Compute maximum available percent while respecting safe area and nav bar.
-      const maxAvailablePixels = Math.max(
-        0,
-        screenHeight - insets.top - NavBarSize
-      );
-      const maxAvailablePercent = (maxAvailablePixels / screenHeight) * 100;
-      const effectiveMax = Math.max(
-        0,
-        Math.min(maxHeight, maxAvailablePercent)
-      );
-      return Math.max(minHeightPercent, Math.min(effectiveMax, newHeight));
-    },
-    [enableDragging, screenHeight, maxHeight, insets.top, NavBarSize]
-  );
-
-  const updateHeight = useCallback(
+  // Wrapper to clamp height before updating
+  const updateHeightClamped = useCallback(
     (newHeight: number) => {
       const clampedHeight = clampHeight(newHeight);
-      currentHeight.current = clampedHeight;
-
-      Animated.spring(animatedHeight, {
-        toValue: clampedHeight,
-        damping: 15,
-        stiffness: 150,
-        mass: 1,
-        useNativeDriver: false,
-      }).start();
-
-      onHeightChange?.(clampedHeight);
+      updateHeight(clampedHeight);
     },
-    [clampHeight, onHeightChange, animatedHeight]
+    [clampHeight, updateHeight]
   );
 
   const handleDoubleTap = useCallback(() => {
@@ -120,9 +102,9 @@ export const CdDialog: React.FC<CdDialogProps> = ({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     // Resize to original height
-    updateHeight(originalHeight.current);
+    updateHeightClamped(originalHeight.current);
     onDoubleTapResize?.(originalHeight.current);
-  }, [updateHeight, onDoubleTapResize]);
+  }, [updateHeightClamped, onDoubleTapResize, originalHeight]);
 
   // Create PanResponder for drag gestures (memoized)
   const pullLabel =
@@ -164,7 +146,13 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         },
         onPanResponderMove: (evt, gestureState) => {
           if (!enableDragging) return;
-          const heightChangePercent = (-gestureState.dy / screenHeight) * 100;
+          // Calculate available height for proper percentage calculation
+          const maxAvailablePixels = Math.max(
+            0,
+            screenHeight - insets.top - NavBarSize
+          );
+          const heightChangePercent =
+            (-gestureState.dy / maxAvailablePixels) * 100;
           const newHeight = dragStartHeight.current + heightChangePercent;
           const clampedHeight = clampHeight(newHeight);
 
@@ -176,11 +164,16 @@ export const CdDialog: React.FC<CdDialogProps> = ({
           // Light haptic feedback when drag ends
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           setIsDragging(false);
-          const screenHeight = Dimensions.get("window").height;
-          const heightChangePercent = (-gestureState.dy / screenHeight) * 100;
+          // Calculate available height for proper percentage calculation
+          const maxAvailablePixels = Math.max(
+            0,
+            screenHeight - insets.top - NavBarSize
+          );
+          const heightChangePercent =
+            (-gestureState.dy / maxAvailablePixels) * 100;
           const newHeight = dragStartHeight.current + heightChangePercent;
           // Set a maximum height of 90%
-          updateHeight(newHeight);
+          updateHeightClamped(newHeight);
           GlobalErrorHandler.logDebug(
             "Dialog height updated",
             "DYNAMIC_DIALOG_RESIZE",
@@ -195,11 +188,21 @@ export const CdDialog: React.FC<CdDialogProps> = ({
       screenHeight,
       handleDoubleTap,
       animatedHeight,
-      updateHeight,
+      updateHeightClamped,
+      NavBarSize,
+      insets.top,
+      currentHeight,
+      dragStartHeight,
     ]
   );
 
   if (!shouldRender) return null;
+
+  // Calculate available height for the dialog (between nav bar and top inset)
+  const maxAvailablePixels = Math.max(
+    0,
+    screenHeight - insets.top - NavBarSize
+  );
 
   return (
     <Animated.View
@@ -209,7 +212,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
           bottom: NavBarSize,
           height: animatedHeight.interpolate({
             inputRange: [0, 100],
-            outputRange: ["0%", "100%"],
+            outputRange: [0, maxAvailablePixels],
             extrapolate: "clamp",
           }),
           zIndex: zIndex ?? 1000,
@@ -267,13 +270,13 @@ export const CdDialog: React.FC<CdDialogProps> = ({
               const current = currentHeight.current;
               if (Math.abs(current - collapsedHeight) < 1) {
                 // collapsed -> default
-                updateHeight(defaultHeight);
+                updateHeightClamped(defaultHeight);
               } else if (Math.abs(current - defaultHeight) < 1) {
                 // default -> full
-                updateHeight(fullHeight);
+                updateHeightClamped(fullHeight);
               } else {
                 // full -> collapsed
-                updateHeight(collapsedHeight);
+                updateHeightClamped(collapsedHeight);
               }
             }}
           />

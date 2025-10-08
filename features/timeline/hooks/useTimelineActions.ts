@@ -178,6 +178,7 @@ export const useTimelineActions = (opts?: {
               isPickingMode: true,
               preventClose: true,
               enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas
+              persistHeight: true, // Enable height persistence
             },
             position: "dock" as const,
           };

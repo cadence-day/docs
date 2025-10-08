@@ -23,11 +23,12 @@ export const ACTIVITY_COLOR_PALETTE = [
 export const GRID_CONFIG = {
   DEFAULT_COLUMNS: 4,
   ITEM_HEIGHT: 80,
-  GRID_GAP: 5,
+  GRID_GAP: 2,
   MIN_DRAG_SENSITIVITY: 0.4,
   DEFAULT_SPACING: 15,
   DEFAULT_PADDING: 16,
   MAX_WIDTH: 400,
+  BORDER_RADIUS: 5,
 } as const;
 
 // Activity Theme Colors

@@ -46,7 +46,7 @@ const ActivityLegendDialog: React.FC<Props> = ({
         props: {
           activity,
           headerProps: { title: t("activity.legend.editActivity") },
-          height: 85,
+          height: 100,
         },
       });
     },
@@ -64,7 +64,7 @@ const ActivityLegendDialog: React.FC<Props> = ({
         position: "dock",
         props: {
           headerProps: { title: t("activity.legend.editActivities") },
-          height: 85,
+          height: 100,
         },
       });
     };
@@ -100,9 +100,9 @@ const ActivityLegendDialog: React.FC<Props> = ({
     const leftActionElement = isEditMode ? t("common.done") : undefined;
     const onLeftAction = isEditMode ? handleExitEditMode : undefined;
 
-    let height = 28;
+    let height = 35; // TODO: Default height should be different depending on the number of activities available, if less than 4, between 4 and 8, or more than 8. If less than 4, show one row, if between 4 and 8, show two rows, otherwise show 2 rows and the preview of the third row. (heights are respectively 22, 33, 35)
     if (isPickingMode) height = 50;
-    else if (isEditMode) height = 85;
+    else if (isEditMode) height = 100;
 
     useDialogStore.getState().setDialogProps(id, {
       headerProps: {
