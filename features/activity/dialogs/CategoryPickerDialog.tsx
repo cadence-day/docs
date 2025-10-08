@@ -46,7 +46,7 @@ const CategoryPickerDialog: React.FC<Props> = ({ _dialogId, onConfirm }) => {
         },
         // Remove Done button since selection is immediate
       },
-      height: 85,
+      height: 1000,
       // Don't prevent this dialog from closing, but ensure underlying dialogs stay open
       preventClose: false,
     });

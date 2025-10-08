@@ -1,8 +1,7 @@
 import Activities from "@/features/activity/components/Activities";
 import { useI18n } from "@/shared/hooks/useI18n";
-import { useDialogStore } from "@/shared/stores";
-import { useActivitiesStore } from "@/shared/stores";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useActivitiesStore, useDialogStore } from "@/shared/stores";
+import React, { useCallback, useEffect, useState } from "react";
 
 type Props = {
   _dialogId?: string;

@@ -7,13 +7,13 @@
   "active-activities": "Aktive aktiviteter",
   "activities": {
     "categories": {
-      "creative": "",
-      "health": "",
-      "learning": "",
-      "other": "",
-      "personal": "",
-      "social": "",
-      "work": ""
+      "creative": "Kreativ",
+      "health": "Sundhed",
+      "learning": "Læring",
+      "other": "Andre",
+      "personal": "Personlig",
+      "social": "Social",
+      "work": "Arbejde"
     }
   },
   "activity": {
@@ -56,14 +56,14 @@
   "already-subscribed-premium": "Du er allerede abonneret på premium!",
   "app-information": "App-information",
   "app-update": {
-    "new-version-available": "",
-    "update-benefits": "",
-    "update-description": "",
-    "update-later": "",
-    "update-now": "",
-    "update-required": "",
-    "update-required-benefits": "",
-    "update-required-description": ""
+    "new-version-available": "Ny version tilgængelig",
+    "update-benefits": "Opdater nu for at få de nyeste funktioner, forbedringer og fejlrettelser.",
+    "update-description": "En ny version ({{senesteVersion}}) af appen er tilgængelig. \nDu bruger i øjeblikket version {{currentVersion}}.",
+    "update-later": "Opdatering senere",
+    "update-now": "Opdater nu",
+    "update-required": "Opdatering krævet",
+    "update-required-benefits": "Denne opdatering inkluderer vigtige sikkerhedsrettelser og forbedringer af kompatibilitet, der kræves for at appen skal fungere korrekt.",
+    "update-required-description": "En kritisk opdatering ({{senesteVersion}}) kræves for at fortsætte med at bruge appen. \nDu bruger i øjeblikket version {{currentVersion}}."
   },
   "app-version-and-platform": "• App-version og platform",
   "are-you-sure-you-want-to-sign": "Er du sikker på, at du vil logge ud?",
@@ -177,7 +177,7 @@
   "fr": "Fre",
   "frequently-asked-questions": "Ofte stillede spørgsmål",
   "get-help": "Få hjælp",
-  "go-back": "",
+  "go-back": "Gå tilbage",
   "hi-cadence-day-support-team-pl": "Hej Cadence.day supportteam, beskriv venligst dit problem eller spørgsmål nedenfor: [Din besked her] --- App-version: {0} ({1}) Bruger-ID: {2} Bruger e-mail: {3} Enhed: {4}",
   "highly-energetic": "Meget energisk",
   "home": {
@@ -204,61 +204,61 @@
   "midday-reflection": "Middagsreflektion",
   "migration": {
     "actions": {
-      "dry-run": "",
-      "full-run": "",
-      "migrate-activities": "",
-      "migrate-notes": "",
-      "migrate-states": "",
-      "migrate-timeslices": "",
-      "title": ""
+      "dry-run": "Tørt løb",
+      "full-run": "Fuld migration",
+      "migrate-activities": "Migrere aktiviteter",
+      "migrate-notes": "Migrere noter",
+      "migrate-states": "Migrate stater",
+      "migrate-timeslices": "Migrate timeslices",
+      "title": "Migrationshandlinger"
     },
     "activities": {
-      "category": "",
-      "color": "",
-      "create-new": "",
-      "create-new-activity": "",
-      "enter-name": "",
-      "name": "",
-      "name-required": "",
-      "new": "",
-      "no-mappings": "",
-      "select-category": "",
-      "select-mapping": "",
-      "title": ""
+      "category": "Kategori",
+      "color": "Farve",
+      "create-new": "Opret ny aktivitet",
+      "create-new-activity": "Opret ny aktivitet",
+      "enter-name": "Indtast aktivitetsnavn",
+      "name": "Navn",
+      "name-required": "Aktivitetsnavn er påkrævet",
+      "new": "Ny",
+      "no-mappings": "Konfigurer først aktivitetskortlægninger",
+      "select-category": "Vælg kategori ...",
+      "select-mapping": "Vælg kortlægning ...",
+      "title": "Aktivitetskortlægning"
     },
     "auth": {
-      "connect": "",
-      "email": "",
-      "email-placeholder": "",
-      "failed": "",
-      "fields-required": "",
-      "password": "",
-      "password-placeholder": "",
-      "subtitle": ""
+      "connect": "Forbinde",
+      "email": "E -mail",
+      "email-placeholder": "Indtast din e -mail",
+      "failed": "Autentificering mislykkedes. \nKontroller dine legitimationsoplysninger.",
+      "fields-required": "E -mail og adgangskode kræves",
+      "password": "Adgangskode",
+      "password-placeholder": "Indtast din adgangskode",
+      "subtitle": "Log ind på din arvekonto for at migrere dine data til det nye system"
     },
     "encryption": {
-      "checking": "",
-      "key-found": "",
-      "unable-to-decrypt": ""
+      "checking": "Kontrol af krypteringsnøgle ...",
+      "key-found": "Krypteringsnøgle fundet ✓",
+      "unable-to-decrypt": "Kan ikke dekryptere krypterede noter"
     },
     "errors": {
-      "title": ""
+      "title": "Fejl"
     },
     "full-run": {
-      "confirm": "",
-      "title": ""
+      "confirm": "Dette vil migrere alle dine data fra kildedatabasen til måldatabasen. \nDenne handling kan ikke fortrydes. \nEr du sikker?",
+      "title": "Bekræft fuld migration"
     },
     "logs": {
-      "title": ""
+      "title": "Logfiler"
     },
     "progress": {
-      "activities": "",
-      "notes": "",
-      "states": "",
-      "timeslices": "",
-      "title": ""
+      "activities": "Aktiviteter",
+      "notes": "Noter",
+      "states": "Siger",
+      "timeslices": "Timeskiver",
+      "title": "Fremskridt"
     },
-    "title": ""
+    "title": "Migrere v1 -konto"
   },
   "mo": "Man",
   "monthly": "Månedlig",
@@ -309,7 +309,7 @@
       "work": "Arbejde"
     },
     "activity-selection": {
-      "content": "",
+      "content": "Vælg aktiviteter, der er relevante for dig:",
       "footer": "Du kan redigere, tilføje, fjerne aktiviteter senere.",
       "title": "Start med at logge på dine daglige aktiviteter og mønstre vil dukke op"
     },
@@ -345,7 +345,7 @@
     }
   },
   "or-paste-encryption-key": "Eller indsæt krypteringsnøgle:",
-  "page-not-found": "",
+  "page-not-found": "Side er ikke fundet",
   "parent-activity": "Forældreaktivitet",
   "password-changed": "Adgangskode ændret",
   "password-changed-successfully": "Adgangskode ændrede sig med succes!",
@@ -429,7 +429,7 @@
     "app-version": "App-version",
     "current-plan": "Nuværende plan",
     "customer-support": "Kundesupport",
-    "data": "",
+    "data": "Data",
     "deep-cadence": "Dyb Cadence",
     "deep-cadence-description": "Dyb Cadence beskrivelse",
     "delete-account": "Slet konto",
@@ -470,7 +470,7 @@
       "take-photo": "Tag foto"
     },
     "logout": "Log ud",
-    "migrate-data": "",
+    "migrate-data": "Migrerer tidligere konto",
     "name": "Navn",
     "notifications": "Notifikationer",
     "phone": "Telefonnummer",
@@ -629,7 +629,7 @@
   },
   "sign-up-now": "Tilmeld dig nu",
   "since-all-notification-types-a": "Da alle notifikationstyper er deaktiveret, er push-notifikationer automatisk slukket.",
-  "sorry-the-page-you-are-looking": "",
+  "sorry-the-page-you-are-looking": "Beklager, den side, du leder efter, findes ikke.",
   "start-free-trial": "Start gratis prøve",
   "stay-in-sync-nwith-your-time": "Bliv synkroniseret \nmed din tid",
   "steps-to-reproduce": "Trin til at gengive",
@@ -676,20 +676,20 @@
   "use-camera-to-scan-qr-code": "Brug kamera til at scanne QR-kode",
   "user-not-found-please-sign-in": "Bruger ikke fundet. Log ind igen.",
   "v2-welcome": {
-    "close": "",
-    "go-to-profile": "",
-    "how-to-migrate": "",
-    "important-changes": "",
-    "legacy-users-description": "",
-    "legacy-users-title": "",
-    "new-account-required": "",
-    "new-features": "",
-    "step-1": "",
-    "step-2": "",
-    "step-3": "",
-    "step-4": "",
-    "title": "",
-    "whats-new": ""
+    "close": "Tæt",
+    "go-to-profile": "Gå til profilen",
+    "how-to-migrate": "Sådan migrerer du dine data",
+    "important-changes": "Vigtige ændringer",
+    "legacy-users-description": "Hvis du tidligere har brugt Cadence 1.0 og ønsker at migrere dine data, kan du gøre det fra din profilskærm. \nDu har brug for din gamle konto -e -mail -adresse for at starte migrationsprocessen.",
+    "legacy-users-title": "For tidligere Cadence -brugere",
+    "new-account-required": "Cadence 2.0 bruger et nyt godkendelsessystem. \nHvis du havde en konto hos Cadence 1.0, skal du oprette en ny konto.",
+    "new-features": "Cadence 2.0 bringer en fuldstændig redesignet oplevelse med forbedret sikkerhed, bedre ydelse og nye funktioner, der hjælper dig med at spore din tid mere effektivt.",
+    "step-1": "Gå til din profilskærm",
+    "step-2": "Find afsnittet 'Migrate V1 -konto'",
+    "step-3": "Indtast din gamle kadence 1.0 e -mail -adresse",
+    "step-4": "Klik på 'Start migration' for at starte processen",
+    "title": "Velkommen til Cadence 2.0",
+    "whats-new": "Hvad er nyt?"
   },
   "validate": "Validerer",
   "verification-code-sent-check-your-email": "Bekræftelseskode sendt. Tjek din e-mail.",

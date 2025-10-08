@@ -45,9 +45,10 @@ import { styles } from "./styles";
  */
 type TimelineProps = {
   date?: Date;
+  bottomPadding?: number;
 };
 
-const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
+const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date, bottomPadding = 0 }, ref) => {
   // Use centralized dialog store instead of local state
   const openDialog = useDialogStore((s) => s.openDialog);
   const getDialogs = useDialogStore((s) => s.dialogs);
@@ -388,7 +389,10 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(({ date }, ref) => {
   return (
     <ScrollView
       style={styles.scrollWrapper}
-      contentContainerStyle={styles.scrollWrapperContent}
+      contentContainerStyle={[
+        styles.scrollWrapperContent,
+        bottomPadding > 0 && { paddingBottom: bottomPadding },
+      ]}
       showsVerticalScrollIndicator={false}
       // Allow vertical scrolling so RefreshControl (pull-to-refresh) can be used
       scrollEnabled={true}

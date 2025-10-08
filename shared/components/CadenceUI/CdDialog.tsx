@@ -371,8 +371,8 @@ const styles = StyleSheet.create({
   },
   gradientContainer: {
     flex: 1,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },

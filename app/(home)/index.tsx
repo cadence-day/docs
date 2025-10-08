@@ -6,6 +6,7 @@ import SignIn from "../(auth)/sign-in";
 
 import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
+import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useTheme } from "@/shared/hooks";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import { generalStyles } from "@/shared/styles";
@@ -150,7 +151,12 @@ export default function Today() {
           <ErrorBoundary>
             {/* Pass selected date into the timeline so it renders the chosen day */}
             <React.Suspense fallback={<LoadingScreen />}>
-              <Timeline date={selectedDate} />
+              <Timeline
+                date={selectedDate}
+                bottomPadding={
+                  isActivityDialogOpen ? DIALOG_HEIGHT_PLACEHOLDER : 0
+                }
+              />
             </React.Suspense>
           </ErrorBoundary>
 

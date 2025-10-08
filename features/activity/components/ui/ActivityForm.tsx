@@ -23,7 +23,6 @@ import {
 } from "react-native";
 import { ACTIVITY_THEME, WEIGHT_CONFIG } from "../../constants";
 import { useActivityValidation } from "../../hooks";
-import { CustomSlider } from "./form/CustomSlider";
 import { FormInput } from "./form/FormInput";
 
 interface ActivityFormProps {
@@ -450,13 +449,13 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
         </View>
 
         {/* Weight Slider */}
-        <CustomSlider
+        {/* <CustomSlider
           value={weight}
           onValueChange={setWeight}
           disabled={isDisabled}
           leftLabel={t("laid-back")}
           rightLabel={t("highly-energetic")}
-        />
+        /> */}
       </View>
     );
   }
@@ -614,8 +613,5 @@ const styles = StyleSheet.create({
     color: ACTIVITY_THEME.WHITE,
     fontSize: 14,
     fontWeight: "500",
-    textShadowColor: "rgba(0,0,0,0.5)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
 });

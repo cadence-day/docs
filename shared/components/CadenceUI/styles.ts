@@ -29,7 +29,7 @@ export const cadenceUIStyles = StyleSheet.create({
     screenHeaderSubtitleContainer: withDebugBorder({
         ...CONTAINER.basic.row,
         ...CONTAINER.padding.vertical.xs,
-        ...CONTAINER.margin.top.xs,
+        ...CONTAINER.margin.top.md,
     }),
     screenHeaderSubtitle: withDebugBorder({
         ...TYPOGRAPHY.body.small,

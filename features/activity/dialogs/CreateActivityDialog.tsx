@@ -23,7 +23,7 @@ const CreateActivityDialog: React.FC<Props> = ({ _dialogId }) => {
       position: "dock",
       props: {
         headerProps: { title: t("activity.legend.editActivities") },
-        height: 85,
+        height: 100,
       },
     });
   }, [_dialogId, t]);
@@ -38,7 +38,7 @@ const CreateActivityDialog: React.FC<Props> = ({ _dialogId }) => {
         rightActionElement: t("save"),
         onRightAction: () => formRef.current?.submit(),
       },
-      height: 85,
+      height: 1000,
     });
   }, [_dialogId, t, handleBackToManage]);
 

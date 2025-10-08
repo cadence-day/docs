@@ -66,7 +66,7 @@ const ReassignActivityDialog: React.FC<Props> = ({
           // we intentionally don't maintain header selection state here; primary flow is item press
         },
       },
-      height: 85,
+      height: 100,
     });
     // cleanup: remove headerProps when unmounted
     return () => {

@@ -264,7 +264,7 @@ const DebugPanel: React.FC = () => {
               headerProps: {
                 title: "Link This Device",
               },
-              height: 85,
+              height: 100,
               enableDragging: false,
             },
             position: "dock",

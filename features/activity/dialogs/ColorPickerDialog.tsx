@@ -84,7 +84,7 @@ const ColorPickerDialog: React.FC<Props> = ({
           if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
         },
       },
-      height: 85,
+      height: 100,
       preventClose: false,
     });
   }, [_dialogId, t, onConfirm, currentColor]);

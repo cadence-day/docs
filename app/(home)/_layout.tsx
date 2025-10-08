@@ -197,7 +197,7 @@ export default function TabLayout() {
             tabBarHideOnKeyboard: false,
             tabBarStyle: {
               backgroundColor: theme.background.primary,
-              borderTopWidth: 2,
+              borderTopWidth: 0,
               borderTopColor: COLORS.light.ui.border,
               height: useNavBarSize(),
               ...getShadowStyle(ShadowLevel.Low),
@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
   },
   tabLabelText: {
     ...generalStyles.smallText,
+    marginTop: 10,
   },
   tabLabelTextFocused: {
     ...generalStyles.focusedText,
