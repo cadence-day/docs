@@ -18,6 +18,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { Platform } from "react-native";
 
 // Storage for device identification and encryption state
 class EncryptionStorage extends BaseStorage {
@@ -115,7 +116,14 @@ const encryptionStorage = new EncryptionStorage();
 async function generateDeviceId(): Promise<string> {
   try {
     // Use expo-application and expo-device to create a unique identifier
-    const installId = (await Application.getAndroidId()) || "unknown";
+    let installId = "unknown";
+    if (Platform.OS === "android") {
+      installId = (await Application.getAndroidId()) || "unknown";
+    } else if (Platform.OS === "ios") {
+      installId = (await Application.getIosIdForVendorAsync()) || "unknown";
+    } else {
+      installId = "unknown";
+    }
     const deviceName = Device.deviceName || "unknown";
     const modelName = Device.modelName || "unknown";
     const osVersion = Device.osVersion || "unknown";
