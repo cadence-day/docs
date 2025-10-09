@@ -146,44 +146,83 @@ export default function TabLayout() {
     })();
   }, [user, segments, didCheckEncryption]);
 
+  // Track if onboarding check has been performed with a ref to avoid race conditions
+  const hasCheckedOnboarding = React.useRef(false);
+
   // On initial mount when signed-in, open onboarding if the user has no timeslices
   useEffect(() => {
-    // Only run once per mount
-    let didRun = false;
     const rawView = segments[segments.length - 1];
     const currentView = String(rawView ?? "index");
     if (currentView !== "index") return;
 
+    const userId = user?.id ?? null;
+    if (!userId) return;
+
+    // Only run once per user session using ref
+    if (hasCheckedOnboarding.current) return;
+
     const tryOpenOnboarding = async () => {
-      if (didRun) return;
-      didRun = true;
-
-      const userId = user?.id ?? null;
-      if (!userId) return;
-
       try {
+        GlobalErrorHandler.logDebug(
+          "Checking if onboarding should be shown",
+          "ONBOARDING_CHECK",
+          { userId }
+        );
+
         const shown = await userOnboardingStorage.getShown();
-        if (shown) return;
+
+        GlobalErrorHandler.logDebug(
+          "Onboarding storage check complete",
+          "ONBOARDING_CHECK",
+          { userId, shown }
+        );
+
+        if (shown) {
+          GlobalErrorHandler.logDebug(
+            "Onboarding already shown - skipping",
+            "ONBOARDING_CHECK",
+            { userId }
+          );
+          return;
+        }
 
         const timeslices = await useTimeslicesStore
           .getState()
           .getAllTimeslices();
+
+        GlobalErrorHandler.logDebug(
+          "Timeslices check complete",
+          "ONBOARDING_CHECK",
+          { userId, timesliceCount: timeslices?.length || 0 }
+        );
+
         if (!timeslices || timeslices.length === 0) {
           // Navigate to full-screen onboarding instead of opening dialog
+          GlobalErrorHandler.logDebug(
+            "No timeslices found - navigating to onboarding",
+            "ONBOARDING_CHECK",
+            { userId }
+          );
           router.replace("/onboarding");
+        } else {
+          GlobalErrorHandler.logDebug(
+            "Timeslices exist - skipping onboarding",
+            "ONBOARDING_CHECK",
+            { userId, timesliceCount: timeslices.length }
+          );
         }
       } catch (err) {
-        // Ignore errors here - non-fatal
-        GlobalErrorHandler.logWarning(
-          "Error checking timeslices for onboarding",
-          "ONBOARDING_CHECK",
-          { error: err, userId }
-        );
+        GlobalErrorHandler.logError(err, "Error checking onboarding status", {
+          userId,
+        });
+      } finally {
+        // Mark as checked after first attempt regardless of outcome
+        hasCheckedOnboarding.current = true;
       }
     };
 
     tryOpenOnboarding();
-  }, [user, segments, router]);
+  }, [user?.id, segments, router]);
 
   return (
     <>
