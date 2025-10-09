@@ -3,7 +3,11 @@
 // Re-export CustomerInfo from react-native-purchases for convenience
 export type { CustomerInfo } from "react-native-purchases";
 
-export type SubscriptionPlan = "free" | "supporter" | "premium_supporter" | "feature_sponsor";
+export type SubscriptionPlan =
+  | "free"
+  | "supporter"
+  | "feature_sponsor"
+  | "premium_supporter";
 
 export interface Product {
   identifier: string;

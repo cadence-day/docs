@@ -1,6 +1,6 @@
 import { useProfileStore } from "@/features/profile/stores/useProfileStore";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { revenueCatService } from "../services/RevenueCatService";
 import type {
   CustomerInfo,
@@ -15,7 +15,8 @@ export function useSubscription(): UseSubscriptionReturn {
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [activeEntitlements, setActiveEntitlements] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { updateSettings } = useProfileStore();
+  const updateSettings = useProfileStore((state) => state.updateSettings);
+  const isInitialized = useRef(false);
 
   const checkSubscription = useCallback(async () => {
     try {
@@ -63,6 +64,12 @@ export function useSubscription(): UseSubscriptionReturn {
   };
 
   useEffect(() => {
+    // Only initialize once
+    if (isInitialized.current) return;
+    isInitialized.current = true;
+
+    let unsubscribe: (() => void) | null = null;
+
     const initializeSubscription = async () => {
       // Wait a bit to ensure RevenueCat configuration has had time to complete
       // from the app initialization
@@ -72,22 +79,45 @@ export function useSubscription(): UseSubscriptionReturn {
       try {
         // Only add listener if RevenueCat is properly configured
         await revenueCatService.configure();
-        const unsubscribe = revenueCatService.addCustomerInfoUpdateListener(
+        unsubscribe = revenueCatService.addCustomerInfoUpdateListener(
           (info) => {
+            GlobalErrorHandler.logDebug(
+              "CustomerInfo updated via listener",
+              "REVENUECAT_TEST",
+              { info },
+            );
             setCustomerInfo(info);
-            checkSubscription();
+            // Don't call checkSubscription here to avoid loops
+            // Just update the local state directly
+            let plan: SubscriptionPlan = "free";
+            if (info.entitlements.active["premium_supporter"]) {
+              plan = "premium_supporter";
+            } else if (info.entitlements.active["feature_sponsor"]) {
+              plan = "feature_sponsor";
+            } else if (info.entitlements.active["supporter"]) {
+              plan = "supporter";
+            }
+            setSubscriptionPlan(plan);
+            setActiveEntitlements(
+              Object.keys(info.entitlements.active || {}),
+            );
+            updateSettings({ subscriptionPlan: plan });
           },
         );
-
-        return unsubscribe;
       } catch (error) {
         GlobalErrorHandler.logError(error, "Failed to add RevenueCat listener");
-        return () => {}; // Return no-op function on error
       }
     };
 
     initializeSubscription();
-  }, [checkSubscription]);
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - only run once on mount
 
   return {
     subscriptionPlan,

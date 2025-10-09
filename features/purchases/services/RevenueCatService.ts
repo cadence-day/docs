@@ -56,9 +56,43 @@ class RevenueCatService {
       }
 
       if (__DEV__) {
-        // Use WARN level instead of INFO to reduce console noise in development
-        // This will still show important warnings but reduce verbose logging
-        Purchases.setLogLevel(LOG_LEVEL.ERROR);
+        // Set log level to show warnings but not debug info
+        Purchases.setLogLevel(LOG_LEVEL.WARN);
+
+        // Add custom log handler to filter out expected errors
+        Purchases.setLogHandler((logLevel, message) => {
+          // Filter out pending payment errors - these are expected in StoreKit Testing
+          if (
+            message.includes("payment is pending") ||
+            message.includes("PAYMENT_PENDING_ERROR") ||
+            message.includes("payment is deferred")
+          ) {
+            // Don't log these - they're handled gracefully in our purchasePackage method
+            return;
+          }
+
+          // Log other messages normally
+          const prefix = "[RevenueCat]";
+          switch (logLevel) {
+            case LOG_LEVEL.VERBOSE:
+            case LOG_LEVEL.DEBUG:
+              // eslint-disable-next-line no-console
+              console.debug(prefix, message);
+              break;
+            case LOG_LEVEL.INFO:
+              // eslint-disable-next-line no-console
+              console.info(prefix, message);
+              break;
+            case LOG_LEVEL.WARN:
+              // eslint-disable-next-line no-console
+              console.warn(prefix, message);
+              break;
+            case LOG_LEVEL.ERROR:
+              // eslint-disable-next-line no-console
+              console.error(prefix, message);
+              break;
+          }
+        });
       }
 
       // Configure the SDK FIRST before making any other calls
@@ -121,7 +155,7 @@ class RevenueCatService {
       GlobalErrorHandler.logDebug(
         "Fetched RevenueCat offerings",
         "REVENUECAT_OFFERINGS",
-        { offerings },
+        { offerings: JSON.stringify(offerings, null, 2) },
       );
       return offerings.current;
     } catch (error) {
@@ -161,9 +195,44 @@ class RevenueCatService {
       return customerInfo;
     } catch (error) {
       const purchasesError = error as PurchasesError;
-      if (!purchasesError.userCancelled) {
-        GlobalErrorHandler.logError(error, "Purchase failed");
+
+      // Check if payment is pending (deferred payment like "Ask to Buy")
+      const errorMessage = error?.toString() || "";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const userInfo = (error as any)?.userInfo || {};
+      const readableErrorCode = userInfo.readable_error_code;
+
+      if (
+        readableErrorCode === "PAYMENT_PENDING_ERROR" ||
+        errorMessage.includes("payment is pending")
+      ) {
+        // This is an expected scenario - log as warning, not error
+        GlobalErrorHandler.logWarning(
+          "Payment is pending approval (deferred payment)",
+          "REVENUECAT_PURCHASE",
+          {
+            productId: pkg.product.identifier,
+            errorCode: readableErrorCode,
+          },
+        );
+        return null;
       }
+
+      // User cancelled the purchase - don't log as error
+      if (purchasesError.userCancelled) {
+        GlobalErrorHandler.logDebug(
+          "User cancelled the purchase",
+          "REVENUECAT_PURCHASE",
+          { productId: pkg.product.identifier },
+        );
+        return null;
+      }
+
+      // Actual error - log it
+      GlobalErrorHandler.logError(error, "Purchase failed", {
+        productId: pkg.product.identifier,
+        errorCode: readableErrorCode,
+      });
       return null;
     }
   }
@@ -187,12 +256,13 @@ class RevenueCatService {
     if (!this.isConfigured) return null; // Still not configured, return null
 
     try {
+      const userInfo = await Purchases.getCustomerInfo();
       GlobalErrorHandler.logDebug(
         "Fetching RevenueCat customer info",
         "REVENUECAT_CUSTOMER_INFO",
-        { userId: this.currentUserId },
+        { userInfo },
       );
-      return await Purchases.getCustomerInfo();
+      return userInfo;
     } catch (error) {
       GlobalErrorHandler.logError(error, "Failed to get customer info");
       return null;

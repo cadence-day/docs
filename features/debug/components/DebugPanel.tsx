@@ -215,6 +215,12 @@ const DebugPanel: React.FC = () => {
       >
         <Text style={debugStyles.debugPanelButtonText}>Test Notifications</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={debugStyles.debugPanelButton}
+        onPress={() => router.push("/test-revenuecat")}
+      >
+        <Text style={debugStyles.debugPanelButtonText}>Test RevenueCat</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         style={debugStyles.debugPanelButton}
