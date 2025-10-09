@@ -26,6 +26,7 @@ interface CdDialogProps {
   headerProps?: CdDialogHeaderProps;
   enableCloseOnBackgroundPress?: boolean;
   onHeightChange?: (height: number) => void;
+  onCollapsedChange?: (isCollapsed: boolean) => void; // Callback when collapsed state changes based on height
   enableDragging?: boolean; // Whether dragging is enabled, defaults to true
   onDoubleTapResize?: (originalHeight: number) => void; // Callback when double tap resize occurs
 
@@ -49,6 +50,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   maxHeight = 100,
   headerProps,
   onHeightChange,
+  onCollapsedChange,
   enableDragging = true,
   onDoubleTapResize,
   allowedViews = [],
@@ -84,6 +86,8 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   });
 
   const lastTap = React.useRef<number | null>(null);
+  const COLLAPSED_HEIGHT_THRESHOLD = 10; // Height percentage below which dialog is considered collapsed
+  const previousCollapsedState = React.useRef<boolean | null>(null);
 
   // Check if glass effect is available
   const canUseGlassEffect = useMemo(() => {
@@ -92,19 +96,28 @@ export const CdDialog: React.FC<CdDialogProps> = ({
     return isLiquidGlassAvailable();
   }, []);
 
-  // Check if dialog should be visible in current view
-  const shouldShowInView =
-    isGlobal || allowedViews.length === 0 || allowedViews.includes(currentView);
-  const shouldRender = visible && shouldShowInView;
-
-  // Wrapper to clamp height before updating
+  // Wrapper to clamp height before updating and notify collapsed state changes
   const updateHeightClamped = useCallback(
     (newHeight: number) => {
       const clampedHeight = clampHeight(newHeight);
       updateHeight(clampedHeight);
+
+      // Check if collapsed state changed and notify parent
+      if (onCollapsedChange) {
+        const isCollapsed = clampedHeight < COLLAPSED_HEIGHT_THRESHOLD;
+        if (previousCollapsedState.current !== isCollapsed) {
+          previousCollapsedState.current = isCollapsed;
+          onCollapsedChange(isCollapsed);
+        }
+      }
     },
-    [clampHeight, updateHeight]
+    [clampHeight, updateHeight, onCollapsedChange]
   );
+
+  // Check if dialog should be visible in current view
+  const shouldShowInView =
+    isGlobal || allowedViews.length === 0 || allowedViews.includes(currentView);
+  const shouldRender = visible && shouldShowInView;
 
   const handleDoubleTap = useCallback(() => {
     // Medium haptic feedback for double tap

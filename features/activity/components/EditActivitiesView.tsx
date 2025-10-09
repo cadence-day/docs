@@ -1,6 +1,9 @@
 import { ENABLE_BUTTON_BG } from "@/features/activity/constants";
 import { COLORS } from "@/shared/constants/COLORS";
+import { CONTAINER } from "@/shared/constants/CONTAINER";
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { useI18n } from "@/shared/hooks/useI18n";
+import { generalStyles } from "@/shared/styles/general";
 import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
@@ -240,62 +243,69 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
 export default EditActivitiesView;
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { color: COLORS.text.header },
+  container: {
+    ...CONTAINER.basic.view,
+  },
+  loadingContainer: {
+    ...CONTAINER.basic.centeredView,
+  },
+  loadingText: {
+    ...generalStyles.bodyMedium,
+    color: COLORS.text.header,
+  },
   headerRight: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginBottom: 16,
+    ...CONTAINER.basic.row,
+    ...CONTAINER.layout.justify.end,
+    ...CONTAINER.padding.horizontal.lg,
+    ...CONTAINER.padding.vertical.base,
+    ...CONTAINER.margin.bottom.lg,
   },
   sectionHeader: {
+    ...generalStyles.h4,
     color: COLORS.text.subheader,
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 12,
+    ...CONTAINER.margin.bottom.md,
     textAlign: "left",
   },
   savingText: {
-    fontSize: 14,
+    ...TYPOGRAPHY.body.medium,
     color: COLORS.secondary,
-    fontWeight: "normal",
+    fontWeight: TYPOGRAPHY.weights.normal,
   },
   noActiveText: {
+    ...TYPOGRAPHY.body.medium,
     color: COLORS.text.subheader,
-    fontSize: 14,
-    marginBottom: 12,
+    ...CONTAINER.margin.bottom.md,
     textAlign: "center",
     fontStyle: "italic",
   },
-  gridContainer: { position: "relative" },
+  gridContainer: {
+    ...CONTAINER.layout.position.relative,
+  },
   separator: {
     height: 1,
     backgroundColor: COLORS.separatorline.light,
-    marginVertical: 20,
+    ...CONTAINER.margin.vertical.xl,
   },
   disabledItemWrapper: {
-    position: "relative",
-    marginBottom: 15,
-    opacity: 0.6,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 4,
+    ...CONTAINER.layout.position.relative,
+    ...CONTAINER.margin.bottom.lg,
+    ...CONTAINER.opacity.visible,
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.padding.horizontal.sm,
   },
   enableButton: {
-    position: "absolute",
+    ...CONTAINER.layout.position.absolute,
     top: -8,
     right: -8,
     backgroundColor: ENABLE_BUTTON_BG,
-    borderRadius: 12,
+    ...CONTAINER.border.radius.md,
     width: 20,
     height: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#fff",
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.border.width.thin,
+    borderColor: COLORS.neutral.white,
     zIndex: 1001,
   },
 });

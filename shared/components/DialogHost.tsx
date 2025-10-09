@@ -28,6 +28,25 @@ export const DialogHost: React.FC = () => {
             visible={true}
             collapsed={d.collapsed}
             onClose={() => useDialogStore.getState().closeDialog(d.id)}
+            onCollapsedChange={(isCollapsed) => {
+              // Update the dialog store with the dynamic collapsed state
+              if (d.collapsed !== isCollapsed) {
+                useDialogStore.getState().setDialogProps(d.id, {
+                  _isCollapsed: isCollapsed,
+                });
+                // Also update the collapsed property directly
+                const dialogs = useDialogStore.getState().dialogs;
+                const dialog = dialogs[d.id];
+                if (dialog) {
+                  useDialogStore.setState({
+                    dialogs: {
+                      ...dialogs,
+                      [d.id]: { ...dialog, collapsed: isCollapsed },
+                    },
+                  });
+                }
+              }
+            }}
             headerProps={{
               ...headerProps,
               rightActionElement:
