@@ -12,6 +12,7 @@ import React, { useMemo, useRef, useState } from "react";
 import {
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -30,7 +31,6 @@ import GridView from "./ui/GridView";
 const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
   onActivityPress,
   onDragStateChange,
-  onExitEditMode,
   gridConfig,
   onAddActivity,
   onDisableActivity,
@@ -107,10 +107,12 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
   }
 
   return (
-    <View style={styles.container}>
-      {/* Header with Done button */}
-      {onExitEditMode && <View style={styles.headerRight} />}
-
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+      scrollEnabled={!draggedActivityId}
+      showsVerticalScrollIndicator={true}
+    >
       {/* Enabled Activities Section */}
       <View>
         {enabledActivities.length > 0 ? (
@@ -297,7 +299,7 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
           />
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -305,7 +307,11 @@ export default EditActivitiesView;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  scrollContent: {
     ...CONTAINER.basic.view,
+    ...CONTAINER.padding.horizontal.md,
   },
   loadingContainer: {
     ...CONTAINER.basic.centeredView,
@@ -313,13 +319,6 @@ const styles = StyleSheet.create({
   loadingText: {
     ...generalStyles.bodyMedium,
     color: COLORS.text.header,
-  },
-  headerRight: {
-    ...CONTAINER.basic.row,
-    ...CONTAINER.layout.justify.end,
-    ...CONTAINER.padding.horizontal.lg,
-    ...CONTAINER.padding.vertical.base,
-    ...CONTAINER.margin.bottom.lg,
   },
   sectionHeaderContainer: {
     ...CONTAINER.basic.row,
