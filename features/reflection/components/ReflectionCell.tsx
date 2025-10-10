@@ -98,12 +98,15 @@ export const ReflectionCell = ({
               {/* Energy icon and number */}
               {energy !== null && (
                 <View style={reflectionStyles.cellRightItem}>
-                  <Ionicons
-                    name="flash"
-                    size={10}
-                    color={iconColor}
-                  />
-                  <Text style={[reflectionStyles.cellEnergyText, { color: iconColor }]}>{energy}</Text>
+                  <Ionicons name="flash" size={10} color={iconColor} />
+                  <Text
+                    style={[
+                      reflectionStyles.cellEnergyText,
+                      { color: iconColor },
+                    ]}
+                  >
+                    {energy}
+                  </Text>
                 </View>
               )}
               {/* Mood icon */}

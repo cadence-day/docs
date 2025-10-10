@@ -83,11 +83,13 @@ export const getContrastColor = (backgroundColor: string): string => {
         // Use the global error handler to report invalid color formats
         // Importing directly would create a cycle; gracefully return default.
         try {
-            const { GlobalErrorHandler } = require("@/shared/utils/errorHandler");
+            const { GlobalErrorHandler } = require(
+                "@/shared/utils/errorHandler",
+            );
             GlobalErrorHandler.logWarning(
                 `Invalid color format: ${backgroundColor}. Using default contrast.`,
                 "colorUtils:getContrastColor",
-                { value: backgroundColor }
+                { value: backgroundColor },
             );
         } catch {}
         return "#000000";
