@@ -3,6 +3,7 @@
  */
 
 import { COLORS } from "@/shared/constants/COLORS";
+import { Logger } from "@/shared/utils/errorHandler";
 
 type ColorScheme = "light" | "dark";
 
@@ -83,10 +84,7 @@ export const getContrastColor = (backgroundColor: string): string => {
         // Use the global error handler to report invalid color formats
         // Importing directly would create a cycle; gracefully return default.
         try {
-            const { GlobalErrorHandler } = require(
-                "@/shared/utils/errorHandler",
-            );
-            GlobalErrorHandler.logWarning(
+            Logger.logWarning(
                 `Invalid color format: ${backgroundColor}. Using default contrast.`,
                 "colorUtils:getContrastColor",
                 { value: backgroundColor },
@@ -97,8 +95,6 @@ export const getContrastColor = (backgroundColor: string): string => {
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
 
     // Calculate relative luminance using WCAG 2.0 formula
     const [rs, gs, bs] = [r, g, b].map((c) => {
