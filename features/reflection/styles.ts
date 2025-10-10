@@ -2,6 +2,7 @@ import { COLORS } from "@/shared/constants/COLORS";
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 import { REFLECTION_LAYOUT } from "./constants/layout";
+import { CONTAINER } from "../../shared/styles";
 
 export const reflectionStyles = StyleSheet.create({
   // Main container styles
@@ -95,34 +96,25 @@ export const reflectionStyles = StyleSheet.create({
   },
   cellContent: {
     flex: 1,
-    flexDirection: "row" as const,
-    justifyContent: "space-between" as const,
-    alignItems: "center" as const,
-    paddingHorizontal: 1,
-    height: "100%",
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.justify.between,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.padding.horizontal.xs,
   },
   cellLeftIcon: {
-    position: "absolute" as const,
-    left: 1,
-    top: "50%",
-    marginTop: -5, // Half of the icon height (10px / 2 = 5px)
-    zIndex: 1,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.layout.justify.center,
   },
   cellRightContent: {
-    position: "absolute" as const,
-    right: 1,
-    top: "50%",
-    marginTop: -4, // Approximate half height of the energy icon + text content
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    zIndex: 1,
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.gap.xs,
   },
   cellRightItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignContent: "center",
-    justifyContent: "center",
-    marginLeft: 2,
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.gap.xs,
   },
   cellEnergyText: {
     fontSize: TYPOGRAPHY.sizes.micro,
