@@ -24,17 +24,20 @@ export const ActivityLegendPlaceholderBox: React.FC<
     height: boxHeight,
     width: boxWidth,
     marginBottom,
+    opacity: 0.6,
   };
 
   const placeholderLarge: ViewStyle = {
     width: "75%",
     height: 10,
     marginBottom: 4,
+    opacity: 0.6,
   };
 
   const placeholderSmall: ViewStyle = {
     width: "45%",
     height: 10,
+    opacity: 0.6,
   };
 
   return isLiquidGlassAvailable() ? (
