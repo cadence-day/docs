@@ -52,13 +52,6 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
       [mode, currentMode, onActivityLongPress, onEditActivity]
     );
 
-    // Handler to exit edit mode
-    const handleExitEditMode = useCallback(() => {
-      if (mode === "view") {
-        setInternalMode("view");
-      }
-    }, [mode]);
-
     const { handleActivityPress, refresh } = useActivitiesActions({
       onActivityPress,
       onActivityLongPress: handleEnhancedActivityLongPress,
@@ -106,7 +99,6 @@ const Activities = React.forwardRef<ActivitiesRef, ActivitiesProps>(
       return (
         <EditActivitiesView
           onActivityPress={handleActivityPress}
-          onExitEditMode={handleExitEditMode}
           gridConfig={effectiveGridConfig}
           onAddActivity={onAddActivity}
           onDisableActivity={onDisableActivity}

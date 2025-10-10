@@ -1,10 +1,14 @@
+import { DELETE_BUTTON_BG } from "@/features/activity/constants";
 import { DraggableActivityItemProps } from "@/features/activity/types";
+import { COLORS } from "@/shared/constants/COLORS";
 import { Ionicons } from "@expo/vector-icons";
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   PanResponder,
+  Platform,
   StyleProp,
   StyleSheet,
   TouchableOpacity,
@@ -44,6 +48,12 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
   const rotationAnim = useRef(new Animated.Value(0)).current;
   const dragAnimation = useRef(new Animated.ValueXY()).current;
   const lastUpdateTimeRef = useRef(0);
+
+  // Check if glass effect is available
+  const canUseGlassEffect = useMemo(() => {
+    if (Platform.OS !== "ios") return false;
+    return isLiquidGlassAvailable();
+  }, []);
 
   const isBeingDragged = draggedActivityId === activity.id;
   const resolvedGridConfig = createDefaultGridConfig(gridConfig || {});
@@ -267,11 +277,34 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
       {isShakeMode && (
         <Animated.View style={deleteButtonStyle}>
           <TouchableOpacity
-            style={styles.deleteButton}
+            style={[
+              styles.deleteButton,
+              !canUseGlassEffect && styles.deleteButtonFallback,
+            ]}
             onPress={() => activity.id && onDisableActivity(activity.id)}
             activeOpacity={0.7}
           >
-            <Ionicons name="remove" size={10} color="#000" />
+            {canUseGlassEffect ? (
+              <GlassView
+                glassEffectStyle="regular"
+                tintColor={DELETE_BUTTON_BG}
+                style={styles.glassButton}
+              >
+                <Ionicons
+                  name="remove"
+                  size={14}
+                  color={COLORS.neutral.white}
+                />
+              </GlassView>
+            ) : (
+              <View style={styles.glassmorphismFallback}>
+                <Ionicons
+                  name="remove"
+                  size={14}
+                  color={COLORS.neutral.white}
+                />
+              </View>
+            )}
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -282,18 +315,32 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
 const styles = StyleSheet.create({
   activityBoxPadding: { paddingHorizontal: 4 },
   deleteButton: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     width: 20,
     height: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ddd",
+    overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
+  },
+  deleteButtonFallback: {
+    backgroundColor: DELETE_BUTTON_BG,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  glassButton: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  glassmorphismFallback: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(161, 161, 161, 0.8)",
   },
 });
