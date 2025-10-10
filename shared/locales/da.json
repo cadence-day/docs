@@ -92,6 +92,7 @@
   "choose-your-plan": "Vælg din plan",
   "choose_action": "Vælg handling",
   "close": "Luk",
+  "code": "Kode",
   "color": "Farve",
   "common": {
     "cancel": "Annuller",
@@ -138,6 +139,7 @@
   "energyLabel": "Energi",
   "energyLow": "Lav",
   "enter-6-digit-code": "Indtast 6-cifret kode",
+  "enter-6-digit-code-from-your-email": "Indtast 6 -cifret kode\n\nfra din e -mail",
   "enter-64-character-encryption": "Indtast 64-karakterkrypteringsnøgle",
   "enter-activity-name": "Indtast aktivitetsnavn",
   "enter-your-current-password": "Indtast din nuværende adgangskode:",
@@ -263,6 +265,13 @@
   "mo": "Man",
   "monthly": "Månedlig",
   "mood": "Humør",
+  "mood-labels": {
+    "content": "Tilfreds",
+    "happy": "Glad",
+    "melancholic": "Melankolsk",
+    "neutral": "Neutral",
+    "sad": "Trist"
+  },
   "morning-reminders": "Morgen-påmindelser",
   "morning-reminders-are-sent-aft": "Morgen-påmindelser sendes efter din opvågningstid og aften-påmindelser før din sengetid. Ugentlige streak-opdateringer fejrer dine resultater hver søndag.",
   "morning-time": "Morgenreflektion",
@@ -696,6 +705,7 @@
   "verification-incomplete": "Bekræftelse ufuldstændig.",
   "verification-incomplete-please-try-again": "Bekræftelse ufuldstændig. Prøv igen.",
   "verify-your-email": "Bekræft din e-mail",
+  "verifying": "Bekræftelse ...",
   "view-our-privacy-policy": "Se vores privatlivspolitik",
   "view-terms-of-service": "Se servicevilkår",
   "we": "Ons",

@@ -47,7 +47,7 @@ export const COLORS = {
       tertiary: "#F5F5F5", // Sections, dividers
       overlay: "rgba(0, 0, 0, 0.5)", // Modal overlays
     },
-
+    glassTint: "#2b2b2bdc",
     // Text Colors
     text: {
       primary: "#363636", // Headers, main text

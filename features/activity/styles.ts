@@ -52,7 +52,7 @@ export const styles = StyleSheet.create({
   // Block-style placeholder used as gray bars in skeletons
   placeholderBlock: {
     backgroundColor: "#666",
-    borderRadius: 2,
+    borderRadius: 8,
   },
   // GridView specific styles
   gridCellWrapper: {

@@ -39,8 +39,8 @@ export const ACTIVITY_THEME = {
   PLACEHOLDER_TEXT: "#9CA3AF",
 
   // Action colors
-  ENABLE_BUTTON_BG: "#4CAF50",
-  DELETE_BUTTON_BG: "#ff4444",
+  ENABLE_BUTTON_BG: "#4caf4fa9",
+  DELETE_BUTTON_BG: "#A1A1A1",
   ADD_PLACEHOLDER_BORDER: "#A1A1A1",
 
   // Form colors

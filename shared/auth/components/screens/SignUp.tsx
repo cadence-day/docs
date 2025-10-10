@@ -1,12 +1,23 @@
 import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import Toast from "@/shared/components/Toast";
 import SageIcon from "@/shared/components/icons/SageIcon";
+import { COLORS } from "@/shared/constants/COLORS";
+import { CONTAINER } from "@/shared/constants/CONTAINER";
+import { isDev } from "@/shared/constants/isDev";
 import { useToast } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 import { useSignUp } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef, useState } from "react";
-import { TextInput, View } from "react-native";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   clearAllClerkErrors,
   createClerkErrorClearer,
@@ -51,6 +62,7 @@ const SignUpScreen: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState("");
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const [errors, setErrors] = useState<Errors>({
     name: null,
@@ -82,13 +94,24 @@ const SignUpScreen: React.FC = () => {
   const passwordRef = useRef<TextInput>(null);
   const repeatPasswordRef = useRef<TextInput>(null);
 
-  const handleBackToSignUp = () => {
-    setPendingVerification(false);
-    setCode("");
-    clearAllClerkErrors(setClerkErrors);
-  };
-
   const clearClerkError = createClerkErrorClearer(setClerkErrors);
+
+  // Keyboard visibility listeners
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const isFormValid = () => {
     const nameParts = full_name.trim().split(" ");
@@ -200,7 +223,7 @@ const SignUpScreen: React.FC = () => {
 
   const formContent = (
     <View style={styles.formContainer}>
-      <CdText variant="title" size="large" style={styles.title}>
+      <CdText variant="title" size="large" style={styles.titleLarge}>
         {t("sign-up.sign-up")}
       </CdText>
 
@@ -307,7 +330,19 @@ const SignUpScreen: React.FC = () => {
       )}
 
       <TermsCheckbox isChecked={agreeToTerms} onToggle={setAgreeToTerms} />
-      <DirectToSignIn />
+
+      {/* Dev button to manually trigger email verification screen */}
+      {isDev && !pendingVerification && (
+        <CdButton
+          title="[DEV] Skip to Email Verification"
+          onPress={() => setPendingVerification(true)}
+          variant="outline"
+          size="medium"
+          style={localStyles.devButton}
+        />
+      )}
+
+      {!isKeyboardVisible && <DirectToSignIn />}
     </View>
   );
 
@@ -337,44 +372,69 @@ const SignUpScreen: React.FC = () => {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      <View style={styles.form}>
-        {isSubmitting ? (
-          <View style={styles.centerContent}>
-            <SageIcon status="pulsating" size={200} />
+      <SafeAreaView style={styles.container}>
+        {/* SageIcon at the top - matching onboarding position */}
+        {!isSubmitting && !isKeyboardVisible && (
+          <View style={styles.topIconContainer}>
+            <SageIcon status="pulsating" size={80} auto={false} />
           </View>
-        ) : (
-          contentComponent
         )}
 
-        <View style={styles.actionButtonContainer}>
-          {pendingVerification && (
-            <CdButton
-              title={t("sign-up.change-email")}
-              onPress={handleBackToSignUp}
-              variant="outline"
-              size="large"
-            />
-          )}
-          {!pendingVerification && !isSuccess && (
-            <CdButton
-              title={actionButtonTitle}
-              onPress={onSignUpPress}
-              variant="text"
-              size="large"
-              disabled={!isFormValid() || isSubmitting}
-            />
-          )}
-        </View>
-      </View>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={0}
+        >
+          <View style={styles.container}>
+            <View style={styles.form}>
+              {isSubmitting ? (
+                <View style={styles.centerContent}>
+                  <SageIcon status="pulsating" size={200} />
+                </View>
+              ) : (
+                contentComponent
+              )}
 
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        isVisible={toast.isVisible}
-        onHide={hideToast}
-      />
+              {!isKeyboardVisible && !pendingVerification && !isSuccess && (
+                <View style={styles.actionButtonContainer}>
+                  <CdButton
+                    title={actionButtonTitle}
+                    onPress={onSignUpPress}
+                    variant="text"
+                    size="large"
+                    disabled={!isFormValid() || isSubmitting}
+                  />
+                </View>
+              )}
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+
+        {/* CADENCE text at the bottom - matching onboarding position */}
+        {!isSubmitting && (
+          <CdText variant="title" size="large" style={styles.cadenceText}>
+            CADENCE
+          </CdText>
+        )}
+
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          isVisible={toast.isVisible}
+          onHide={hideToast}
+        />
+      </SafeAreaView>
     </LinearGradient>
   );
 };
 
 export default SignUpScreen;
+
+const localStyles = StyleSheet.create({
+  devButton: {
+    ...CONTAINER.size.width.full,
+    marginTop: 16,
+    backgroundColor: COLORS.semantic.warning,
+    borderColor: COLORS.semantic.warning,
+  },
+});

@@ -28,7 +28,9 @@ interface UseActivityManagementReturn {
   draggedActivityId: string | null;
   dragPlaceholderIndex: number | null;
   isShakeMode: boolean;
+  isActivelyDragging: boolean;
   handleDragStart: (activityId: string) => void;
+  handleDragMove: () => void;
   handleDragEnd: () => void;
   handleReorder: (fromIndex: number, toIndex: number) => void;
   handlePlaceholderChange: (index: number | null) => void;

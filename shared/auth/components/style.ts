@@ -28,14 +28,12 @@ export const styles = StyleSheet.create({
   // Form styles
   form: {
     ...CONTAINER.size.width.full,
-    paddingVertical: 100,
+    ...CONTAINER.layout.flex.grow,
+    ...CONTAINER.layout.justify.center,
     paddingHorizontal: CONTAINER.spacing["4xl"],
-    ...CONTAINER.layout.align.center,
-    ...CONTAINER.size.minHeight.full,
   },
   formContainer: {
     ...CONTAINER.size.width.full,
-    ...CONTAINER.layout.align.center,
   },
 
   // Title styles
@@ -43,13 +41,14 @@ export const styles = StyleSheet.create({
     ...TYPOGRAPHY.heading.h2,
     ...CONTAINER.margin.bottom.xl,
     ...CONTAINER.margin.top.none,
-    textAlign: "center",
+    textAlign: "left",
     color: COLORS.neutral.white,
   },
   titleLarge: {
     ...TYPOGRAPHY.heading.h1,
     ...CONTAINER.margin.bottom["3xl"],
-    ...CONTAINER.margin.top.xl,
+    ...CONTAINER.margin.top.none,
+    textAlign: "left",
     color: COLORS.neutral.white,
   },
 
@@ -119,6 +118,7 @@ export const styles = StyleSheet.create({
 
   // Social button styles
   socialContainer: {
+    ...CONTAINER.size.width.full,
     ...CONTAINER.margin.bottom["3xl"],
     ...CONTAINER.gap.lg,
   },
@@ -196,7 +196,7 @@ export const styles = StyleSheet.create({
   emailBody: {
     color: COLORS.light.ui.border,
     ...CONTAINER.margin.bottom.xl,
-    textAlign: "center",
+    textAlign: "left",
   },
   emailBold: {
     fontWeight: TYPOGRAPHY.weights.semibold,
@@ -334,14 +334,25 @@ export const styles = StyleSheet.create({
   },
 
   // Loading and success styles
+  loadingOverlay: {
+    ...CONTAINER.layout.position.absolute,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.layout.align.center,
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Semi-transparent overlay
+    zIndex: 1000, // Ensure it's on top of all content
+  },
   loadingText: {
-    color: COLORS.neutral.white,
     ...TYPOGRAPHY.body.large,
+    color: COLORS.neutral.white,
     ...CONTAINER.margin.top.lg,
   },
   successTitle: {
-    color: COLORS.neutral.white,
     ...TYPOGRAPHY.heading.h1,
+    color: COLORS.neutral.white,
     ...CONTAINER.margin.bottom.lg,
   },
   successText: {
@@ -349,5 +360,23 @@ export const styles = StyleSheet.create({
     ...TYPOGRAPHY.body.large,
     ...CONTAINER.margin.bottom.xl,
     textAlign: "center",
+  },
+
+  // Top icon container - matching onboarding position
+  topIconContainer: {
+    ...CONTAINER.layout.position.absolute,
+    top: 70,
+    left: 30,
+    zIndex: 10,
+  },
+
+  // Bottom CADENCE text - matching onboarding position
+  cadenceText: {
+    ...CONTAINER.layout.position.absolute,
+    bottom: 40,
+    left: 30,
+    fontSize: 24,
+    color: COLORS.neutral.white,
+    fontFamily: "FoundersGrotesk-Regular",
   },
 });
