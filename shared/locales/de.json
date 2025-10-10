@@ -7,13 +7,13 @@
   "active-activities": "Aktive Aktivitäten",
   "activities": {
     "categories": {
-      "creative": "",
-      "health": "",
-      "learning": "",
-      "other": "",
-      "personal": "",
-      "social": "",
-      "work": ""
+      "creative": "Kreativ",
+      "health": "Gesundheit",
+      "learning": "Lernen",
+      "other": "Andere",
+      "personal": "Persönlich",
+      "social": "Sozial",
+      "work": "Arbeiten"
     }
   },
   "activity": {
@@ -56,14 +56,14 @@
   "already-subscribed-premium": "Sie sind bereits für Premium abonniert!",
   "app-information": "App-Informationen",
   "app-update": {
-    "new-version-available": "",
-    "update-benefits": "",
-    "update-description": "",
-    "update-later": "",
-    "update-now": "",
-    "update-required": "",
-    "update-required-benefits": "",
-    "update-required-description": ""
+    "new-version-available": "Neue Version verfügbar",
+    "update-benefits": "Aktualisieren Sie jetzt, um die neuesten Funktionen, Verbesserungen und Fehlerbehebungen zu erhalten.",
+    "update-description": "Eine neue Version ({{latestVersion}}) der App ist verfügbar. \nSie verwenden derzeit die Version {{currentVersion}}.",
+    "update-later": "Später aktualisieren",
+    "update-now": "Jetzt aktualisieren",
+    "update-required": "Aktualisierung erforderlich",
+    "update-required-benefits": "Dieses Update enthält wichtige Sicherheitskorrekturen und Kompatibilitätsverbesserungen, die für die ordnungsgemäße Funktion der App erforderlich sind.",
+    "update-required-description": "Um die App weiterhin verwenden zu können, ist ein wichtiges Update ({{latestVersion}}) erforderlich. \nSie verwenden derzeit die Version {{currentVersion}}."
   },
   "app-version-and-platform": "• App-Version und Plattform",
   "are-you-sure-you-want-to-sign": "Sind Sie sicher, dass Sie sich abmelden möchten?",
@@ -92,6 +92,7 @@
   "choose-your-plan": "Wählen Sie Ihren Plan",
   "choose_action": "Wählen Sie Aktion",
   "close": "Schließen",
+  "code": "Code",
   "color": "Farbe",
   "common": {
     "cancel": "Abbrechen",
@@ -138,6 +139,7 @@
   "energyLabel": "Energie",
   "energyLow": "Niedrig",
   "enter-6-digit-code": "Geben Sie einen 6-stelligen Code ein",
+  "enter-6-digit-code-from-your-email": "Geben Sie den 6-stelligen Code ein\n\naus Ihrer E-Mail",
   "enter-64-character-encryption": "Geben Sie den 64-Charakter-Verschlüsselungsschlüssel ein",
   "enter-activity-name": "Aktivitätsname eingeben",
   "enter-your-current-password": "Geben Sie Ihr aktuelles Passwort ein:",
@@ -177,7 +179,7 @@
   "fr": "Fr",
   "frequently-asked-questions": "Häufig gestellte Fragen",
   "get-help": "Hilfe erhalten",
-  "go-back": "",
+  "go-back": "Geh zurück",
   "hi-cadence-day-support-team-pl": "Hallo cadence.day Support-Team, bitte beschreiben Sie Ihr Problem oder Ihre Frage unten: [Ihre Nachricht hier] --- App-Version: {0} ({1}) Benutzer-ID: {2} Benutzer-E-Mail: {3} Gerät: {4}",
   "highly-energetic": "Sehr energisch",
   "home": {
@@ -204,65 +206,72 @@
   "midday-reflection": "Mittagsreflexion",
   "migration": {
     "actions": {
-      "dry-run": "",
-      "full-run": "",
-      "migrate-activities": "",
-      "migrate-notes": "",
-      "migrate-states": "",
-      "migrate-timeslices": "",
-      "title": ""
+      "dry-run": "Trockenlauf",
+      "full-run": "Vollständige Migration",
+      "migrate-activities": "Aktivitäten migrieren",
+      "migrate-notes": "Notizen migrieren",
+      "migrate-states": "Staaten migrieren",
+      "migrate-timeslices": "Zeitscheiben migrieren",
+      "title": "Migrationsaktionen"
     },
     "activities": {
-      "category": "",
-      "color": "",
-      "create-new": "",
-      "create-new-activity": "",
-      "enter-name": "",
-      "name": "",
-      "name-required": "",
-      "new": "",
-      "no-mappings": "",
-      "select-category": "",
-      "select-mapping": "",
-      "title": ""
+      "category": "Kategorie",
+      "color": "Farbe",
+      "create-new": "Neue Aktivität erstellen",
+      "create-new-activity": "Neue Aktivität erstellen",
+      "enter-name": "Geben Sie den Aktivitätsnamen ein",
+      "name": "Name",
+      "name-required": "Aktivitätsname ist erforderlich",
+      "new": "Neu",
+      "no-mappings": "Bitte konfigurieren Sie zuerst Aktivitätszuordnungen",
+      "select-category": "Kategorie auswählen...",
+      "select-mapping": "Zuordnung auswählen...",
+      "title": "Aktivitätszuordnung"
     },
     "auth": {
-      "connect": "",
-      "email": "",
-      "email-placeholder": "",
-      "failed": "",
-      "fields-required": "",
-      "password": "",
-      "password-placeholder": "",
-      "subtitle": ""
+      "connect": "Verbinden",
+      "email": "E-Mail",
+      "email-placeholder": "Geben Sie Ihre E-Mail-Adresse ein",
+      "failed": "Die Authentifizierung ist fehlgeschlagen. \nBitte überprüfen Sie Ihre Anmeldedaten.",
+      "fields-required": "E-Mail und Passwort sind erforderlich",
+      "password": "Passwort",
+      "password-placeholder": "Geben Sie Ihr Passwort ein",
+      "subtitle": "Melden Sie sich bei Ihrem alten Konto an, um Ihre Daten auf das neue System zu migrieren"
     },
     "encryption": {
-      "checking": "",
-      "key-found": "",
-      "unable-to-decrypt": ""
+      "checking": "Verschlüsselungsschlüssel wird überprüft...",
+      "key-found": "Verschlüsselungsschlüssel gefunden ✓",
+      "unable-to-decrypt": "Verschlüsselte Notizen können nicht entschlüsselt werden"
     },
     "errors": {
-      "title": ""
+      "title": "Fehler"
     },
     "full-run": {
-      "confirm": "",
-      "title": ""
+      "confirm": "Dadurch werden alle Ihre Daten von der Quelldatenbank in die Zieldatenbank migriert. \nDiese Aktion kann nicht rückgängig gemacht werden. \nBist du sicher?",
+      "title": "Bestätigen Sie die vollständige Migration"
     },
     "logs": {
-      "title": ""
+      "title": "Protokolle"
     },
     "progress": {
-      "activities": "",
-      "notes": "",
-      "states": "",
-      "timeslices": "",
-      "title": ""
+      "activities": "Aktivitäten",
+      "notes": "Notizen",
+      "states": "Staaten",
+      "timeslices": "Zeitscheiben",
+      "title": "Fortschritt"
     },
-    "title": ""
+    "title": "V1-Konto migrieren"
   },
   "mo": "Mon",
   "monthly": "Monatlich",
   "mood": "Stimmung",
+  "mood-labels": {
+    "content": "Zufrieden",
+    "happy": "Glücklich",
+    "melancholic": "Melancholisch",
+    "neutral": "Neutral",
+    "sad": "Traurig"
+  },
   "morning-reminders": "Morgen -Erinnerungen",
   "morning-reminders-are-sent-aft": "Morgen -Erinnerungen werden nach Ihrer Wachzeit und abendliche Erinnerungen vor Ihrer Schlafzeit geschickt. \nWöchentliche Streifen -Updates feiern jeden Sonntag Ihre Erfolge.",
   "morning-time": "Morgenspiegelung",
@@ -309,7 +318,7 @@
       "work": "Arbeiten"
     },
     "activity-selection": {
-      "content": "",
+      "content": "Wählen Sie Aktivitäten aus, die für Sie relevant sind:",
       "footer": "Sie können Aktivitäten später bearbeiten, hinzufügen, entfernen.",
       "title": "Beginnen Sie damit, Ihre täglichen Aktivitäten und Muster zu protokollieren"
     },
@@ -345,7 +354,7 @@
     }
   },
   "or-paste-encryption-key": "Oder Einfügen der Verschlüsselungsschlüssel:",
-  "page-not-found": "",
+  "page-not-found": "Seite nicht gefunden",
   "parent-activity": "Elternaktivität",
   "password-changed": "Passwort geändert",
   "password-changed-successfully": "Passwort erfolgreich geändert!",
@@ -429,7 +438,7 @@
     "app-version": "App -Version",
     "current-plan": "Aktueller Plan",
     "customer-support": "Kundensupport",
-    "data": "",
+    "data": "Daten",
     "deep-cadence": "Tiefe Kadenz",
     "deep-cadence-description": "Beschreibung der tiefen Kadenz",
     "delete-account": "Konto löschen",
@@ -470,7 +479,7 @@
       "take-photo": "Foto aufnehmen"
     },
     "logout": "Abmelden",
-    "migrate-data": "",
+    "migrate-data": "Vorheriges Konto migrieren",
     "name": "Name",
     "notifications": "Benachrichtigungen",
     "phone": "Telefonnummer",
@@ -629,7 +638,7 @@
   },
   "sign-up-now": "Jetzt registrieren",
   "since-all-notification-types-a": "Da alle Benachrichtigungsarten deaktiviert sind, wurden die Push-Benachrichtigungen automatisch ausgeschaltet.",
-  "sorry-the-page-you-are-looking": "",
+  "sorry-the-page-you-are-looking": "Leider existiert die von Ihnen gesuchte Seite nicht.",
   "start-free-trial": "Kostenlose Testversion beginnen",
   "stay-in-sync-nwith-your-time": "Bleiben Sie synchron \nmit Ihrer Zeit",
   "steps-to-reproduce": "Schritte zur Reproduktion",
@@ -676,26 +685,27 @@
   "use-camera-to-scan-qr-code": "Verwenden Sie die Kamera, um den QR-Code zu scannen",
   "user-not-found-please-sign-in": "Benutzer nicht gefunden. Bitte melden Sie sich erneut an.",
   "v2-welcome": {
-    "close": "",
-    "go-to-profile": "",
-    "how-to-migrate": "",
-    "important-changes": "",
-    "legacy-users-description": "",
-    "legacy-users-title": "",
-    "new-account-required": "",
-    "new-features": "",
-    "step-1": "",
-    "step-2": "",
-    "step-3": "",
-    "step-4": "",
-    "title": "",
-    "whats-new": ""
+    "close": "Schließen",
+    "go-to-profile": "Gehen Sie zu Profil",
+    "how-to-migrate": "So migrieren Sie Ihre Daten",
+    "important-changes": "Wichtige Änderungen",
+    "legacy-users-description": "Wenn Sie zuvor Cadence 1.0 verwendet haben und Ihre Daten migrieren möchten, können Sie dies über Ihren Profilbildschirm tun. \nSie benötigen die E-Mail-Adresse Ihres alten Kontos, um den Migrationsprozess zu starten.",
+    "legacy-users-title": "Für frühere Cadence-Benutzer",
+    "new-account-required": "Cadence 2.0 verwendet ein neues Authentifizierungssystem. \nWenn Sie ein Konto bei Cadence 1.0 hatten, müssen Sie ein neues Konto erstellen.",
+    "new-features": "Cadence 2.0 bietet ein völlig neu gestaltetes Erlebnis mit verbesserter Sicherheit, besserer Leistung und neuen Funktionen, die Ihnen helfen, Ihre Zeit effektiver zu erfassen.",
+    "step-1": "Gehen Sie zu Ihrem Profilbildschirm",
+    "step-2": "Suchen Sie den Abschnitt „V1-Konto migrieren“.",
+    "step-3": "Geben Sie Ihre alte Cadence 1.0-E-Mail-Adresse ein",
+    "step-4": "Klicken Sie auf „Migration starten“, um den Vorgang zu starten",
+    "title": "Willkommen bei Cadence 2.0",
+    "whats-new": "Was ist neu?"
   },
   "validate": "Bestätigen",
   "verification-code-sent-check-your-email": "Bestätigungscode gesendet. Überprüfen Sie Ihre E-Mail.",
   "verification-incomplete": "Bestätigung unvollständig.",
   "verification-incomplete-please-try-again": "Bestätigung unvollständig. Bitte versuchen Sie es erneut.",
   "verify-your-email": "Bestätigen Sie Ihre E-Mail",
+  "verifying": "Überprüfung...",
   "view-our-privacy-policy": "Sehen Sie sich unsere Datenschutzrichtlinie an",
   "view-terms-of-service": "Nutzungsbedingungen anzeigen",
   "we": "Mi",

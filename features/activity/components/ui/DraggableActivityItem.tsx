@@ -34,6 +34,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
   activityOrder,
   onActivityPress,
   onDragStart,
+  onDragMove,
   onDragEnd,
   onReorder,
   onPlaceholderChange,
@@ -48,6 +49,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
   const rotationAnim = useRef(new Animated.Value(0)).current;
   const dragAnimation = useRef(new Animated.ValueXY()).current;
   const lastUpdateTimeRef = useRef(0);
+  const hasCalledDragMoveRef = useRef(false);
 
   // Check if glass effect is available
   const canUseGlassEffect = useMemo(() => {
@@ -90,6 +92,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
           onDragStart(activity.id);
         }
         onPlaceholderChange(null);
+        hasCalledDragMoveRef.current = false;
 
         // Stop shake animation for dragged item
         stopShakeAnimation(shakeAnim, rotationAnim);
@@ -98,6 +101,15 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
       onPanResponderMove: (evt, gestureState) => {
         // Update drag animation smoothly
         dragAnimation.setValue({ x: gestureState.dx, y: gestureState.dy });
+
+        // Call onDragMove only once when user actually starts moving (disables scroll)
+        if (
+          !hasCalledDragMoveRef.current &&
+          (Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5)
+        ) {
+          hasCalledDragMoveRef.current = true;
+          onDragMove();
+        }
 
         // Only update placeholder position if dragged far enough to avoid jitter
         if (Math.abs(gestureState.dx) > 20 || Math.abs(gestureState.dy) > 20) {
@@ -132,6 +144,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
       },
       onPanResponderRelease: (evt, gestureState) => {
         const wasBeingDragged = draggedActivityId === activity.id;
+        hasCalledDragMoveRef.current = false;
         onDragEnd();
         onPlaceholderChange(null);
 
@@ -181,6 +194,26 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
           velocity: { x: 0, y: 0 },
         }).start();
       },
+      onPanResponderTerminate: () => {
+        // Handle case where gesture is interrupted (e.g., by another gesture)
+        hasCalledDragMoveRef.current = false;
+        onDragEnd();
+        onPlaceholderChange(null);
+
+        // Restart shake animation
+        if (isShakeMode) {
+          startShakeAnimation(shakeAnim, rotationAnim);
+        }
+
+        // Reset animation
+        Animated.spring(dragAnimation, {
+          toValue: { x: 0, y: 0 },
+          useNativeDriver: false,
+          tension: 300,
+          friction: 10,
+          velocity: { x: 0, y: 0 },
+        }).start();
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -194,6 +227,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
     isShakeMode,
     onDisableActivity,
     onDragEnd,
+    onDragMove,
     onDragStart,
     onPlaceholderChange,
     onReorder,

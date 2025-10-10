@@ -55,7 +55,9 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
     draggedActivityId,
     dragPlaceholderIndex,
     isShakeMode,
+    isActivelyDragging,
     handleDragStart,
+    handleDragMove,
     handleDragEnd,
     handleReorder,
     handlePlaceholderChange,
@@ -110,7 +112,7 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scrollContent}
-      scrollEnabled={!draggedActivityId}
+      scrollEnabled={!isActivelyDragging}
       showsVerticalScrollIndicator={true}
     >
       {/* Enabled Activities Section */}
@@ -207,6 +209,7 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
                 activityOrder={activityOrder}
                 onActivityPress={onActivityPress}
                 onDragStart={handleDragStart}
+                onDragMove={handleDragMove}
                 onDragEnd={handleDragEnd}
                 onReorder={handleReorder}
                 onPlaceholderChange={handlePlaceholderChange}

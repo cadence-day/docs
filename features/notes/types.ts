@@ -1,12 +1,14 @@
-import { Note } from "@/shared/types/models";
-
-export interface NoteItem extends Note {
-  isNew: boolean;
+// NoteItem type for dialog UI
+export interface NoteItem {
+  id?: string;
+  timeslice_id?: string | null;
+  message?: string; // Added message property
+  isNew?: boolean;
+  isPinned?: boolean;
   isSaving?: boolean;
   hasError?: boolean;
-  isPinned?: boolean;
+  // Add other properties as needed
 }
-
 export interface CreateNoteItem {
   id?: string | null;
   timeslice_id?: string | null;

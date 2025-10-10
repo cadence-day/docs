@@ -7,13 +7,13 @@
   "active-activities": "Actividades activas",
   "activities": {
     "categories": {
-      "creative": "",
-      "health": "",
-      "learning": "",
-      "other": "",
-      "personal": "",
-      "social": "",
-      "work": ""
+      "creative": "Creativo",
+      "health": "Salud",
+      "learning": "Aprendiendo",
+      "other": "Otro",
+      "personal": "Personal",
+      "social": "Social",
+      "work": "Trabajar"
     }
   },
   "activity": {
@@ -56,14 +56,14 @@
   "already-subscribed-premium": "¡Ya estás suscrito a Premium!",
   "app-information": "Información de la aplicación",
   "app-update": {
-    "new-version-available": "",
-    "update-benefits": "",
-    "update-description": "",
-    "update-later": "",
-    "update-now": "",
-    "update-required": "",
-    "update-required-benefits": "",
-    "update-required-description": ""
+    "new-version-available": "Nueva versión disponible",
+    "update-benefits": "Actualice ahora para obtener las últimas funciones, mejoras y correcciones de errores.",
+    "update-description": "Hay disponible una nueva versión ({{latestVersion}}) de la aplicación. \nActualmente estás usando la versión {{currentVersion}}.",
+    "update-later": "Actualizar más tarde",
+    "update-now": "Actualizar ahora",
+    "update-required": "Actualización requerida",
+    "update-required-benefits": "Esta actualización incluye importantes correcciones de seguridad y mejoras de compatibilidad necesarias para que la aplicación funcione correctamente.",
+    "update-required-description": "Se requiere una actualización crítica ({{latestVersion}}) para continuar usando la aplicación. \nActualmente estás usando la versión {{currentVersion}}."
   },
   "app-version-and-platform": "• Versión y plataforma de la aplicación",
   "are-you-sure-you-want-to-sign": "¿Estás seguro de que quieres cerrar sesión?",
@@ -92,6 +92,7 @@
   "choose-your-plan": "Elige tu plan",
   "choose_action": "Elegir acción",
   "close": "Cerrar",
+  "code": "Código",
   "color": "Color",
   "common": {
     "cancel": "Cancelar",
@@ -138,6 +139,7 @@
   "energyLabel": "Energía",
   "energyLow": "Bajo",
   "enter-6-digit-code": "Ingrese el código de 6 dígitos",
+  "enter-6-digit-code-from-your-email": "Ingrese el código de 6 dígitos\n\ndesde tu correo electrónico",
   "enter-64-character-encryption": "Ingrese la clave de cifrado de 64 caracteres",
   "enter-activity-name": "Ingrese el nombre de la actividad",
   "enter-your-current-password": "Ingrese su contraseña actual:",
@@ -177,7 +179,7 @@
   "fr": "Vie",
   "frequently-asked-questions": "Preguntas frecuentes",
   "get-help": "Obtener ayuda",
-  "go-back": "",
+  "go-back": "Volver",
   "hi-cadence-day-support-team-pl": "Hola equipo de soporte de Cadence.day, describe tu problema o pregunta a continuación: [tu mensaje aquí] --- Versión de la aplicación: {0} ({1}) ID de usuario: {2} Correo electrónico del usuario: {3} dispositivo: {4}",
   "highly-energetic": "Muy enérgico",
   "home": {
@@ -204,65 +206,72 @@
   "midday-reflection": "Reflexión del mediodía",
   "migration": {
     "actions": {
-      "dry-run": "",
-      "full-run": "",
-      "migrate-activities": "",
-      "migrate-notes": "",
-      "migrate-states": "",
-      "migrate-timeslices": "",
-      "title": ""
+      "dry-run": "Ejecución en seco",
+      "full-run": "Migración completa",
+      "migrate-activities": "Migrar actividades",
+      "migrate-notes": "Migrar notas",
+      "migrate-states": "Estados migratorios",
+      "migrate-timeslices": "Migrar segmentos de tiempo",
+      "title": "Acciones Migratorias"
     },
     "activities": {
-      "category": "",
-      "color": "",
-      "create-new": "",
-      "create-new-activity": "",
-      "enter-name": "",
-      "name": "",
-      "name-required": "",
-      "new": "",
-      "no-mappings": "",
-      "select-category": "",
-      "select-mapping": "",
-      "title": ""
+      "category": "Categoría",
+      "color": "Color",
+      "create-new": "Crear nueva actividad",
+      "create-new-activity": "Crear nueva actividad",
+      "enter-name": "Introduzca el nombre de la actividad",
+      "name": "Nombre",
+      "name-required": "El nombre de la actividad es obligatorio.",
+      "new": "Nuevo",
+      "no-mappings": "Primero configure las asignaciones de actividades",
+      "select-category": "Seleccione categoría...",
+      "select-mapping": "Seleccionar mapeo...",
+      "title": "Mapeo de actividades"
     },
     "auth": {
-      "connect": "",
-      "email": "",
-      "email-placeholder": "",
-      "failed": "",
-      "fields-required": "",
-      "password": "",
-      "password-placeholder": "",
-      "subtitle": ""
+      "connect": "Conectar",
+      "email": "Correo electrónico",
+      "email-placeholder": "Introduce tu correo electrónico",
+      "failed": "La autenticación falló. \nPor favor verifique sus credenciales.",
+      "fields-required": "Se requiere correo electrónico y contraseña",
+      "password": "Contraseña",
+      "password-placeholder": "Introduce tu contraseña",
+      "subtitle": "Inicie sesión en su cuenta heredada para migrar sus datos al nuevo sistema"
     },
     "encryption": {
-      "checking": "",
-      "key-found": "",
-      "unable-to-decrypt": ""
+      "checking": "Comprobando clave de cifrado...",
+      "key-found": "Clave de cifrado encontrada ✓",
+      "unable-to-decrypt": "No se pueden descifrar notas cifradas"
     },
     "errors": {
-      "title": ""
+      "title": "Errores"
     },
     "full-run": {
-      "confirm": "",
-      "title": ""
+      "confirm": "Esto migrará todos sus datos de la base de datos de origen a la base de datos de destino. \nEsta acción no se puede deshacer. \n¿Está seguro?",
+      "title": "Confirmar migración completa"
     },
     "logs": {
-      "title": ""
+      "title": "Registros"
     },
     "progress": {
-      "activities": "",
-      "notes": "",
-      "states": "",
-      "timeslices": "",
-      "title": ""
+      "activities": "Actividades",
+      "notes": "Notas",
+      "states": "Estados",
+      "timeslices": "Rebanadas de tiempo",
+      "title": "Progreso"
     },
-    "title": ""
+    "title": "Migrar cuenta V1"
   },
   "mo": "Lun",
   "monthly": "Mensual",
   "mood": "Ánimo",
+  "mood-labels": {
+    "content": "Contento",
+    "happy": "Feliz",
+    "melancholic": "Melancólico",
+    "neutral": "Neutral",
+    "sad": "Triste"
+  },
   "morning-reminders": "Recordatorios matutinos",
   "morning-reminders-are-sent-aft": "Los recordatorios matutinos se envían después de tu hora de despertar y los recordatorios vespertinos antes de tu hora de dormir. Las actualizaciones de rachas semanales celebran tus logros todos los domingos.",
   "morning-time": "Reflexión de la mañana",
@@ -309,7 +318,7 @@
       "work": "Trabajar"
     },
     "activity-selection": {
-      "content": "",
+      "content": "Elija actividades que sean relevantes para usted:",
       "footer": "Puede editar, agregar, eliminar actividades más tarde.",
       "title": "Comience por registrar sus actividades y patrones diarios surgirá"
     },
@@ -345,7 +354,7 @@
     }
   },
   "or-paste-encryption-key": "O pega la clave de cifrado:",
-  "page-not-found": "",
+  "page-not-found": "Página no encontrada",
   "parent-activity": "Actividad principal",
   "password-changed": "Contraseña cambiada",
   "password-changed-successfully": "¡La contraseña se cambió con éxito!",
@@ -429,7 +438,7 @@
     "app-version": "Versión de la aplicación",
     "current-plan": "Plan actual",
     "customer-support": "Soporte al cliente",
-    "data": "",
+    "data": "Datos",
     "deep-cadence": "Cadencia profunda",
     "deep-cadence-description": "Descripción de la cadencia profunda",
     "delete-account": "Eliminar cuenta",
@@ -470,7 +479,7 @@
       "take-photo": "Tomar foto"
     },
     "logout": "Cerrar sesión",
-    "migrate-data": "",
+    "migrate-data": "Migrar cuenta anterior",
     "name": "Nombre",
     "notifications": "Notificaciones",
     "phone": "Número de teléfono",
@@ -629,7 +638,7 @@
   },
   "sign-up-now": "Registrarse ahora",
   "since-all-notification-types-a": "Dado que todos los tipos de notificación están deshabilitados, las notificaciones push se han apagado automáticamente.",
-  "sorry-the-page-you-are-looking": "",
+  "sorry-the-page-you-are-looking": "Lo sentimos, la página que estás buscando no existe.",
   "start-free-trial": "Iniciar prueba gratis",
   "stay-in-sync-nwith-your-time": "Manténgase sincronizado con su tiempo",
   "steps-to-reproduce": "Pasos para reproducir",
@@ -676,26 +685,27 @@
   "use-camera-to-scan-qr-code": "Usa la cámara para escanear el código QR",
   "user-not-found-please-sign-in": "Usuario no encontrado. Inicia sesión nuevamente.",
   "v2-welcome": {
-    "close": "",
-    "go-to-profile": "",
-    "how-to-migrate": "",
-    "important-changes": "",
-    "legacy-users-description": "",
-    "legacy-users-title": "",
-    "new-account-required": "",
-    "new-features": "",
-    "step-1": "",
-    "step-2": "",
-    "step-3": "",
-    "step-4": "",
-    "title": "",
-    "whats-new": ""
+    "close": "Cerca",
+    "go-to-profile": "Ir al perfil",
+    "how-to-migrate": "Cómo migrar sus datos",
+    "important-changes": "Cambios importantes",
+    "legacy-users-description": "Si anteriormente utilizó Cadence 1.0 y desea migrar sus datos, puede hacerlo desde la pantalla de su perfil. \nNecesitará la dirección de correo electrónico de su antigua cuenta para iniciar el proceso de migración.",
+    "legacy-users-title": "Para usuarios anteriores de Cadence",
+    "new-account-required": "Cadence 2.0 utiliza un nuevo sistema de autenticación. \nSi tenía una cuenta con Cadence 1.0, deberá crear una cuenta nueva.",
+    "new-features": "Cadence 2.0 ofrece una experiencia completamente rediseñada con seguridad mejorada, mejor rendimiento y nuevas funciones para ayudarte a realizar un seguimiento de tu tiempo de forma más eficaz.",
+    "step-1": "Ve a la pantalla de tu perfil",
+    "step-2": "Busque la sección 'Migrar cuenta V1'",
+    "step-3": "Ingrese su antigua dirección de correo electrónico de Cadence 1.0",
+    "step-4": "Haga clic en 'Iniciar migración' para comenzar el proceso.",
+    "title": "Bienvenido a Cadencia 2.0",
+    "whats-new": "¿Qué hay de nuevo?"
   },
   "validate": "Validar",
   "verification-code-sent-check-your-email": "Código de verificación enviado. Revisa tu correo electrónico.",
   "verification-incomplete": "Verificación incompleta.",
   "verification-incomplete-please-try-again": "Verificación incompleta. Por favor, inténtalo de nuevo.",
   "verify-your-email": "Verifica tu correo electrónico",
+  "verifying": "Verificando...",
   "view-our-privacy-policy": "Ver nuestra política de privacidad",
   "view-terms-of-service": "Ver términos de servicio",
   "we": "Mié",
