@@ -5,7 +5,7 @@ import type { Notification } from "@/shared/types/models/notification";
 
 /**
  * Fetch notification settings for a user.
- * If no settings exist, creates default settings.
+ * If no settings exist, creates default settings using upsert to handle race conditions.
  * Handles the case where there might be multiple rows (takes the most recent one).
  */
 export async function getNotificationSettings(
@@ -31,11 +31,12 @@ export async function getNotificationSettings(
             return existing;
         }
 
-        // If no settings exist, create default settings
+        // If no settings exist, create default settings using upsert to prevent duplicates
+        // This handles race conditions when multiple requests try to create settings concurrently
         return await apiCall(async () => {
             const { data, error } = await supabaseClient
                 .from("notifications")
-                .insert([
+                .upsert(
                     {
                         user_id: userId,
                         push_enabled: true,
@@ -44,7 +45,11 @@ export async function getNotificationSettings(
                         sleep_time: null,
                         timezone: null,
                     },
-                ])
+                    {
+                        onConflict: "user_id",
+                        ignoreDuplicates: false,
+                    },
+                )
                 .select()
                 .single();
 
