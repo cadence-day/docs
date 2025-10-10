@@ -14,9 +14,9 @@ import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
+import { usePostHog } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { usePostHog } from "posthog-react-native";
 
 // Custom TabLabel component to have more control over the appearance
 function TabLabel({ focused, label }: { focused: boolean; label: string }) {
@@ -224,17 +224,16 @@ export default function TabLayout() {
             }}
           />
 
-          {isChatEnabled && (
-            <Tabs.Screen
-              name="chat"
-              options={{
-                title: "Chat",
-                tabBarIcon: ({ focused }: TabBarIconProps) => (
-                  <TabLabel focused={focused} label="Chat" />
-                ),
-              }}
-            />
-          )}
+          <Tabs.Screen
+            name="chat"
+            options={{
+              title: "Chat",
+              href: isChatEnabled ? "/chat" : null,
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label="Chat" />
+              ),
+            }}
+          />
 
           <Tabs.Screen
             name="profile"
