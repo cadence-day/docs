@@ -33,7 +33,6 @@ export interface ActivityGridViewProps {
 export interface EditActivitiesViewProps {
   onActivityPress: ActivityHandler;
   onDragStateChange?: (isDragging: boolean) => void;
-  onExitEditMode?: VoidHandler;
   gridConfig?: Partial<GridConfig>;
   onAddActivity?: VoidHandler;
   onDisableActivity?: ActivityIdHandler;
@@ -50,6 +49,7 @@ export interface ActivityBoxProps {
 
 // Drag operation types
 export type DragStartHandler = (activityId: string) => void;
+export type DragMoveHandler = () => void;
 export type DragEndHandler = () => void;
 export type ReorderHandler = (fromIndex: number, toIndex: number) => void;
 export type PlaceholderChangeHandler = (index: number | null) => void;
@@ -60,6 +60,7 @@ export interface DraggableActivityItemProps {
   activityOrder: Activity[];
   onActivityPress: ActivityHandler;
   onDragStart: DragStartHandler;
+  onDragMove: DragMoveHandler;
   onDragEnd: DragEndHandler;
   onReorder: ReorderHandler;
   onPlaceholderChange: PlaceholderChangeHandler;

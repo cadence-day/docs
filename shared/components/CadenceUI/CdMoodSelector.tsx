@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { COLORS } from "../../constants/COLORS";
 import HIT_SLOP_10 from "../../constants/hitSlop";
+import { useI18n } from "../../hooks/useI18n";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -45,8 +46,14 @@ interface CdMoodSelectorProps {
 const CIRCLE_COUNT = 5;
 const ACTIVE_COLOR = COLORS.primary;
 
-// Mood labels for each level (1-5)
-const MOOD_LABELS = ["Sad", "Melancholic", "Neutral", "Content", "Happy"];
+// Mood label keys for localization
+const MOOD_LABEL_KEYS = [
+  "mood-labels.sad",
+  "mood-labels.melancholic",
+  "mood-labels.neutral",
+  "mood-labels.content",
+  "mood-labels.happy",
+];
 
 export const CdMoodSelector: React.FC<CdMoodSelectorProps> = ({
   label = "MOOD",
@@ -54,6 +61,7 @@ export const CdMoodSelector: React.FC<CdMoodSelectorProps> = ({
   onChange,
   style,
 }) => {
+  const { t } = useI18n();
   // Dynamic styles based on screen size
   const circleSize = getResponsiveCircleSize();
   const dynamicStyles = {
@@ -66,10 +74,10 @@ export const CdMoodSelector: React.FC<CdMoodSelectorProps> = ({
       paddingHorizontal: getResponsivePadding(),
     },
     labelText: {
-      fontSize: getResponsiveFontSize(10),
+      fontSize: getResponsiveFontSize(12),
     },
     circleLabel: {
-      fontSize: getResponsiveFontSize(10),
+      fontSize: getResponsiveFontSize(12),
     },
   };
 
@@ -97,7 +105,15 @@ export const CdMoodSelector: React.FC<CdMoodSelectorProps> = ({
                       styles.circle,
                       dynamicStyles.circle,
                       {
-                        backgroundColor: i < value ? ACTIVE_COLOR : "#444",
+                        backgroundColor:
+                          i < value
+                            ? ACTIVE_COLOR
+                            : "rgba(255, 255, 255, 0.05)",
+                        borderWidth: i < value ? 0 : 1,
+                        borderColor:
+                          i < value
+                            ? "transparent"
+                            : "rgba(255, 255, 255, 0.1)",
                       },
                     ]}
                   />
@@ -108,7 +124,11 @@ export const CdMoodSelector: React.FC<CdMoodSelectorProps> = ({
                     styles.circle,
                     dynamicStyles.circle,
                     {
-                      backgroundColor: i < value ? ACTIVE_COLOR : "#222",
+                      backgroundColor:
+                        i < value ? ACTIVE_COLOR : "rgba(255, 255, 255, 0.05)",
+                      borderWidth: i < value ? 0 : 1,
+                      borderColor:
+                        i < value ? "transparent" : "rgba(255, 255, 255, 0.1)",
                     },
                   ]}
                 />
@@ -119,14 +139,14 @@ export const CdMoodSelector: React.FC<CdMoodSelectorProps> = ({
 
         {/* Labels positioned to align with circles */}
         <View style={styles.labelRow}>
-          {MOOD_LABELS.map((label, i) => (
+          {MOOD_LABEL_KEYS.map((labelKey, i) => (
             <Text
               key={i}
               style={[styles.circleLabel, dynamicStyles.circleLabel]}
               numberOfLines={1}
               adjustsFontSizeToFit
             >
-              {label}
+              {t(labelKey)}
             </Text>
           ))}
         </View>
@@ -176,6 +196,7 @@ const styles = StyleSheet.create({
     // width, height, and borderRadius will be set dynamically
   },
   circleLabel: {
+    fontSize: 10, // Will be overridden dynamically
     fontWeight: "400",
     letterSpacing: 0.5, // Reduced letter spacing to give more room for text
     textAlign: "center",

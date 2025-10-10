@@ -13,7 +13,7 @@ const DirectToSignIn = () => {
         {t("already-have-an-account")}{" "}
       </CdText>
       <TouchableOpacity onPress={() => router.push("/(auth)/sign-in")}>
-        <CdText variant="link" size="medium">
+        <CdText variant="link" size="small">
           {t("sign-in-now")}
         </CdText>
       </TouchableOpacity>

@@ -50,20 +50,20 @@ const TermsCheckbox: React.FC<TermsCheckboxProps> = ({
 
         <View style={styles.termsTextContainer}>
           <View style={styles.termsTextRow}>
-            <CdText variant="body" size="medium">
+            <CdText variant="body" size="small">
               {t("i-agree-to-the")}{" "}
             </CdText>
             <TouchableOpacity onPress={handleOpenPrivacy}>
-              <CdText variant="link" size="medium" style={styles.link}>
+              <CdText variant="link" size="small" style={styles.link}>
                 {t("privacy-policy")}
               </CdText>
             </TouchableOpacity>
-            <CdText variant="body" size="medium">
+            <CdText variant="body" size="small">
               {" "}
               and{" "}
             </CdText>
             <TouchableOpacity onPress={handleOpenTerms}>
-              <CdText variant="link" size="medium" style={styles.link}>
+              <CdText variant="link" size="small" style={styles.link}>
                 {t("terms-and-conditions")}
               </CdText>
             </TouchableOpacity>

@@ -1,10 +1,14 @@
+import { DELETE_BUTTON_BG } from "@/features/activity/constants";
 import { DraggableActivityItemProps } from "@/features/activity/types";
+import { COLORS } from "@/shared/constants/COLORS";
 import { Ionicons } from "@expo/vector-icons";
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   PanResponder,
+  Platform,
   StyleProp,
   StyleSheet,
   TouchableOpacity,
@@ -30,6 +34,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
   activityOrder,
   onActivityPress,
   onDragStart,
+  onDragMove,
   onDragEnd,
   onReorder,
   onPlaceholderChange,
@@ -44,6 +49,13 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
   const rotationAnim = useRef(new Animated.Value(0)).current;
   const dragAnimation = useRef(new Animated.ValueXY()).current;
   const lastUpdateTimeRef = useRef(0);
+  const hasCalledDragMoveRef = useRef(false);
+
+  // Check if glass effect is available
+  const canUseGlassEffect = useMemo(() => {
+    if (Platform.OS !== "ios") return false;
+    return isLiquidGlassAvailable();
+  }, []);
 
   const isBeingDragged = draggedActivityId === activity.id;
   const resolvedGridConfig = createDefaultGridConfig(gridConfig || {});
@@ -80,6 +92,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
           onDragStart(activity.id);
         }
         onPlaceholderChange(null);
+        hasCalledDragMoveRef.current = false;
 
         // Stop shake animation for dragged item
         stopShakeAnimation(shakeAnim, rotationAnim);
@@ -88,6 +101,15 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
       onPanResponderMove: (evt, gestureState) => {
         // Update drag animation smoothly
         dragAnimation.setValue({ x: gestureState.dx, y: gestureState.dy });
+
+        // Call onDragMove only once when user actually starts moving (disables scroll)
+        if (
+          !hasCalledDragMoveRef.current &&
+          (Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5)
+        ) {
+          hasCalledDragMoveRef.current = true;
+          onDragMove();
+        }
 
         // Only update placeholder position if dragged far enough to avoid jitter
         if (Math.abs(gestureState.dx) > 20 || Math.abs(gestureState.dy) > 20) {
@@ -122,6 +144,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
       },
       onPanResponderRelease: (evt, gestureState) => {
         const wasBeingDragged = draggedActivityId === activity.id;
+        hasCalledDragMoveRef.current = false;
         onDragEnd();
         onPlaceholderChange(null);
 
@@ -171,6 +194,26 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
           velocity: { x: 0, y: 0 },
         }).start();
       },
+      onPanResponderTerminate: () => {
+        // Handle case where gesture is interrupted (e.g., by another gesture)
+        hasCalledDragMoveRef.current = false;
+        onDragEnd();
+        onPlaceholderChange(null);
+
+        // Restart shake animation
+        if (isShakeMode) {
+          startShakeAnimation(shakeAnim, rotationAnim);
+        }
+
+        // Reset animation
+        Animated.spring(dragAnimation, {
+          toValue: { x: 0, y: 0 },
+          useNativeDriver: false,
+          tension: 300,
+          friction: 10,
+          velocity: { x: 0, y: 0 },
+        }).start();
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -184,6 +227,7 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
     isShakeMode,
     onDisableActivity,
     onDragEnd,
+    onDragMove,
     onDragStart,
     onPlaceholderChange,
     onReorder,
@@ -267,11 +311,34 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
       {isShakeMode && (
         <Animated.View style={deleteButtonStyle}>
           <TouchableOpacity
-            style={styles.deleteButton}
+            style={[
+              styles.deleteButton,
+              !canUseGlassEffect && styles.deleteButtonFallback,
+            ]}
             onPress={() => activity.id && onDisableActivity(activity.id)}
             activeOpacity={0.7}
           >
-            <Ionicons name="remove" size={10} color="#000" />
+            {canUseGlassEffect ? (
+              <GlassView
+                glassEffectStyle="regular"
+                tintColor={DELETE_BUTTON_BG}
+                style={styles.glassButton}
+              >
+                <Ionicons
+                  name="remove"
+                  size={14}
+                  color={COLORS.neutral.white}
+                />
+              </GlassView>
+            ) : (
+              <View style={styles.glassmorphismFallback}>
+                <Ionicons
+                  name="remove"
+                  size={14}
+                  color={COLORS.neutral.white}
+                />
+              </View>
+            )}
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -282,18 +349,32 @@ export const DraggableActivityItem: React.FC<DraggableActivityItemProps> = ({
 const styles = StyleSheet.create({
   activityBoxPadding: { paddingHorizontal: 4 },
   deleteButton: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     width: 20,
     height: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ddd",
+    overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
+  },
+  deleteButtonFallback: {
+    backgroundColor: DELETE_BUTTON_BG,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  glassButton: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  glassmorphismFallback: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(161, 161, 161, 0.8)",
   },
 });
