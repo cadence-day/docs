@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SignIn from "../(auth)/sign-in";
 
-import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
+import { ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useTheme, useViewDialogState } from "@/shared/hooks";
@@ -52,20 +52,6 @@ export default function Today() {
     const interval = setInterval(() => setCurrentTime(new Date()), 30000);
     return () => clearInterval(interval);
   }, []);
-
-  // Function to reopen activity dialog
-  const reopenActivityDialog = () => {
-    useDialogStore.getState().openDialog({
-      type: "activity-legend",
-      id: "activity-legend-home", // Fixed ID for height persistence
-      props: {
-        preventClose: true,
-        enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas
-        persistHeight: true, // Enable height persistence
-      },
-      position: "dock",
-    });
-  };
 
   return (
     <View
@@ -162,20 +148,6 @@ export default function Today() {
             </React.Suspense>
           </ErrorBoundary>
 
-          {/* Reopen Activity Dialog Button - shown when dialog is closed */}
-          {!isActivityDialogOpen && (
-            <View style={style.reopenButtonContainer}>
-              <CdButton
-                title={t("activity.legend.reopen")}
-                onPress={reopenActivityDialog}
-                variant="outline"
-                size="medium"
-                style={generalStyles.outlineDiscreetButton}
-                textStyle={generalStyles.discreetText}
-              />
-            </View>
-          )}
-
           {/* Share modal could be added here when available */}
         </SafeAreaView>
       </SignedIn>
@@ -194,11 +166,5 @@ const style = StyleSheet.create({
   backToTodayButtonText: {
     ...generalStyles.clickableText,
     textDecorationLine: "none",
-  },
-  reopenButtonContainer: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

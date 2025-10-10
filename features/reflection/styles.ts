@@ -1,8 +1,8 @@
 import { COLORS } from "@/shared/constants/COLORS";
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
-import { REFLECTION_LAYOUT } from "./constants/layout";
 import { CONTAINER } from "../../shared/styles";
+import { REFLECTION_LAYOUT } from "./constants/layout";
 
 export const reflectionStyles = StyleSheet.create({
   // Main container styles
@@ -99,11 +99,12 @@ export const reflectionStyles = StyleSheet.create({
     ...CONTAINER.layout.direction.row,
     ...CONTAINER.layout.justify.between,
     ...CONTAINER.layout.align.center,
-    ...CONTAINER.padding.horizontal.xs,
+    ...CONTAINER.padding.horizontal.sm,
   },
   cellLeftIcon: {
     ...CONTAINER.layout.align.center,
     ...CONTAINER.layout.justify.center,
+    ...CONTAINER.padding.left.xs,
   },
   cellRightContent: {
     ...CONTAINER.layout.direction.row,
