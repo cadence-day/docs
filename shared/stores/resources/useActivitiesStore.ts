@@ -1,7 +1,7 @@
 import * as activitiesApi from "@/shared/api/resources/activities";
 import { activityOrderStorage } from "@/shared/storage/activities";
 import type { Activity } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { create } from "zustand";
 import {
   type BaseStoreState,
@@ -531,14 +531,14 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
           activities: reorderedActivities.filter((a) => a.status === "ENABLED"),
         });
       } else {
-        GlobalErrorHandler.logError(
+        Logger.logError(
           new Error("Failed to save activity order"),
           "updateActivityOrder",
           { activitiesCount: reorderedActivities.length },
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, "updateActivityOrder", {
+      Logger.logError(error, "updateActivityOrder", {
         activitiesCount: reorderedActivities.length,
         operationType: "save_activity_order",
       });
@@ -571,7 +571,7 @@ const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         set({ activities: enabledActivities });
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, "loadStoredOrder", {
+      Logger.logError(error, "loadStoredOrder", {
         operation: "load_and_apply_stored_order",
       });
     }

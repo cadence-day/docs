@@ -2,7 +2,7 @@ import { supabaseClient } from "@/shared/api/client";
 import { apiCall } from "@/shared/api/utils/apiHelpers";
 import { handleApiError } from "@/shared/api/utils/errorHandler";
 import type { Notification } from "@/shared/types/models/notification";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 
 /**
  * Update notification settings for a user.
@@ -46,7 +46,7 @@ export async function upsertNotificationSettings(
                     .eq("user_id", notification.user_id);
 
                 if (deleteError) {
-                    GlobalErrorHandler.logWarning(
+                    Logger.logWarning(
                         "Failed to clean up duplicate notification settings",
                         "upsertNotificationSettings_cleanup",
                         deleteError,

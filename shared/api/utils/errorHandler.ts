@@ -1,6 +1,6 @@
 // Centralized error handler for API functions
 import { ToastService } from "@/shared/context/ToastProvider";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 
 export interface RetryOptions {
   maxRetries?: number;
@@ -144,7 +144,7 @@ export async function handleApiErrorWithRetry<T>(
         maxDelay,
       );
 
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         `Attempt ${attempt + 1}/${
           maxRetries + 1
         } failed, retrying in ${delayMs}ms`,
@@ -166,7 +166,7 @@ export async function handleApiErrorWithRetry<T>(
     isRetryableError(lastError, retryableErrors),
   );
 
-  GlobalErrorHandler.logError(apiError, "API_ERROR", {
+  Logger.logError(apiError, "API_ERROR", {
     context,
     originalError: getErrorMessage(lastError),
     isRetryable: apiError.isRetryable,
@@ -193,7 +193,7 @@ export async function handleApiErrorWithRetry<T>(
 export function handleApiError(context: string, error: unknown): never {
   const apiError = new ApiError(context, error);
 
-  GlobalErrorHandler.logError(apiError, "API_ERROR", {
+  Logger.logError(apiError, "API_ERROR", {
     context,
     originalError: getErrorMessage(error),
     errorType:

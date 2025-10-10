@@ -1,5 +1,5 @@
 import { BaseStorage } from "@/shared/storage/base";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as CryptoJS from "crypto-js";
 import * as Crypto from "expo-crypto";
 import * as SecureStore from "expo-secure-store";
@@ -59,7 +59,7 @@ export function setEncryptionKeyChangedCallback(
 export function triggerEncryptedDataDetected(): void {
   // Mark encrypted data as detected in storage
   encryptionStorage.setEncryptedDataDetected(true).catch((error) => {
-    GlobalErrorHandler.logError(
+    Logger.logError(
       error,
       "ENCRYPTION_SET_DATA_DETECTED_FAILED",
       {},
@@ -70,7 +70,7 @@ export function triggerEncryptedDataDetected(): void {
     try {
       onEncryptedDataDetected();
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ENCRYPTION_DATA_DETECTED_CALLBACK_FAILED",
         {},
@@ -88,7 +88,7 @@ export async function triggerEncryptionKeyChanged(): Promise<void> {
     try {
       await onEncryptionKeyChanged();
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ENCRYPTION_KEY_CHANGED_CALLBACK_FAILED",
         {},
@@ -103,7 +103,7 @@ export async function triggerEncryptionKeyChanged(): Promise<void> {
  */
 export async function refreshAllStoresFromCore(): Promise<void> {
   try {
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       "Refreshing all stores due to encryption key change (from core)",
       "ENCRYPTION_CORE_STORE_REFRESH",
       {},
@@ -122,7 +122,7 @@ export async function refreshAllStoresFromCore(): Promise<void> {
 
     await Promise.allSettled(storeRefreshPromises);
 
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       "All stores refreshed successfully (from core)",
       "ENCRYPTION_CORE_STORE_REFRESH_COMPLETE",
       {},
@@ -131,7 +131,7 @@ export async function refreshAllStoresFromCore(): Promise<void> {
     // Also trigger the callback if set
     await triggerEncryptionKeyChanged();
   } catch (error) {
-    GlobalErrorHandler.logError(
+    Logger.logError(
       error,
       "ENCRYPTION_CORE_STORE_REFRESH_FAILED",
       {},
@@ -212,7 +212,7 @@ async function generateRandomKey(): Promise<string> {
       .map((byte) => byte.toString(16).padStart(2, "0"))
       .join("");
   } catch (error) {
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       "Expo crypto random failed, using fallback generator",
       "encryption.generateRandomKey",
       { error },
@@ -245,7 +245,7 @@ export function getKeyFingerprint(key: string, length: number = 8): string {
     const hash = CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex);
     return hash.slice(0, Math.max(1, Math.min(length, hash.length)));
   } catch (error) {
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       "Failed to compute key fingerprint",
       "encryption.getKeyFingerprint",
       { error },
@@ -271,7 +271,7 @@ async function generateAndStoreKey(): Promise<string> {
     // If SecureStore fails, log and return an ephemeral key. We intentionally
     // removed AsyncStorage persistence to avoid storing sensitive keys in
     // less-secure storage.
-    GlobalErrorHandler.logError(error, "ENCRYPTION_SECURESTORE_FAILED", {
+    Logger.logError(error, "ENCRYPTION_SECURESTORE_FAILED", {
       operation: "generate_and_store",
     });
 
@@ -316,7 +316,7 @@ export async function getEncryptionKey(): Promise<string> {
       throw error;
     }
 
-    GlobalErrorHandler.logError(error, "ENCRYPTION_GET_KEY_FAILED", {});
+    Logger.logError(error, "ENCRYPTION_GET_KEY_FAILED", {});
     // As a last resort, return an ephemeral key
     return await generateRandomKey();
   }
@@ -366,7 +366,7 @@ export async function getEncryptionKeyWithSource(): Promise<{
     }
 
     // On any other error, try AsyncStorage then return ephemeral
-    GlobalErrorHandler.logError(
+    Logger.logError(
       error,
       "ENCRYPTION_GET_KEY_WITH_SOURCE_FAILED",
       {},
@@ -422,7 +422,7 @@ export async function importEncryptionKey(key: string): Promise<{
 
     await SecureStore.setItemAsync(ENCRYPTION_KEY_NAME, normalized);
     const fp = getKeyFingerprint(normalized);
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       `Encryption key imported (fp=${fp})`,
       "encryption.importEncryptionKey",
       { fp },
@@ -433,7 +433,7 @@ export async function importEncryptionKey(key: string): Promise<{
 
     return { fingerprint: fp };
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_IMPORT_KEY_FAILED", {
+    Logger.logError(error, "ENCRYPTION_IMPORT_KEY_FAILED", {
       error,
     });
     throw new EncryptionError(
@@ -469,7 +469,7 @@ export async function encryptString(
 
   try {
     const keyHex = await getEncryptionKey();
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       "Got encryption key for encrypt",
       "encryption.encryptString",
       {
@@ -486,7 +486,7 @@ export async function encryptString(
       error instanceof EncryptionError &&
       error.message.includes("Encrypted data detected")
     ) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Cannot encrypt new data: encryption key not available due to existing encrypted data",
         "ENCRYPTION_KEY_NOT_AVAILABLE_FOR_NEW_DATA",
         { plaintextLength: plaintext?.length },
@@ -500,13 +500,13 @@ export async function encryptString(
       throw error;
     }
 
-    GlobalErrorHandler.logError(error, "ENCRYPTION_ENCRYPT_FAILED", {
+    Logger.logError(error, "ENCRYPTION_ENCRYPT_FAILED", {
       plaintextLength: plaintext?.length,
       plaintextSample: plaintext?.substring(0, 20),
     });
 
     if (allowFallback) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Encryption fallback: returning plaintext due to error",
         "encryption.encryptString",
         {},
@@ -559,7 +559,7 @@ export async function decryptString(encryptedData: string): Promise<string> {
       error instanceof EncryptionError &&
       error.message.includes("Encrypted data detected")
     ) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Cannot decrypt data: encryption key not available",
         "ENCRYPTION_KEY_NOT_AVAILABLE",
         { hasPrefix: encryptedData.startsWith(ENCRYPTED_PREFIX) },
@@ -568,7 +568,7 @@ export async function decryptString(encryptedData: string): Promise<string> {
       return `🔒 [Encrypted data - key required]`;
     }
 
-    GlobalErrorHandler.logError(error, "ENCRYPTION_DECRYPT_FAILED", {});
+    Logger.logError(error, "ENCRYPTION_DECRYPT_FAILED", {});
     throw new EncryptionError(
       "Failed to decrypt string",
       error instanceof Error ? error : new Error(String(error)),
@@ -585,7 +585,7 @@ async function _clearEncryptionKey(): Promise<void> {
   try {
     await SecureStore.deleteItemAsync(ENCRYPTION_KEY_NAME);
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_CLEAR_KEY_FAILED", {});
+    Logger.logError(error, "ENCRYPTION_CLEAR_KEY_FAILED", {});
     throw new EncryptionError(
       "Failed to clear encryption key",
       error instanceof Error ? error : new Error(String(error)),
@@ -603,7 +603,7 @@ export async function clearEncryptionKey(): Promise<void> {
       await SecureStore.deleteItemAsync(ENCRYPTION_KEY_NAME);
     } catch (secureErr) {
       // log and continue to try AsyncStorage
-      GlobalErrorHandler.logError(
+      Logger.logError(
         secureErr,
         "ENCRYPTION_CLEAR_SECURESTORE_FAILED",
         {},
@@ -723,7 +723,7 @@ export async function rotateEncryptionKeyAndReEncryptData(
     // Step 4: Re-encrypt all data using the update functions which handle encryption with the new key
     await Promise.all([updateActivities(activities), updateNotes(notes)]);
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_KEY_ROTATION", {
+    Logger.logError(error, "ENCRYPTION_KEY_ROTATION", {
       userId,
       operation: "rotate_key_and_reencrypt",
       step: "re_encrypt_all_data",

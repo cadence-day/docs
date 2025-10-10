@@ -1,8 +1,11 @@
-import React, { useState, useCallback, useRef } from "react";
+import {
+  appUpdateService,
+  type AppVersionInfo,
+} from "@/shared/services/AppUpdateService";
+import { Logger } from "@/shared/utils/errorHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useCallback, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
-import { appUpdateService, type AppVersionInfo } from "@/shared/services/AppUpdateService";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
 const UPDATE_CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const UPDATE_LATER_STORAGE_KEY = "app_update_later_timestamp";
@@ -26,8 +29,12 @@ export const useAppUpdate = (): UseAppUpdateReturn => {
 
   const shouldCheckForUpdates = useCallback(async (): Promise<boolean> => {
     try {
-      const lastCheckTimestamp = await AsyncStorage.getItem(LAST_UPDATE_CHECK_KEY);
-      const updateLaterTimestamp = await AsyncStorage.getItem(UPDATE_LATER_STORAGE_KEY);
+      const lastCheckTimestamp = await AsyncStorage.getItem(
+        LAST_UPDATE_CHECK_KEY,
+      );
+      const updateLaterTimestamp = await AsyncStorage.getItem(
+        UPDATE_LATER_STORAGE_KEY,
+      );
 
       const now = Date.now();
 
@@ -35,10 +42,10 @@ export const useAppUpdate = (): UseAppUpdateReturn => {
       if (lastCheckTimestamp) {
         const timeSinceLastCheck = now - parseInt(lastCheckTimestamp, 10);
         if (timeSinceLastCheck < UPDATE_CHECK_INTERVAL) {
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Skipping update check - too recent",
             "APP_UPDATE_HOOK",
-            { timeSinceLastCheck, interval: UPDATE_CHECK_INTERVAL }
+            { timeSinceLastCheck, interval: UPDATE_CHECK_INTERVAL },
           );
           return false;
         }
@@ -48,10 +55,10 @@ export const useAppUpdate = (): UseAppUpdateReturn => {
       if (updateLaterTimestamp) {
         const timeSinceUpdateLater = now - parseInt(updateLaterTimestamp, 10);
         if (timeSinceUpdateLater < UPDATE_CHECK_INTERVAL) {
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Skipping update check - user chose 'Update Later' recently",
             "APP_UPDATE_HOOK",
-            { timeSinceUpdateLater, interval: UPDATE_CHECK_INTERVAL }
+            { timeSinceUpdateLater, interval: UPDATE_CHECK_INTERVAL },
           );
           return false;
         }
@@ -59,7 +66,7 @@ export const useAppUpdate = (): UseAppUpdateReturn => {
 
       return true;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to check update timing");
+      Logger.logError(error, "Failed to check update timing");
       return true; // Default to checking if we can't determine timing
     }
   }, []);
@@ -77,9 +84,9 @@ export const useAppUpdate = (): UseAppUpdateReturn => {
     setIsChecking(true);
 
     try {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Starting app update check",
-        "APP_UPDATE_HOOK"
+        "APP_UPDATE_HOOK",
       );
 
       const updateInfo = await appUpdateService.checkForUpdates();
@@ -89,24 +96,24 @@ export const useAppUpdate = (): UseAppUpdateReturn => {
       await AsyncStorage.setItem(LAST_UPDATE_CHECK_KEY, Date.now().toString());
 
       if (updateInfo.updateAvailable) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "App update available",
           "APP_UPDATE_HOOK",
           {
             currentVersion: updateInfo.currentVersion,
             latestVersion: updateInfo.latestVersion,
-          }
+          },
         );
         setIsUpdateDialogVisible(true);
       } else {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "App is up to date",
           "APP_UPDATE_HOOK",
-          { currentVersion: updateInfo.currentVersion }
+          { currentVersion: updateInfo.currentVersion },
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, "App update check failed");
+      Logger.logError(error, "App update check failed");
     } finally {
       setIsChecking(false);
     }
@@ -123,16 +130,19 @@ export const useAppUpdate = (): UseAppUpdateReturn => {
   const handleUpdateLater = useCallback(async (): Promise<void> => {
     try {
       // Store timestamp when user chose "Update Later"
-      await AsyncStorage.setItem(UPDATE_LATER_STORAGE_KEY, Date.now().toString());
+      await AsyncStorage.setItem(
+        UPDATE_LATER_STORAGE_KEY,
+        Date.now().toString(),
+      );
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "User chose to update later",
-        "APP_UPDATE_HOOK"
+        "APP_UPDATE_HOOK",
       );
 
       setIsUpdateDialogVisible(false);
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to store update later timestamp");
+      Logger.logError(error, "Failed to store update later timestamp");
       setIsUpdateDialogVisible(false);
     }
   }, []);
@@ -149,12 +159,15 @@ export const useAppUpdate = (): UseAppUpdateReturn => {
       }
       appStateRef.current = nextAppState;
     },
-    [checkForUpdates]
+    [checkForUpdates],
   );
 
   // Set up app state listener
   React.useEffect(() => {
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange,
+    );
 
     return () => subscription?.remove();
   }, [handleAppStateChange]);

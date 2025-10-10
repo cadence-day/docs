@@ -1,7 +1,7 @@
 // useTimelineData.ts
 import { useActivitiesStore, useTimeslicesStore } from "@/shared/stores";
 import { Activity, Timeslice } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import { useMemo } from "react";
 
@@ -43,7 +43,7 @@ export const useTimelineData = (
         ...(disabledActivitiesFromStore || []),
       ];
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error as Error,
         "useTimelineData:getActivities",
         {},
@@ -57,7 +57,7 @@ export const useTimelineData = (
   // Ensure date is a valid Date object
   const validDate = useMemo(() => {
     if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "useTimelineData received invalid date",
         "useTimelineData:date",
         { date },

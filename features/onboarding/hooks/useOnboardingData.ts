@@ -1,5 +1,5 @@
 import useTranslation from "@/shared/hooks/useI18n";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Notifications from "expo-notifications";
 import { useEffect, useMemo, useState } from "react";
 import { OnboardingPage } from "../types";
@@ -20,7 +20,7 @@ export function useOnboardingData() {
         setNotificationsEnabled(status === "granted");
       } catch (error) {
         setNotificationsEnabled(false);
-        GlobalErrorHandler.logError(
+        Logger.logError(
           error,
           "CHECK_NOTIFICATION_PERMISSION",
         );

@@ -1,4 +1,4 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useRef } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
@@ -19,7 +19,7 @@ export const useWheelHaptics = () => {
 
   const safeImpact = useCallback((style: Haptics.ImpactFeedbackStyle) => {
     Haptics.impactAsync(style).catch((err) => {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Wheel haptic impact failed",
         "WHEEL_HAPTICS",
         { error: err },
@@ -101,7 +101,7 @@ export const useWheelHaptics = () => {
           lastHapticTimeRef.current = now;
         }
       } catch (err) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Wheel haptic failed during scroll",
           "WHEEL_HAPTICS",
           { error: err },
@@ -154,7 +154,7 @@ export const useWheelHaptics = () => {
           }
         }, TICK_MS) as unknown as number;
       } catch (err) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to start momentum haptics",
           "WHEEL_HAPTICS",
           { error: err },

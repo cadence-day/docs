@@ -2,12 +2,12 @@ import * as Localization from "expo-localization";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
+import { Logger } from "../utils/errorHandler";
 import da from "./da.json";
 import de from "./de.json";
 import en from "./en.json";
 import es from "./es.json";
 import fr from "./fr.json";
-import { GlobalErrorHandler } from "../utils/errorHandler";
 
 export const resources = {
   en: { translation: en },
@@ -56,11 +56,11 @@ if (!i18n.isInitialized) {
     initI18n();
   } catch (err) {
     // Log initialization errors; components may still mount and use the provider.
-     
-    GlobalErrorHandler.logWarning(
+
+    Logger.logWarning(
       "i18n initialization failed",
       "I18N_INIT_ERROR",
-      { error: err }
+      { error: err },
     );
   }
 }
@@ -73,10 +73,10 @@ i18n.on("languageChanged", (lng) => {
   // Update exported locale variable
   // Note: This won't update existing imports; they need to re-import or use i18n directly.
   // This is a limitation of module exports in JavaScript/TypeScript.
-   
-  GlobalErrorHandler.logWarning(
+
+  Logger.logWarning(
     "i18n language changed",
     "I18N_LANGUAGE_CHANGE",
-    { language: lng }
+    { language: lng },
   );
 });

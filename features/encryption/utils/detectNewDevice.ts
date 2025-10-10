@@ -1,7 +1,7 @@
 import { hasEncryptionKey } from "@/shared/api/encryption/core";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 
 /**
  * Check whether this looks like a new device scenario and prompt the linking dialog.
@@ -22,7 +22,7 @@ export async function checkAndPromptEncryptionLinking(userId: string | null) {
       if (hasLocalTimeslices) {
         const hasKeyLocal = await hasEncryptionKey();
         if (!hasKeyLocal) {
-          GlobalErrorHandler.logWarning(
+          Logger.logWarning(
             "Local timeslices present and no encryption key – prompting link dialog",
             "encryption.detectNewDevice",
             {},
@@ -42,14 +42,14 @@ export async function checkAndPromptEncryptionLinking(userId: string | null) {
       }
     } catch (localErr) {
       // If the local heuristic fails for any reason, fall back to server probes.
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Local timeslices heuristic failed; falling back to server probe",
         "encryption.detectNewDevice",
         { localErr },
       );
     }
   } catch (error) {
-    GlobalErrorHandler.logError(
+    Logger.logError(
       error as Error,
       "ENCRYPTION_DETECT_NEW_DEVICE",
       {},

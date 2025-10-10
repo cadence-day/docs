@@ -7,7 +7,7 @@ import {
   useTimeslicesStore,
 } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
 import { ActionSheetIOS, Alert, Platform } from "react-native";
@@ -91,7 +91,7 @@ export const useTimelineActions = (opts?: {
         if (isEmpty) {
           // Add empty timeslices to pending creation list
           addPendingTimeslice(timeslice);
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Added empty timeslice to pending list",
             "PENDING_TIMESLICE_ADDITION",
             { timeslice },
@@ -99,7 +99,7 @@ export const useTimelineActions = (opts?: {
         } else {
           // Add existing timeslices to pending update list
           addPendingUpdate(timeslice);
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Added existing timeslice to pending updates list",
             "PENDING_TIMESLICE_UPDATE",
             { timeslice },
@@ -130,7 +130,7 @@ export const useTimelineActions = (opts?: {
                 closeDialog(id);
               }
             } catch (err) {
-              GlobalErrorHandler.logWarning(
+              Logger.logWarning(
                 "Failed to adjust dialog during timeslice press",
                 "TIMELINE_DIALOGS",
                 { id, error: err },
@@ -151,7 +151,7 @@ export const useTimelineActions = (opts?: {
               isPickingMode: true,
             });
           } catch (err) {
-            GlobalErrorHandler.logWarning(
+            Logger.logWarning(
               "setDialogProps failed",
               "TIMELINE_DIALOGS",
               { id: activityDialog.id, error: err },
@@ -165,7 +165,7 @@ export const useTimelineActions = (opts?: {
               toggleCollapse(activityDialog.id);
             }
           } catch (err) {
-            GlobalErrorHandler.logWarning(
+            Logger.logWarning(
               "toggleCollapse failed",
               "TIMELINE_DIALOGS",
               { id: activityDialog.id, error: err },
@@ -206,14 +206,14 @@ export const useTimelineActions = (opts?: {
             user_id: timeslice.user_id,
             note_ids: timeslice.note_ids,
           };
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Creating new timeslice",
             "DYNAMIC_TIMESLICE_CREATION",
             { newTimeslice },
           );
           const created = await insertTimesliceInStore(newTimeslice);
           if (!created) {
-            GlobalErrorHandler.logError(
+            Logger.logError(
               new Error("Failed to create new timeslice"),
               "DYNAMIC_TIMESLICE_CREATION",
               { newTimeslice },
@@ -228,7 +228,7 @@ export const useTimelineActions = (opts?: {
 
           const updated = await updateTimesliceInStore(updatedTimeslice);
           if (!updated) {
-            GlobalErrorHandler.logError(
+            Logger.logError(
               new Error("Failed to update timeslice"),
               "DYNAMIC_TIMESLICE_UPDATE",
               { updatedTimeslice },
@@ -236,7 +236,7 @@ export const useTimelineActions = (opts?: {
           }
         }
       } catch (error) {
-        GlobalErrorHandler.logError(error as Error, "DYNAMIC_TIMESLICE_PRESS", {
+        Logger.logError(error as Error, "DYNAMIC_TIMESLICE_PRESS", {
           timeslice,
         });
       }
@@ -263,7 +263,7 @@ export const useTimelineActions = (opts?: {
       const isEmpty = timeslice.id == null;
 
       if (isEmpty) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Empty timeslice long pressed",
           "DYNAMIC_TIMESLICE_LONG_PRESS",
           { start_time: timeslice.start_time },
@@ -278,13 +278,13 @@ export const useTimelineActions = (opts?: {
       const performDelete = async () => {
         try {
           await deleteTimesliceInStore(timeslice.id ?? "");
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Timeslice deleted successfully",
             "DYNAMIC_TIMESLICE_DELETE",
             { timesliceId: timeslice.id },
           );
         } catch (error) {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             error as Error,
             "DYNAMIC_TIMESLICE_DELETE",
             { timesliceId: timeslice.id },

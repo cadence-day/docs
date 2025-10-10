@@ -4,7 +4,7 @@ import { notificationEngine } from "@/shared/notifications/NotificationEngine";
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
 import { type NotificationType } from "@/shared/notifications/types";
 import useNotificationSettingsStore from "@/shared/stores/resources/useNotificationsStore";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import * as Notifications from "expo-notifications";
 import { router, Stack } from "expo-router";
@@ -123,10 +123,7 @@ export default function TestNotifications() {
         await loadScheduledNotifications();
         await loadBackgroundNotifications();
       } catch (error) {
-        GlobalErrorHandler.logError(
-          error as Error,
-          "NotificationEngine.initialize"
-        );
+        Logger.logError(error as Error, "NotificationEngine.initialize");
       }
     };
     initialize();
@@ -161,7 +158,7 @@ export default function TestNotifications() {
       );
       setScheduledNotifications(mappedNotifs);
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "loadScheduledNotifications");
+      Logger.logError(error as Error, "loadScheduledNotifications");
     }
   };
 
@@ -171,10 +168,7 @@ export default function TestNotifications() {
       const backgroundNotifs = await taskManager.listScheduledNotifications();
       setBackgroundNotifications(backgroundNotifs);
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "loadBackgroundNotifications"
-      );
+      Logger.logError(error as Error, "loadBackgroundNotifications");
     }
   };
 
@@ -186,7 +180,7 @@ export default function TestNotifications() {
         `Granted: ${granted ? "Yes" : "No"}\nStatus: ${permissionStatus}`
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleRequestPermissions");
+      Logger.logError(error as Error, "handleRequestPermissions");
       Alert.alert("Error", "Failed to request permissions");
     }
   };
@@ -197,7 +191,7 @@ export default function TestNotifications() {
       await notificationEngine.deliverNotificationNow(selectedNotificationType);
       Alert.alert("Success", "Immediate notification sent!");
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleSendImmediate");
+      Logger.logError(error as Error, "handleSendImmediate");
       Alert.alert("Error", "Failed to send notification");
     } finally {
       setIsLoading(false);
@@ -221,7 +215,7 @@ export default function TestNotifications() {
       );
       await loadScheduledNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleScheduleDelayed");
+      Logger.logError(error as Error, "handleScheduleDelayed");
       Alert.alert("Error", "Failed to schedule delayed notification");
     } finally {
       setIsLoading(false);
@@ -254,10 +248,7 @@ export default function TestNotifications() {
       );
       await loadScheduledNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "handleScheduleMultipleWithDelay"
-      );
+      Logger.logError(error as Error, "handleScheduleMultipleWithDelay");
       Alert.alert("Error", "Failed to schedule multiple delayed notifications");
     } finally {
       setIsLoading(false);
@@ -286,10 +277,7 @@ export default function TestNotifications() {
       );
       await loadBackgroundNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "handleTestBackgroundManager"
-      );
+      Logger.logError(error as Error, "handleTestBackgroundManager");
       Alert.alert("Error", "Failed to schedule background notification");
     } finally {
       setIsLoading(false);
@@ -309,7 +297,7 @@ export default function TestNotifications() {
       Alert.alert("Success", "Notification scheduled for 10 seconds from now!");
       await loadScheduledNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleSchedule10Seconds");
+      Logger.logError(error as Error, "handleSchedule10Seconds");
       Alert.alert("Error", "Failed to schedule notification");
     } finally {
       setIsLoading(false);
@@ -323,7 +311,7 @@ export default function TestNotifications() {
       Alert.alert("Success", "All notifications scheduled!");
       await loadScheduledNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleBackgroundTest");
+      Logger.logError(error as Error, "handleBackgroundTest");
       Alert.alert("Error", "Failed to schedule notifications");
     } finally {
       setIsLoading(false);
@@ -356,7 +344,7 @@ export default function TestNotifications() {
       );
       await loadScheduledNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleTestVariousDelays");
+      Logger.logError(error as Error, "handleTestVariousDelays");
       Alert.alert("Error", "Failed to schedule various delay notifications");
     } finally {
       setIsLoading(false);
@@ -384,10 +372,7 @@ export default function TestNotifications() {
       );
       await loadScheduledNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "handleTestImmediateVsDelayed"
-      );
+      Logger.logError(error as Error, "handleTestImmediateVsDelayed");
       Alert.alert("Error", "Failed to test immediate vs delayed notifications");
     } finally {
       setIsLoading(false);
@@ -420,7 +405,7 @@ export default function TestNotifications() {
       );
       await loadBackgroundNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleScheduleMultiple");
+      Logger.logError(error as Error, "handleScheduleMultiple");
       Alert.alert("Error", "Failed to schedule multiple notifications");
     } finally {
       setIsLoading(false);
@@ -435,7 +420,7 @@ export default function TestNotifications() {
       await loadScheduledNotifications();
       await loadBackgroundNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleCancelAll");
+      Logger.logError(error as Error, "handleCancelAll");
       Alert.alert("Error", "Failed to cancel notifications");
     } finally {
       setIsLoading(false);
@@ -449,10 +434,7 @@ export default function TestNotifications() {
       Alert.alert("Success", "Notification triggered immediately!");
       await loadBackgroundNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "handleTriggerNotificationNow"
-      );
+      Logger.logError(error as Error, "handleTriggerNotificationNow");
       Alert.alert("Error", "Failed to trigger notification");
     }
   };
@@ -472,10 +454,7 @@ export default function TestNotifications() {
       }
       Alert.alert("Success", "Notification cancelled!");
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "handleCancelScheduledNotification"
-      );
+      Logger.logError(error as Error, "handleCancelScheduledNotification");
       Alert.alert("Error", "Failed to cancel notification");
     }
   };
@@ -485,7 +464,7 @@ export default function TestNotifications() {
       // Reset quote backlog - functionality moved to NotificationEngine
       Alert.alert("Success", "Quote backlog has been reset!");
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleResetQuoteBacklog");
+      Logger.logError(error as Error, "handleResetQuoteBacklog");
       Alert.alert("Error", "Failed to reset quote backlog");
     }
   };
@@ -503,7 +482,7 @@ export default function TestNotifications() {
 
       Alert.alert("Success", "All notification data refreshed!");
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleRefreshData");
+      Logger.logError(error as Error, "handleRefreshData");
       Alert.alert("Error", "Failed to refresh notification data");
     } finally {
       setIsLoading(false);
@@ -519,7 +498,7 @@ export default function TestNotifications() {
         "Timing data has been repaired! All required time properties are now present with valid defaults."
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleRepairTiming");
+      Logger.logError(error as Error, "handleRepairTiming");
       Alert.alert("Error", "Failed to repair timing data");
     } finally {
       setIsLoading(false);
@@ -532,10 +511,7 @@ export default function TestNotifications() {
       await notificationEngine.deliverNotificationNow("morning-motivation");
       Alert.alert("Success", "In-app notification sent!");
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "handleSendInAppNotification"
-      );
+      Logger.logError(error as Error, "handleSendInAppNotification");
       Alert.alert("Error", "Failed to send in-app notification");
     } finally {
       setIsLoading(false);
@@ -558,7 +534,7 @@ export default function TestNotifications() {
             `In-app notification delivered after ${delay} seconds delay!`
           );
         } catch (error) {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             error as Error,
             "handleSendDelayedInAppNotification.timeout"
           );
@@ -571,10 +547,7 @@ export default function TestNotifications() {
         `In-app notification will appear in ${delay} seconds (${selectedNotificationType})`
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "handleSendDelayedInAppNotification"
-      );
+      Logger.logError(error as Error, "handleSendDelayedInAppNotification");
       Alert.alert("Error", "Failed to schedule delayed in-app notification");
     } finally {
       setIsLoading(false);
@@ -592,7 +565,7 @@ export default function TestNotifications() {
 
       Alert.alert("Success", "Multiple notifications sent!");
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleSendMultipleInApp");
+      Logger.logError(error as Error, "handleSendMultipleInApp");
       Alert.alert("Error", "Failed to send multiple notifications");
     } finally {
       setIsLoading(false);
@@ -606,7 +579,7 @@ export default function TestNotifications() {
       Alert.alert("Success", "All notification preferences scheduled!");
       await loadScheduledNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "handleTestScheduleAll");
+      Logger.logError(error as Error, "handleTestScheduleAll");
       Alert.alert("Error", "Failed to schedule notifications");
     } finally {
       setIsLoading(false);

@@ -3,7 +3,7 @@ import { useTheme } from "@/shared/hooks";
 import useI18n from "@/shared/hooks/useI18n";
 import { useDialogStore } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useFocusEffect } from "@react-navigation/native";
 import React, {
   useCallback,
@@ -249,7 +249,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
 
   // Debug logging for reflection grid data - optimized with useMemo dependencies
   React.useEffect(() => {
-    GlobalErrorHandler.logDebug("Data update", "ReflectionGrid", {
+    Logger.logDebug("Data update", "ReflectionGrid", {
       isLoading,
       error,
       dateRangeKey,
@@ -315,7 +315,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
 
   // Debug log for dates after calculation
   React.useEffect(() => {
-    GlobalErrorHandler.logDebug("Generated dates", "ReflectionGrid", {
+    Logger.logDebug("Generated dates", "ReflectionGrid", {
       generatedDatesCount: dates.length,
       sampleDates: dates
         .slice(0, 3)
@@ -377,33 +377,35 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
 
       if (wakeTimeIndex !== -1) {
         // Use InteractionManager similar to Timeline for better timing
-        const interactionHandle = InteractionManager.runAfterInteractions(() => {
-          // Position wake time at 1/3 of screen height (similar to Timeline)
-          const screenHeight = Dimensions.get("window").height;
-          const desiredCenterY = screenHeight / 3;
+        const interactionHandle = InteractionManager.runAfterInteractions(
+          () => {
+            // Position wake time at 1/3 of screen height (similar to Timeline)
+            const screenHeight = Dimensions.get("window").height;
+            const desiredCenterY = screenHeight / 3;
 
-          // Calculate scroll position
-          const itemCenter =
-            wakeTimeIndex * REFLECTION_LAYOUT.ROW_HEIGHT +
-            REFLECTION_LAYOUT.ROW_HEIGHT / 2;
-          const targetScrollY = Math.max(0, itemCenter - desiredCenterY);
+            // Calculate scroll position
+            const itemCenter =
+              wakeTimeIndex * REFLECTION_LAYOUT.ROW_HEIGHT +
+              REFLECTION_LAYOUT.ROW_HEIGHT / 2;
+            const targetScrollY = Math.max(0, itemCenter - desiredCenterY);
 
-          // Small delay to ensure component is fully mounted
-          setTimeout(() => {
-            try {
-              hoursScrollViewRef.current?.scrollTo({
-                y: targetScrollY,
-                animated: true,
-              });
-            } catch (err) {
-              GlobalErrorHandler.logWarning(
-                "Failed to scroll to wake time",
-                "ReflectionGrid:scrollToWakeTime",
-                { error: err }
-              );
-            }
-          }, 50);
-        });
+            // Small delay to ensure component is fully mounted
+            setTimeout(() => {
+              try {
+                hoursScrollViewRef.current?.scrollTo({
+                  y: targetScrollY,
+                  animated: true,
+                });
+              } catch (err) {
+                Logger.logWarning(
+                  "Failed to scroll to wake time",
+                  "ReflectionGrid:scrollToWakeTime",
+                  { error: err }
+                );
+              }
+            }, 50);
+          }
+        );
 
         return () => {
           if (
@@ -465,7 +467,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
       // Clear any activity isolation when refreshing
       clearActivityIsolation();
     } catch (err) {
-      GlobalErrorHandler.logError(err, "ReflectionGrid.handleRefresh", {
+      Logger.logError(err, "ReflectionGrid.handleRefresh", {
         dateRangeKey,
       });
     } finally {
@@ -498,7 +500,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
             position: "dock",
           });
         } else {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             new Error("Failed to get timeslice information"),
             "ReflectionGrid.handleTimeslicePress",
             {
@@ -507,13 +509,9 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
           );
         }
       } catch (err) {
-        GlobalErrorHandler.logError(
-          err,
-          "ReflectionGrid.handleTimeslicePress",
-          {
-            timesliceId: timeslice?.id,
-          }
-        );
+        Logger.logError(err, "ReflectionGrid.handleTimeslicePress", {
+          timesliceId: timeslice?.id,
+        });
       }
     },
     [getTimesliceWithDetails]
@@ -532,14 +530,10 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
           isolateActivity(timeslice.activity_id);
         }
       } catch (err) {
-        GlobalErrorHandler.logError(
-          err,
-          "ReflectionGrid.handleTimesliceLongPress",
-          {
-            timesliceId: timeslice?.id,
-            activityId: timeslice?.activity_id,
-          }
-        );
+        Logger.logError(err, "ReflectionGrid.handleTimesliceLongPress", {
+          timesliceId: timeslice?.id,
+          activityId: timeslice?.activity_id,
+        });
       }
     },
     [isolatedActivityId, clearActivityIsolation, isolateActivity]
@@ -555,7 +549,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
       try {
         await refetch();
       } catch (err) {
-        GlobalErrorHandler.logError(err, "ReflectionGrid.refresh", {
+        Logger.logError(err, "ReflectionGrid.refresh", {
           dateRangeKey,
         });
       } finally {
@@ -577,15 +571,11 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
   React.useEffect(() => {
     if (error && error !== lastLoggedError.current) {
       lastLoggedError.current = error;
-      GlobalErrorHandler.logError(
-        new Error(error),
-        "ReflectionGrid.dataError",
-        {
-          fromDate: fromDate.toISOString(),
-          toDate: toDate.toISOString(),
-          gridDimensions,
-        }
-      );
+      Logger.logError(new Error(error), "ReflectionGrid.dataError", {
+        fromDate: fromDate.toISOString(),
+        toDate: toDate.toISOString(),
+        gridDimensions,
+      });
     } else if (!error) {
       // Reset the logged error when error is cleared
       lastLoggedError.current = null;
@@ -602,7 +592,7 @@ const ReflectionGrid: React.FC<ScheduleGridProps> = ({
 
       if (renderTime > 100) {
         // Log slow renders > 100ms
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           `Slow render detected: ${renderTime.toFixed(2)}ms`,
           "ReflectionGrid",
           {

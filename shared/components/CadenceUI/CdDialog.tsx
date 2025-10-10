@@ -1,6 +1,6 @@
 import { COLORS } from "@/shared/constants/COLORS";
 import { useNavBarSize } from "@/shared/constants/VIEWPORT";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -196,11 +196,10 @@ export const CdDialog: React.FC<CdDialogProps> = ({
           const newHeight = dragStartHeight.current + heightChangePercent;
           // Set a maximum height of 90%
           updateHeightClamped(newHeight);
-          GlobalErrorHandler.logDebug(
-            "Dialog height updated",
-            "DYNAMIC_DIALOG_RESIZE",
-            { newHeight, heightChangePercent }
-          );
+          Logger.logDebug("Dialog height updated", "DYNAMIC_DIALOG_RESIZE", {
+            newHeight,
+            heightChangePercent,
+          });
         },
         onPanResponderTerminationRequest: () => false,
       }),

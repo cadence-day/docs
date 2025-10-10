@@ -1,6 +1,6 @@
 import { useActivitiesStore, useStatesStore } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useEffect, useState } from "react";
 
 export interface TimesliceDetails {
@@ -60,7 +60,7 @@ export const useTimesliceDetails = (
           ? err.message
           : "Failed to fetch state data";
         setError(errorMessage);
-        GlobalErrorHandler.logError(err, "useTimesliceDetails.fetchStateData", {
+        Logger.logError(err, "useTimesliceDetails.fetchStateData", {
           timesliceId: timeslice?.id,
           stateId: timeslice?.state_id,
         });

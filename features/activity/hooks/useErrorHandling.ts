@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 import { useCallback, useState } from "react";
-import { GlobalErrorHandler } from "../../../shared/utils/errorHandler";
+import { Logger } from "../../../shared/utils/errorHandler";
 import type { LoadingState } from "../types";
 
 interface UseErrorHandlingReturn {
@@ -15,7 +15,7 @@ interface UseErrorHandlingReturn {
       successMessage?: string;
       errorPrefix?: string;
       showHapticFeedback?: boolean;
-    }
+    },
   ) => Promise<T | null>;
 }
 
@@ -34,7 +34,7 @@ export const useErrorHandling = (): UseErrorHandlingReturn => {
         successMessage?: string;
         errorPrefix?: string;
         showHapticFeedback?: boolean;
-      } = {}
+      } = {},
     ): Promise<T | null> => {
       const {
         successMessage,
@@ -56,7 +56,7 @@ export const useErrorHandling = (): UseErrorHandlingReturn => {
 
         if (successMessage) {
           // Could integrate with toast/notification system here
-          GlobalErrorHandler.logDebug("Success", "SUCCESS_NOTIFICATION", {
+          Logger.logDebug("Success", "SUCCESS_NOTIFICATION", {
             message: successMessage,
           });
         }
@@ -72,13 +72,13 @@ export const useErrorHandling = (): UseErrorHandlingReturn => {
         if (showHapticFeedback) {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         }
-        GlobalErrorHandler.logError(errorMessage, "ASYNC_OPERATION_ERROR", {
+        Logger.logError(errorMessage, "ASYNC_OPERATION_ERROR", {
           error: err,
         });
         return null;
       }
     },
-    [clearError]
+    [clearError],
   );
 
   return {

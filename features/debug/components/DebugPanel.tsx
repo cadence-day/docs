@@ -1,8 +1,9 @@
 import useDetectNewDevice from "@/features/debug/hooks/useDetectNewDevice";
 import { BackgroundTaskManager } from "@/shared/notifications/services/BackgroundTaskManager";
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
+import { userVersionStorage } from "@/shared/storage/user/version";
 import useDialogStore from "@/shared/stores/useDialogStore";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -36,7 +37,7 @@ const DebugPanel: React.FC = () => {
       }));
       setTasks(view);
     } catch (err) {
-      GlobalErrorHandler.logError(err, "Failed to load background tasks");
+      Logger.logError(err, "Failed to load background tasks");
     }
   };
 
@@ -60,10 +61,7 @@ const DebugPanel: React.FC = () => {
       await mgr.removeScheduledNotificationById(id);
       await loadTasks();
     } catch (err) {
-      GlobalErrorHandler.logError(
-        err,
-        "Failed to remove scheduled notification"
-      );
+      Logger.logError(err, "Failed to remove scheduled notification");
     }
   };
 
@@ -73,10 +71,7 @@ const DebugPanel: React.FC = () => {
       await mgr.triggerScheduledNotificationNow(id);
       await loadTasks();
     } catch (err) {
-      GlobalErrorHandler.logError(
-        err,
-        "Failed to trigger scheduled notification"
-      );
+      Logger.logError(err, "Failed to trigger scheduled notification");
     }
   };
 
@@ -84,7 +79,7 @@ const DebugPanel: React.FC = () => {
     try {
       await userOnboardingStorage.clearShown();
     } catch (error) {
-      GlobalErrorHandler.logError(error, "clear onboarding storage failed");
+      Logger.logError(error, "clear onboarding storage failed");
     }
 
     router.push("/onboarding");
@@ -94,7 +89,7 @@ const DebugPanel: React.FC = () => {
     try {
       router.push("/debug");
     } catch (error) {
-      GlobalErrorHandler.logError(error, "open debug page failed");
+      Logger.logError(error, "open debug page failed");
     }
   };
 
@@ -125,7 +120,7 @@ const DebugPanel: React.FC = () => {
                 ]
               );
             } catch (error) {
-              GlobalErrorHandler.logError(
+              Logger.logError(
                 error,
                 "Failed to suppress notification permissions"
               );
@@ -153,10 +148,7 @@ const DebugPanel: React.FC = () => {
             storeUrl: "https://apps.apple.com/app/cadence-day/id123456789",
           },
           onUpdateLater: () => {
-            GlobalErrorHandler.logDebug(
-              "User chose to update later",
-              "DEBUG_PANEL"
-            );
+            Logger.logDebug("User chose to update later", "DEBUG_PANEL");
           },
           headerProps: {
             title: required ? "Update Required" : "New Version Available",
@@ -167,8 +159,45 @@ const DebugPanel: React.FC = () => {
         position: "dock",
       });
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to show app update dialog");
+      Logger.logError(error, "Failed to show app update dialog");
     }
+  };
+
+  const handleFlushStorage = () => {
+    Alert.alert(
+      "Flush Storage Flags",
+      "This will clear the onboarding and version tracking flags, allowing you to see the onboarding flow and update changelog again on next app launch.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Flush",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await userOnboardingStorage.clearShown();
+              await userVersionStorage.clearLastSeenVersion();
+
+              Logger.logDebug(
+                "Storage flags flushed successfully",
+                "DEBUG_PANEL"
+              );
+
+              Alert.alert(
+                "Success",
+                "Storage flags cleared. Restart the app to see onboarding and update changelog.",
+                [{ text: "OK" }]
+              );
+            } catch (error) {
+              Logger.logError(error, "Failed to flush storage flags");
+              Alert.alert("Error", "Failed to clear storage flags");
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -204,10 +233,27 @@ const DebugPanel: React.FC = () => {
         <Text style={debugStyles.debugPanelButtonText}>Show Onboarding</Text>
       </TouchableOpacity>
       <TouchableOpacity
+        style={[
+          debugStyles.debugPanelButton,
+          debugStyles.debugPanelWarningButton,
+        ]}
+        onPress={handleFlushStorage}
+      >
+        <Text style={debugStyles.debugPanelButtonText}>
+          Flush Storage Flags
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         style={debugStyles.debugPanelButton}
         onPress={handleOpenDebugPage}
       >
         <Text style={debugStyles.debugPanelButtonText}>Open Debug</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={debugStyles.debugPanelButton}
+        onPress={() => router.push("/storage-inspector")}
+      >
+        <Text style={debugStyles.debugPanelButtonText}>Storage Inspector</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={debugStyles.debugPanelButton}

@@ -1,5 +1,5 @@
 import { useActivityDialogHeightStore } from "@/features/activity/stores";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
 
@@ -68,7 +68,7 @@ export const useDialogHeight = ({
     const [effectiveHeight] = useState(() => {
         if (persistHeight && dialogId) {
             const savedHeight = getDialogHeight(dialogId);
-            GlobalErrorHandler.logDebug(
+            Logger.logDebug(
                 "Checking for persisted dialog height",
                 "DIALOG_HEIGHT_PERSISTENCE",
                 {
@@ -76,12 +76,13 @@ export const useDialogHeight = ({
                     savedHeight,
                     propHeight: height,
                     persistHeight,
-                    allHeights: useActivityDialogHeightStore.getState().dialogHeights,
+                    allHeights:
+                        useActivityDialogHeightStore.getState().dialogHeights,
                 },
             );
             if (savedHeight !== null) {
                 const clamped = clampHeight(savedHeight);
-                GlobalErrorHandler.logDebug(
+                Logger.logDebug(
                     "Loading persisted dialog height",
                     "DIALOG_HEIGHT_PERSISTENCE",
                     { dialogId, savedHeight, clamped, propHeight: height },
@@ -90,7 +91,7 @@ export const useDialogHeight = ({
             }
         }
         const clamped = clampHeight(height);
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
             "Using prop height (no persisted height found)",
             "DIALOG_HEIGHT_PERSISTENCE",
             { dialogId, propHeight: height, clamped, persistHeight },
@@ -122,17 +123,19 @@ export const useDialogHeight = ({
             if (persistHeight && dialogId && shouldPersist) {
                 try {
                     saveDialogHeight(dialogId, newHeight);
-                    GlobalErrorHandler.logDebug(
+                    Logger.logDebug(
                         "Persisted dialog height",
                         "DIALOG_HEIGHT_PERSISTENCE",
                         {
                             dialogId,
                             newHeight,
-                            allHeights: useActivityDialogHeightStore.getState().dialogHeights,
+                            allHeights:
+                                useActivityDialogHeightStore.getState()
+                                    .dialogHeights,
                         },
                     );
                 } catch (error) {
-                    GlobalErrorHandler.logError(error, "persistDialogHeight", {
+                    Logger.logError(error, "persistDialogHeight", {
                         dialogId,
                         newHeight,
                     });
@@ -160,7 +163,7 @@ export const useDialogHeight = ({
                 originalHeight.current = clampedHeight;
             } else {
                 // Saved height exists - ignore prop changes completely
-                GlobalErrorHandler.logDebug(
+                Logger.logDebug(
                     "Ignoring prop height change - using persisted height",
                     "DIALOG_HEIGHT_PERSISTENCE",
                     { dialogId, propHeight: height, savedHeight },

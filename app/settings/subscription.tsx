@@ -2,7 +2,7 @@ import { useSubscription } from "@/features/purchases";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
@@ -31,10 +31,7 @@ export default function SubscriptionSettings() {
         ]
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error,
-        "Failed to refresh subscription after purchase"
-      );
+      Logger.logError(error, "Failed to refresh subscription after purchase");
     }
   }
 
@@ -48,7 +45,7 @@ export default function SubscriptionSettings() {
 
   function handleDismiss() {
     // Paywall was dismissed, optionally navigate back
-    GlobalErrorHandler.logDebug("Paywall dismissed", "SUBSCRIPTION_SCREEN");
+    Logger.logDebug("Paywall dismissed", "SUBSCRIPTION_SCREEN");
   }
 
   return (

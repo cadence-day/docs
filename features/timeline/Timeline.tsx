@@ -25,7 +25,7 @@ export interface TimelineRef {
 }
 
 // Hooks
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { COLORS } from "../../shared/constants/COLORS";
 import {
   TIMESLICE_MARGIN_HORIZONTAL,
@@ -63,7 +63,7 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(
       if (typeof date === "number" || typeof date === "string")
         return new Date(date);
       if (date instanceof Date) return new Date(date.getTime());
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Timeline received unexpected date type",
         "Timeline:targetDate",
         { type: typeof date, value: date }
@@ -292,7 +292,7 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(
 
           // Only fetch if we don't have data for this date
           if (existingTimeslicesForDate.length === 0) {
-            GlobalErrorHandler.logDebug(
+            Logger.logDebug(
               `Fetching timeslices for date: ${targetDate.toDateString()}`,
               "Timeline:fetch",
               { date: targetDate.toDateString() }
@@ -308,7 +308,7 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(
             );
 
             if (mounted && fetchedTimeslices && fetchedTimeslices.length > 0) {
-              GlobalErrorHandler.logDebug(
+              Logger.logDebug(
                 `Fetched ${fetchedTimeslices.length} timeslices for ${targetDate.toDateString()}`,
                 "Timeline:fetch",
                 {
@@ -346,7 +346,7 @@ const Timeline = forwardRef<TimelineRef, TimelineProps>(
             }
           }
         } catch (err) {
-          GlobalErrorHandler.logError(err as Error, "Timeline:fetch", {});
+          Logger.logError(err as Error, "Timeline:fetch", {});
           if (mounted) {
             const timeslicesStore = useTimeslicesStore.getState();
             timeslicesStore.setLoading(false);

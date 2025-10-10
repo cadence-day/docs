@@ -1,7 +1,7 @@
 import { revenueCatService } from "@/features/purchases/services/RevenueCatService";
 import { COLORS } from "@/shared/constants/COLORS";
 import HIT_SLOP_10 from "@/shared/constants/hitSlop";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -59,7 +59,7 @@ export default function TestRevenueCat() {
 
       setLastUpdate(new Date().toLocaleTimeString());
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to load RevenueCat data");
+      Logger.logError(error, "Failed to load RevenueCat data");
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +73,7 @@ export default function TestRevenueCat() {
       (info: CustomerInfo) => {
         setCustomerInfo(info);
         setLastUpdate(new Date().toLocaleTimeString());
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "CustomerInfo updated via listener",
           "REVENUECAT_TEST",
           { info }
@@ -103,7 +103,7 @@ export default function TestRevenueCat() {
           : "No customer info available"
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to get customer info");
+      Logger.logError(error, "Failed to get customer info");
       Alert.alert("Error", "Failed to get customer info");
     } finally {
       setIsLoading(false);
@@ -122,7 +122,7 @@ export default function TestRevenueCat() {
           : "No offerings available"
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to get offerings");
+      Logger.logError(error, "Failed to get offerings");
       Alert.alert("Error", "Failed to get offerings");
     } finally {
       setIsLoading(false);
@@ -141,7 +141,7 @@ export default function TestRevenueCat() {
         Alert.alert("Cancelled", "Purchase was cancelled");
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to purchase package");
+      Logger.logError(error, "Failed to purchase package");
       Alert.alert("Error", "Failed to complete purchase");
     } finally {
       setIsLoading(false);
@@ -160,7 +160,7 @@ export default function TestRevenueCat() {
         Alert.alert("Error", "Failed to restore purchases");
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to restore purchases");
+      Logger.logError(error, "Failed to restore purchases");
       Alert.alert("Error", "Failed to restore purchases");
     } finally {
       setIsLoading(false);
@@ -174,7 +174,7 @@ export default function TestRevenueCat() {
       setSubscriptionStatus(status);
       Alert.alert("Subscription Status", `Current plan: ${status}`);
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to check subscription status");
+      Logger.logError(error, "Failed to check subscription status");
       Alert.alert("Error", "Failed to check subscription status");
     } finally {
       setIsLoading(false);
@@ -191,10 +191,7 @@ export default function TestRevenueCat() {
         available ? "Products are available" : "No products available"
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error,
-        "Failed to check products availability"
-      );
+      Logger.logError(error, "Failed to check products availability");
       Alert.alert("Error", "Failed to check products availability");
     } finally {
       setIsLoading(false);
@@ -213,7 +210,7 @@ export default function TestRevenueCat() {
           : "No active entitlements"
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to get active entitlements");
+      Logger.logError(error, "Failed to get active entitlements");
       Alert.alert("Error", "Failed to get active entitlements");
     } finally {
       setIsLoading(false);

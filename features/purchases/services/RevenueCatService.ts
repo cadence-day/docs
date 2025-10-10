@@ -1,5 +1,5 @@
 import { SECRETS } from "@/shared/constants/SECRETS";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { Platform } from "react-native";
 import Purchases, {
   CustomerInfo,
@@ -30,7 +30,7 @@ class RevenueCatService {
 
     // Check if RevenueCat is available (not in Expo Go)
     if (!Purchases) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "RevenueCat not available - skipping configuration",
         "REVENUECAT_CONFIG",
       );
@@ -48,7 +48,7 @@ class RevenueCatService {
         typeof apiKey !== "string" ||
         apiKey.trim().length < 20
       ) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "RevenueCat API key is missing or invalid - skipping configuration",
           "REVENUECAT_CONFIG",
         );
@@ -101,13 +101,13 @@ class RevenueCatService {
       });
 
       this.isConfigured = true;
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "RevenueCat configured successfully",
         "REVENUECAT_CONFIG",
       );
 
       const CustomerInfo = await Purchases.getCustomerInfo();
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Checking initial subscription status after configuration",
         "REVENUECAT_CONFIG",
         { customerInfo: JSON.stringify(CustomerInfo, null, 2) },
@@ -116,7 +116,7 @@ class RevenueCatService {
       // Don't sync subscription status during initial configuration
       // This will be handled when login() is called with a user ID
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to configure RevenueCat");
+      Logger.logError(error, "Failed to configure RevenueCat");
     }
   }
 
@@ -131,7 +131,7 @@ class RevenueCatService {
       this.currentUserId = userId;
       await this.syncSubscriptionStatus(customerInfo);
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to login to RevenueCat");
+      Logger.logError(error, "Failed to login to RevenueCat");
     }
   }
 
@@ -142,7 +142,7 @@ class RevenueCatService {
       await Purchases.logOut();
       this.currentUserId = null;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to logout from RevenueCat");
+      Logger.logError(error, "Failed to logout from RevenueCat");
     }
   }
 
@@ -152,7 +152,7 @@ class RevenueCatService {
 
     try {
       const offerings = await Purchases.getOfferings();
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Fetched RevenueCat offerings",
         "REVENUECAT_OFFERINGS",
         { offerings: JSON.stringify(offerings, null, 2) },
@@ -170,14 +170,14 @@ class RevenueCatService {
         errorMessage.includes("None of the products registered")
       ) {
         // This is expected in development or when products aren't approved in App Store Connect
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "RevenueCat products not available - this is expected in development or when products aren't approved in App Store Connect",
           "REVENUECAT_OFFERINGS",
           { errorMessage: errorMessage.substring(0, 200) }, // Log first 200 chars of error for debugging
         );
       } else {
         // Unexpected error - log as error
-        GlobalErrorHandler.logError(error, "Failed to get offerings");
+        Logger.logError(error, "Failed to get offerings");
       }
       return null;
     }
@@ -207,7 +207,7 @@ class RevenueCatService {
         errorMessage.includes("payment is pending")
       ) {
         // This is an expected scenario - log as warning, not error
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Payment is pending approval (deferred payment)",
           "REVENUECAT_PURCHASE",
           {
@@ -220,7 +220,7 @@ class RevenueCatService {
 
       // User cancelled the purchase - don't log as error
       if (purchasesError.userCancelled) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "User cancelled the purchase",
           "REVENUECAT_PURCHASE",
           { productId: pkg.product.identifier },
@@ -229,7 +229,7 @@ class RevenueCatService {
       }
 
       // Actual error - log it
-      GlobalErrorHandler.logError(error, "Purchase failed", {
+      Logger.logError(error, "Purchase failed", {
         productId: pkg.product.identifier,
         errorCode: readableErrorCode,
       });
@@ -246,7 +246,7 @@ class RevenueCatService {
       await this.syncSubscriptionStatus(customerInfo);
       return customerInfo;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to restore purchases");
+      Logger.logError(error, "Failed to restore purchases");
       return null;
     }
   }
@@ -257,14 +257,14 @@ class RevenueCatService {
 
     try {
       const userInfo = await Purchases.getCustomerInfo();
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Fetching RevenueCat customer info",
         "REVENUECAT_CUSTOMER_INFO",
         { userInfo },
       );
       return userInfo;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to get customer info");
+      Logger.logError(error, "Failed to get customer info");
       return null;
     }
   }
@@ -282,7 +282,7 @@ class RevenueCatService {
       );
       return activeEntitlements;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to get active entitlements");
+      Logger.logError(error, "Failed to get active entitlements");
       return [];
     }
   }
@@ -308,7 +308,7 @@ class RevenueCatService {
 
       return "free";
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to check subscription status");
+      Logger.logError(error, "Failed to check subscription status");
       return "free";
     }
   }
@@ -340,7 +340,7 @@ class RevenueCatService {
       if (!userId) {
         // If no user ID is stored, skip syncing
         // This method should only be called after login when userId is set
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "No user ID available for subscription sync",
           "REVENUECAT_SYNC",
         );
@@ -358,7 +358,7 @@ class RevenueCatService {
       }
 
       // Log the subscription plan for debugging purposes
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `User subscription plan determined: ${plan}`,
         "REVENUECAT_SYNC",
         {
@@ -371,7 +371,7 @@ class RevenueCatService {
       // Note: Profile table updates are deprecated and removed
       // Subscription status is now managed through RevenueCat directly
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to sync subscription status");
+      Logger.logError(error, "Failed to sync subscription status");
     }
   }
 
@@ -381,7 +381,7 @@ class RevenueCatService {
     if (!this.isConfigured) {
       // Return a no-op function if not configured
       // The configure() call should happen elsewhere first
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "RevenueCat not configured when adding listener",
         "REVENUECAT_LISTENER",
       );

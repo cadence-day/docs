@@ -61,8 +61,6 @@ export const sharedComponentStyles = StyleSheet.create({
     },
     toastDismissButton: {
         ...CONTAINER.padding.md,
-        ...CONTAINER.border.radius["2xl"],
-        backgroundColor: COLORS.dark.interactive.hover,
         ...CONTAINER.layout.justify.center,
         ...CONTAINER.layout.align.center,
     },

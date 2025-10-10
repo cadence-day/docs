@@ -1,6 +1,6 @@
 import { ToastService } from "@/shared/context/ToastProvider";
 import { ToastType } from "@/shared/types/toast.types";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { NotificationMessage, NotificationProvider } from "../types";
 
 export interface InAppNotificationDisplay {
@@ -54,7 +54,7 @@ export class InAppNotificationProvider implements NotificationProvider {
 
   async initialize(): Promise<void> {
     // In-app notifications don't require initialization
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       "In-app notification provider initialized",
       "InAppNotificationProvider.initialize",
     );
@@ -95,13 +95,13 @@ export class InAppNotificationProvider implements NotificationProvider {
         this.enforceDisplayLimit();
       }
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `In-app notification sent: ${notification.title}`,
         "InAppNotificationProvider.sendNotification",
         { notificationId: notification.id },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "InAppNotificationProvider.sendNotification",
         {
@@ -129,13 +129,13 @@ export class InAppNotificationProvider implements NotificationProvider {
         await this.sendNotification(notification);
       }, delay);
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `In-app notification scheduled for: ${scheduledFor.toISOString()}`,
         "InAppNotificationProvider.scheduleNotification",
         { notificationId: notification.id, delay },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "InAppNotificationProvider.scheduleNotification",
         {
@@ -153,14 +153,14 @@ export class InAppNotificationProvider implements NotificationProvider {
         this.notifications.delete(notificationId);
         this.notifySubscribers();
 
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `In-app notification cancelled`,
           "InAppNotificationProvider.cancelNotification",
           { notificationId },
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "InAppNotificationProvider.cancelNotification",
         {
@@ -176,12 +176,12 @@ export class InAppNotificationProvider implements NotificationProvider {
       this.notifications.clear();
       this.notifySubscribers();
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "All in-app notifications cancelled",
         "InAppNotificationProvider.cancelAllNotifications",
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "InAppNotificationProvider.cancelAllNotifications",
       );
@@ -281,7 +281,7 @@ export class InAppNotificationProvider implements NotificationProvider {
       try {
         callback(visibleNotifications);
       } catch (error) {
-        GlobalErrorHandler.logError(
+        Logger.logError(
           error,
           "InAppNotificationProvider.notifySubscribers",
         );
