@@ -1,6 +1,7 @@
 import NoteIcon from "@/shared/components/icons/NoteIcon";
 import { COLORS } from "@/shared/constants/COLORS";
 import { Timeslice } from "@/shared/types/models";
+import { getContrastColor } from "@/shared/utils/colorUtils";
 import { getMoodIcon } from "@/shared/utils/moodUtils";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useRef } from "react";
@@ -40,6 +41,11 @@ export const ReflectionCell = ({
 
   // Track if long press was triggered to prevent onPress
   const longPressTriggered = useRef(false);
+
+  // Calculate contrast color for icons based on activity background color
+  const iconColor = useMemo(() => {
+    return getContrastColor(activityColor || COLORS.primary);
+  }, [activityColor]);
 
   // Memoize dynamic container style to avoid inline object recreation on each render
   const containerDynamicStyle = useMemo(
@@ -83,7 +89,7 @@ export const ReflectionCell = ({
           {/* Note icon on the left if notes exist */}
           {timeslice?.note_ids && timeslice.note_ids.length > 0 && (
             <View style={reflectionStyles.cellLeftIcon}>
-              <NoteIcon size="small" color="white" />
+              <NoteIcon size="small" color={iconColor} />
             </View>
           )}
           {/* Energy and mood icons on the right */}
@@ -95,15 +101,15 @@ export const ReflectionCell = ({
                   <Ionicons
                     name="flash"
                     size={10}
-                    color="rgba(255, 255, 255, 1)"
+                    color={iconColor}
                   />
-                  <Text style={reflectionStyles.cellEnergyText}>{energy}</Text>
+                  <Text style={[reflectionStyles.cellEnergyText, { color: iconColor }]}>{energy}</Text>
                 </View>
               )}
               {/* Mood icon */}
               {mood !== null && (
                 <View style={reflectionStyles.cellRightItem}>
-                  {getMoodIcon(mood, "rgba(255, 255, 255, 1)", { size: 10 })}
+                  {getMoodIcon(mood, iconColor, { size: 10 })}
                 </View>
               )}
             </View>
