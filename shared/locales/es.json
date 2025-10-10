@@ -263,6 +263,13 @@
   "mo": "Lun",
   "monthly": "Mensual",
   "mood": "Ánimo",
+  "mood-labels": {
+    "sad": "Triste",
+    "melancholic": "Melancólico",
+    "neutral": "Neutral",
+    "content": "Contento",
+    "happy": "Feliz"
+  },
   "morning-reminders": "Recordatorios matutinos",
   "morning-reminders-are-sent-aft": "Los recordatorios matutinos se envían después de tu hora de despertar y los recordatorios vespertinos antes de tu hora de dormir. Las actualizaciones de rachas semanales celebran tus logros todos los domingos.",
   "morning-time": "Reflexión de la mañana",

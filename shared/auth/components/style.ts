@@ -334,9 +334,20 @@ export const styles = StyleSheet.create({
   },
 
   // Loading and success styles
+  loadingOverlay: {
+    ...CONTAINER.layout.position.absolute,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.layout.align.center,
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Semi-transparent overlay
+    zIndex: 1000, // Ensure it's on top of all content
+  },
   loadingText: {
-    color: COLORS.neutral.white,
     ...TYPOGRAPHY.body.large,
+    color: COLORS.neutral.white,
     ...CONTAINER.margin.top.lg,
   },
   successTitle: {

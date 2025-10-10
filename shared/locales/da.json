@@ -263,6 +263,13 @@
   "mo": "Man",
   "monthly": "Månedlig",
   "mood": "Humør",
+  "mood-labels": {
+    "sad": "Trist",
+    "melancholic": "Melankolsk",
+    "neutral": "Neutral",
+    "content": "Tilfreds",
+    "happy": "Glad"
+  },
   "morning-reminders": "Morgen-påmindelser",
   "morning-reminders-are-sent-aft": "Morgen-påmindelser sendes efter din opvågningstid og aften-påmindelser før din sengetid. Ugentlige streak-opdateringer fejrer dine resultater hver søndag.",
   "morning-time": "Morgenreflektion",

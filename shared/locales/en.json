@@ -263,6 +263,13 @@
   "mo": "Mon",
   "monthly": "Monthly",
   "mood": "Mood",
+  "mood-labels": {
+    "sad": "Sad",
+    "melancholic": "Melancholic",
+    "neutral": "Neutral",
+    "content": "Content",
+    "happy": "Happy"
+  },
   "morning-reminders": "Morning Reminders",
   "morning-reminders-are-sent-aft": "Morning reminders are sent after your wake time, and evening reminders before your sleep time. Weekly streak updates celebrate your achievements every Sunday.",
   "morning-time": "Morning Reflection",

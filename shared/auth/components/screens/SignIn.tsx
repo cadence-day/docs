@@ -304,23 +304,23 @@ const SignInScreen = () => {
         <DirectToSignUp />
 
         <View style={styles.actionButtonContainer}>
-          {isSubmitting ? (
-            // TODO: Change this because it appears on the buttons with no overlay...
-            <View style={styles.centerContent}>
-              <SageIcon status="pulsating" size={100} />
-            </View>
-          ) : (
-            <CdButton
-              title={t("sign-in.title")}
-              onPress={handleSubmit}
-              variant="text"
-              size="large"
-              disabled={!isFormValid() || isSubmitting}
-              style={styles.signinButton}
-            />
-          )}
+          <CdButton
+            title={t("sign-in.title")}
+            onPress={handleSubmit}
+            variant="text"
+            size="large"
+            disabled={!isFormValid() || isSubmitting}
+            style={styles.signinButton}
+          />
         </View>
       </View>
+
+      {/* Full-screen loading overlay */}
+      {isSubmitting && (
+        <View style={styles.loadingOverlay}>
+          <SageIcon status="pulsating" size={150} />
+        </View>
+      )}
 
       {/* Toast Notification */}
       <Toast

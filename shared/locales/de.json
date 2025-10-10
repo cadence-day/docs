@@ -263,6 +263,13 @@
   "mo": "Mon",
   "monthly": "Monatlich",
   "mood": "Stimmung",
+  "mood-labels": {
+    "sad": "Traurig",
+    "melancholic": "Melancholisch",
+    "neutral": "Neutral",
+    "content": "Zufrieden",
+    "happy": "Glücklich"
+  },
   "morning-reminders": "Morgen -Erinnerungen",
   "morning-reminders-are-sent-aft": "Morgen -Erinnerungen werden nach Ihrer Wachzeit und abendliche Erinnerungen vor Ihrer Schlafzeit geschickt. \nWöchentliche Streifen -Updates feiern jeden Sonntag Ihre Erfolge.",
   "morning-time": "Morgenspiegelung",

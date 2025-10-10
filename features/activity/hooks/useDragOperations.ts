@@ -14,7 +14,9 @@ interface UseDragOperationsReturn {
   draggedActivityId: string | null;
   dragPlaceholderIndex: number | null;
   isShakeMode: boolean;
+  isActivelyDragging: boolean;
   handleDragStart: (activityId: string) => void;
+  handleDragMove: () => void;
   handleDragEnd: () => void;
   handleReorder: (fromIndex: number, toIndex: number) => void;
   handlePlaceholderChange: (index: number | null) => void;
@@ -34,6 +36,7 @@ export const useDragOperations = ({
     number | null
   >(null);
   const [isShakeMode, setIsShakeMode] = useState(false);
+  const [isActivelyDragging, setIsActivelyDragging] = useState(false);
 
   // Update local order when activities prop changes (only if not dragging)
   useEffect(() => {
@@ -46,19 +49,29 @@ export const useDragOperations = ({
     (activityId: string) => {
       setDraggedActivityId(activityId);
       setIsShakeMode(true);
-      onDragStateChange?.(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     },
-    [onDragStateChange],
+    [],
   );
+
+  const handleDragMove = useCallback(() => {
+    if (!isActivelyDragging) {
+      setIsActivelyDragging(true);
+      onDragStateChange?.(true);
+    }
+  }, [isActivelyDragging, onDragStateChange]);
 
   const handleDragEnd = useCallback(() => {
     setDraggedActivityId(null);
     setDragPlaceholderIndex(null);
     setIsShakeMode(false);
-    onDragStateChange?.(false);
+    // Reset actively dragging immediately
+    if (isActivelyDragging) {
+      setIsActivelyDragging(false);
+      onDragStateChange?.(false);
+    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  }, [onDragStateChange]);
+  }, [isActivelyDragging, onDragStateChange]);
 
   const handleReorder = useCallback(
     async (fromIndex: number, toIndex: number) => {
@@ -105,7 +118,9 @@ export const useDragOperations = ({
     draggedActivityId,
     dragPlaceholderIndex,
     isShakeMode,
+    isActivelyDragging,
     handleDragStart,
+    handleDragMove,
     handleDragEnd,
     handleReorder,
     handlePlaceholderChange,

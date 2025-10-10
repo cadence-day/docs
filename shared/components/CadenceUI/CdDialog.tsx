@@ -264,7 +264,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         <GlassView
           glassEffectStyle="regular"
           isInteractive={true}
-          tintColor={COLORS.linearGradient.start}
+          tintColor={COLORS.light.glassTint}
           style={[
             styles.gradientContainer,
             styles.glassContainer,

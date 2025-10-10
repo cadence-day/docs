@@ -263,6 +263,13 @@
   "mo": "Lun",
   "monthly": "Mensuel",
   "mood": "Humeur",
+  "mood-labels": {
+    "sad": "Triste",
+    "melancholic": "Mélancolique",
+    "neutral": "Neutre",
+    "content": "Content",
+    "happy": "Heureux"
+  },
   "morning-reminders": "Rappels du matin",
   "morning-reminders-are-sent-aft": "Les rappels du matin sont envoyés après votre heure de réveil et les rappels du soir avant votre temps de sommeil. \nLes mises à jour hebdomadaires de séquences célèbrent vos réalisations tous les dimanches.",
   "morning-time": "Réflexion matinale",
