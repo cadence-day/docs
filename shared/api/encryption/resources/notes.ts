@@ -1,6 +1,6 @@
 import { isDev } from "@/shared/constants/isDev";
 import type { Note } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { decryptString, encryptString } from "../core";
 
 /**
@@ -21,7 +21,7 @@ export async function encryptNoteMessage(note: Note): Promise<Note> {
     };
   } catch (error) {
     // If encryption fails, return original note
-    GlobalErrorHandler.logError(error, "ENCRYPTION_NOTE_MESSAGE", {
+    Logger.logError(error, "ENCRYPTION_NOTE_MESSAGE", {
       noteId: note.id,
       operation: "encrypt",
       fallbackBehavior: "return_original",
@@ -48,7 +48,7 @@ export async function decryptNoteMessage(note: Note): Promise<Note> {
     };
   } catch (error) {
     // If decryption fails, return original note
-    GlobalErrorHandler.logError(error, "DECRYPTION_NOTE_MESSAGE", {
+    Logger.logError(error, "DECRYPTION_NOTE_MESSAGE", {
       noteId: note.id,
       operation: "decrypt",
       fallbackBehavior: "return_original",
@@ -81,7 +81,7 @@ export async function decryptNotesMessages(notes: Note[]): Promise<Note[]> {
  * @returns Promise<Omit<Note, "id">> - The note ready for insertion with encrypted message
  */
 export async function encryptNoteForInsertion(
-  note: Omit<Note, "id">
+  note: Omit<Note, "id">,
 ): Promise<Omit<Note, "id">> {
   if (!note.message) {
     return note;
@@ -94,7 +94,7 @@ export async function encryptNoteForInsertion(
       message: encryptedMessage,
     };
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_NOTE_INSERTION", {
+    Logger.logError(error, "ENCRYPTION_NOTE_INSERTION", {
       operation: "encrypt_for_insertion",
       fallbackBehavior: "return_original",
     });
@@ -108,7 +108,7 @@ export async function encryptNoteForInsertion(
  * @returns Promise<Omit<Note, "id">[]> - Array of notes ready for insertion with encrypted messages
  */
 export async function encryptNotesForInsertion(
-  notes: Omit<Note, "id">[]
+  notes: Omit<Note, "id">[],
 ): Promise<Omit<Note, "id">[]> {
   return Promise.all(notes.map(encryptNoteForInsertion));
 }

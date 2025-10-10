@@ -2,7 +2,7 @@
  * Date and Time formatting utilities
  */
 
-import { GlobalErrorHandler } from "./errorHandler";
+import { Logger } from "./errorHandler";
 
 export interface DateTimeFormatOptions {
     locale?: string;
@@ -82,7 +82,7 @@ export const formatDateTime = (
 
         return `${dateStr}${separator}${timeStr}`;
     } catch (error) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
             "Error formatting date/time",
             "formatDateTime",
             { dateInput, options, error },
@@ -135,7 +135,7 @@ export const formatDate = (
 
         return date.toLocaleDateString(locale, options);
     } catch (error) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
             "Error formatting date",
             "formatDate",
             { dateInput, locale, format, error },
@@ -186,7 +186,7 @@ export const formatTime = (
 
         return date.toLocaleTimeString(locale, options);
     } catch (error) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
             "Error formatting time",
             "formatTime",
             { dateInput, locale, format, error },
@@ -261,7 +261,7 @@ export const getRelativeTime = (
                 : `${days} day${days > 1 ? "s" : ""} ago`;
         }
     } catch (error) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
             "Error getting relative time",
             "getRelativeTime",
             { dateInput, locale, error },

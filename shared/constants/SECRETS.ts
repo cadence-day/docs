@@ -26,6 +26,16 @@ export const SECRETS = {
     process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
   EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY:
     process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
+
+  // PostHog
+  EXPO_PUBLIC_POSTHOG_KEY: process.env.EXPO_PUBLIC_POSTHOG_KEY,
+  EXPO_PUBLIC_POSTHOG_HOST: process.env.EXPO_PUBLIC_POSTHOG_HOST,
+
+  // OpenAI
+  EXPO_PUBLIC_OPENAI_API_KEY: process.env.EXPO_PUBLIC_OPENAI_API_KEY,
+
+  // Anthropic (legacy)
+  EXPO_PUBLIC_ANTHROPIC_API_KEY: process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY,
 } as const;
 
 // Type guard to ensure required secrets are present
@@ -40,7 +50,7 @@ export const validateRequiredSecrets = () => {
 
   if (missing.length > 0) {
     throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`
+      `Missing required environment variables: ${missing.join(", ")}`,
     );
   }
 };

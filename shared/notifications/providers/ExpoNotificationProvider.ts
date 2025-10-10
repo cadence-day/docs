@@ -1,5 +1,5 @@
 import { SECRETS } from "@/shared/constants/SECRETS";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
@@ -37,7 +37,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
       await this.registerForPushNotificationsAsync();
       this.isInitialized = true;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "ExpoNotificationProvider.initialize");
+      Logger.logError(error, "ExpoNotificationProvider.initialize");
       throw error;
     }
   }
@@ -59,7 +59,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
         trigger: null, // Send immediately
       });
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ExpoNotificationProvider.sendNotification",
         { notificationId: notification.id },
@@ -94,7 +94,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
         trigger,
       });
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ExpoNotificationProvider.scheduleNotification",
         {
@@ -110,7 +110,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
     try {
       await Notifications.cancelScheduledNotificationAsync(notificationId);
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ExpoNotificationProvider.cancelNotification",
         { notificationId },
@@ -123,7 +123,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
     try {
       await Notifications.cancelAllScheduledNotificationsAsync();
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ExpoNotificationProvider.cancelAllNotifications",
       );
@@ -174,7 +174,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
       });
       return token.data;
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ExpoNotificationProvider.getExpoPushToken",
       );
@@ -188,7 +188,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
     try {
       return await Notifications.getAllScheduledNotificationsAsync();
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ExpoNotificationProvider.getScheduledNotifications",
       );
@@ -203,12 +203,12 @@ export class ExpoNotificationProvider implements NotificationProvider {
         "Push notifications are not supported in current environment (requires physical device with iOS/Android)";
 
       if (isDev) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           message,
           "ExpoNotificationProvider.registerForPushNotificationsAsync",
         );
       } else {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           message,
           "ExpoNotificationProvider.registerForPushNotificationsAsync",
         );
@@ -232,7 +232,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
     }
 
     if (finalStatus !== "granted") {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Push notification permissions not granted",
         "ExpoNotificationProvider.registerForPushNotificationsAsync",
       );
@@ -245,7 +245,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
       });
       return token.data;
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ExpoNotificationProvider.registerForPushNotificationsAsync",
       );
@@ -274,7 +274,7 @@ export class ExpoNotificationProvider implements NotificationProvider {
         trigger,
       });
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "ExpoNotificationProvider.scheduleRecurringNotification",
         { notificationId: notification.id },

@@ -22,7 +22,7 @@ import {
 } from "react-native";
 import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 import { useToast } from "../../shared/hooks";
-import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
+import { Logger } from "../../shared/utils/errorHandler";
 
 export default function NotificationsSettings() {
   const { t } = useTranslation();
@@ -52,10 +52,7 @@ export default function NotificationsSettings() {
         setPermissionStatus(status);
         setPushNotificationsEnabled(status === "granted");
       } catch (error) {
-        GlobalErrorHandler.logError(
-          error,
-          "Failed to initialize notifications"
-        );
+        Logger.logError(error, "Failed to initialize notifications");
         showError?.(
           error instanceof Error
             ? error.message
@@ -90,7 +87,10 @@ export default function NotificationsSettings() {
       };
 
   // Helper to convert HH:MM:SS to HH:MM for display
-  const formatTimeForDisplay = (time: string | null | undefined, defaultTime: string = "07:00"): string => {
+  const formatTimeForDisplay = (
+    time: string | null | undefined,
+    defaultTime: string = "07:00"
+  ): string => {
     if (!time) return defaultTime;
     // If time is already in HH:MM format, return it
     if (time.length === 5 && time.includes(":")) return time;
@@ -102,10 +102,19 @@ export default function NotificationsSettings() {
   };
 
   const timing = {
-    morningTime: formatTimeForDisplay(notificationSettings?.wake_up_time, "07:00"),
+    morningTime: formatTimeForDisplay(
+      notificationSettings?.wake_up_time,
+      "07:00"
+    ),
     // @ts-ignore - midday_time may not exist until migration is run
-    middayTime: formatTimeForDisplay(notificationSettings?.midday_time, "12:00"),
-    eveningTime: formatTimeForDisplay(notificationSettings?.sleep_time, "22:00"),
+    middayTime: formatTimeForDisplay(
+      notificationSettings?.midday_time,
+      "12:00"
+    ),
+    eveningTime: formatTimeForDisplay(
+      notificationSettings?.sleep_time,
+      "22:00"
+    ),
   };
 
   // Helper functions
@@ -186,7 +195,7 @@ export default function NotificationsSettings() {
       if (timeUpdates.middayTime) {
         // Only update midday_time if the column exists in the current settings (migration has been run)
         // @ts-ignore - midday_time may not exist until migration is run
-        if ('midday_time' in notificationSettings) {
+        if ("midday_time" in notificationSettings) {
           updates.midday_time = formatTimeForDatabase(timeUpdates.middayTime);
         }
       }
@@ -200,10 +209,7 @@ export default function NotificationsSettings() {
       // Refresh the settings to ensure UI updates
       await refresh();
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error,
-        "updateTiming",
-      );
+      Logger.logError(error, "updateTiming");
       throw error;
     }
   };
@@ -442,7 +448,9 @@ export default function NotificationsSettings() {
                         await updateTiming({ morningTime: formatted });
                         showSuccess?.(t("success"));
                       } catch (error) {
-                        showError?.(error instanceof Error ? error.message : String(error));
+                        showError?.(
+                          error instanceof Error ? error.message : String(error)
+                        );
                       }
                     } else {
                       const msg =
@@ -468,7 +476,9 @@ export default function NotificationsSettings() {
                         await updateTiming({ middayTime: formatted });
                         showSuccess?.(t("success"));
                       } catch (error) {
-                        showError?.(error instanceof Error ? error.message : String(error));
+                        showError?.(
+                          error instanceof Error ? error.message : String(error)
+                        );
                       }
                     } else {
                       const msg =
@@ -493,7 +503,9 @@ export default function NotificationsSettings() {
                         await updateTiming({ eveningTime: formatted });
                         showSuccess?.(t("success"));
                       } catch (error) {
-                        showError?.(error instanceof Error ? error.message : String(error));
+                        showError?.(
+                          error instanceof Error ? error.message : String(error)
+                        );
                       }
                     } else {
                       const msg =

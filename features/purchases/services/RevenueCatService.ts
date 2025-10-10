@@ -1,5 +1,5 @@
 import { SECRETS } from "@/shared/constants/SECRETS";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { Platform } from "react-native";
 import Purchases, {
   CustomerInfo,
@@ -30,7 +30,7 @@ class RevenueCatService {
 
     // Check if RevenueCat is available (not in Expo Go)
     if (!Purchases) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "RevenueCat not available - skipping configuration",
         "REVENUECAT_CONFIG",
       );
@@ -48,7 +48,7 @@ class RevenueCatService {
         typeof apiKey !== "string" ||
         apiKey.trim().length < 20
       ) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "RevenueCat API key is missing or invalid - skipping configuration",
           "REVENUECAT_CONFIG",
         );
@@ -56,9 +56,43 @@ class RevenueCatService {
       }
 
       if (__DEV__) {
-        // Use WARN level instead of INFO to reduce console noise in development
-        // This will still show important warnings but reduce verbose logging
-        Purchases.setLogLevel(LOG_LEVEL.ERROR);
+        // Set log level to show warnings but not debug info
+        Purchases.setLogLevel(LOG_LEVEL.WARN);
+
+        // Add custom log handler to filter out expected errors
+        Purchases.setLogHandler((logLevel, message) => {
+          // Filter out pending payment errors - these are expected in StoreKit Testing
+          if (
+            message.includes("payment is pending") ||
+            message.includes("PAYMENT_PENDING_ERROR") ||
+            message.includes("payment is deferred")
+          ) {
+            // Don't log these - they're handled gracefully in our purchasePackage method
+            return;
+          }
+
+          // Log other messages normally
+          const prefix = "[RevenueCat]";
+          switch (logLevel) {
+            case LOG_LEVEL.VERBOSE:
+            case LOG_LEVEL.DEBUG:
+              // eslint-disable-next-line no-console
+              console.debug(prefix, message);
+              break;
+            case LOG_LEVEL.INFO:
+              // eslint-disable-next-line no-console
+              console.info(prefix, message);
+              break;
+            case LOG_LEVEL.WARN:
+              // eslint-disable-next-line no-console
+              console.warn(prefix, message);
+              break;
+            case LOG_LEVEL.ERROR:
+              // eslint-disable-next-line no-console
+              console.error(prefix, message);
+              break;
+          }
+        });
       }
 
       // Configure the SDK FIRST before making any other calls
@@ -67,13 +101,13 @@ class RevenueCatService {
       });
 
       this.isConfigured = true;
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "RevenueCat configured successfully",
         "REVENUECAT_CONFIG",
       );
 
       const CustomerInfo = await Purchases.getCustomerInfo();
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Checking initial subscription status after configuration",
         "REVENUECAT_CONFIG",
         { customerInfo: JSON.stringify(CustomerInfo, null, 2) },
@@ -82,7 +116,7 @@ class RevenueCatService {
       // Don't sync subscription status during initial configuration
       // This will be handled when login() is called with a user ID
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to configure RevenueCat");
+      Logger.logError(error, "Failed to configure RevenueCat");
     }
   }
 
@@ -97,7 +131,7 @@ class RevenueCatService {
       this.currentUserId = userId;
       await this.syncSubscriptionStatus(customerInfo);
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to login to RevenueCat");
+      Logger.logError(error, "Failed to login to RevenueCat");
     }
   }
 
@@ -108,7 +142,7 @@ class RevenueCatService {
       await Purchases.logOut();
       this.currentUserId = null;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to logout from RevenueCat");
+      Logger.logError(error, "Failed to logout from RevenueCat");
     }
   }
 
@@ -118,10 +152,10 @@ class RevenueCatService {
 
     try {
       const offerings = await Purchases.getOfferings();
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Fetched RevenueCat offerings",
         "REVENUECAT_OFFERINGS",
-        { offerings },
+        { offerings: JSON.stringify(offerings, null, 2) },
       );
       return offerings.current;
     } catch (error) {
@@ -136,14 +170,14 @@ class RevenueCatService {
         errorMessage.includes("None of the products registered")
       ) {
         // This is expected in development or when products aren't approved in App Store Connect
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "RevenueCat products not available - this is expected in development or when products aren't approved in App Store Connect",
           "REVENUECAT_OFFERINGS",
           { errorMessage: errorMessage.substring(0, 200) }, // Log first 200 chars of error for debugging
         );
       } else {
         // Unexpected error - log as error
-        GlobalErrorHandler.logError(error, "Failed to get offerings");
+        Logger.logError(error, "Failed to get offerings");
       }
       return null;
     }
@@ -161,9 +195,44 @@ class RevenueCatService {
       return customerInfo;
     } catch (error) {
       const purchasesError = error as PurchasesError;
-      if (!purchasesError.userCancelled) {
-        GlobalErrorHandler.logError(error, "Purchase failed");
+
+      // Check if payment is pending (deferred payment like "Ask to Buy")
+      const errorMessage = error?.toString() || "";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const userInfo = (error as any)?.userInfo || {};
+      const readableErrorCode = userInfo.readable_error_code;
+
+      if (
+        readableErrorCode === "PAYMENT_PENDING_ERROR" ||
+        errorMessage.includes("payment is pending")
+      ) {
+        // This is an expected scenario - log as warning, not error
+        Logger.logWarning(
+          "Payment is pending approval (deferred payment)",
+          "REVENUECAT_PURCHASE",
+          {
+            productId: pkg.product.identifier,
+            errorCode: readableErrorCode,
+          },
+        );
+        return null;
       }
+
+      // User cancelled the purchase - don't log as error
+      if (purchasesError.userCancelled) {
+        Logger.logDebug(
+          "User cancelled the purchase",
+          "REVENUECAT_PURCHASE",
+          { productId: pkg.product.identifier },
+        );
+        return null;
+      }
+
+      // Actual error - log it
+      Logger.logError(error, "Purchase failed", {
+        productId: pkg.product.identifier,
+        errorCode: readableErrorCode,
+      });
       return null;
     }
   }
@@ -177,7 +246,7 @@ class RevenueCatService {
       await this.syncSubscriptionStatus(customerInfo);
       return customerInfo;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to restore purchases");
+      Logger.logError(error, "Failed to restore purchases");
       return null;
     }
   }
@@ -187,14 +256,15 @@ class RevenueCatService {
     if (!this.isConfigured) return null; // Still not configured, return null
 
     try {
-      GlobalErrorHandler.logDebug(
+      const userInfo = await Purchases.getCustomerInfo();
+      Logger.logDebug(
         "Fetching RevenueCat customer info",
         "REVENUECAT_CUSTOMER_INFO",
-        { userId: this.currentUserId },
+        { userInfo },
       );
-      return await Purchases.getCustomerInfo();
+      return userInfo;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to get customer info");
+      Logger.logError(error, "Failed to get customer info");
       return null;
     }
   }
@@ -212,7 +282,7 @@ class RevenueCatService {
       );
       return activeEntitlements;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to get active entitlements");
+      Logger.logError(error, "Failed to get active entitlements");
       return [];
     }
   }
@@ -238,7 +308,7 @@ class RevenueCatService {
 
       return "free";
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to check subscription status");
+      Logger.logError(error, "Failed to check subscription status");
       return "free";
     }
   }
@@ -270,7 +340,7 @@ class RevenueCatService {
       if (!userId) {
         // If no user ID is stored, skip syncing
         // This method should only be called after login when userId is set
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "No user ID available for subscription sync",
           "REVENUECAT_SYNC",
         );
@@ -288,7 +358,7 @@ class RevenueCatService {
       }
 
       // Log the subscription plan for debugging purposes
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `User subscription plan determined: ${plan}`,
         "REVENUECAT_SYNC",
         {
@@ -301,7 +371,7 @@ class RevenueCatService {
       // Note: Profile table updates are deprecated and removed
       // Subscription status is now managed through RevenueCat directly
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to sync subscription status");
+      Logger.logError(error, "Failed to sync subscription status");
     }
   }
 
@@ -311,7 +381,7 @@ class RevenueCatService {
     if (!this.isConfigured) {
       // Return a no-op function if not configured
       // The configure() call should happen elsewhere first
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "RevenueCat not configured when adding listener",
         "REVENUECAT_LISTENER",
       );

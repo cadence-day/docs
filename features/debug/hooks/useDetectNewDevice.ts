@@ -1,5 +1,5 @@
 import { checkAndPromptEncryptionLinking } from "@/features/encryption/utils/detectNewDevice";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import { useCallback, useState } from "react";
 import { useToast } from "../../../shared/hooks";
@@ -17,7 +17,7 @@ export default function useDetectNewDevice() {
             await checkAndPromptEncryptionLinking(userId);
             setDetectResult("Triggered checkAndPromptEncryptionLinking");
         } catch (err) {
-            GlobalErrorHandler.logError(
+            Logger.logError(
                 err as Error,
                 "DEBUG_DETECT_NEW_DEVICE",
             );
@@ -28,7 +28,7 @@ export default function useDetectNewDevice() {
             );
             setDetectResult(String(err));
             try {
-                GlobalErrorHandler.logError(
+                Logger.logError(
                     err as Error,
                     "DEBUG_DETECT_NEW_DEVICE",
                     {},

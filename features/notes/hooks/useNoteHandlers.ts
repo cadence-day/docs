@@ -2,7 +2,7 @@ import useNotesStore from "@/shared/stores/resources/useNotesStore";
 import useStatesStore from "@/shared/stores/resources/useStatesStore";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import type { Timeslice } from "@/shared/types/models/timeslice";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useCallback } from "react";
 import type { NoteItem, NoteOperations, UseNoteHandlersProps } from "../types";
 
@@ -77,7 +77,7 @@ export const useNoteHandlers = ({
               } as unknown as TimesliceUpsertInput);
             } catch (timesliceError) {
               // Log but don't throw - note was deleted successfully
-              GlobalErrorHandler.logError(
+              Logger.logError(
                 timesliceError,
                 "updateTimesliceAfterDelete",
                 {
@@ -100,7 +100,7 @@ export const useNoteHandlers = ({
           setActiveNoteIndex(activeNoteIndex - 1);
         }
       } catch (error) {
-        GlobalErrorHandler.logError(error, "deleteNoteAsync", {
+        Logger.logError(error, "deleteNoteAsync", {
           noteId: note.id,
           index,
         });
@@ -125,7 +125,7 @@ export const useNoteHandlers = ({
 
       // Only save if note has content
       if (!note.message?.trim()) {
-        GlobalErrorHandler.logError(
+        Logger.logError(
           new Error("Cannot save empty note"),
           "saveNote",
           { noteIndex, timesliceId: ts_id },
@@ -134,7 +134,7 @@ export const useNoteHandlers = ({
       }
 
       if (!ts_id) {
-        GlobalErrorHandler.logError(
+        Logger.logError(
           new Error("No timeslice ID provided"),
           "saveNote",
           { noteIndex },
@@ -198,7 +198,7 @@ export const useNoteHandlers = ({
           }
         }
       } catch (error) {
-        GlobalErrorHandler.logError(error, "saveNote", {
+        Logger.logError(error, "saveNote", {
           noteIndex,
           noteId: note.id,
           timesliceId: ts_id,
@@ -224,7 +224,7 @@ export const useNoteHandlers = ({
   const saveAllNotes = useCallback(async (): Promise<void> => {
     const ts_id = timeslice.id?.toString();
     if (!ts_id) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         new Error("No timeslice ID provided"),
         "saveAllNotes",
       );
@@ -282,7 +282,7 @@ export const useNoteHandlers = ({
             }
           } catch (fetchError) {
             // If fetch fails, we'll create a new state below
-            GlobalErrorHandler.logError(fetchError, "saveAllNotes_fetchState", {
+            Logger.logError(fetchError, "saveAllNotes_fetchState", {
               timesliceId: ts_id,
             });
           }
@@ -316,7 +316,7 @@ export const useNoteHandlers = ({
       // NOTE: Database trigger automatically handles timeslice.note_ids updates
       // No need to manually update timeslice - this prevents race conditions
     } catch (error) {
-      GlobalErrorHandler.logError(error, "saveAllNotes", {
+      Logger.logError(error, "saveAllNotes", {
         timesliceId: ts_id,
         notesCount: notes.length,
       });

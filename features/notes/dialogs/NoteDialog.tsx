@@ -30,7 +30,7 @@ import {
   useStatesStore,
 } from "@/shared/stores";
 
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 
 import { useToast } from "../../../shared/hooks";
 import { SwipeableNoteItem } from "../components";
@@ -145,7 +145,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       }
       // If no state found anywhere, energy and mood remain at default value of 0
     } catch (error) {
-      GlobalErrorHandler.logError(error, "loadStateData", {
+      Logger.logError(error, "loadStateData", {
         timesliceId: ts_id,
       });
     }
@@ -185,7 +185,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
 
       setNotes(noteItems);
     } catch (error) {
-      GlobalErrorHandler.logError(error, "loadNotes", {
+      Logger.logError(error, "loadNotes", {
         timesliceId: ts_id,
         noteIds,
       });
@@ -331,13 +331,9 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
               }
             } catch (fetchError) {
               // If fetch fails, we'll create a new state below
-              GlobalErrorHandler.logError(
-                fetchError,
-                "handleMoodChange_fetchState",
-                {
-                  timesliceId: ts_id,
-                }
-              );
+              Logger.logError(fetchError, "handleMoodChange_fetchState", {
+                timesliceId: ts_id,
+              });
             }
           }
 
@@ -355,7 +351,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
 
           await statesStore.upsertState(stateData);
         } catch (error) {
-          GlobalErrorHandler.logError(error, "saveMoodState", {
+          Logger.logError(error, "saveMoodState", {
             timesliceId: ts_id,
             mood: finalValue,
           });
@@ -372,7 +368,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      GlobalErrorHandler.logError(error, "handleSaveNote", { index });
+      Logger.logError(error, "handleSaveNote", { index });
       showError("Failed to save note. Please try again.");
     }
   };
@@ -412,7 +408,7 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           } catch (error) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-            GlobalErrorHandler.logError(error, "handleDeleteNote", { index });
+            Logger.logError(error, "handleDeleteNote", { index });
             showError("Failed to delete note. Please try again.");
           }
         },

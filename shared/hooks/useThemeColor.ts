@@ -5,7 +5,7 @@
 
 import { COLORS } from "@/shared/constants/COLORS";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
-import { GlobalErrorHandler } from "../utils";
+import { Logger } from "../utils";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -54,7 +54,7 @@ export function useNestedThemeColor(
     }
   } catch (error) {
     // Console warn is needed for debugging color issues
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       `Failed to resolve color path "${colorPath}": ${
         (error as Error).message
       }`,

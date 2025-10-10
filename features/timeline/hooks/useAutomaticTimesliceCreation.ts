@@ -5,7 +5,7 @@ import {
   useSelectionStore,
   useTimeslicesStore,
 } from "@/shared/stores";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useEffect } from "react";
 import { Timeslice } from "../../../shared/types/models";
 import usePendingTimeslicesStore from "./usePendingTimeslicesStore";
@@ -84,7 +84,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
           note_ids: pendingTimeslice.note_ids,
         }));
 
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Creating timeslices from pending selections",
           "AUTOMATIC_TIMESLICE_CREATION",
           {
@@ -99,7 +99,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
         try {
           createdTimeslices = await insertTimeslicesInStore(newTimeslices);
         } catch (err) {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             err as Error,
             "AUTOMATIC_TIMESLICE_CREATION:INSERT",
             {
@@ -114,7 +114,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
           try {
             clearPendingTimeslices();
           } catch (err) {
-            GlobalErrorHandler.logWarning(
+            Logger.logWarning(
               "Failed to clear pending timeslices",
               "AUTOMATIC_TIMESLICE_CREATION:CLEAR_PENDING",
               { error: err },
@@ -132,7 +132,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
 
           await resetPickingModeDialog(createdTimeslices.length);
 
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Successfully created timeslices from pending selections",
             "AUTOMATIC_TIMESLICE_CREATION",
             {
@@ -141,7 +141,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
             },
           );
         } else {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             new Error("No timeslices created"),
             "AUTOMATIC_TIMESLICE_CREATION",
             {
@@ -153,7 +153,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
           showError(t("failed-to-create-timeslices"));
         }
       } catch (error) {
-        GlobalErrorHandler.logError(
+        Logger.logError(
           error as Error,
           "AUTOMATIC_TIMESLICE_CREATION",
           {
@@ -171,7 +171,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
         // Update existing timeslices with the selected activity
         // Read current pending updates for logging and processing
         const updates = usePendingTimeslicesStore.getState().pendingUpdates;
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Updating timeslices from pending updates",
           "AUTOMATIC_TIMESLICE_UPDATE",
           {
@@ -196,7 +196,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
             successCount++;
           } catch (err) {
             errors.push({ timeslice: pendingUpdate, error: err as Error });
-            GlobalErrorHandler.logError(
+            Logger.logError(
               err as Error,
               "AUTOMATIC_TIMESLICE_UPDATE:SINGLE",
               {
@@ -212,7 +212,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
           try {
             clearPendingUpdates();
           } catch (err) {
-            GlobalErrorHandler.logWarning(
+            Logger.logWarning(
               "Failed to clear pending updates",
               "AUTOMATIC_TIMESLICE_UPDATE:CLEAR_PENDING",
               { error: err },
@@ -230,7 +230,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
 
           await resetPickingModeDialog(successCount);
 
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Successfully updated timeslices from pending updates",
             "AUTOMATIC_TIMESLICE_UPDATE",
             {
@@ -241,7 +241,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
         }
 
         if (errors.length > 0) {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             new Error(`Failed to update ${errors.length} timeslices`),
             "AUTOMATIC_TIMESLICE_UPDATE",
             {
@@ -254,7 +254,7 @@ export const useAutomaticTimesliceCreation = (opts?: {
           showError(t("failed-to-update-some-timeslices"));
         }
       } catch (error) {
-        GlobalErrorHandler.logError(
+        Logger.logError(
           error as Error,
           "AUTOMATIC_TIMESLICE_UPDATE",
           {
@@ -284,14 +284,14 @@ export const useAutomaticTimesliceCreation = (opts?: {
             isPickingMode: false,
           });
 
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Reset picking mode dialog after successful timeslice processing",
             "AUTOMATIC_TIMESLICE_PROCESSING:RESET_PICKING_MODE",
             { dialogId, processedCount },
           );
         }
       } catch (err) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to reset picking mode dialog",
           "AUTOMATIC_TIMESLICE_PROCESSING:RESET_PICKING_MODE",
           { error: err },

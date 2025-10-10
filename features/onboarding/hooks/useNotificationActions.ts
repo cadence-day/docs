@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { GlobalErrorHandler } from "../../../shared/utils";
+import { Logger } from "../../../shared/utils";
 import { useOnboardingStore } from "../store/useOnboardingStore";
 
 export function useNotificationActions() {
@@ -26,7 +26,7 @@ export function useNotificationActions() {
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         "Failed to request notification permissions",
         "NOTIFICATION_PERMISSION_ERROR",
         { error },

@@ -1,5 +1,5 @@
 import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useOnboardingStore } from "../store/useOnboardingStore";
 import { useOnboardingCompletion } from "./useOnboardingCompletion";
 
@@ -23,7 +23,7 @@ export function useOnboardingActions() {
         confirm,
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         "Error completing onboarding",
         "ONBOARDING_COMPLETION_ERROR",
         { error },

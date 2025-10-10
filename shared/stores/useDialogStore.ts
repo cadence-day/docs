@@ -1,3 +1,4 @@
+import { DialogStateInfo, ViewDialogState } from "@/shared/types/dialog.types";
 import { create, StoreApi } from "zustand";
 
 export type DialogId = string;
@@ -32,6 +33,10 @@ interface DialogStore {
   setCurrentView: (viewName: string) => void;
   closeViewSpecificDialogs: (viewName: string) => void;
   restoreViewSpecificDialogs: (viewName: string) => void;
+  // Methods for getting dialog state information
+  getDialogStateForView: (viewName?: string) => ViewDialogState;
+  getDialogInfo: (id: DialogId) => DialogStateInfo | undefined;
+  getAllDialogStates: () => DialogStateInfo[];
 }
 
 const makeId = () => Math.random().toString(36).slice(2, 9);
@@ -245,6 +250,98 @@ const useDialogStore = create<DialogStore>(
           viewSpecificDialogs: updatedViewSpecificDialogs,
         };
       }),
+
+    // Get dialog state information for a specific view or all dialogs
+    getDialogStateForView: (viewName?: string): ViewDialogState => {
+      const state = get();
+      const currentView = viewName || state.currentView || "";
+
+      // Filter dialogs for this view
+      const viewDialogs = Object.values(state.dialogs).filter((dialog) => {
+        // Include global dialogs and dialogs without view restrictions
+        if (dialog.props?.isGlobal || !dialog.viewSpecific) return true;
+        // Include dialogs specific to this view
+        if (dialog.viewSpecific === currentView) return true;
+        // Include dialogs that allow this view
+        if (
+          dialog.props?.allowedViews &&
+          Array.isArray(dialog.props.allowedViews) &&
+          dialog.props.allowedViews.includes(currentView)
+        ) {
+          return true;
+        }
+        return false;
+      });
+
+      // Convert to DialogStateInfo array
+      const dialogStates: DialogStateInfo[] = viewDialogs.map((dialog) => ({
+        dialogId: dialog.id,
+        dialogType: dialog.type,
+        height: dialog.props?.height ?? 50,
+        isCollapsed: dialog.collapsed ?? false,
+        enableDragging: dialog.props?.enableDragging ?? true,
+        allowedViews: dialog.props?.allowedViews ?? [],
+        showCloseButton: dialog.props?.showCloseButton ?? true,
+        zIndex: dialog.zIndex ?? 1000,
+        position: dialog.position ?? "dock",
+        preventClose: dialog.props?.preventClose ?? false,
+        isGlobal: dialog.props?.isGlobal ?? false,
+        viewSpecific: dialog.viewSpecific,
+      }));
+
+      // Calculate total visible height (non-collapsed dialogs)
+      const totalVisibleHeight = dialogStates
+        .filter((d) => !d.isCollapsed)
+        .reduce((sum, d) => sum + d.height, 0);
+
+      return {
+        dialogs: dialogStates,
+        viewName: currentView,
+        count: dialogStates.length,
+        isAnyDialogDragging: false, // This would need to be tracked separately if needed
+        totalVisibleHeight,
+      };
+    },
+
+    // Get dialog state info for a specific dialog
+    getDialogInfo: (id: DialogId): DialogStateInfo | undefined => {
+      const dialog = get().dialogs[id];
+      if (!dialog) return undefined;
+
+      return {
+        dialogId: dialog.id,
+        dialogType: dialog.type,
+        height: dialog.props?.height ?? 50,
+        isCollapsed: dialog.collapsed ?? false,
+        enableDragging: dialog.props?.enableDragging ?? true,
+        allowedViews: dialog.props?.allowedViews ?? [],
+        showCloseButton: dialog.props?.showCloseButton ?? true,
+        zIndex: dialog.zIndex ?? 1000,
+        position: dialog.position ?? "dock",
+        preventClose: dialog.props?.preventClose ?? false,
+        isGlobal: dialog.props?.isGlobal ?? false,
+        viewSpecific: dialog.viewSpecific,
+      };
+    },
+
+    // Get all dialog states regardless of view
+    getAllDialogStates: (): DialogStateInfo[] => {
+      const state = get();
+      return Object.values(state.dialogs).map((dialog) => ({
+        dialogId: dialog.id,
+        dialogType: dialog.type,
+        height: dialog.props?.height ?? 50,
+        isCollapsed: dialog.collapsed ?? false,
+        enableDragging: dialog.props?.enableDragging ?? true,
+        allowedViews: dialog.props?.allowedViews ?? [],
+        showCloseButton: dialog.props?.showCloseButton ?? true,
+        zIndex: dialog.zIndex ?? 1000,
+        position: dialog.position ?? "dock",
+        preventClose: dialog.props?.preventClose ?? false,
+        isGlobal: dialog.props?.isGlobal ?? false,
+        viewSpecific: dialog.viewSpecific,
+      }));
+    },
   }),
 );
 

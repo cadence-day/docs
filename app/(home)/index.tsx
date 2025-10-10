@@ -7,7 +7,7 @@ import SignIn from "../(auth)/sign-in";
 import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
-import { useTheme } from "@/shared/hooks";
+import { useTheme, useViewDialogState } from "@/shared/hooks";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import { generalStyles } from "@/shared/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,9 +28,21 @@ export default function Today() {
   const { getDateTimeSeparator, displayDateTime } = useDeviceDateTime();
   const theme = useTheme();
 
+  // Get dialog state for this view
+  const dialogState = useViewDialogState("home");
+
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
+
+  // Derive dialog state from the hook instead of local state
+  const isActivityDialogOpen = dialogState.dialogs.some(
+    (d) => d.dialogType === "activity-legend"
+  );
+  const activityDialog = dialogState.dialogs.find(
+    (d) => d.dialogType === "activity-legend"
+  );
+  const isActivityDialogCollapsed = activityDialog?.isCollapsed ?? false;
+
   // isToday is true if selectedDate is today's date (but ignore time)
   const isToday = selectedDate.toDateString() === new Date().toDateString();
   const title = isToday ? t("home.todayTitle") : t("home.title");
@@ -39,18 +51,6 @@ export default function Today() {
     setCurrentTime(new Date());
     const interval = setInterval(() => setCurrentTime(new Date()), 30000);
     return () => clearInterval(interval);
-  }, []);
-
-  // Listen to dialog store changes to track activity dialog state
-  useEffect(() => {
-    const unsubscribe = useDialogStore.subscribe((state) => {
-      const hasActivityDialog = Object.values(state.dialogs).some(
-        (dialog) => dialog.type === "activity-legend"
-      );
-      setIsActivityDialogOpen(hasActivityDialog);
-    });
-
-    return unsubscribe;
   }, []);
 
   // Function to reopen activity dialog
@@ -154,7 +154,9 @@ export default function Today() {
               <Timeline
                 date={selectedDate}
                 bottomPadding={
-                  isActivityDialogOpen ? DIALOG_HEIGHT_PLACEHOLDER : 0
+                  isActivityDialogOpen && isActivityDialogCollapsed
+                    ? DIALOG_HEIGHT_PLACEHOLDER
+                    : 5
                 }
               />
             </React.Suspense>

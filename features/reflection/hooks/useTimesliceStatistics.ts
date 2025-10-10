@@ -6,7 +6,7 @@ import {
   useTimeslicesStore,
 } from "@/shared/stores";
 import type { State } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useMemo } from "react";
 import type {
   ActivityStatistics,
@@ -22,7 +22,7 @@ export interface UseTimesliceStatisticsReturn {
   getActivityDailyTotal: (activityId: string, targetDate: Date) => number;
   getActivityWeeklyTotal: (activityId: string) => number;
   getTimesliceWithDetails: (
-    timesliceId: string
+    timesliceId: string,
   ) => Promise<EnhancedTimesliceInformation>;
 }
 
@@ -31,7 +31,7 @@ export interface UseTimesliceStatisticsReturn {
  */
 export const useTimesliceStatistics = (
   fromDate: Date,
-  toDate: Date
+  toDate: Date,
 ): UseTimesliceStatisticsReturn => {
   const { t } = useI18n();
   const timeslicesStore = useTimeslicesStore();
@@ -64,7 +64,7 @@ export const useTimesliceStatistics = (
         // Get or create activity stats
         if (!activitiesMap.has(activityId)) {
           const activity = activitiesStore.activities.find(
-            (a) => a.id === activityId
+            (a) => a.id === activityId,
           );
           activitiesMap.set(activityId, {
             activityId,
@@ -92,7 +92,7 @@ export const useTimesliceStatistics = (
         // Process energy levels
         if (timeslice.state_id) {
           const state = statesStore.states.find(
-            (s) => s.id === timeslice.state_id
+            (s) => s.id === timeslice.state_id,
           );
           if (state?.energy !== null && state?.energy !== undefined) {
             const energy = Number(state.energy);
@@ -106,7 +106,7 @@ export const useTimesliceStatistics = (
         // Process notes
         if (timeslice.note_ids && timeslice.note_ids.length > 0) {
           const timesliceNotes = notesStore.notes.filter(
-            (note) => note.id && timeslice.note_ids?.includes(note.id)
+            (note) => note.id && timeslice.note_ids?.includes(note.id),
           );
           activityStats.notesList.push(...timesliceNotes);
           activityStats.totalNotes += timesliceNotes.length;
@@ -117,21 +117,20 @@ export const useTimesliceStatistics = (
       // Calculate average energy for each activity
       activitiesMap.forEach((stats) => {
         if (stats.energyLevels.length > 0) {
-          stats.averageEnergy =
-            stats.energyLevels.reduce((sum, energy) => sum + energy, 0) /
+          stats.averageEnergy = stats.energyLevels.reduce((sum, energy) =>
+            sum + energy, 0) /
             stats.energyLevels.length;
         }
       });
 
       // Calculate overall average energy
-      const overallAverageEnergy =
-        allEnergyLevels.length > 0
-          ? allEnergyLevels.reduce((sum, energy) => sum + energy, 0) /
-            allEnergyLevels.length
-          : null;
+      const overallAverageEnergy = allEnergyLevels.length > 0
+        ? allEnergyLevels.reduce((sum, energy) => sum + energy, 0) /
+          allEnergyLevels.length
+        : null;
 
       const activitiesStats = Array.from(activitiesMap.values()).sort(
-        (a, b) => b.totalTimeslices - a.totalTimeslices
+        (a, b) => b.totalTimeslices - a.totalTimeslices,
       );
 
       return {
@@ -143,18 +142,19 @@ export const useTimesliceStatistics = (
         dateRange: {
           from: fromDate,
           to: toDate,
-          formattedRange: `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
+          formattedRange:
+            `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
         },
       };
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "useTimesliceStatistics.computeStats",
         {
           fromDate: fromDate.toISOString(),
           toDate: toDate.toISOString(),
           timeslicesCount: timeslicesInRange.length,
-        }
+        },
       );
 
       return {
@@ -166,7 +166,8 @@ export const useTimesliceStatistics = (
         dateRange: {
           from: fromDate,
           to: toDate,
-          formattedRange: `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
+          formattedRange:
+            `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
         },
       };
     }
@@ -182,17 +183,17 @@ export const useTimesliceStatistics = (
 
   // Helper function to get stats for a specific activity
   const getActivityStats = (
-    activityId: string
+    activityId: string,
   ): ActivityStatistics | undefined => {
     return statistics.activitiesStats.find(
-      (stats) => stats.activityId === activityId
+      (stats) => stats.activityId === activityId,
     );
   };
 
   // Helper function to calculate daily total for a specific activity
   const getActivityDailyTotal = (
     activityId: string,
-    targetDate: Date
+    targetDate: Date,
   ): number => {
     const startOfDay = new Date(targetDate);
     startOfDay.setHours(0, 0, 0, 0);
@@ -205,13 +206,13 @@ export const useTimesliceStatistics = (
         ts.activity_id === activityId &&
         ts.start_time &&
         new Date(ts.start_time) >= startOfDay &&
-        new Date(ts.start_time) <= endOfDay
+        new Date(ts.start_time) <= endOfDay,
     );
 
     return dayTimeslices.reduce((total, ts) => {
       if (ts.start_time && ts.end_time) {
-        const durationMs =
-          new Date(ts.end_time).getTime() - new Date(ts.start_time).getTime();
+        const durationMs = new Date(ts.end_time).getTime() -
+          new Date(ts.start_time).getTime();
         const durationHours = durationMs / (1000 * 60 * 60);
         return total + durationHours;
       }
@@ -241,7 +242,7 @@ export const useTimesliceStatistics = (
 
       // Get activity
       const activity = activitiesStore.activities.find(
-        (a) => a.id === timeslice.activity_id
+        (a) => a.id === timeslice.activity_id,
       );
 
       // Get state and energy level
@@ -290,12 +291,12 @@ export const useTimesliceStatistics = (
         activityStats,
       } as EnhancedTimesliceInformation;
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "useTimesliceStatistics.getTimesliceWithDetails",
         {
           timesliceId,
-        }
+        },
       );
 
       return {

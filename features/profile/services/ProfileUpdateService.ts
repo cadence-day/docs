@@ -1,4 +1,4 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { getClerkInstance } from "@clerk/clerk-expo";
 import * as Haptics from "expo-haptics";
 import { Alert } from "react-native";
@@ -48,7 +48,7 @@ export class ProfileUpdateService {
 
       return { success: true };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "PROFILE_UPDATE_NAME_FAILED", {
+      Logger.logError(error, "PROFILE_UPDATE_NAME_FAILED", {
         newName,
         error: error instanceof Error ? error.message : "Unknown error",
       });
@@ -95,7 +95,7 @@ export class ProfileUpdateService {
 
       return { success: true };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "PROFILE_UPDATE_EMAIL_FAILED", {
+      Logger.logError(error, "PROFILE_UPDATE_EMAIL_FAILED", {
         newEmail,
         error: error instanceof Error ? error.message : "Unknown error",
       });
@@ -148,7 +148,7 @@ export class ProfileUpdateService {
         avatarUrl: currentUser.imageUrl || "",
       };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "PROFILE_GET_USER_DATA_FAILED");
+      Logger.logError(error, "PROFILE_GET_USER_DATA_FAILED");
       return null;
     }
   }

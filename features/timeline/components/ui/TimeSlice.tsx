@@ -4,7 +4,7 @@ import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import { locale } from "@/shared/locales";
 import { Timeslice } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
@@ -143,7 +143,7 @@ const TimeSlice: React.FC<TimeSliceProps> = ({
             return formatTime(timeslice.start_time);
           } catch (err) {
             // Keep UI resilient; route warnings through the GlobalErrorHandler
-            GlobalErrorHandler.logWarning(
+            Logger.logWarning(
               "TimeSlice: failed to format time",
               "TimeSlice:format",
               { error: err }

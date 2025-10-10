@@ -4,7 +4,7 @@ import { reassignTimeslicesActivity } from "@/shared/api/resources/timeslices/up
 import { useI18n } from "@/shared/hooks/useI18n";
 import { useActivitiesStore, useDialogStore } from "@/shared/stores";
 import type { Activity } from "@/shared/types/models/activity";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import React, { useEffect, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -41,7 +41,7 @@ const ReassignActivityDialog: React.FC<Props> = ({
       if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
       if (parentDialogId) useDialogStore.getState().closeDialog(parentDialogId);
     } catch (error) {
-      GlobalErrorHandler.logError(error, "REASSIGN_ACTIVITY_DIALOG_PERFORM", {
+      Logger.logError(error, "REASSIGN_ACTIVITY_DIALOG_PERFORM", {
         activityId: activity.id,
         replacementId,
         timeslices: timesliceIds.length,

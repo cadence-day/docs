@@ -1,6 +1,6 @@
 import { useActivitiesStore } from "@/shared/stores";
 import type { Activity } from "@/shared/types/models/activity";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
 import type { GridConfig } from "../components/utils/gridUtils";
@@ -58,13 +58,13 @@ export const useActivityManagement = ({
   // Get activities directly from store (single source of truth)
   const storeActivities = useActivitiesStore((state) => state.activities);
   const storeDisabledActivities = useActivitiesStore(
-    (state) => state.disabledActivities
+    (state) => state.disabledActivities,
   );
   const isLoading = useActivitiesStore((state) => state.isLoading);
 
   // Store functions
   const updateActivityOrder = useActivitiesStore(
-    (state) => state.updateActivityOrder
+    (state) => state.updateActivityOrder,
   );
   const disableActivity = useActivitiesStore((state) => state.disableActivity);
   const enableActivity = useActivitiesStore((state) => state.enableActivity);
@@ -95,7 +95,7 @@ export const useActivityManagement = ({
         await updateActivityOrder(allActivities);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch (error) {
-        GlobalErrorHandler.logError(error, "UPDATE_ACTIVITY_ORDER", {
+        Logger.logError(error, "UPDATE_ACTIVITY_ORDER", {
           message: "Error updating activity order",
         });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -103,7 +103,7 @@ export const useActivityManagement = ({
         setIsSavingOrder(false);
       }
     },
-    [storeDisabledActivities, updateActivityOrder]
+    [storeDisabledActivities, updateActivityOrder],
   );
 
   // Drag operations using store activities
@@ -122,11 +122,11 @@ export const useActivityManagement = ({
         await disableActivity(activityId);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch (error) {
-        GlobalErrorHandler.logError(error, "DISABLE_ACTIVITY", { activityId });
+        Logger.logError(error, "DISABLE_ACTIVITY", { activityId });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
     },
-    [disableActivity]
+    [disableActivity],
   );
 
   const handleEnableActivity = useCallback(
@@ -137,13 +137,13 @@ export const useActivityManagement = ({
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
       } catch (error) {
-        GlobalErrorHandler.logError(error, "ENABLE_ACTIVITY", {
+        Logger.logError(error, "ENABLE_ACTIVITY", {
           activityId: activity.id,
         });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
     },
-    [enableActivity]
+    [enableActivity],
   );
 
   return {

@@ -1,13 +1,15 @@
-import React, { createContext, useContext, useEffect, ReactNode } from "react";
+import { Logger } from "@/shared/utils/errorHandler";
+import React, { createContext, ReactNode, useContext, useEffect } from "react";
 import { notificationEngine } from "../NotificationEngine";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
 
 interface NotificationContextType {
   // Keep minimal interface for backwards compatibility
   engine: typeof notificationEngine;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined
+);
 
 interface NotificationProviderProps {
   children: ReactNode;
@@ -18,16 +20,12 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     const initializeNotificationEngine = async () => {
       try {
         await notificationEngine.initialize();
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "NotificationProvider: Engine initialized successfully",
           "NotificationProvider.initialize"
         );
       } catch (error) {
-        GlobalErrorHandler.logError(
-          error,
-          "NotificationProvider.initialize",
-          {}
-        );
+        Logger.logError(error, "NotificationProvider.initialize", {});
       }
     };
 
@@ -38,11 +36,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
       try {
         notificationEngine.destroy();
       } catch (error) {
-        GlobalErrorHandler.logError(
-          error,
-          "NotificationProvider.cleanup",
-          {}
-        );
+        Logger.logError(error, "NotificationProvider.cleanup", {});
       }
     };
   }, []);
@@ -61,7 +55,9 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
 export function useNotifications() {
   const context = useContext(NotificationContext);
   if (context === undefined) {
-    throw new Error("useNotifications must be used within a NotificationProvider");
+    throw new Error(
+      "useNotifications must be used within a NotificationProvider"
+    );
   }
   return context;
 }

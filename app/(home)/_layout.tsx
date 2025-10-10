@@ -6,17 +6,16 @@ import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
 import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
-import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
-import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { generalStyles } from "@/shared/styles";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-import { Tabs, useRouter, useSegments } from "expo-router";
+import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
-import React, { useEffect } from "react";
+import { usePostHog } from "posthog-react-native";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // Custom TabLabel component to have more control over the appearance
@@ -39,11 +38,29 @@ interface TabBarIconProps {
 export default function TabLayout() {
   const { t } = useTranslation();
   const segments = useSegments();
-  const router = useRouter();
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
   const theme = useTheme();
+  const posthog = usePostHog();
+  const [isChatEnabled, setIsChatEnabled] = useState(false);
+
+  // Check chat feature flag
+  useEffect(() => {
+    const checkChatFlag = async () => {
+      try {
+        const isEnabled = await posthog?.isFeatureEnabled("chat");
+        setIsChatEnabled(isEnabled ?? false);
+      } catch (error) {
+        Logger.logWarning("Error checking chat feature flag", "CHAT_FLAG", {
+          error,
+        });
+        setIsChatEnabled(false);
+      }
+    };
+
+    checkChatFlag();
+  }, [posthog]);
 
   // Initialize RevenueCat when user is signed in
   useEffect(() => {
@@ -52,13 +69,13 @@ export default function TabLayout() {
     const initializeRevenueCat = async () => {
       try {
         await revenueCatService.configure();
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "RevenueCat configured successfully for signed-in user",
           "REVENUECAT_INIT",
           { userId: user.id }
         );
       } catch (error) {
-        GlobalErrorHandler.logError(
+        Logger.logError(
           error,
           "Failed to initialize RevenueCat for signed-in user",
           { userId: user.id }
@@ -75,7 +92,7 @@ export default function TabLayout() {
         .default.getState()
         .refresh();
     } catch (err) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Failed to kick off activities refresh on sign-in",
         "ACTIVITIES_REFRESH",
         { error: err, userId: user.id }
@@ -146,45 +163,6 @@ export default function TabLayout() {
     })();
   }, [user, segments, didCheckEncryption]);
 
-  // On initial mount when signed-in, open onboarding if the user has no timeslices
-  useEffect(() => {
-    // Only run once per mount
-    let didRun = false;
-    const rawView = segments[segments.length - 1];
-    const currentView = String(rawView ?? "index");
-    if (currentView !== "index") return;
-
-    const tryOpenOnboarding = async () => {
-      if (didRun) return;
-      didRun = true;
-
-      const userId = user?.id ?? null;
-      if (!userId) return;
-
-      try {
-        const shown = await userOnboardingStorage.getShown();
-        if (shown) return;
-
-        const timeslices = await useTimeslicesStore
-          .getState()
-          .getAllTimeslices();
-        if (!timeslices || timeslices.length === 0) {
-          // Navigate to full-screen onboarding instead of opening dialog
-          router.replace("/onboarding");
-        }
-      } catch (err) {
-        // Ignore errors here - non-fatal
-        GlobalErrorHandler.logWarning(
-          "Error checking timeslices for onboarding",
-          "ONBOARDING_CHECK",
-          { error: err, userId }
-        );
-      }
-    };
-
-    tryOpenOnboarding();
-  }, [user, segments, router]);
-
   return (
     <>
       <SignedIn>
@@ -242,6 +220,17 @@ export default function TabLayout() {
               title: t("reflection.title"),
               tabBarIcon: ({ focused }: TabBarIconProps) => (
                 <TabLabel focused={focused} label={t("reflection.title")} />
+              ),
+            }}
+          />
+
+          <Tabs.Screen
+            name="chat"
+            options={{
+              title: "Chat",
+              href: isChatEnabled ? "/chat" : null,
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label="Chat" />
               ),
             }}
           />

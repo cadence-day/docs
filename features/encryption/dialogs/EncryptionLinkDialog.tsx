@@ -2,7 +2,7 @@ import { importEncryptionKey } from "@/shared/api/encryption/core";
 import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import { COLORS } from "@/shared/constants/COLORS";
 import useDialogStore from "@/shared/stores/useDialogStore";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
@@ -71,7 +71,7 @@ export const EncryptionLinkDialog = forwardRef<
 
       setTimeout(() => closeSelf(), 900);
     } catch (err) {
-      GlobalErrorHandler.logError(err as Error, "ENCRYPTION_LINK_IMPORT", {});
+      Logger.logError(err as Error, "ENCRYPTION_LINK_IMPORT", {});
       setPasteError("Failed to save key. Try again.");
       setIsScanning(true); // Re-enable scanning on error
     } finally {

@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { GlobalErrorHandler } from "../../../shared/utils/errorHandler";
+import { Logger } from "../../../shared/utils/errorHandler";
 import DebugPanel from "../../debug/components/DebugPanel";
 import { ProfileImageService } from "../services/ProfileImageService";
 import { ProfileUpdateService } from "../services/ProfileUpdateService";
@@ -46,6 +46,13 @@ export const ProfileScreen: React.FC = () => {
 
   // Profile image upload state
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  // Upload the flags for the debug section
+  const isDebugEnabled = true; // Set to false in production builds
+
+  if (!isDebugEnabled) {
+    Logger.logDebug("Debug mode is disabled", "DEBUG_MODE_DISABLED");
+  }
 
   // Sync user data from Clerk on mount
   useEffect(() => {
@@ -115,7 +122,7 @@ export const ProfileScreen: React.FC = () => {
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError("Error updating name", "NAME_UPDATE_ERROR", {
+      Logger.logError("Error updating name", "NAME_UPDATE_ERROR", {
         error,
       });
       ProfileUpdateService.showErrorMessage(
@@ -177,11 +184,7 @@ export const ProfileScreen: React.FC = () => {
           }
         }
       } catch (error) {
-        GlobalErrorHandler.logError(
-          "Image picker error",
-          "IMAGE_PICKER_ERROR",
-          { error }
-        );
+        Logger.logError("Image picker error", "IMAGE_PICKER_ERROR", { error });
 
         // Check if it's a native module error
         const errorMessage =
@@ -244,7 +247,7 @@ export const ProfileScreen: React.FC = () => {
                 }
               }
             } catch (error) {
-              GlobalErrorHandler.logError("Camera error", "CAMERA_ERROR", {
+              Logger.logError("Camera error", "CAMERA_ERROR", {
                 error,
               });
               const errorMessage =
@@ -305,7 +308,7 @@ export const ProfileScreen: React.FC = () => {
                 }
               }
             } catch (error) {
-              GlobalErrorHandler.logError("Camera error", "CAMERA_ERROR", {
+              Logger.logError("Camera error", "CAMERA_ERROR", {
                 error,
               });
 

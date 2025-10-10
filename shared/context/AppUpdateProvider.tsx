@@ -1,6 +1,6 @@
 import { useAppUpdate } from "@/shared/hooks/useAppUpdate";
 import useDialogStore from "@/shared/stores/useDialogStore";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useAuth } from "@clerk/clerk-expo";
 import React, { createContext, useContext, useEffect } from "react";
 
@@ -47,7 +47,7 @@ export const AppUpdateProvider: React.FC<AppUpdateProviderProps> = ({
     if (isSignedIn) {
       const checkUpdatesAfterSignIn = async () => {
         try {
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "User signed in - checking for app updates",
             "APP_UPDATE_PROVIDER"
           );
@@ -57,10 +57,7 @@ export const AppUpdateProvider: React.FC<AppUpdateProviderProps> = ({
             await checkForUpdates();
           }, 2000);
         } catch (error) {
-          GlobalErrorHandler.logError(
-            error,
-            "Failed to check updates after sign in"
-          );
+          Logger.logError(error, "Failed to check updates after sign in");
         }
       };
 

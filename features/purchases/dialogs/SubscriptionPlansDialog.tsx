@@ -1,5 +1,5 @@
 import { useI18n } from "@/shared/hooks/useI18n";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
@@ -46,10 +46,7 @@ export const SubscriptionPlansDialog: React.FC<
         setPackages(offering.availablePackages);
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error,
-        "Failed to load subscription packages"
-      );
+      Logger.logError(error, "Failed to load subscription packages");
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +79,7 @@ export const SubscriptionPlansDialog: React.FC<
             );
           }
         } catch (error) {
-          GlobalErrorHandler.logError(error, "Feature sponsor purchase failed");
+          Logger.logError(error, "Feature sponsor purchase failed");
         } finally {
           setIsPurchasing(false);
         }
@@ -116,7 +113,7 @@ export const SubscriptionPlansDialog: React.FC<
             );
           }
         } catch (error) {
-          GlobalErrorHandler.logError(error, "Subscription purchase failed");
+          Logger.logError(error, "Subscription purchase failed");
         } finally {
           setIsPurchasing(false);
         }
@@ -132,7 +129,7 @@ export const SubscriptionPlansDialog: React.FC<
         { text: t("ok") },
       ]);
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to restore purchases");
+      Logger.logError(error, "Failed to restore purchases");
     } finally {
       setIsPurchasing(false);
     }

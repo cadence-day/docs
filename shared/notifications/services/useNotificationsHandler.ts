@@ -3,7 +3,7 @@
 
 import useNotificationSettingsStore from "@/shared/stores/resources/useNotificationsStore";
 import type { Notification } from "@/shared/types/models/notification";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { getClerkInstance } from "@clerk/clerk-expo";
 import * as Notifications from "expo-notifications";
 
@@ -21,12 +21,12 @@ export class useNotificationHandler {
   static async initialize(): Promise<void> {
     try {
       await this.store.getState().initializeForCurrentUser();
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Notification settings initialized",
         "NotificationManager.initialize",
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationManager.initialize",
       );
@@ -40,14 +40,14 @@ export class useNotificationHandler {
       const { status } = await Notifications.requestPermissionsAsync();
       const granted = status === "granted";
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `Notification permissions ${granted ? "granted" : "denied"}`,
         "NotificationManager.requestPermissions",
       );
 
       return granted;
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationManager.requestPermissions",
       );
@@ -62,7 +62,7 @@ export class useNotificationHandler {
     try {
       // Check if user is authenticated first
       if (!getClerkInstance().user?.id) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "User not authenticated yet, deferring push token update",
           "useNotificationHandler.updatePushToken",
         );
@@ -87,13 +87,13 @@ export class useNotificationHandler {
         }
       }
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Push token updated in notification settings",
         "NotificationManager.updatePushToken",
         { token: token.substring(0, 10) + "..." },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationManager.updatePushToken",
         { token: token?.substring(0, 10) + "..." },
@@ -113,7 +113,7 @@ export class useNotificationHandler {
 
       return await this.store.getState().getNotificationSettings(userId);
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationManager.getCurrentUserSettings",
       );
@@ -150,13 +150,13 @@ export class useNotificationHandler {
         });
       }
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Notification preferences updated",
         "NotificationManager.updatePreferences",
         preferences,
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationManager.updatePreferences",
         preferences,
@@ -172,7 +172,7 @@ export class useNotificationHandler {
       const settings = await this.getCurrentUserSettings();
       return settings?.push_enabled ?? false;
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationManager.isPushEnabled",
       );
@@ -187,7 +187,7 @@ export class useNotificationHandler {
     try {
       const settings = await this.getCurrentUserSettings();
       if (!settings?.push_enabled) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Push notifications disabled, skipping scheduling",
           "NotificationManager.scheduleNotifications",
         );
@@ -217,7 +217,7 @@ export class useNotificationHandler {
         );
       }
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Notifications scheduled successfully",
         "NotificationManager.scheduleNotifications",
         {
@@ -226,7 +226,7 @@ export class useNotificationHandler {
         },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationManager.scheduleNotifications",
       );
@@ -254,7 +254,7 @@ export class useNotificationHandler {
         trigger,
       });
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationManager.scheduleTimeBasedNotification",
         { time, title, body, data },
@@ -271,7 +271,7 @@ export const useNotificationStore = useNotificationSettingsStore;
   try {
     await useNotificationHandler.initialize();
   } catch (error) {
-    GlobalErrorHandler.logError(
+    Logger.logError(
       error,
       "notificationsStore auto-initialization",
     );
