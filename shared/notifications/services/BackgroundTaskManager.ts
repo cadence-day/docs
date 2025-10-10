@@ -1,5 +1,5 @@
 import useNotificationStore from "@/shared/stores/resources/useNotificationsStore";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as BackgroundTask from "expo-background-task";
 import * as Notifications from "expo-notifications";
 import * as TaskManager from "expo-task-manager";
@@ -36,12 +36,12 @@ export class BackgroundTaskManager {
       await this.registerBackgroundTask();
       await this.scheduleBackgroundTask();
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Background task manager initialized",
         "BackgroundTaskManager.initialize",
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.initialize",
       );
@@ -61,7 +61,7 @@ export class BackgroundTaskManager {
             await this.processScheduledNotifications();
             return BackgroundTask.BackgroundTaskResult.Success;
           } catch (error) {
-            GlobalErrorHandler.logError(
+            Logger.logError(
               error,
               "BackgroundTaskManager.backgroundTask",
             );
@@ -72,12 +72,12 @@ export class BackgroundTaskManager {
 
       this.isRegistered = true;
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Background task registered successfully",
         "BackgroundTaskManager.registerBackgroundTask",
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.registerBackgroundTask",
       );
@@ -93,7 +93,7 @@ export class BackgroundTaskManager {
 
       const status = await BackgroundTask.getStatusAsync();
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `Background fetch scheduled with status: ${status}`,
         "BackgroundTaskManager.scheduleBackgroundTask",
         {
@@ -102,7 +102,7 @@ export class BackgroundTaskManager {
         },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.scheduleBackgroundTask",
       );
@@ -122,12 +122,12 @@ export class BackgroundTaskManager {
         }
       }
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `Processed ${notifications.length} scheduled notifications`,
         "BackgroundTaskManager.processScheduledNotifications",
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.processScheduledNotifications",
       );
@@ -160,7 +160,7 @@ export class BackgroundTaskManager {
       await this.sendNotification(notification);
       await this.removeScheduledNotification(id);
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.triggerScheduledNotificationNow",
         { notificationId: id },
@@ -201,7 +201,7 @@ export class BackgroundTaskManager {
           trigger: triggerInput,
         });
 
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Notification scheduled using Expo Notifications",
           "BackgroundTaskManager.scheduleNotification",
           {
@@ -214,7 +214,7 @@ export class BackgroundTaskManager {
         this.scheduledNotifications.push(notification);
         await this.persistScheduledNotifications();
 
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Notification stored for background processing",
           "BackgroundTaskManager.scheduleNotification",
           {
@@ -225,7 +225,7 @@ export class BackgroundTaskManager {
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.scheduleNotification",
         { notificationId: notification.id },
@@ -247,13 +247,13 @@ export class BackgroundTaskManager {
         trigger: null,
       });
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Notification sent successfully",
         "BackgroundTaskManager.sendNotification",
         { notificationId: notification.id },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.sendNotification",
         { notificationId: notification.id },
@@ -280,7 +280,7 @@ export class BackgroundTaskManager {
         // Scheduler removed - notifications now managed by unified store
       }
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Preferences updated successfully",
         "BackgroundTaskManager.updatePreferences",
         {
@@ -291,7 +291,7 @@ export class BackgroundTaskManager {
         },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.updatePreferences",
       );
@@ -307,12 +307,12 @@ export class BackgroundTaskManager {
 
       // Scheduler removed - notifications now managed by unified store
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "All notifications cancelled",
         "BackgroundTaskManager.cancelAllNotifications",
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.cancelAllNotifications",
       );
@@ -325,12 +325,12 @@ export class BackgroundTaskManager {
       await BackgroundTask.unregisterTaskAsync(NOTIFICATION_TASK_NAME);
       this.isRegistered = false;
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Background task unregistered",
         "BackgroundTaskManager.unregisterBackgroundTask",
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.unregisterBackgroundTask",
       );
@@ -357,7 +357,7 @@ export class BackgroundTaskManager {
         JSON.stringify(this.scheduledNotifications),
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.persistScheduledNotifications",
       );
@@ -374,13 +374,13 @@ export class BackgroundTaskManager {
 
       if (data) {
         this.scheduledNotifications = JSON.parse(data);
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `Loaded ${this.scheduledNotifications.length} scheduled notifications`,
           "BackgroundTaskManager.loadScheduledNotifications",
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.loadScheduledNotifications",
       );
@@ -392,7 +392,7 @@ export class BackgroundTaskManager {
       await this.loadScheduledNotifications();
       await this.processScheduledNotifications();
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "BackgroundTaskManager.checkAndProcessNotifications",
       );

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import i18n, { availableLanguages, locale } from "@/shared/locales";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 
 /**
  * Preferences discovered from the device/runtime Intl environment.
@@ -85,7 +85,7 @@ export const getDeviceDateTimePreferences = (): DateTimePreferences => {
     return result;
   } catch (err) {
     try {
-      GlobalErrorHandler.logError(err, "getDeviceDateTimePreferences", {});
+      Logger.logError(err, "getDeviceDateTimePreferences", {});
     } catch {
       // ignore
     }
@@ -138,7 +138,7 @@ export const formatTimeForDisplay = (
     }).format(date);
   } catch (error) {
     try {
-      GlobalErrorHandler.logError(error, "formatTimeForDisplay", {
+      Logger.logError(error, "formatTimeForDisplay", {
         utcDate,
         prefs,
       });
@@ -216,7 +216,7 @@ export const formatDateWithWeekday = (
     return result;
   } catch (error) {
     try {
-      GlobalErrorHandler.logError(error, "formatDateWithWeekday", {
+      Logger.logError(error, "formatDateWithWeekday", {
         utcDate,
         prefs,
         options,

@@ -1,5 +1,9 @@
 import { SECRETS } from "@/shared/constants/SECRETS";
-import { EncryptionProvider, NetworkProvider } from "@/shared/context";
+import {
+  EncryptionProvider,
+  NetworkProvider,
+  OnboardingProvider,
+} from "@/shared/context";
 import { ToastProvider } from "@/shared/context/ToastProvider";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { getIsDev } from "@/shared/hooks/useDev";
@@ -16,11 +20,12 @@ import * as Sentry from "@sentry/react-native";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { PostHogProvider } from "posthog-react-native";
 import { I18nextProvider } from "react-i18next";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
-import { GlobalErrorHandler } from "../shared/utils/errorHandler";
+import { Logger } from "../shared/utils/errorHandler";
 
 if (
   SECRETS.EXPO_PUBLIC_SENTRY_DSN &&
@@ -72,11 +77,7 @@ if (
     beforeSend(event) {
       // In development, you might want to log to console as well
       if (getIsDev()) {
-        GlobalErrorHandler.logDebug(
-          "Sentry Event Captured",
-          "SENTRY_EVENT",
-          event
-        );
+        Logger.logDebug("Sentry Event Captured", "SENTRY_EVENT", event);
       }
       return event;
     },
@@ -88,9 +89,9 @@ if (
     attachScreenshot: true, // Attach screenshots on errors
     attachViewHierarchy: true, // Attach view hierarchy on errors
   });
-  GlobalErrorHandler.logDebug("Sentry initialized", "SENTRY_INIT");
+  Logger.logDebug("Sentry initialized", "SENTRY_INIT");
 } else {
-  GlobalErrorHandler.logWarning(
+  Logger.logWarning(
     "Sentry DSN is not set or invalid. Sentry is disabled.",
     "SENTRY_INIT",
     { message: SECRETS.EXPO_PUBLIC_SENTRY_DSN }
@@ -118,27 +119,36 @@ const RootLayout = function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <I18nextProvider i18n={i18n}>
-          <NetworkProvider>
-            <EncryptionProvider>
-              <ToastProvider>
-                <ClerkProvider
-                  publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-                  tokenCache={tokenCache}
-                >
-                  <NotificationProvider>
-                    <Slot />
-                  </NotificationProvider>
-                </ClerkProvider>
-              </ToastProvider>
-            </EncryptionProvider>
-          </NetworkProvider>
-          <StatusBar style="auto" />
-        </I18nextProvider>
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <PostHogProvider
+      apiKey={SECRETS.EXPO_PUBLIC_POSTHOG_KEY!}
+      options={{ host: SECRETS.EXPO_PUBLIC_POSTHOG_HOST! }}
+    >
+      <GestureHandlerRootView style={styles.container}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <I18nextProvider i18n={i18n}>
+            <NetworkProvider>
+              <EncryptionProvider>
+                <ToastProvider>
+                  <ClerkProvider
+                    publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+                    tokenCache={tokenCache}
+                  >
+                    <OnboardingProvider>
+                      <NotificationProvider>
+                        <Slot />
+                      </NotificationProvider>
+                    </OnboardingProvider>
+                  </ClerkProvider>
+                </ToastProvider>
+              </EncryptionProvider>
+            </NetworkProvider>
+            <StatusBar style="auto" />
+          </I18nextProvider>
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    </PostHogProvider>
   );
 };
 

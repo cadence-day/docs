@@ -2,7 +2,7 @@ import {
     getAllEncryptionLegacyKeys,
     insertEncryptionKey,
 } from "@/shared/api/resources";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useCallback, useState } from "react";
 import { getLegacyEncryptionKeyFromAsyncStorage } from "../lib/encryptionKey";
 
@@ -42,7 +42,7 @@ export const useLegacyEncryptionKeySync = () => {
 
             if (existingKeys && existingKeys.length > 0) {
                 // Key already exists, no need to insert again
-                GlobalErrorHandler.logDebug(
+                Logger.logDebug(
                     "Legacy encryption key already exists in database",
                     "useLegacyEncryptionKeySync.syncEncryptionKey",
                     { hasLegacyEmail: !!legacyEmail },
@@ -60,13 +60,13 @@ export const useLegacyEncryptionKeySync = () => {
                 throw new Error("Failed to insert encryption key to database");
             }
 
-            GlobalErrorHandler.logDebug(
+            Logger.logDebug(
                 "Legacy encryption key synced to database successfully",
                 "useLegacyEncryptionKeySync.syncEncryptionKey",
                 { legacyEmail },
             );
         } catch (error) {
-            GlobalErrorHandler.logError(
+            Logger.logError(
                 error,
                 "useLegacyEncryptionKeySync.syncEncryptionKey",
                 { operation: "sync_encryption_key", legacyEmail },

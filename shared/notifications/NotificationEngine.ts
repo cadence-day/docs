@@ -11,7 +11,7 @@ import type {
   NotificationType,
 } from "@/shared/notifications/types";
 import useNotificationSettingsStore from "@/shared/stores/resources/useNotificationsStore";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Notifications from "expo-notifications";
 import { AppState, AppStateStatus } from "react-native";
 
@@ -51,7 +51,7 @@ export class NotificationEngine {
     );
 
     if (this.config.enableLogging) {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `NotificationEngine: App state monitoring initialized. Current state: ${this.appState}`,
         "NotificationEngine.setupAppStateMonitoring",
       );
@@ -68,7 +68,7 @@ export class NotificationEngine {
     }
 
     if (this.config.enableLogging) {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `NotificationEngine: App state changed: ${previousState} → ${nextAppState}`,
         "NotificationEngine.handleAppStateChange",
       );
@@ -137,7 +137,7 @@ export class NotificationEngine {
     });
 
     if (this.config.enableLogging) {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `NotificationEngine: Delivered in-app notification`,
         "NotificationEngine.deliverInApp",
         { quoteId: quote.id, type, message: quote.body.substring(0, 100) },
@@ -175,7 +175,7 @@ export class NotificationEngine {
       });
 
       if (this.config.enableLogging) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `NotificationEngine: Scheduled Expo push notification`,
           "NotificationEngine.scheduleExpoPushNotification",
           {
@@ -189,7 +189,7 @@ export class NotificationEngine {
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationEngine.scheduleExpoPushNotification",
         {
@@ -261,7 +261,7 @@ export class NotificationEngine {
 
       if (!settings) {
         if (this.config.enableLogging) {
-          GlobalErrorHandler.logWarning(
+          Logger.logWarning(
             "NotificationEngine: No notification settings found, skipping scheduling",
             "NotificationEngine.scheduleAllNotifications",
           );
@@ -272,7 +272,7 @@ export class NotificationEngine {
       // Check if push notifications are enabled
       if (!settings.push_enabled) {
         if (this.config.enableLogging) {
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "NotificationEngine: Push notifications disabled, skipping scheduling",
             "NotificationEngine.scheduleAllNotifications",
           );
@@ -284,7 +284,7 @@ export class NotificationEngine {
       const { status } = await Notifications.getPermissionsAsync();
       if (status !== "granted") {
         if (this.config.enableLogging) {
-          GlobalErrorHandler.logWarning(
+          Logger.logWarning(
             "NotificationEngine: Notification permissions not granted",
             "NotificationEngine.scheduleAllNotifications",
           );
@@ -331,14 +331,14 @@ export class NotificationEngine {
       }
 
       if (this.config.enableLogging) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `NotificationEngine: Scheduled ${scheduledNotifications.length} recurring notifications`,
           "NotificationEngine.scheduleAllNotifications",
           { scheduledNotifications },
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationEngine.scheduleAllNotifications",
         {},
@@ -388,7 +388,7 @@ export class NotificationEngine {
         await useNotificationHandler.updatePushToken(tokenData.data);
 
         if (this.config.enableLogging) {
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "NotificationEngine: Updated Expo push token",
             "NotificationEngine.updatePushTokenIfNeeded",
             { tokenPrefix: tokenData.data.substring(0, 20) + "..." },
@@ -396,7 +396,7 @@ export class NotificationEngine {
         }
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationEngine.updatePushTokenIfNeeded",
       );
@@ -431,13 +431,13 @@ export class NotificationEngine {
       await Notifications.cancelAllScheduledNotificationsAsync();
 
       if (this.config.enableLogging) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "NotificationEngine: Cancelled all scheduled notifications",
           "NotificationEngine.cancelAllNotifications",
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationEngine.cancelAllNotifications",
         {},
@@ -451,13 +451,13 @@ export class NotificationEngine {
       await Notifications.cancelScheduledNotificationAsync(notificationId);
 
       if (this.config.enableLogging) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `NotificationEngine: Cancelled notification ${notificationId}`,
           "NotificationEngine.cancelNotification",
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationEngine.cancelNotification",
         { notificationId },
@@ -510,13 +510,13 @@ export class NotificationEngine {
       await this.updatePushTokenIfNeeded();
 
       if (this.config.enableLogging) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "NotificationEngine: Initialized successfully",
           "NotificationEngine.initialize",
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationEngine.initialize",
         {},
@@ -537,7 +537,7 @@ export class NotificationEngine {
 
       return granted;
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "NotificationEngine.requestPermissions",
       );
@@ -553,7 +553,7 @@ export class NotificationEngine {
     }
 
     if (this.config.enableLogging) {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "NotificationEngine: Destroyed",
         "NotificationEngine.destroy",
       );

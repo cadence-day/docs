@@ -1,4 +1,4 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { getClerkInstance } from "@clerk/clerk-expo";
 import type * as ExpoImageManipulator from "expo-image-manipulator";
 import type * as ExpoImagePicker from "expo-image-picker";
@@ -26,7 +26,7 @@ const loadNativeModules = async (): Promise<
     if (!ImagePicker || !ImageManipulator) return null;
     return { ImagePicker, ImageManipulator };
   } catch (error) {
-    GlobalErrorHandler.logError(error, "NATIVE_MODULES_NOT_AVAILABLE");
+    Logger.logError(error, "NATIVE_MODULES_NOT_AVAILABLE");
     return null;
   }
 };
@@ -82,7 +82,7 @@ export class ProfileImageService {
         quality: 1,
       }) as ImagePickerResult;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "PROFILE_IMAGE_PICKER_FAILED");
+      Logger.logError(error, "PROFILE_IMAGE_PICKER_FAILED");
       return null;
     }
   }
@@ -108,7 +108,7 @@ export class ProfileImageService {
         quality: 1,
       }) as ImagePickerResult;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "PROFILE_CAMERA_FAILED");
+      Logger.logError(error, "PROFILE_CAMERA_FAILED");
       return null;
     }
   }
@@ -131,7 +131,7 @@ export class ProfileImageService {
 
       return result.uri;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "PROFILE_IMAGE_PROCESSING_FAILED", {
+      Logger.logError(error, "PROFILE_IMAGE_PROCESSING_FAILED", {
         originalUri: uri,
       });
       return uri;
@@ -166,7 +166,7 @@ export class ProfileImageService {
       }
       return `data:image/jpeg;base64,${base64String}`;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "BASE64_CONVERSION_FAILED", { uri });
+      Logger.logError(error, "BASE64_CONVERSION_FAILED", { uri });
       throw new Error("Failed to convert image to base64");
     }
   }
@@ -209,7 +209,7 @@ export class ProfileImageService {
 
       return { success: true, url: profileImageUrl };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "CLERK_PROFILE_IMAGE_UPLOAD_FAILED", {
+      Logger.logError(error, "CLERK_PROFILE_IMAGE_UPLOAD_FAILED", {
         imageUri,
         error: error instanceof Error ? error.message : "Unknown error",
       });
@@ -230,7 +230,7 @@ export class ProfileImageService {
       await currentUser.setProfileImage({ file: null });
       return true;
     } catch (error) {
-      GlobalErrorHandler.logError(error, "CLERK_PROFILE_IMAGE_DELETE_FAILED", {
+      Logger.logError(error, "CLERK_PROFILE_IMAGE_DELETE_FAILED", {
         userId: currentUser?.id,
         error: error instanceof Error ? error.message : "Unknown error",
       });

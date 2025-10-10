@@ -2,7 +2,7 @@ import { CONTAINER } from "@/shared/constants/CONTAINER";
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { useI18n } from "@/shared/hooks/useI18n";
 import type { AppVersionInfo } from "@/shared/services/AppUpdateService";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
 import { Linking, Platform, StyleSheet, View } from "react-native";
@@ -28,7 +28,7 @@ export const AppUpdateDialog: React.FC<AppUpdateDialogProps> = ({
       const storeUrl = versionInfo.storeUrl;
 
       if (!storeUrl) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "No store URL available for app update",
           "APP_UPDATE_DIALOG"
         );
@@ -49,17 +49,13 @@ export const AppUpdateDialog: React.FC<AppUpdateDialogProps> = ({
         }
       }
 
-      GlobalErrorHandler.logDebug(
-        "User opened app store for update",
-        "APP_UPDATE_DIALOG",
-        {
-          platform: Platform.OS,
-          currentVersion: versionInfo.currentVersion,
-          latestVersion: versionInfo.latestVersion,
-        }
-      );
+      Logger.logDebug("User opened app store for update", "APP_UPDATE_DIALOG", {
+        platform: Platform.OS,
+        currentVersion: versionInfo.currentVersion,
+        latestVersion: versionInfo.latestVersion,
+      });
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to open app store for update");
+      Logger.logError(error, "Failed to open app store for update");
     }
   };
 

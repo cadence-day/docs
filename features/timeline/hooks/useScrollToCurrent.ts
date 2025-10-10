@@ -1,4 +1,4 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { RefObject } from "react";
 import { Dimensions } from "react-native";
 
@@ -29,7 +29,7 @@ export const scrollToIndexAtOneThird = (
     scrollRef.current?.scrollTo({ x: targetScrollX, animated: true });
   } catch (err) {
     // Route warnings through global handler for consistent reporting
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       "scrollToIndexAtOneThird failed",
       "Timeline:scroll",
       { error: err },

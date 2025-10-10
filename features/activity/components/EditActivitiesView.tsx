@@ -4,7 +4,7 @@ import { CONTAINER } from "@/shared/constants/CONTAINER";
 import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { useI18n } from "@/shared/hooks/useI18n";
 import { generalStyles } from "@/shared/styles/general";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -222,7 +222,7 @@ const EditActivitiesView: React.FC<EditActivitiesViewProps> = ({
                     try {
                       await handleEnableActivity(activity);
                     } catch (error) {
-                      GlobalErrorHandler.logError(error, "ENABLE_ACTIVITY", {
+                      Logger.logError(error, "ENABLE_ACTIVITY", {
                         activityId: activity.id,
                       });
                     }

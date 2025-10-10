@@ -1,6 +1,6 @@
 // useTimelineRefresh.ts
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
 
@@ -32,10 +32,9 @@ export const useTimelineRefresh = () => {
       // Fetch fresh timeslices for yesterday and today
       const storeState = useTimeslicesStore.getState();
       const fetchFn = storeState.getTimeslicesFromTo;
-      const fetched =
-        typeof fetchFn === "function"
-          ? await fetchFn(startOfYesterday, startOfTomorrow)
-          : [];
+      const fetched = typeof fetchFn === "function"
+        ? await fetchFn(startOfYesterday, startOfTomorrow)
+        : [];
 
       // Update the store directly with fresh data
       if (fetched && fetched.length > 0) {
@@ -55,10 +54,10 @@ export const useTimelineRefresh = () => {
             };
           });
         } catch (err) {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             err as Error,
             "TIMELINE_REFRESH:SET_STATE",
-            { fetchedCount: fetched.length }
+            { fetchedCount: fetched.length },
           );
         }
       }
@@ -66,17 +65,17 @@ export const useTimelineRefresh = () => {
       // Haptic feedback
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "TIMELINE_REFRESH", {});
+      Logger.logError(error as Error, "TIMELINE_REFRESH", {});
       // Set error state if available
       try {
         setError(
-          error instanceof Error ? error.message : "Failed to refresh timeline"
+          error instanceof Error ? error.message : "Failed to refresh timeline",
         );
       } catch (err) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to set refresh error",
           "TIMELINE_REFRESH",
-          { error: err }
+          { error: err },
         );
       }
     } finally {

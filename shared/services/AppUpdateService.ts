@@ -1,4 +1,4 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Application from "expo-application";
 import { Platform } from "react-native";
 
@@ -42,7 +42,7 @@ class AppUpdateService {
   getCurrentVersion(): string {
     const version = Application.nativeApplicationVersion;
     if (!version) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Unable to retrieve current app version",
         "APP_UPDATE_SERVICE",
       );
@@ -57,7 +57,7 @@ class AppUpdateService {
   getCurrentBuildNumber(): string {
     const buildNumber = Application.nativeBuildVersion;
     if (!buildNumber) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Unable to retrieve current build number",
         "APP_UPDATE_SERVICE",
       );
@@ -96,7 +96,7 @@ class AppUpdateService {
       const updateRequired = updateAvailable &&
         this.isUpdateRequired(currentVersion, latestVersion);
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "iOS App Store version check completed",
         "APP_UPDATE_SERVICE",
         {
@@ -116,7 +116,7 @@ class AppUpdateService {
         storeUrl: appData.trackViewUrl,
       };
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "Failed to check iOS App Store for updates",
       );
@@ -140,7 +140,7 @@ class AppUpdateService {
     // For Android, we'll return the current version info with store URL
     // In a production app, you might want to implement a custom backend service
     // that checks the Play Store or use Google's In-App Updates API
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       "Android Play Store version check - using fallback method",
       "APP_UPDATE_SERVICE",
       { currentVersion },
@@ -167,7 +167,7 @@ class AppUpdateService {
         throw new Error(`Unsupported platform: ${Platform.OS}`);
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, "App update check failed");
+      Logger.logError(error, "App update check failed");
 
       return {
         currentVersion: this.getCurrentVersion(),
@@ -203,7 +203,10 @@ class AppUpdateService {
    * Returns true for major (x) or minor (y) version changes
    * Returns false for patch (z) version changes only
    */
-  private isUpdateRequired(currentVersion: string, latestVersion: string): boolean {
+  private isUpdateRequired(
+    currentVersion: string,
+    latestVersion: string,
+  ): boolean {
     const currentParts = currentVersion.split(".").map(Number);
     const latestParts = latestVersion.split(".").map(Number);
 
@@ -216,11 +219,12 @@ class AppUpdateService {
 
     // Force update if major or minor version changed
     const majorChanged = latestMajor > currentMajor;
-    const minorChanged = latestMajor === currentMajor && latestMinor > currentMinor;
+    const minorChanged = latestMajor === currentMajor &&
+      latestMinor > currentMinor;
 
     const isRequired = majorChanged || minorChanged;
 
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       "Update requirement check",
       "APP_UPDATE_SERVICE",
       {
@@ -229,7 +233,7 @@ class AppUpdateService {
         majorChanged,
         minorChanged,
         isRequired,
-      }
+      },
     );
 
     return isRequired;

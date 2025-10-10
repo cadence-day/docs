@@ -6,7 +6,7 @@ import {
   useTimeslicesStore,
 } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { timeslicesParser } from "../utils";
@@ -60,7 +60,7 @@ export function useReflectionData(
       setIsLoading(true);
       setError(null);
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Starting refetch for date range",
         "useReflectionData",
         {
@@ -94,7 +94,7 @@ export function useReflectionData(
           notesStoreState.getUserNotes(currentUserId),
         ]);
 
-      GlobalErrorHandler.logDebug("Fetch results", "useReflectionData", {
+      Logger.logDebug("Fetch results", "useReflectionData", {
         timeslicesStatus: timeslicesResult.status,
         activitiesStatus: activitiesResult.status,
         statesStatus: statesResult.status,
@@ -105,7 +105,7 @@ export function useReflectionData(
       if (timeslicesResult.status === "fulfilled" && timeslicesResult.value) {
         const fetchedTimeslices = timeslicesResult.value;
 
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `Fetched ${fetchedTimeslices.length} timeslices`,
           "useReflectionData",
         );
@@ -127,7 +127,7 @@ export function useReflectionData(
           });
         }
       } else if (timeslicesResult.status === "rejected") {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to refetch timeslices",
           "useReflectionData",
           {
@@ -136,7 +136,7 @@ export function useReflectionData(
             toDate: toDate.toISOString(),
           },
         );
-        GlobalErrorHandler.logError(
+        Logger.logError(
           timeslicesResult.reason,
           "useReflectionData.refetch.timeslices",
           {
@@ -154,7 +154,7 @@ export function useReflectionData(
       // Handle activities result - update the activities store
       if (activitiesResult.status === "fulfilled" && activitiesResult.value) {
         const fetchedActivities = activitiesResult.value;
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `Fetched ${fetchedActivities.length} activities`,
           "useReflectionData",
         );
@@ -180,7 +180,7 @@ export function useReflectionData(
           });
         }
       } else if (activitiesResult.status === "rejected") {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to refetch activities",
           "useReflectionData",
           {
@@ -189,7 +189,7 @@ export function useReflectionData(
             toDate: toDate.toISOString(),
           },
         );
-        GlobalErrorHandler.logError(
+        Logger.logError(
           activitiesResult.reason,
           "useReflectionData.refetch.activities",
           {
@@ -202,7 +202,7 @@ export function useReflectionData(
       // Handle states result - update the states store
       if (statesResult.status === "fulfilled" && statesResult.value) {
         const fetchedStates = statesResult.value;
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `Fetched ${fetchedStates.length} states`,
           "useReflectionData",
         );
@@ -214,7 +214,7 @@ export function useReflectionData(
           }));
         }
       } else if (statesResult.status === "rejected") {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to refetch states",
           "useReflectionData",
           {
@@ -223,7 +223,7 @@ export function useReflectionData(
             toDate: toDate.toISOString(),
           },
         );
-        GlobalErrorHandler.logError(
+        Logger.logError(
           statesResult.reason,
           "useReflectionData.refetch.states",
           {
@@ -237,7 +237,7 @@ export function useReflectionData(
         ? err.message
         : "Failed to refetch reflection data";
       setError(errorMessage);
-      GlobalErrorHandler.logError(err, "useReflectionData.refetch", {
+      Logger.logError(err, "useReflectionData.refetch", {
         fromDate: fromDate.toISOString(),
         toDate: toDate.toISOString(),
       });
@@ -272,7 +272,7 @@ export function useReflectionData(
       return startTime >= fromDate && startTime <= toDate;
     });
 
-    GlobalErrorHandler.logDebug("Syncing timeslices", "useReflectionData", {
+    Logger.logDebug("Syncing timeslices", "useReflectionData", {
       allTimeslicesCount: allTimeslices.length,
       filteredCount: filteredTimeslices.length,
       dateRange:
@@ -284,12 +284,12 @@ export function useReflectionData(
 
   // Parse timeslices for reflection display
   useEffect(() => {
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       `Parsing ${timeslices.length} timeslices`,
       "useReflectionData",
     );
     const parsed = timeslicesParser(timeslices, currentLocale);
-    GlobalErrorHandler.logDebug("Parsed timeslices", "useReflectionData", {
+    Logger.logDebug("Parsed timeslices", "useReflectionData", {
       timeslicesCount: timeslices.length,
       parsedDatesCount: Object.keys(parsed).length,
       sampleParsedKeys: Object.keys(parsed).slice(0, 3),

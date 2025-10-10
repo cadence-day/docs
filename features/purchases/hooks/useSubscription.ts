@@ -1,5 +1,5 @@
 import { useProfileStore } from "@/features/profile/stores/useProfileStore";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { revenueCatService } from "../services/RevenueCatService";
 import type {
@@ -35,7 +35,7 @@ export function useSubscription(): UseSubscriptionReturn {
 
       updateSettings({ subscriptionPlan: plan });
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to check subscription status");
+      Logger.logError(error, "Failed to check subscription status");
       // Set to free plan and empty entitlements on error to prevent blocking UI
       setSubscriptionPlan("free");
       setActiveEntitlements([]);
@@ -57,7 +57,7 @@ export function useSubscription(): UseSubscriptionReturn {
         await checkSubscription();
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, "Failed to restore purchases");
+      Logger.logError(error, "Failed to restore purchases");
     } finally {
       setIsLoading(false);
     }
@@ -81,7 +81,7 @@ export function useSubscription(): UseSubscriptionReturn {
         await revenueCatService.configure();
         unsubscribe = revenueCatService.addCustomerInfoUpdateListener(
           (info) => {
-            GlobalErrorHandler.logDebug(
+            Logger.logDebug(
               "CustomerInfo updated via listener",
               "REVENUECAT_TEST",
               { info },
@@ -105,7 +105,7 @@ export function useSubscription(): UseSubscriptionReturn {
           },
         );
       } catch (error) {
-        GlobalErrorHandler.logError(error, "Failed to add RevenueCat listener");
+        Logger.logError(error, "Failed to add RevenueCat listener");
       }
     };
 

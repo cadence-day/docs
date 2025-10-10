@@ -21,7 +21,7 @@ import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { CdButton } from "../../shared/components";
 import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
-import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
+import { Logger } from "../../shared/utils/errorHandler";
 
 const FeatureRequestScreen = () => {
   const [title, setTitle] = useState("");
@@ -80,7 +80,7 @@ const FeatureRequestScreen = () => {
           email:
             user?.primaryEmailAddress?.emailAddress || "unknown@cadence.day",
         });
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "FEATURE_REQUEST_SUBMITTED",
           "settings.feature-request",
           { feedback }
@@ -99,7 +99,7 @@ const FeatureRequestScreen = () => {
         ]
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         "Failed to submit feature request",
         "FEATURE_REQUEST_ERROR",
         { error, userId: user?.id ?? null }

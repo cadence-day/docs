@@ -5,7 +5,7 @@ import * as Sentry from "@sentry/react-native";
  * Global error handler that routes errors to Sentry in production
  * or console in development environment
  */
-export class GlobalErrorHandler {
+export class Logger {
   /**
    * Set user context for Sentry
    * @param user - User information
@@ -223,10 +223,10 @@ export class GlobalErrorHandler {
  */
 export const useErrorHandler = () => {
   return {
-    logError: GlobalErrorHandler.logError,
-    logWarning: GlobalErrorHandler.logWarning,
-    logDebug: GlobalErrorHandler.logDebug,
-    setUserContext: GlobalErrorHandler.setUserContext,
-    addBreadcrumb: GlobalErrorHandler.addBreadcrumb,
+    logError: Logger.logError,
+    logWarning: Logger.logWarning,
+    logDebug: Logger.logDebug,
+    setUserContext: Logger.setUserContext,
+    addBreadcrumb: Logger.addBreadcrumb,
   };
 };

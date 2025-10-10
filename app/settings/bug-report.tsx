@@ -20,7 +20,7 @@ import { CdButton } from "@/shared/components";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 
 export default function BugReportScreen() {
@@ -119,26 +119,22 @@ export default function BugReportScreen() {
         });
       }
 
-      GlobalErrorHandler.logError(
-        new Error(`Bug report - ${ticketId}`),
-        "BUG_REPORT",
-        {
-          ticketId,
-          userId: user?.id,
-          email:
-            user?.primaryEmailAddress?.emailAddress ||
-            user?.emailAddresses?.[0]?.emailAddress,
-          title: title.trim(),
-          description: description.trim(),
-          stepsToReproduce: stepsToReproduce.trim(),
-          expectedBehavior: expectedBehavior.trim(),
-          actualBehavior: actualBehavior.trim(),
-          deviceInfo,
-          appVersion: Constants.expoConfig?.version,
-          sentryEventId,
-          timestamp: new Date().toISOString(),
-        }
-      );
+      Logger.logError(new Error(`Bug report - ${ticketId}`), "BUG_REPORT", {
+        ticketId,
+        userId: user?.id,
+        email:
+          user?.primaryEmailAddress?.emailAddress ||
+          user?.emailAddresses?.[0]?.emailAddress,
+        title: title.trim(),
+        description: description.trim(),
+        stepsToReproduce: stepsToReproduce.trim(),
+        expectedBehavior: expectedBehavior.trim(),
+        actualBehavior: actualBehavior.trim(),
+        deviceInfo,
+        appVersion: Constants.expoConfig?.version,
+        sentryEventId,
+        timestamp: new Date().toISOString(),
+      });
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
@@ -160,7 +156,7 @@ export default function BugReportScreen() {
         ]
       );
     } catch (error) {
-      GlobalErrorHandler.logError(error, "BUG_REPORT_FAILED", {
+      Logger.logError(error, "BUG_REPORT_FAILED", {
         userId: user?.id,
         title: title.trim(),
       });

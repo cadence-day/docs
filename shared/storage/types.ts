@@ -28,6 +28,7 @@ export type StorageKeys = {
   USER_PROFILE: "user_profile";
   USER_SETTINGS: "user_settings";
   USER_ONBOARDING: "user_onboarding";
+  USER_LAST_SEEN_VERSION: "user_last_seen_version";
 };
 
 export const STORAGE_KEYS: StorageKeys = {
@@ -45,4 +46,5 @@ export const STORAGE_KEYS: StorageKeys = {
   USER_PROFILE: "user_profile",
   USER_SETTINGS: "user_settings",
   USER_ONBOARDING: "user_onboarding",
+  USER_LAST_SEEN_VERSION: "user_last_seen_version",
 } as const;

@@ -1,4 +1,4 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 
 export interface ClerkErrorMapping {
   email: string | null;
@@ -39,7 +39,7 @@ export const parseClerkErrors = (error: any): ParsedClerkError => {
     generalError = fallbackMessage;
     toastMessage = fallbackMessage;
 
-    GlobalErrorHandler.logError(
+    Logger.logError(
       new Error(fallbackMessage),
       "AUTH_CLERK_EMPTY_ERROR",
       { errorType: "empty_error" },
@@ -102,7 +102,7 @@ export const parseClerkErrors = (error: any): ParsedClerkError => {
     });
 
     // Log the Clerk errors using global error handler
-    GlobalErrorHandler.logError(error, "AUTH_CLERK_VALIDATION", {
+    Logger.logError(error, "AUTH_CLERK_VALIDATION", {
       errorCount: error.errors.length,
       errorDetails,
       fieldErrorsGenerated: fieldErrors,
@@ -124,7 +124,7 @@ export const parseClerkErrors = (error: any): ParsedClerkError => {
     generalError = fallbackMessage;
     toastMessage = fallbackMessage;
 
-    GlobalErrorHandler.logError(error, "AUTH_CLERK_UNEXPECTED_FORMAT", {
+    Logger.logError(error, "AUTH_CLERK_UNEXPECTED_FORMAT", {
       errorType: "unexpected_format",
       originalError: error,
       fallbackMessage,
@@ -152,7 +152,7 @@ export const createClerkErrorClearer = (
   return (field: keyof ClerkErrorMapping) => {
     setClerkErrors((prev) => ({ ...prev, [field]: null }));
 
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       `Cleared Clerk error for field: ${field}`,
       "AUTH_CLERK_ERROR_CLEAR",
     );
@@ -174,7 +174,7 @@ export const clearAllClerkErrors = (
     general: null,
   });
 
-  GlobalErrorHandler.logDebug(
+  Logger.logDebug(
     "Cleared all Clerk errors",
     "AUTH_CLERK_ERROR_CLEAR_ALL",
   );
@@ -212,7 +212,7 @@ export const getClerkErrorMessage = (
     CLERK_ERROR_MESSAGES[code as keyof typeof CLERK_ERROR_MESSAGES] || fallback;
 
   if (friendlyMessage !== fallback) {
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       `Mapped Clerk error code '${code}' to friendly message`,
       "AUTH_CLERK_ERROR_MAPPING",
       { code, friendlyMessage },
@@ -237,7 +237,7 @@ export const handleAuthError = (
       "constructor" in (error as Record<string, unknown>)
     ? (error as Error).constructor?.name
     : typeof error;
-  GlobalErrorHandler.logError(error, `AUTH_${context}`, {
+  Logger.logError(error, `AUTH_${context}`, {
     authContext: context,
     errorType,
     ...extra,
@@ -255,7 +255,7 @@ export const handleAuthWarning = (
   context: string,
   extra?: Record<string, any>,
 ) => {
-  GlobalErrorHandler.logWarning(message, `AUTH_${context}`, {
+  Logger.logWarning(message, `AUTH_${context}`, {
     authContext: context,
     ...extra,
   });

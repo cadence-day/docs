@@ -12,7 +12,7 @@ export interface NotificationTiming {
 }
 import * as notificationsApi from "@/shared/api/resources/notifications";
 import type { Notification } from "@/shared/types/models/notification";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { getClerkInstance } from "@clerk/clerk-expo";
 import { create } from "zustand";
 import {
@@ -169,7 +169,7 @@ const useNotificationSettingsStore = create<NotificationSettingsStore>((
         if (!userId) {
             // User not yet authenticated, skip initialization
             // This can happen during app startup before Clerk is ready
-            GlobalErrorHandler.logDebug(
+            Logger.logDebug(
                 "User not authenticated yet, skipping notification initialization",
                 "initializeForCurrentUser",
             );

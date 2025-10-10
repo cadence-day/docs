@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Rect } from "react-native-svg";
-import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
+import { Logger } from "../../shared/utils/errorHandler";
 
 interface NoInternetScreenProps {
   onRetry?: () => Promise<void>;
@@ -26,7 +26,7 @@ const NoInternetFallback: React.FC<NoInternetScreenProps> = ({ onRetry }) => {
         try {
           retry();
         } catch (e) {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             "NoInternetFallback",
             "Error calling retry from NetworkProvider",
             e instanceof Error ? e : undefined

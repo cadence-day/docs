@@ -6,7 +6,7 @@ import {
 } from "@/shared/stores";
 import useNotificationSettingsStore from "@/shared/stores/resources/useNotificationsStore";
 import type { Activity } from "@/shared/types/models/activity";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import * as Notifications from "expo-notifications";
 import { useState } from "react";
@@ -28,7 +28,7 @@ export function useOnboardingCompletion() {
   const insertActivities = useActivitiesStore((state) =>
     state.insertActivities
   );
-  const { categories, getAllCategories } = useActivityCategoriesStore();
+  const { categories, refresh } = useActivityCategoriesStore();
   const { resetStore } = useOnboardingStore();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -40,7 +40,7 @@ export function useOnboardingCompletion() {
 
   const requestNotificationPermissions = async (): Promise<boolean> => {
     try {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Requesting notification permissions during onboarding",
         "onboarding:requestNotificationPermissions",
       );
@@ -49,7 +49,7 @@ export function useOnboardingCompletion() {
       let finalStatus = existingStatus;
 
       if (existingStatus !== "granted") {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Requesting notification permissions from user",
           "onboarding:requestNotificationPermissions",
         );
@@ -58,7 +58,7 @@ export function useOnboardingCompletion() {
       }
 
       if (finalStatus === "granted") {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Notification permissions granted, setting default preferences",
           "onboarding:requestNotificationPermissions",
         );
@@ -97,7 +97,7 @@ export function useOnboardingCompletion() {
           await notificationEngine.initialize();
           await notificationEngine.scheduleAllNotifications();
         } catch (error) {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             error,
             "onboarding:requestNotificationPermissions:setup",
           );
@@ -107,13 +107,13 @@ export function useOnboardingCompletion() {
         return true;
       }
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Notification permissions denied or error occurred",
         "onboarding:requestNotificationPermissions",
       );
       return false;
     } catch (error) {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Error requesting notification permissions",
         "onboarding:requestNotificationPermissions",
         { error },
@@ -127,20 +127,20 @@ export function useOnboardingCompletion() {
     userId: string,
   ): Promise<Activity[]> => {
     try {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Creating onboarding activities",
         "onboarding:createActivities",
         { selectedActivityIds, userId },
       );
       // First, ensure we have activity categories loaded
-      await getAllCategories();
+      await refresh();
 
       const selectedPresets = ACTIVITY_PRESETS.filter((preset) =>
         selectedActivityIds.includes(preset.id)
       );
 
       // Print all loaded categories for debugging
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Loaded activity categories before mapping presets",
         "onboarding:createActivities",
         { categories },
@@ -155,7 +155,7 @@ export function useOnboardingCompletion() {
               cat.key === preset.categoryKey
             );
             if (!category || !category.id) {
-              GlobalErrorHandler.logDebug(
+              Logger.logDebug(
                 "Category not found for activity preset",
                 "onboarding:createActivities",
                 { preset },
@@ -179,14 +179,14 @@ export function useOnboardingCompletion() {
 
       // Use the activities store to create all activities at once
       const createdActivities = await insertActivities(activityData);
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Onboarding activities created successfully",
         "onboarding:createActivities",
         { createdActivities },
       );
       return createdActivities;
     } catch (error) {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Error creating onboarding activities",
         "onboarding:createActivities",
         { error },
@@ -207,7 +207,7 @@ export function useOnboardingCompletion() {
 
     setIsProcessing(true);
 
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       "Starting onboarding completion workflow",
       "onboarding:completeOnboarding",
       { data },
@@ -218,13 +218,13 @@ export function useOnboardingCompletion() {
 
       // Step 1: Handle notification permissions
       if (data.allowNotifications) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "User opted in for notifications during onboarding",
           "onboarding:completeOnboarding",
         );
         notificationsEnabled = await requestNotificationPermissions();
         if (!notificationsEnabled) {
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Notification permissions not enabled",
             "onboarding:completeOnboarding",
           );
@@ -237,21 +237,21 @@ export function useOnboardingCompletion() {
 
       // Step 2: Create selected activities (only if activities are selected)
       if (data.selectedActivities.length > 0 && user?.id) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Creating activities as part of onboarding",
           "onboarding:completeOnboarding",
           { selectedActivities: data.selectedActivities, userId: user.id },
         );
         await createActivities(data.selectedActivities, user.id);
       } else {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "No activities selected or no user ID - skipping activity creation",
           "onboarding:completeOnboarding",
         );
       }
 
       // Step 3: Mark onboarding as complete - flush onboarding store
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Onboarding completed successfully - flushing onboarding store",
         "onboarding:completeOnboarding",
       );
@@ -260,7 +260,7 @@ export function useOnboardingCompletion() {
       // Step 4: Call completion callback
       onComplete?.();
     } catch (error) {
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Error during onboarding completion",
         "onboarding:completeOnboarding",
         { error },
@@ -277,7 +277,7 @@ export function useOnboardingCompletion() {
   const pushOnboarding = async (): Promise<void> => {
     // This function pushes onboarding data to backend/storage
     // Implementation can be added here if needed
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       "Pushing onboarding data to backend",
       "onboarding:pushOnboarding",
     );

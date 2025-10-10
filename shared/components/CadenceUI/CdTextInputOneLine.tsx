@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { COLORS } from "../../constants/COLORS";
-import { GlobalErrorHandler } from "../../utils/errorHandler";
+import { Logger } from "../../utils/errorHandler";
 
 interface CdTextInputOneLineProps extends Omit<TextInputProps, "onChangeText"> {
   label: string;
@@ -70,7 +70,7 @@ export const CdTextInputOneLine: React.FC<CdTextInputOneLineProps> = ({
           setShowCopiedFeedback(false);
         }, 1500);
       } catch (error) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to copy to clipboard",
           "CLIPBOARD_COPY_ERROR",
           { error }

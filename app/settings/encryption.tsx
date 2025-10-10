@@ -25,7 +25,7 @@ import Toast from "@/shared/components/Toast";
 import { COLORS } from "@/shared/constants/COLORS";
 import { useTheme, useToast } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
 
 export default function EncryptionSettings() {
@@ -62,11 +62,7 @@ export default function EncryptionSettings() {
         setExportFingerprint("");
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "ENCRYPTION_SETTINGS_INIT",
-        {}
-      );
+      Logger.logError(error as Error, "ENCRYPTION_SETTINGS_INIT", {});
       showError(t("failed-to-check-encryption-sta"));
     }
   }, [showError, t]);
@@ -111,7 +107,7 @@ export default function EncryptionSettings() {
       showSuccess(t("key-imported-successfully-fing"));
       await checkEncryptionStatus();
     } catch (error) {
-      GlobalErrorHandler.logError(error as Error, "ENCRYPTION_QR_IMPORT", {});
+      Logger.logError(error as Error, "ENCRYPTION_QR_IMPORT", {});
       showError(t("failed-to-import-key-from-qr-c"));
     } finally {
       setIsLinking(false);
@@ -141,11 +137,7 @@ export default function EncryptionSettings() {
       setPasteValue("");
       await checkEncryptionStatus();
     } catch (error) {
-      GlobalErrorHandler.logError(
-        error as Error,
-        "ENCRYPTION_PASTE_IMPORT",
-        {}
-      );
+      Logger.logError(error as Error, "ENCRYPTION_PASTE_IMPORT", {});
       showError(t("failed-to-import-key-please-tr"));
     } finally {
       setIsLinking(false);

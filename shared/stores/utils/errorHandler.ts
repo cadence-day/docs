@@ -1,11 +1,11 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 
 /**
  * Extracts error message from unknown error type
  */
 export function extractErrorMessage(
   error: unknown,
-  operationName: string
+  operationName: string,
 ): string {
   if (error instanceof Error) {
     return error.message;
@@ -25,7 +25,7 @@ export function createErrorState(error: unknown, operationName: string) {
   const errorMessage = extractErrorMessage(error, operationName);
 
   // Log the error using global error handler
-  GlobalErrorHandler.logError(error, `STORE_${operationName}`, {
+  Logger.logError(error, `STORE_${operationName}`, {
     operationName,
     errorType: error?.constructor?.name || typeof error,
     storeContext: true,

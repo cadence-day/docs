@@ -4,7 +4,7 @@ import { CdButton } from "@/shared/components/CadenceUI";
 import { useI18n } from "@/shared/hooks/useI18n";
 import { useActivitiesStore, useDialogStore } from "@/shared/stores";
 import type { Activity } from "@/shared/types/models/activity";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import React, { useCallback, useEffect, useRef } from "react";
 import {
   ActionSheetIOS,
@@ -53,7 +53,7 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
         useDialogStore.getState().closeDialog(_dialogId);
       }
     } catch (error) {
-      GlobalErrorHandler.logError(error, "UPDATE_ACTIVITY", {
+      Logger.logError(error, "UPDATE_ACTIVITY", {
         activityId: activity?.id,
       });
     }
@@ -78,7 +78,7 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
         },
       });
     } catch (error) {
-      GlobalErrorHandler.logError(error, "PERFORM_DELETE_NOW", {
+      Logger.logError(error, "PERFORM_DELETE_NOW", {
         activityId: activity?.id,
       });
     }
@@ -105,7 +105,7 @@ const EditActivityDialog: React.FC<Props> = ({ _dialogId, activity }) => {
       await disableActivity(activity.id!);
       if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
     } catch (error) {
-      GlobalErrorHandler.logError(error, "DISABLE_ACTIVITY", {
+      Logger.logError(error, "DISABLE_ACTIVITY", {
         activityId: activity.id,
       });
     }

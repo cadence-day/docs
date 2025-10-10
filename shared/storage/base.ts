@@ -1,4 +1,4 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { StorageResult } from "./types";
 
@@ -40,7 +40,7 @@ export class BaseStorage {
 
       return { success: true, data: defaultValue };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "STORAGE_GET_ERROR", {
+      Logger.logError(error, "STORAGE_GET_ERROR", {
         key: namespacedKey,
         operation: "get",
       });
@@ -64,7 +64,7 @@ export class BaseStorage {
 
       return { success: true, data };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "STORAGE_SET_ERROR", {
+      Logger.logError(error, "STORAGE_SET_ERROR", {
         key: namespacedKey,
         operation: "set",
         dataType: typeof data,
@@ -86,7 +86,7 @@ export class BaseStorage {
     try {
       await AsyncStorage.removeItem(namespacedKey);
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `Storage removed: ${namespacedKey}`,
         "STORAGE_REMOVE",
         { key: namespacedKey },
@@ -94,7 +94,7 @@ export class BaseStorage {
 
       return { success: true };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "STORAGE_REMOVE_ERROR", {
+      Logger.logError(error, "STORAGE_REMOVE_ERROR", {
         key: namespacedKey,
         operation: "remove",
       });
@@ -119,7 +119,7 @@ export class BaseStorage {
       if (namespacedKeys.length > 0) {
         await AsyncStorage.multiRemove(namespacedKeys);
 
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `Storage namespace cleared: ${this.namespace}`,
           "STORAGE_CLEAR",
           { namespace: this.namespace, keysRemoved: namespacedKeys.length },
@@ -128,7 +128,7 @@ export class BaseStorage {
 
       return { success: true };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "STORAGE_CLEAR_ERROR", {
+      Logger.logError(error, "STORAGE_CLEAR_ERROR", {
         namespace: this.namespace,
         operation: "clear",
       });
