@@ -28,7 +28,7 @@ export function useOnboardingCompletion() {
   const insertActivities = useActivitiesStore((state) =>
     state.insertActivities
   );
-  const { categories, getAllCategories } = useActivityCategoriesStore();
+  const { categories, refresh } = useActivityCategoriesStore();
   const { resetStore } = useOnboardingStore();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -133,7 +133,7 @@ export function useOnboardingCompletion() {
         { selectedActivityIds, userId },
       );
       // First, ensure we have activity categories loaded
-      await getAllCategories();
+      await refresh();
 
       const selectedPresets = ACTIVITY_PRESETS.filter((preset) =>
         selectedActivityIds.includes(preset.id)
