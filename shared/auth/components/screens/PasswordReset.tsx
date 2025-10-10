@@ -8,7 +8,8 @@ import { useSignIn } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { handleAuthError, parseClerkErrors } from "../../utils";
 import { PASSWORD_REQUIREMENTS } from "../../utils/constants";
 import PasswordRequirement from "../shared/PasswordRequirement";
@@ -35,7 +36,25 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
     password: false,
     repeatPassword: false,
   });
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { toast, showError, showSuccess, hideToast } = useToast();
+
+  // Keyboard visibility listeners
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   // Cooldown timer for resend button
   useEffect(() => {
@@ -312,197 +331,223 @@ const PasswordResetScreen: React.FC<PasswordResetScreenProps> = ({ email }) => {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      <View style={styles.form}>
-        {isSubmitting ? (
-          <View style={styles.centerContent}>
-            <SageIcon status="pulsating" size={200} />
-          </View>
-        ) : (
-          <View style={styles.formContainer}>
-            {step === "code" ? (
-              <>
-                <CdText
-                  variant="body"
-                  size="medium"
-                  style={localStyles.subtitle}
-                >
-                  {t("password-reset.weve-sent-a-6-digit-verification-code-to")}{" "}
-                  {email && (
-                    <CdText
-                      variant="body"
-                      size="medium"
-                      style={localStyles.boldText}
-                    >
-                      {email}
-                    </CdText>
-                  )}
-                </CdText>
-
-                <CdTextInput
-                  value={code}
-                  onChangeText={(newCode) => {
-                    // Only allow numbers and limit to 6 digits
-                    const numericCode = newCode
-                      .replace(/[^0-9]/g, "")
-                      .slice(0, 6);
-                    setCode(numericCode);
-                    // Clear error when user starts typing
-                    if (codeError) {
-                      setCodeError(null);
-                    }
-                  }}
-                  onBlur={() =>
-                    setFieldsTouched((prev) => ({ ...prev, code: true }))
-                  }
-                  error={fieldsTouched.code ? codeError : null}
-                  keyboardType="number-pad"
-                  placeholder={t("password-reset.enter-6-digit-code")}
-                  returnKeyType="done"
-                  onSubmitEditing={onVerifyCodePress}
-                  maxLength={6}
-                  letterSpacing={2}
-                  style={localStyles.codeInput}
-                />
-
-                <View style={localStyles.resendWrapper}>
-                  <CdText
-                    variant="body"
-                    size="small"
-                    style={localStyles.placeholderText}
-                  >
-                    {t("password-reset.didnt-receive-the-code")}
-                  </CdText>
-
-                  <TouchableOpacity
-                    onPress={onResendPress}
-                    disabled={isResending || resendCooldown > 0}
-                    style={[
-                      localStyles.resendButton,
-                      { opacity: resendOpacity },
-                    ]}
-                  >
-                    <CdText
-                      variant="body"
-                      size="medium"
-                      style={localStyles.resendText}
-                    >
-                      {resendText}
-                    </CdText>
-                  </TouchableOpacity>
-                </View>
-              </>
-            ) : (
-              <>
-                <CdText variant="title" size="large" style={styles.title}>
-                  {t("password-reset.set-new-password")}
-                </CdText>
-
-                <CdText
-                  variant="body"
-                  size="medium"
-                  style={localStyles.subtitle}
-                >
-                  {t(
-                    "password-reset.create-a-strong-password-for-your-account"
-                  )}
-                </CdText>
-
-                <CdTextInput
-                  placeholder={t("password-reset.new-password")}
-                  value={password}
-                  onChangeText={(text) => {
-                    setPassword(text);
-                    if (passwordError) {
-                      setPasswordError(null);
-                    }
-                  }}
-                  onBlur={() =>
-                    setFieldsTouched((prev) => ({ ...prev, password: true }))
-                  }
-                  error={fieldsTouched.password ? passwordError : null}
-                  secureTextEntry
-                  textContentType="newPassword"
-                  autoComplete="password-new"
-                  returnKeyType="next"
-                />
-
-                <CdTextInput
-                  placeholder={t("password-reset.repeat-new-password")}
-                  value={repeatPassword}
-                  onChangeText={(text) => {
-                    setRepeatPassword(text);
-                    if (passwordError) {
-                      setPasswordError(null);
-                    }
-                  }}
-                  onBlur={() =>
-                    setFieldsTouched((prev) => ({
-                      ...prev,
-                      repeatPassword: true,
-                    }))
-                  }
-                  error={
-                    fieldsTouched.repeatPassword
-                      ? validatePasswordMatch(password, repeatPassword)
-                      : null
-                  }
-                  secureTextEntry
-                  textContentType="newPassword"
-                  autoComplete="password-new"
-                  returnKeyType="done"
-                  onSubmitEditing={onResetPasswordPress}
-                />
-
-                <PasswordRequirement
-                  password={password}
-                  repeatPassword={repeatPassword}
-                />
-              </>
-            )}
-
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={localStyles.backLinkWrapper}
-            >
-              <CdText
-                variant="link"
-                size="medium"
-                style={localStyles.centerText}
-              >
-                {t("password-reset.back-to-sign-in")}
-              </CdText>
-            </TouchableOpacity>
+      <SafeAreaView style={styles.container}>
+        {/* SageIcon at the top - matching onboarding position */}
+        {!isSubmitting && !isKeyboardVisible && (
+          <View style={styles.topIconContainer}>
+            <SageIcon status="pulsating" size={80} auto={false} />
           </View>
         )}
 
-        <View style={styles.actionButtonContainer}>
-          {step === "code" ? (
-            <CdButton
-              title={t("password-reset.verify-code")}
-              onPress={onVerifyCodePress}
-              variant="text"
-              size="large"
-              disabled={code.length !== 6 || isSubmitting}
-            />
-          ) : (
-            <CdButton
-              title={t("password-reset.reset-password")}
-              onPress={onResetPasswordPress}
-              variant="text"
-              size="large"
-              disabled={!isPasswordValid() || isSubmitting}
-            />
-          )}
-        </View>
-      </View>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={0}
+        >
+          <View style={styles.container}>
 
-      {/* Toast Notification */}
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        isVisible={toast.isVisible}
-        onHide={hideToast}
-      />
+            <View style={styles.form}>
+            {isSubmitting ? (
+              <View style={styles.centerContent}>
+                <SageIcon status="pulsating" size={200} />
+              </View>
+            ) : (
+              <View style={styles.formContainer}>
+                {step === "code" ? (
+                  <>
+                    <CdText
+                      variant="body"
+                      size="medium"
+                      style={localStyles.subtitle}
+                    >
+                      {t(
+                        "password-reset.weve-sent-a-6-digit-verification-code-to"
+                      )}{" "}
+                      {email && (
+                        <CdText
+                          variant="body"
+                          size="medium"
+                          style={localStyles.boldText}
+                        >
+                          {email}
+                        </CdText>
+                      )}
+                    </CdText>
+
+                    <CdTextInput
+                      value={code}
+                      onChangeText={(newCode) => {
+                        // Only allow numbers and limit to 6 digits
+                        const numericCode = newCode
+                          .replace(/[^0-9]/g, "")
+                          .slice(0, 6);
+                        setCode(numericCode);
+                        // Clear error when user starts typing
+                        if (codeError) {
+                          setCodeError(null);
+                        }
+                      }}
+                      onBlur={() =>
+                        setFieldsTouched((prev) => ({ ...prev, code: true }))
+                      }
+                      error={fieldsTouched.code ? codeError : null}
+                      keyboardType="number-pad"
+                      placeholder={t("password-reset.enter-6-digit-code")}
+                      returnKeyType="done"
+                      onSubmitEditing={onVerifyCodePress}
+                      maxLength={6}
+                      letterSpacing={2}
+                      style={localStyles.codeInput}
+                    />
+
+                    <CdButton
+                      title={t("password-reset.verify-code")}
+                      onPress={onVerifyCodePress}
+                      variant="outline"
+                      size="large"
+                      disabled={code.length !== 6 || isSubmitting}
+                    />
+
+                    <View style={localStyles.resendWrapper}>
+                      <CdText
+                        variant="body"
+                        size="small"
+                        style={localStyles.placeholderText}
+                      >
+                        {t("password-reset.didnt-receive-the-code")}
+                      </CdText>
+
+                      <TouchableOpacity
+                        onPress={onResendPress}
+                        disabled={isResending || resendCooldown > 0}
+                        style={[
+                          localStyles.resendButton,
+                          { opacity: resendOpacity },
+                        ]}
+                      >
+                        <CdText
+                          variant="body"
+                          size="medium"
+                          style={localStyles.resendText}
+                        >
+                          {resendText}
+                        </CdText>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <CdText variant="title" size="large" style={styles.titleLarge}>
+                      {t("password-reset.set-new-password")}
+                    </CdText>
+
+                    <CdText
+                      variant="body"
+                      size="medium"
+                      style={localStyles.subtitle}
+                    >
+                      {t(
+                        "password-reset.create-a-strong-password-for-your-account"
+                      )}
+                    </CdText>
+
+                    <CdTextInput
+                      placeholder={t("password-reset.new-password")}
+                      value={password}
+                      onChangeText={(text) => {
+                        setPassword(text);
+                        if (passwordError) {
+                          setPasswordError(null);
+                        }
+                      }}
+                      onBlur={() =>
+                        setFieldsTouched((prev) => ({
+                          ...prev,
+                          password: true,
+                        }))
+                      }
+                      error={fieldsTouched.password ? passwordError : null}
+                      secureTextEntry
+                      textContentType="newPassword"
+                      autoComplete="password-new"
+                      returnKeyType="next"
+                    />
+
+                    <CdTextInput
+                      placeholder={t("password-reset.repeat-new-password")}
+                      value={repeatPassword}
+                      onChangeText={(text) => {
+                        setRepeatPassword(text);
+                        if (passwordError) {
+                          setPasswordError(null);
+                        }
+                      }}
+                      onBlur={() =>
+                        setFieldsTouched((prev) => ({
+                          ...prev,
+                          repeatPassword: true,
+                        }))
+                      }
+                      error={
+                        fieldsTouched.repeatPassword
+                          ? validatePasswordMatch(password, repeatPassword)
+                          : null
+                      }
+                      secureTextEntry
+                      textContentType="newPassword"
+                      autoComplete="password-new"
+                      returnKeyType="done"
+                      onSubmitEditing={onResetPasswordPress}
+                    />
+
+                    <PasswordRequirement
+                      password={password}
+                      repeatPassword={repeatPassword}
+                    />
+
+                    <CdButton
+                      title={t("password-reset.reset-password")}
+                      onPress={onResetPasswordPress}
+                      variant="outline"
+                      size="large"
+                      disabled={!isPasswordValid() || isSubmitting}
+                    />
+                  </>
+                )}
+
+                <TouchableOpacity
+                  onPress={() => router.back()}
+                  style={localStyles.backLinkWrapper}
+                >
+                  <CdText
+                    variant="link"
+                    size="medium"
+                    style={localStyles.centerText}
+                  >
+                    {t("password-reset.back-to-sign-in")}
+                  </CdText>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+          </View>
+        </KeyboardAvoidingView>
+
+        {/* CADENCE text at the bottom - matching onboarding position */}
+        {!isSubmitting && (
+          <CdText variant="title" size="large" style={styles.cadenceText}>
+            CADENCE
+          </CdText>
+        )}
+
+        {/* Toast Notification */}
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          isVisible={toast.isVisible}
+          onHide={hideToast}
+        />
+      </SafeAreaView>
     </LinearGradient>
   );
 };
@@ -512,7 +557,7 @@ export default PasswordResetScreen;
 const localStyles = StyleSheet.create({
   subtitle: {
     marginBottom: 24,
-    textAlign: "center",
+    textAlign: "left",
     color: "#B9B9B9",
   },
   codeInput: {

@@ -12,11 +12,11 @@ const DirectToSignUp = () => {
 
   return (
     <View style={styles.signupContainer}>
-      <CdText variant="body" size="medium" style={styles.signupText}>
+      <CdText variant="body" size="small" style={styles.signupText}>
         {t("dont-have-an-account")}{" "}
       </CdText>
       <TouchableOpacity onPress={handleSignup}>
-        <CdText variant="link" size="medium">
+        <CdText variant="link" size="small">
           {t("sign-up-now")}
         </CdText>
       </TouchableOpacity>
