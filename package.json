@@ -12,7 +12,10 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "lint": "echo 'Linting complete - no linter configured'",
+    "test": "npm run typecheck && npm run build",
+    "preview": "npm run build && npm run serve"
   },
   "dependencies": {
     "@docusaurus/core": "3.9.1",
