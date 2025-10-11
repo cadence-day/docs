@@ -1,25 +1,33 @@
-yangshun:
-  name: Yangshun Tay
-  title: Ex-Meta Staff Engineer, Co-founder GreatFrontEnd
-  url: https://linkedin.com/in/yangshun
-  image_url: https://github.com/yangshun.png
+andrea:
+  name: Andrea Lausevic
+  title: Design Lead, Co-founder at Cadence.day
+  url: https://linkedin.com/in/andrealausevic
+  image_url:
   page: true
   socials:
-    x: yangshunz
-    linkedin: yangshun
-    github: yangshun
-    newsletter: https://www.greatfrontend.com
+    x: andrealausevic
+    linkedin: andrealausevic
 
-slorber:
-  name: Sébastien Lorber
-  title: Docusaurus maintainer
-  url: https://sebastienlorber.com
-  image_url: https://github.com/slorber.png
+bruno:
+  name: Bruno Adam
+  title: Developer Lead, Co-founder at Cadence.day
+  url: https://linkedin.com/in/bruno-adam
+  image_url:
   page:
     # customize the url of the author page at /blog/authors/<permalink>
-    permalink: '/all-sebastien-lorber-articles'
+    permalink: "/all-bruno-adam-articles"
   socials:
-    x: sebastienlorber
-    linkedin: sebastienlorber
-    github: slorber
-    newsletter: https://thisweekinreact.com
+    x: bruadam_
+    linkedin: bruno-adam
+    github: bruadam
+
+oleg:
+  name: Oleg Moshkovich
+  title: Product Lead, Co-founder at Cadence.day
+  url: https://linkedin.com/in/oleg-frolov-1aabbb1b4
+  image_url:
+  page: true
+  socials:
+    x: olegfrolov_
+    linkedin: oleg-frolov-1aabbb1b4
+    github: olegfrolov

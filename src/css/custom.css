@@ -1,30 +1,272 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Cadence.day Documentation - Custom Styling
+ * Designed to match the Cadence mobile app design system
  */
 
-/* You can override the default Infima variables here. */
-:root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+/* Founders Grotesk Font - From Cadence App */
+@font-face {
+  font-family: 'Founders Grotesk';
+  src: url('/fonts/FoundersGrotesk-Regular-BF66175e972ac1c.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+@font-face {
+  font-family: 'Founders Grotesk';
+  src: url('/fonts/FoundersGrotesk-Medium-BF66175e972d694.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Founders Grotesk';
+  src: url('/fonts/FoundersGrotesk-Semibold-BF66175e972c958.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Founders Grotesk';
+  src: url('/fonts/FoundersGrotesk-Bold-BF66175e9700615.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Cadence Design System Variables */
+:root {
+  /* Primary Cadence Purple - from app's color system */
+  --ifm-color-primary: #6646ec;
+  --ifm-color-primary-dark: #5a3dd4;
+  --ifm-color-primary-darker: #5339c8;
+  --ifm-color-primary-darkest: #452fa5;
+  --ifm-color-primary-light: #7a5ef0;
+  --ifm-color-primary-lighter: #8870f2;
+  --ifm-color-primary-lightest: #a999f6;
+  
+  /* Light Theme - Cadence Light Background */
+  --ifm-background-color: #F7F7F6;
+  --ifm-background-surface-color: #ffffff;
+  
+  /* Typography - Founders Grotesk font from Cadence app */
+  --ifm-font-family-base: 'Founders Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --ifm-font-family-monospace: 'SF Mono', Monaco, Menlo, Consolas, 'Courier New', monospace;
+  
+  /* Border Radius - Cadence uses 8px for buttons */
+  --ifm-button-border-radius: 8px;
+  --ifm-card-border-radius: 12px;
+  --ifm-global-radius: 8px;
+  
+  /* Spacing & Shadows */
+  --ifm-global-spacing: 1rem;
+  --ifm-global-shadow-lw: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --ifm-global-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --ifm-global-shadow-tl: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Code & Syntax Highlighting */
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(102, 70, 236, 0.1);
+  
+  /* Border Colors */
+  --ifm-border-color: #e5e5e5;
+  
+  /* Navbar */
+  --ifm-navbar-height: 60px;
+  --ifm-navbar-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  
+  /* Footer */
+  --ifm-footer-background-color: #fafafa;
+}
+
+/* Dark Theme - Cadence Dark Background (#151414) */
+[data-theme="dark"] {
+  /* Primary Purple - Lighter shade for dark mode */
+  --ifm-color-primary: #8870f2;
+  --ifm-color-primary-dark: #7a5ef0;
+  --ifm-color-primary-darker: #7152ef;
+  --ifm-color-primary-darkest: #5a3dd4;
+  --ifm-color-primary-light: #9682f4;
+  --ifm-color-primary-lighter: #a18ef5;
+  --ifm-color-primary-lightest: #bdb2f8;
+  
+  /* Dark Theme - Cadence Dark Background */
+  --ifm-background-color: #151414;
+  --ifm-background-surface-color: #1f1e1e;
+  
+  /* Typography Colors */
+  --ifm-font-color-base: #f5f5f5;
+  --ifm-font-color-secondary: #b3b3b3;
+  
+  /* Code & Syntax Highlighting */
+  --docusaurus-highlighted-code-line-bg: rgba(139, 92, 246, 0.2);
+  
+  /* Border Colors */
+  --ifm-border-color: #2a2929;
+  
+  /* Shadows - Subtle in dark mode */
+  --ifm-global-shadow-lw: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --ifm-global-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --ifm-global-shadow-tl: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  
+  /* Navbar */
+  --ifm-navbar-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  
+  /* Footer */
+  --ifm-footer-background-color: #1a1a1a;
+}
+
+/* Custom Component Styling */
+
+/* Buttons - Rounded with Cadence styling */
+.button,
+.button--primary,
+.button--secondary,
+.button--outline,
+button {
+  border-radius: var(--ifm-button-border-radius);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.button--primary {
+  background: linear-gradient(135deg, #6646EC 0%, #8B5CF6 100%);
+  border: none;
+}
+
+.button--primary:hover {
+  background: linear-gradient(135deg, #5a3dd4 0%, #7a5ef0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 70, 236, 0.3);
+}
+
+/* Search Bar - Rounded */
+.navbar__search-input {
+  border-radius: 20px;
+  background-color: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-border-color);
+}
+
+/* Cards - Rounded with Cadence styling */
+.card {
+  border-radius: var(--ifm-card-border-radius);
+  border: 1px solid var(--ifm-border-color);
+  box-shadow: var(--ifm-global-shadow-lw);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--ifm-global-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Code Blocks - Rounded */
+pre,
+code {
+  border-radius: var(--ifm-global-radius);
+}
+
+pre {
+  border: 1px solid var(--ifm-border-color);
+}
+
+/* Navbar - Cadence styling */
+.navbar {
+  background-color: var(--ifm-background-surface-color);
+  border-bottom: 1px solid var(--ifm-border-color);
+  box-shadow: var(--ifm-navbar-shadow);
+}
+
+/* Sidebar - Cadence styling */
+.menu__link {
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.menu__link--active {
+  background: linear-gradient(135deg, rgba(102, 70, 236, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  font-weight: 600;
+}
+
+.menu__link:hover {
+  background: rgba(102, 70, 236, 0.05);
+}
+
+/* Footer - Cadence styling */
+.footer {
+  background-color: var(--ifm-footer-background-color);
+  border-top: 1px solid var(--ifm-border-color);
+}
+
+/* Hero Section - Cadence styling */
+.hero {
+  background: linear-gradient(135deg, var(--ifm-background-color) 0%, var(--ifm-background-surface-color) 100%);
+}
+
+.hero__title {
+  font-weight: 700;
+  background: linear-gradient(135deg, #6646EC 0%, #8B5CF6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Table of Contents */
+.table-of-contents__link {
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.table-of-contents__link--active {
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+/* Pagination */
+.pagination-nav__link {
+  border-radius: var(--ifm-global-radius);
+  border: 1px solid var(--ifm-border-color);
+  transition: all 0.2s ease;
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+/* Tabs */
+.tabs__item {
+  border-radius: var(--ifm-global-radius) var(--ifm-global-radius) 0 0;
+  transition: all 0.2s ease;
+}
+
+.tabs__item--active {
+  font-weight: 600;
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+/* Admonitions - Rounded corners */
+.admonition {
+  border-radius: var(--ifm-global-radius);
+  border-left-width: 4px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color - Cadence purple */
+::selection {
+  background-color: rgba(102, 70, 236, 0.2);
+  color: var(--ifm-font-color-base);
+}
+
+/* Focus styles - Accessibility with Cadence purple */
+:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
