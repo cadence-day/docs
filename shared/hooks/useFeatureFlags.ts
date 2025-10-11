@@ -33,7 +33,7 @@ import { useFeatureFlag as usePostHogFeatureFlag } from "posthog-react-native";
  */
 const MANUAL_FEATURE_TOGGLES: Record<string, boolean> = {
   "chat": false,
-  "weekly-insights": false,
+  "weekly-insights": true,
   "monthly-reflection": true,
   "timeline-view-toggle": false,
 };
