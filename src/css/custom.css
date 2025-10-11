@@ -55,6 +55,10 @@
   --ifm-font-family-base: 'Founders Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   --ifm-font-family-monospace: 'SF Mono', Monaco, Menlo, Consolas, 'Courier New', monospace;
   
+  /* Typography Colors for light theme */
+  --ifm-font-color-base: #1c1e21;
+  --ifm-font-color-secondary: #656565;
+  
   /* Border Radius - Cadence uses 8px for buttons */
   --ifm-button-border-radius: 8px;
   --ifm-card-border-radius: 12px;
@@ -76,6 +80,7 @@
   /* Navbar */
   --ifm-navbar-height: 60px;
   --ifm-navbar-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --ifm-navbar-background-color: #ffffff;
   
   /* Footer */
   --ifm-footer-background-color: #fafafa;
@@ -92,11 +97,11 @@
   --ifm-color-primary-lighter: #a18ef5;
   --ifm-color-primary-lightest: #bdb2f8;
   
-  /* Dark Theme - Cadence Dark Background */
-  --ifm-background-color: #151414;
-  --ifm-background-surface-color: #1f1e1e;
+  /* Dark Theme - Linear Gradient Background */
+  --ifm-background-color: linear-gradient(180deg, #2B2B2B 0%, #151414 100%);
+  --ifm-background-surface-color: #2B2B2B;
   
-  /* Typography Colors */
+  /* Typography Colors for dark theme */
   --ifm-font-color-base: #f5f5f5;
   --ifm-font-color-secondary: #b3b3b3;
   
@@ -113,14 +118,15 @@
   
   /* Navbar */
   --ifm-navbar-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --ifm-navbar-background-color: #2B2B2B;
   
   /* Footer */
-  --ifm-footer-background-color: #1a1a1a;
+  --ifm-footer-background-color: #151414;
 }
 
 /* Custom Component Styling */
 
-/* Buttons - Rounded with Cadence styling */
+/* Buttons - Rounded with Cadence styling and purple borders */
 .button,
 .button--primary,
 .button--secondary,
@@ -129,17 +135,48 @@ button {
   border-radius: var(--ifm-button-border-radius);
   font-weight: 600;
   transition: all 0.2s ease;
+  border: 1px solid #6646ec;
 }
 
 .button--primary {
   background: linear-gradient(135deg, #6646EC 0%, #8B5CF6 100%);
-  border: none;
+  border: 1px solid #6646ec;
+  color: white;
 }
 
 .button--primary:hover {
   background: linear-gradient(135deg, #5a3dd4 0%, #7a5ef0 100%);
+  border-color: #8B5CF6;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(102, 70, 236, 0.3);
+}
+
+.button--secondary {
+  background: rgba(102, 70, 236, 0.1);
+  border: 1px solid #6646ec;
+  color: white;
+  backdrop-filter: blur(8px);
+}
+
+.button--secondary:hover {
+  background: rgba(102, 70, 236, 0.2);
+  border-color: #8B5CF6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 70, 236, 0.2);
+}
+
+.button--outline {
+  background: transparent;
+  border: 1px solid #6646ec;
+  color: #6646ec;
+  backdrop-filter: blur(8px);
+}
+
+.button--outline:hover {
+  background: rgba(102, 70, 236, 0.1);
+  border-color: #8B5CF6;
+  color: white;
+  transform: translateY(-1px);
 }
 
 /* Search Bar - Rounded */
@@ -149,27 +186,40 @@ button {
   border: 1px solid var(--ifm-border-color);
 }
 
-/* Cards - Rounded with Cadence styling */
+/* Cards - enhanced readability with purple borders */
 .card {
   border-radius: var(--ifm-card-border-radius);
-  border: 1px solid var(--ifm-border-color);
-  box-shadow: var(--ifm-global-shadow-lw);
+  border: 1px solid #6646ec;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
   transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(102, 70, 236, 0.1);
 }
 
 .card:hover {
-  box-shadow: var(--ifm-global-shadow-md);
+  border-color: #8B5CF6;
+  background: rgba(255, 255, 255, 0.08);
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 70, 236, 0.2);
 }
 
-/* Code Blocks - Rounded */
+/* Code Blocks - enhanced with purple borders */
 pre,
 code {
   border-radius: var(--ifm-global-radius);
 }
 
 pre {
-  border: 1px solid var(--ifm-border-color);
+  border: 1px solid #6646ec;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+/* Inline code */
+code {
+  background: rgba(102, 70, 236, 0.1);
+  border: 1px solid rgba(102, 70, 236, 0.3);
+  padding: 0.1rem 0.3rem;
 }
 
 /* Navbar - Cadence styling */
@@ -179,30 +229,160 @@ pre {
   box-shadow: var(--ifm-navbar-shadow);
 }
 
-/* Sidebar - Cadence styling */
+/* Sidebar - Cadence styling with clean background like navbar */
+.theme-doc-sidebar-container {
+  background: var(--ifm-background-surface-color);
+  border-right: 1px solid var(--ifm-border-color);
+}
+
+.menu {
+  background: transparent;
+}
+
 .menu__link {
   border-radius: 6px;
   transition: all 0.2s ease;
+  color: var(--ifm-font-color-secondary);
+  border: none;
 }
 
 .menu__link--active {
-  background: linear-gradient(135deg, rgba(102, 70, 236, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  background: rgba(102, 70, 236, 0.15);
   font-weight: 600;
+  color: var(--ifm-font-color-base);
 }
 
 .menu__link:hover {
-  background: rgba(102, 70, 236, 0.05);
+  background: rgba(102, 70, 236, 0.1);
+  color: var(--ifm-font-color-base);
+}
+
+.menu__list-item-collapsible {
+  background: transparent;
+}
+
+.menu__caret {
+  color: var(--ifm-font-color-secondary);
+}
+
+/* Dark theme sidebar - override colors for proper theme switching */
+[data-theme="dark"] .theme-doc-sidebar-container {
+  background: #2B2B2B;
+}
+
+[data-theme="dark"] .menu__link {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-theme="dark"] .menu__link--active {
+  color: white !important;
+}
+
+[data-theme="dark"] .menu__link:hover {
+  color: white !important;
+}
+
+[data-theme="dark"] .menu__caret {
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 /* Footer - Cadence styling */
 .footer {
-  background-color: var(--ifm-footer-background-color);
+  background: #151414;
   border-top: 1px solid var(--ifm-border-color);
+  color: white;
+}
+
+.footer__title {
+  color: white;
+  font-weight: 600;
+}
+
+.footer__item {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.footer__link-item {
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.2s ease;
+}
+
+.footer__link-item:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.footer__copyright {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Navbar - Enhanced styling */
+.navbar {
+  background: var(--ifm-navbar-background-color);
+  border-bottom: 1px solid var(--ifm-border-color);
+  box-shadow: var(--ifm-navbar-shadow);
+}
+
+.navbar__brand {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--ifm-font-color-base);
+}
+
+.navbar__item {
+  font-weight: 500;
+}
+
+.navbar__link {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s ease;
+  color: var(--ifm-font-color-secondary);
+}
+
+.navbar__link:hover {
+  background: rgba(102, 70, 236, 0.1);
+  text-decoration: none;
+  color: var(--ifm-font-color-base);
+}
+
+.navbar__link--active {
+  background: linear-gradient(135deg, rgba(102, 70, 236, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+}
+
+/* Dark mode navbar adjustments */
+[data-theme="dark"] .navbar {
+  background: #2B2B2B;
+}
+
+[data-theme="dark"] .navbar__brand {
+  color: white;
+}
+
+[data-theme="dark"] .navbar__link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] .navbar__link:hover,
+[data-theme="dark"] .navbar__link--active {
+  color: white;
+}
+
+/* Dark mode navbar */
+[data-theme="dark"] .navbar {
+  background: #2B2B2B;
+}
+
+[data-theme="dark"] .footer {
+  background: #151414;
 }
 
 /* Hero Section - Cadence styling */
 .hero {
-  background: linear-gradient(135deg, var(--ifm-background-color) 0%, var(--ifm-background-surface-color) 100%);
+  background: transparent;
+  color: var(--ifm-font-color-base);
 }
 
 .hero__title {
@@ -211,51 +391,182 @@ pre {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  font-size: 3.5rem;
 }
 
-/* Table of Contents */
+.hero__subtitle {
+  color: var(--ifm-font-color-secondary);
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+/* Dark theme hero adjustments */
+[data-theme="dark"] .hero {
+  color: white;
+}
+
+[data-theme="dark"] .hero__subtitle {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Table of Contents - with blur background and purple highlights */
+.table-of-contents {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid rgba(102, 70, 236, 0.3);
+}
+
 .table-of-contents__link {
   border-radius: 4px;
   transition: all 0.2s ease;
+  color: var(--ifm-font-color-secondary);
+  padding: 0.25rem 0.5rem;
+  border: 1px solid transparent;
 }
 
 .table-of-contents__link--active {
   font-weight: 600;
-  color: var(--ifm-color-primary);
+  color: var(--ifm-font-color-base);
+  background: rgba(102, 70, 236, 0.15);
+  border-color: #6646ec;
 }
 
-/* Pagination */
+.table-of-contents__link:hover {
+  color: var(--ifm-font-color-base);
+  background: rgba(102, 70, 236, 0.1);
+  border-color: rgba(102, 70, 236, 0.5);
+}
+
+/* Dark theme TOC overrides */
+[data-theme="dark"] .table-of-contents__link {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+[data-theme="dark"] .table-of-contents__link--active {
+  color: white !important;
+}
+
+[data-theme="dark"] .table-of-contents__link:hover {
+  color: white !important;
+}
+
+/* Pagination - with purple borders */
 .pagination-nav__link {
   border-radius: var(--ifm-global-radius);
-  border: 1px solid var(--ifm-border-color);
+  border: 1px solid #6646ec;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
   transition: all 0.2s ease;
 }
 
 .pagination-nav__link:hover {
-  border-color: var(--ifm-color-primary);
-  box-shadow: var(--ifm-global-shadow-md);
+  border-color: #8B5CF6;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(102, 70, 236, 0.2);
 }
 
-/* Tabs */
+/* Tabs - with purple highlights */
 .tabs__item {
   border-radius: var(--ifm-global-radius) var(--ifm-global-radius) 0 0;
   transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
 .tabs__item--active {
   font-weight: 600;
-  border-bottom-color: var(--ifm-color-primary);
+  border-color: #6646ec;
+  border-bottom-color: transparent;
+  background: rgba(102, 70, 236, 0.1);
 }
 
-/* Admonitions - Rounded corners */
+.tabs__item:hover {
+  border-color: rgba(102, 70, 236, 0.5);
+  background: rgba(102, 70, 236, 0.05);
+}
+
+/* Admonitions - enhanced with blur and purple borders */
 .admonition {
   border-radius: var(--ifm-global-radius);
   border-left-width: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(102, 70, 236, 0.3);
+  border-left: 4px solid #6646ec;
 }
 
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Body - Light theme default, dark gradient for dark mode */
+body {
+  background: #F7F7F6;
+  min-height: 100vh;
+}
+
+/* Dark mode body with gradient */
+[data-theme="dark"] body {
+  background: linear-gradient(180deg, #2B2B2B 0%, #151414 100%);
+  background-attachment: fixed;
+}
+
+/* Main content area */
+main {
+  background: transparent;
+}
+
+/* Ensure content containers are transparent to show gradient */
+.main-wrapper {
+  background: transparent;
+}
+
+.container {
+  background: transparent;
+}
+
+/* Documentation pages - with blur and purple borders for readability */
+article {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid #6646ec;
+  box-shadow: 0 4px 12px rgba(102, 70, 236, 0.1);
+}
+
+/* Content wrapper */
+.docusaurus-wrapper {
+  background: transparent;
+}
+
+/* Make sure all main containers are transparent */
+.theme-doc-wrapper,
+.theme-doc-main,
+.theme-doc-content {
+  background: transparent;
+}
+
+/* Blog pages */
+.theme-blog-wrapper,
+.blog-wrapper {
+  background: transparent;
+}
+
+/* Ensure no conflicting backgrounds */
+.row {
+  background: transparent;
+}
+
+.col {
+  background: transparent;
+}
+
+/* Page wrapper */
+.page-wrapper {
+  background: transparent;
 }
 
 /* Selection color - Cadence purple */
@@ -269,4 +580,35 @@ html {
   outline: 2px solid var(--ifm-color-primary);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* External link icons - Replace box with arrow */
+a[href*="://"]::after,
+a[href^="mailto:"]::after,
+a[target="_blank"]::after {
+  content: "↗";
+  display: inline-block;
+  margin-left: 0.3em;
+  font-size: 0.8em;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+/* Hide default external link icon if it exists */
+.iconExternalLink_nPIU {
+  display: none;
+}
+
+/* Override for navbar and footer links to avoid duplicate arrows */
+.navbar a[href*="://"]::after,
+.footer a[href*="://"]::after,
+.navbar a[target="_blank"]::after,
+.footer a[target="_blank"]::after {
+  display: none;
+}
+
+/* Special styling for specific external links */
+.footer__link-item[href*="://"]::after,
+.navbar__link[href*="://"]::after {
+  display: none;
 }

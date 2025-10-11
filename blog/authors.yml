@@ -1,33 +1,37 @@
 andrea:
   name: Andrea Lausevic
   title: Design Lead, Co-founder at Cadence.day
-  url: https://linkedin.com/in/andrealausevic
-  image_url:
-  page: true
+  url: https://andrealausevic.com/
+  image_url: https://cdn.shopify.com/s/files/1/0274/9612/0417/files/14.jpg?v=1579664422
+  page: 
+    permalink: "/all-andrea-lausevic-articles"
   socials:
     x: andrealausevic
-    linkedin: andrealausevic
+    linkedin: andrea-lausevic-358673370
+    instagram: andrea.lausevic
 
 bruno:
   name: Bruno Adam
   title: Developer Lead, Co-founder at Cadence.day
-  url: https://linkedin.com/in/bruno-adam
-  image_url:
+  url: https://brunoadam.eu/
+  image_url: https://avatars.githubusercontent.com/u/73777755?v=4
   page:
-    # customize the url of the author page at /blog/authors/<permalink>
     permalink: "/all-bruno-adam-articles"
   socials:
     x: bruadam_
     linkedin: bruno-adam
     github: bruadam
+    instagram: brunoadam_
 
 oleg:
   name: Oleg Moshkovich
   title: Product Lead, Co-founder at Cadence.day
-  url: https://linkedin.com/in/oleg-frolov-1aabbb1b4
-  image_url:
-  page: true
+  url: https://www.olegmoshkovich.com/
+  image_url: https://avatars.githubusercontent.com/u/3433606?v=4
+  page: 
+    permalink: "/all-oleg-moshkovich-articles"
   socials:
-    x: olegfrolov_
-    linkedin: oleg-frolov-1aabbb1b4
-    github: olegfrolov
+    x: olegmoshkovich
+    linkedin: olegmoshkovich
+    github: OlegMoshkovich
+    instagram: olegmoshkovich

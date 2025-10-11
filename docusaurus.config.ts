@@ -20,38 +20,6 @@ const config: Config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'de', 'da', 'es', 'fr'],
-    localeConfigs: {
-      en: {
-        label: 'English',
-        direction: 'ltr',
-        htmlLang: 'en-US',
-      },
-      de: {
-        label: 'Deutsch',
-        direction: 'ltr',
-        htmlLang: 'de-DE',
-      },
-      da: {
-        label: 'Dansk',
-        direction: 'ltr',
-        htmlLang: 'da-DK',
-      },
-      es: {
-        label: 'Español',
-        direction: 'ltr',
-        htmlLang: 'es-ES',
-      },
-      fr: {
-        label: 'Français',
-        direction: 'ltr',
-        htmlLang: 'fr-FR',
-      },
-    },
-  },
-
   presets: [
     [
       'classic',
@@ -61,7 +29,16 @@ const config: Config = {
           routeBasePath: 'docs',
           editUrl: 'https://github.com/cadence-day/docs/edit/main/',
         },
-        blog: false,
+        blog: {
+          showReadingTime: true,
+          feedOptions: {
+            type: ['rss', 'atom'],
+            xslt: true,
+          },
+          editUrl: 'https://github.com/cadence-day/docs/edit/main/',
+          onInlineAuthors: 'throw',
+          onUntruncatedBlogPosts: 'warn',
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -83,8 +60,8 @@ const config: Config = {
     },
     
     algolia: {
-      appId: 'YOUR_ALGOLIA_APP_ID',
-      apiKey: 'YOUR_ALGOLIA_SEARCH_API_KEY',
+      appId: 'QYNNN8YBZD',
+      apiKey: 'ae3c21956a4ee3a8f161fea63ad25a2a',
       indexName: 'cadence-docs',
       contextualSearch: true,
       searchParameters: {},
@@ -93,7 +70,7 @@ const config: Config = {
     },
     
     navbar: {
-      title: 'Cadence',
+      title: 'CADENCE',
       logo: {
         alt: 'Cadence Logo',
         src: 'img/logo.png',
@@ -113,8 +90,9 @@ const config: Config = {
           label: 'Features',
         },
         {
-          type: 'localeDropdown',
-          position: 'right',
+          to: '/blog',
+          label: 'Blog',
+          position: 'left'
         },
         {
           href: 'https://apps.apple.com/app/cadence-day/id6745115112',
@@ -153,6 +131,10 @@ const config: Config = {
           title: 'Community',
           items: [
             {
+              label: 'Discord',
+              href: 'https://discord.gg/',
+            },
+            {
               label: 'Instagram',
               href: 'https://instagram.com/cadencedotday',
             },
@@ -164,6 +146,10 @@ const config: Config = {
               label: 'GitHub',
               href: 'https://github.com/cadence-day-dev',
             },
+            {
+              label: 'LinkedIn',
+              href: 'https://www.linkedin.com/company/cadence-day',
+            }
           ],
         },
         {
@@ -192,8 +178,8 @@ const config: Config = {
     },
     
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      theme: prismThemes.duotoneDark,
+      darkTheme: prismThemes.duotoneDark,
       additionalLanguages: ['bash', 'json', 'typescript', 'javascript'],
     },
   } satisfies Preset.ThemeConfig,
