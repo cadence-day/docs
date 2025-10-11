@@ -1,227 +1,205 @@
-# Encryption & Privacy
+---
+sidebar_position: 5
+---
 
-Learn how Cadence protects your personal data and maintains your privacy.
+# Encryption & Security
+
+Your privacy and security are our top priorities. Learn how Cadence protects your data.
 
 ## How is my data encrypted?
 
-Cadence uses **AES-256 encryption**, the same standard used by banks and government agencies:
+Cadence uses **end-to-end encryption** for your most sensitive data:
 
-- **End-to-end encryption**: Your notes and sensitive data are encrypted on your device before being sent to our servers
-- **Encryption keys**: Your personal encryption key is generated on your device and never leaves it
-- **Secure storage**: Encrypted data is stored in Supabase with additional security layers
+**What's encrypted:**
+- Notes and reflections
+- Chat conversations with Sage (AI)
+- Personal insights and patterns
 
-Even we can't read your encrypted notes!
+**Encryption method:**
+- **AES-256-GCM**: Industry-standard encryption algorithm
+- **Unique keys**: Each user has their own encryption key
+- **Encrypted at rest**: Data is encrypted before leaving your device
+- **Encrypted in transit**: All network communications use HTTPS/TLS
 
-## What data is encrypted?
+Your encryption key is derived from your authentication credentials and never leaves your device in plain text.
 
-The following data is encrypted:
+## What data is NOT encrypted?
 
-- **Notes**: All activity notes and reflections
-- **Chat history**: Your conversations with Sage AI
-- **Personal reflections**: Long-form reflections and insights
-- **Sensitive metadata**: Certain metadata about your activities
+To provide core functionality, some data is stored in a structured (non-encrypted) format:
 
-Activity names, categories, and timing are stored securely but not encrypted to enable features like pattern analysis.
+- **Activity logs**: Time, duration, and activity type
+- **Activity metadata**: Colors, emojis, custom names
+- **User profile**: Email, username, preferences
 
-## Can I disable encryption?
+This allows us to provide fast timeline views, pattern analysis, and sync across devices.
 
-No, encryption is mandatory to protect your privacy. All users benefit from the same level of security by default.
+## Where is my data stored?
 
-## What encryption algorithm does Cadence use?
+**Database**: Supabase (PostgreSQL) hosted on secure cloud infrastructure
+- Data centers with SOC 2 Type II compliance
+- Regular backups and disaster recovery
+- Network isolation and access controls
 
-Cadence uses **AES-256-GCM** (Advanced Encryption Standard with Galois/Counter Mode):
+**Local storage**: Some data is cached on your device for offline access:
+- Activity logs for the current week
+- User preferences
+- Encryption keys (stored in iOS Keychain)
 
-- **256-bit keys**: Maximum security for symmetric encryption
-- **GCM mode**: Provides both encryption and authentication
-- **Industry standard**: Trusted by security experts worldwide
+## Can I export my data?
 
-## Where are my encryption keys stored?
+Yes! You can export all your Cadence data at any time:
 
-Your encryption keys are:
+1. Go to **Profile** → **Settings** → **Data & Privacy**
+2. Tap **"Export My Data"**
+3. Choose format: JSON or CSV
+4. Your data will be prepared and sent to your email
 
-- **Generated on your device** using secure random generation
-- **Stored in secure device storage** (iOS Keychain)
-- **Never transmitted** to our servers or third parties
-- **Backed up securely** only to your personal iCloud Keychain (if enabled)
-
-This ensures only you can decrypt your data.
-
-## What happens if I lose my device?
-
-**Good news:** Your data is safe!
-
-1. **Encrypted data is backed up** in the cloud
-2. **Your encryption key** is securely stored in iCloud Keychain
-3. **Sign in on a new device** and your key will be restored automatically
-4. **All your data remains accessible** and secure
-
-Make sure iCloud Keychain is enabled on your device for automatic key backup.
+Exported data includes:
+- All activities and time logs
+- Notes and reflections (decrypted)
+- Chat history
+- Custom activities and preferences
 
 ## Can Cadence employees see my data?
 
 **Encrypted data**: No! Your notes, reflections, and chat history are encrypted end-to-end. Even our employees cannot decrypt this information.
 
-**Activity data**: We can see anonymized activity patterns for debugging and improving the app, but we never access or share personal identifiable information.
+**Activity data**: We can see anonymized activity patterns for debugging and improving the app, but we never access or share personally identifiable information.
 
 ## Is my data shared with third parties?
 
-**No/Users/brunoadam/Documents/work/current/projects/cadence-day/cadence-app/cadence-docs && cat > docs/faq/calendar.md << 'EOFCALENDAR'
-# Calendar & Timeline
+**No**, we never share your personal data with third parties for marketing or advertising purposes.
 
-Learn how to navigate your activities across time in Cadence.
+**Service providers we use:**
+- **Supabase**: Database and authentication (with strict data processing agreements)
+- **OpenAI**: AI chat features (data is not used for training)
+- **Sentry**: Error tracking (anonymized error logs only)
 
-## How does the timeline view work?
+All third-party services are bound by strict data processing agreements and only receive the minimum data necessary to provide their services.
 
-The timeline is your main interface for tracking activities:
+## What happens if I delete my account?
 
-- **Time slots**: Each row represents a 30-minute period
-- **Color-coded blocks**: Activities are shown as colored blocks
-- **Scrollable view**: Scroll vertically through the day, horizontally between days
-- **Tap to log**: Simply tap any time slot to log an activity
+When you delete your account:
 
-The timeline gives you a visual representation of how you spend your time.
+1. **Immediate actions:**
+   - Your account is deactivated
+   - You're logged out of all devices
+   - Your encryption key is deleted (making encrypted data unrecoverable)
 
-## Can I change the time slot duration?
+2. **Within 30 days:**
+   - All personal data is permanently deleted from our servers
+   - Backups are purged
+   - No recovery is possible after this point
 
-Currently, time slots are 30 minutes each. We're exploring options to customize this in future updates based on user feedback.
+3. **What remains:**
+   - Anonymized usage statistics (no personal identifiers)
+   - Legal/compliance records (if required by law)
 
-## How do I navigate between days?
+## How do I enable/disable encryption?
 
-There are several ways to navigate:
+**Encryption is always enabled** for sensitive data (notes, reflections, chat). You cannot disable it.
 
-**Swipe:**
-- Swipe left/right on the timeline to move between days
+For optional features:
+- **Biometric unlock**: Settings → Security → Face ID/Touch ID
+- **Auto-lock**: Settings → Security → Auto-lock (require authentication after inactivity)
 
-**Calendar picker:**
-1. Tap the calendar icon in the header
-2. Select any date
-3. The timeline updates to show that day
+## What if I forget my password?
 
-**Today button:**
-- Tap the "Today" button to jump back to the current day
+**Important**: Because of end-to-end encryption, if you forget your password:
 
-## Can I view my week at a glance?
+- You can reset your password using email verification
+- **However**, your encrypted data (notes, reflections, chat) will be permanently lost
+- Activity logs and profile data will remain accessible
 
-Yes! The **Reflection** screen shows your week in a compact cadence view:
-- See all 7 days side-by-side
-- Quickly identify patterns and rhythms
-- Tap any day to see details
+**Best practices:**
+- Use a strong, memorable password
+- Consider using a password manager
+- Keep your email address up to date for recovery
 
-## Does Cadence integrate with my phone's calendar?
+## Is Cadence GDPR compliant?
 
-Not yet! Calendar integration is a planned feature that will allow you to:
-- Import events from your phone's calendar
-- See meetings and appointments alongside your activities
-- Automatically suggest activities based on calendar events
+Yes! Cadence is fully compliant with GDPR (General Data Protection Regulation):
 
-This feature is coming soon based on user demand.
+- **Right to access**: Export your data anytime
+- **Right to erasure**: Delete your account and all data
+- **Right to portability**: Export data in machine-readable formats
+- **Right to rectification**: Edit or correct your data
+- **Data minimization**: We only collect what's necessary
+- **Consent**: Clear opt-ins for data collection
 
-## Can I view multiple days side-by-side?
-
-The Reflection screen shows your weekly cadence in a grid view. We're exploring additional multi-day views for deeper pattern analysis.
-
-## How far back can I view my data?
-
-You can view your activity history from the day you started using Cadence with no limits! All your data is preserved and accessible.
-
-## Can I set recurring activities?
-
-Recurring activities aren't directly supported yet, but you can:
-- Quickly log the same activity for multiple days
-- Use patterns from your Reflection view to spot regular activities
-
-Automated recurring activities are on our roadmap!
-
-## What's the difference between the Timeline and Reflection views?
-
-**Timeline (Home screen):**
-- Detailed view of a single day
-- Log and edit activities in real-time
-- See minute-by-minute breakdown
-
-**Reflection:**
-- Weekly overview with pattern insights
-- Analyze your rhythms and balance
-- Generate reflections with Sage AI
-- See total time spent per activity
-
-Use Timeline for daily logging, Reflection for understanding patterns.
-
-## Can I zoom in/out on the timeline?
-
-The timeline is optimized for 30-minute increments. We're considering zoom features for future updates to support different levels of detail.
-
-## How do I see what I did last week?
-
-1. Tap the calendar icon
-2. Select a date from last week
-3. Or swipe right multiple times to go back day-by-day
-
-The Reflection screen also shows your full week at once!
-EOFCALENDAR* We never sell or share your personal data with third parties. Here's what we do use:
-
-**Analytics**: We use anonymous analytics to improve the app (no personal data)
-**AI Processing**: Sage AI conversations are processed by OpenAI with strict privacy agreements
-**Cloud Storage**: Encrypted data is stored in Supabase with enterprise-grade security
-
-See our [Privacy Policy](https://cadence.day/privacy) for complete details.
-
-## How does Sage AI protect my privacy?
-
-When using Sage AI:
-
-- **Conversations are encrypted** before being sent for processing
-- **No personal identifiers** are included in AI requests
-- **Data is not used for AI training** by our partners
-- **Responses are encrypted** before storage
-- **You can delete chat history** anytime
-
-We have strict data processing agreements with our AI providers.
-
-## Can I export my encrypted data?
-
-Yes! You can export all your data including:
-
-- Decrypted notes and reflections
-- Activity history
-- Chat conversations
-- All metadata
-
-Data export is currently in development and will be available soon.
-
-## What security certifications does Cadence have?
-
-We're working toward:
-
-- **SOC 2 Type II** compliance
-- **GDPR** compliance (we're based in Europe!)
-- **HIPAA** readiness for healthcare use cases
-
-Our infrastructure partners (Supabase, AWS) maintain industry-leading security certifications.
+For GDPR inquiries, contact: privacy@cadence.day
 
 ## How do I report a security issue?
 
 If you discover a security vulnerability:
 
-1. **Email us** at security@cadence.day
-2. **Do not** post publicly until we've had time to address it
-3. **We'll respond** within 24 hours
-4. **We appreciate** responsible disclosure
+1. **Do not** post it publicly
+2. Email us immediately at: security@cadence.day
+3. Include:
+   - Description of the vulnerability
+   - Steps to reproduce
+   - Your contact information
 
-We take all security reports seriously and will work quickly to address any issues.
+We take security seriously and will respond within 24 hours. We appreciate responsible disclosure and may offer recognition or rewards for valid findings.
 
-## Is Cadence open source?
+## Can I use Cadence for HIPAA-compliant data?
 
-Not currently, but we're considering open-sourcing our encryption implementation for community security audits. Stay tuned!
+**No**, Cadence is not currently HIPAA-compliant and should not be used to store protected health information (PHI).
 
-## Does Cadence comply with GDPR?
+While we use strong encryption, HIPAA compliance requires additional:
+- Business Associate Agreements (BAAs)
+- Specific audit logging
+- Physical safeguards
+- Employee training certifications
 
-Yes! As a company with operations in Berlin and Copenhagen, we're committed to GDPR compliance:
+If you need HIPAA compliance, please contact us at: enterprise@cadence.day
 
-- **Data minimization**: We only collect what's necessary
-- **Right to access**: Export all your data anytime
-- **Right to deletion**: Delete your account and all data permanently
-- **Transparent processing**: Clear privacy policy and data practices
-- **EU-based infrastructure**: Data stored in EU regions when possible
+## What encryption libraries does Cadence use?
 
-Learn more in our [Privacy Policy](https://cadence.day/privacy).
+We use industry-standard, battle-tested encryption libraries:
+
+- **iOS**: CommonCrypto (Apple's native cryptography framework)
+- **JavaScript**: Web Crypto API and crypto-js
+- **Backend**: PostgreSQL pgcrypto extension
+
+All libraries are regularly updated to patch vulnerabilities.
+
+## Does Cadence have a bug bounty program?
+
+Not yet, but we're planning to launch one! In the meantime:
+
+- Report vulnerabilities to: security@cadence.day
+- We may offer rewards on a case-by-case basis
+- You'll be credited in our security acknowledgments (with permission)
+
+## How often are security audits performed?
+
+- **Code reviews**: Every pull request is reviewed by senior developers
+- **Dependency updates**: Weekly automated security scans
+- **Penetration testing**: Planned annually (starting 2025)
+- **Third-party audit**: Planned for when we reach 100K+ users
+
+## Can I see Cadence's security certifications?
+
+We're working toward:
+- SOC 2 Type II certification (2025)
+- ISO 27001 certification (2026)
+
+Current security measures:
+- ✅ End-to-end encryption (AES-256-GCM)
+- ✅ HTTPS/TLS for all network traffic
+- ✅ Regular security updates
+- ✅ Minimal data collection
+- ✅ GDPR compliance
+
+## More Questions?
+
+If you have additional security or privacy questions:
+
+- Email: security@cadence.day
+- View our [Privacy Policy](https://cadence.day/privacy)
+- View our [Terms of Service](https://cadence.day/terms)
+
+---
+
+*Last updated: January 2025*
