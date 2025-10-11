@@ -582,16 +582,28 @@ article {
   border-radius: 4px;
 }
 
-/* External link icons - Replace box with arrow */
+/* External link icons - Phosphor Icons caret-right */
 a[href*="://"]::after,
 a[href^="mailto:"]::after,
 a[target="_blank"]::after {
-  content: "↗";
+  content: "";
   display: inline-block;
-  margin-left: 0.3em;
-  font-size: 0.8em;
-  color: var(--ifm-color-primary);
+  width: 0.875em;
+  height: 0.875em;
+  margin-left: 0.25em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%236646ec'%3E%3Cpath d='M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
   text-decoration: none;
+}
+
+/* Dark theme external link icon */
+[data-theme="dark"] a[href*="://"]::after,
+[data-theme="dark"] a[href^="mailto:"]::after,
+[data-theme="dark"] a[target="_blank"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%238870f2'%3E%3Cpath d='M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z'%3E%3C/path%3E%3C/svg%3E");
 }
 
 /* Hide default external link icon if it exists */
@@ -599,16 +611,28 @@ a[target="_blank"]::after {
   display: none;
 }
 
-/* Override for navbar and footer links to avoid duplicate arrows */
+/* Show caret icon for navbar and footer external links */
 .navbar a[href*="://"]::after,
 .footer a[href*="://"]::after,
 .navbar a[target="_blank"]::after,
 .footer a[target="_blank"]::after {
-  display: none;
+  content: "";
+  display: inline-block;
+  width: 0.875em;
+  height: 0.875em;
+  margin-left: 0.25em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%236646ec'%3E%3Cpath d='M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  text-decoration: none;
 }
 
-/* Special styling for specific external links */
-.footer__link-item[href*="://"]::after,
-.navbar__link[href*="://"]::after {
-  display: none;
+/* Dark theme for navbar and footer external link icons */
+[data-theme="dark"] .navbar a[href*="://"]::after,
+[data-theme="dark"] .footer a[href*="://"]::after,
+[data-theme="dark"] .navbar a[target="_blank"]::after,
+[data-theme="dark"] .footer a[target="_blank"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%238870f2'%3E%3Cpath d='M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z'%3E%3C/path%3E%3C/svg%3E");
 }
