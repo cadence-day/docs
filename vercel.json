@@ -10,11 +10,6 @@
     "silent": false,
     "autoJobCancelation": true
   },
-  "functions": {
-    "app/api/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -42,6 +37,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "regions": ["fra1", "iad1", "sfo1"]
+  }
 }
