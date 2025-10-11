@@ -33,9 +33,9 @@ import { useFeatureFlag as usePostHogFeatureFlag } from "posthog-react-native";
  */
 const MANUAL_FEATURE_TOGGLES: Record<string, boolean> = {
   "chat": false,
-  "weekly-insights": true,
+  "weekly-insights": false,
   "monthly-reflection": true,
-  "timeline-view-toggle": true,
+  "timeline-view-toggle": false,
 };
 
 /**
@@ -53,8 +53,8 @@ export function useFeatureFlag(flagKey: string): boolean | undefined {
   const posthogFlag = usePostHogFeatureFlag(flagKey);
   const manualToggle = MANUAL_FEATURE_TOGGLES[flagKey] ?? false;
 
-  // If we're in dev mode or manual toggle is enabled, feature is always enabled
-  if (isDev || manualToggle) {
+  // If we're in dev mode and manual toggle is enabled, feature is always enabled
+  if (isDev && manualToggle) {
     return true;
   }
 
