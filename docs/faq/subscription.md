@@ -13,46 +13,13 @@ Cadence offers both free and premium options:
 - Weekly reflection view
 - Core privacy features
 
-**Cadence Premium:**
-- Sage AI chat and insights
-- Voice-to-text note-taking
-- Advanced pattern analysis
-- Priority support
-- Early access to new features
-- Export your data
+## How much does Cadence Support cost?
 
-## How much does Cadence Premium cost?
-
-Cadence Premium pricing:
+Cadence Support pricing:
 
 - **Monthly**: $4.99/month
-- **Yearly**: $39.99/year (save 33%!)
 
 Pricing may vary by region. Check the app for exact pricing in your currency.
-
-## Is there a free trial?
-
-Yes! New users get a **7-day free trial** of Cadence Premium. Try all premium features before committing. Cancel anytime before the trial ends with no charge.
-
-## How do I start my free trial?
-
-1. Open Cadence and complete onboarding
-2. Tap **"Try Premium"** from your profile
-3. Choose your plan (monthly or yearly)
-4. Confirm with your App Store payment method
-5. Start using Premium features immediately!
-
-Remember to cancel before the trial ends if you don't want to continue.
-
-## How do I subscribe to Premium?
-
-To subscribe:
-
-1. Tap your profile icon
-2. Select **"Upgrade to Premium"**
-3. Choose monthly or yearly billing
-4. Complete payment through the App Store
-5. Premium features activate immediately!
 
 ## Can I cancel my subscription?
 
@@ -128,17 +95,15 @@ You can disable auto-renewal in your App Store subscription settings. You'll sti
 
 Family Sharing for Cadence Premium is coming soon! This will allow one subscription to cover multiple family members. Stay tuned!
 
-## Is Premium worth it?
+## Is Support worth it?
 
-That depends on your needs! Premium is worth it if you:
+That depends on your needs! Support is worth it if you:
 
-- Want AI-powered insights and reflections (Sage)
-- Use voice notes frequently
 - Want advanced pattern analysis
 - Need data export capabilities
 - Value priority support
 
-Many users find the free version sufficient for basic tracking, while others love the deeper insights from Premium.
+Many users find the free version sufficient for basic tracking, while others love the deeper insights from Support.
 
 ## Are there any hidden fees?
 

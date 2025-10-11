@@ -1,8 +1,7 @@
 ---
 slug: cadence-documentation-is-live
 title: Cadence Documentation is Live
-authors: [bruno]
-tags: [announcement, documentation, launch]
+authors: [bruno, oleg, andrea]
 ---
 
 # Cadence Documentation is Live
@@ -15,83 +14,28 @@ We're excited to announce that the official **Cadence Documentation** is now liv
 
 ## What You'll Find Here
 
-Our comprehensive documentation hub provides everything you need to get the most out of Cadence.day:
+Our comprehensive documentation hub provides everything you need to get the most out of Cadence.day. Here are some highlights:
 
-### 📚 **Complete User Guide**
-- **Getting Started** - Quick setup and onboarding
-- **Feature Guides** - Detailed walkthroughs of every feature
-- **FAQ Section** - Answers to common questions
-- **Troubleshooting** - Solutions to common issues
+- **Getting Started Guides**: Step-by-step instructions to help you set up and start using Cadence quickly.
+- **Feature Guides**: Detailed explanations of Cadence's core features including activity tracking, note-taking, reflections, and privacy.
+- **FAQ Section**: Answers to common questions about accounts, activities, notes, encryption, calendar features, notifications, and subscriptions.
+- **Troubleshooting**: Solutions to common issues you might encounter.
 
-### 🔧 **Technical Resources**
-- **API Documentation** - For developers and integrations
-- **Privacy & Security** - How we protect your data
-- **Performance Tips** - Optimizing your Cadence experience
+## Why We Built This
 
-### 🎯 **Best Practices**
-- **Activity Tracking** - Maximizing insights from your data
-- **Reflection Techniques** - Making the most of your daily reviews
-- **Goal Setting** - Using Cadence for intentional living
+As Cadence continues to grow, we wanted to create a central knowledge base where users can find answers, learn about features, and get the most value from the app. Whether you're a new user or have been with us from the beginning, these docs will help you discover features you might have missed.
 
-## Why Documentation Matters
+## What's Next?
 
-At Cadence, we believe that great products deserve great documentation. We've built this resource to:
+The documentation will be regularly updated as we add new features and improve existing ones. We're also planning to add:
 
-- **Empower Users** - Help you unlock Cadence's full potential
-- **Save Time** - Quick answers when you need them
-- **Build Community** - Share knowledge and best practices
-- **Support Growth** - Detailed guides as you deepen your practice
+- User case studies
+- Advanced guides for power users
 
-## What's Coming Next
+## Get Started
 
-This is just the beginning! We're continuously expanding our documentation with:
+Explore the [documentation](/docs/intro) today to enhance your Cadence experience. If you haven't downloaded the app yet, get it on the [App Store](https://apps.apple.com/app/cadence-day/id6745115112).
 
-- **Video Tutorials** - Visual guides for complex features
-- **Use Case Studies** - Real examples from our community
-- **Integration Guides** - Connecting Cadence with your workflow
-- **Advanced Techniques** - Power user tips and tricks
+Have suggestions for topics we should cover? Let us know at [admin@cadence.day](mailto:admin@cadence.day).
 
-## Technical Excellence
-
-Our documentation is built with modern web technologies:
-
-- **Fast & Responsive** - Optimized for all devices
-- **Search Enabled** - Find what you need instantly
-- **Always Updated** - Synchronized with app releases
-- **Accessible** - Designed for everyone to use
-
-## Community Driven
-
-We're building this documentation **with** our community, not just **for** it. Here's how you can contribute:
-
-- **Feedback** - Tell us what's missing or unclear
-- **Suggestions** - Request new guides and tutorials
-- **Corrections** - Help us fix errors and improve clarity
-- **Examples** - Share your own use cases and workflows
-
-## Get Started Today
-
-Ready to dive in? Here are the best places to start:
-
-1. **[Introduction](/docs/intro)** - Overview of Cadence's core concepts
-2. **[Activity Tracking](/docs/features/activity-tracking)** - Start capturing your daily rhythms
-3. **[General FAQ](/docs/faq/general)** - Quick answers to common questions
-
-## Stay Connected
-
-Questions? Ideas? We'd love to hear from you:
-
-- **Support**: [admin@cadence.day](mailto:admin@cadence.day)
-- **Community**: Join our [Discord](https://discord.gg/) 
-- **Updates**: Follow us on [X](https://x.com/cadencedotday) and [Instagram](https://instagram.com/cadencedotday)
-
----
-
-**Happy tracking!** 🚀
-
-*Bruno Adam*  
-*Developer Lead & Co-founder*
-
----
-
-*This documentation represents our commitment to transparency, usability, and community. We're excited to help you build more intentional daily rhythms with Cadence.*
+—The Cadence Team

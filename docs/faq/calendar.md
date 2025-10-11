@@ -74,7 +74,6 @@ Automated recurring activities are on our roadmap!
 **Reflection:**
 - Weekly overview with pattern insights
 - Analyze your rhythms and balance
-- Generate reflections with Sage AI
 - See total time spent per activity
 
 Use Timeline for daily logging, Reflection for understanding patterns.

@@ -147,15 +147,12 @@ Add context to activities:
 - Important details: "Discussed Q1 goals with team"
 - Feelings: "Felt anxious during this meeting"
 
-Notes help Sage AI provide better insights and help you remember details later.
-
 ### Reflections
 
 Use activity tracking as the foundation for reflections:
 
 - Review your week visually
 - Notice patterns in timing and frequency
-- Generate reflections with Sage based on your activities
 
 ### Timeline Navigation
 
@@ -230,7 +227,7 @@ Track these to ensure you're winding down effectively.
 Once you're comfortable with basic tracking:
 
 1. **Add context with notes**: Start adding thoughts and reflections
-2. **Chat with Sage**: Ask questions about your patterns
+2. **Regular reflections**: Set a weekly time to review your patterns
 3. **Review weekly**: Use the Reflection screen to understand your rhythms
 4. **Optimize your days**: Use insights to design better days
 

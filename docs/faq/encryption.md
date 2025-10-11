@@ -12,7 +12,6 @@ Cadence uses **end-to-end encryption** for your most sensitive data:
 
 **What's encrypted:**
 - Notes and reflections
-- Chat conversations with Sage (AI)
 - Personal insights and patterns
 
 **Encryption method:**
@@ -57,12 +56,11 @@ Yes! You can export all your Cadence data at any time:
 Exported data includes:
 - All activities and time logs
 - Notes and reflections (decrypted)
-- Chat history
 - Custom activities and preferences
 
 ## Can Cadence employees see my data?
 
-**Encrypted data**: No! Your notes, reflections, and chat history are encrypted end-to-end. Even our employees cannot decrypt this information.
+**Encrypted data**: No! Your notes, reflections are encrypted end-to-end. Even our employees cannot decrypt this information.
 
 **Activity data**: We can see anonymized activity patterns for debugging and improving the app, but we never access or share personally identifiable information.
 
@@ -72,7 +70,6 @@ Exported data includes:
 
 **Service providers we use:**
 - **Supabase**: Database and authentication (with strict data processing agreements)
-- **OpenAI**: AI chat features (data is not used for training)
 - **Sentry**: Error tracking (anonymized error logs only)
 
 All third-party services are bound by strict data processing agreements and only receive the minimum data necessary to provide their services.
@@ -97,7 +94,7 @@ When you delete your account:
 
 ## How do I enable/disable encryption?
 
-**Encryption is always enabled** for sensitive data (notes, reflections, chat). You cannot disable it.
+**Encryption is always enabled** for sensitive data (notes, reflections). You cannot disable it.
 
 For optional features:
 - **Biometric unlock**: Settings → Security → Face ID/Touch ID
@@ -108,7 +105,7 @@ For optional features:
 **Important**: Because of end-to-end encryption, if you forget your password:
 
 - You can reset your password using email verification
-- **However**, your encrypted data (notes, reflections, chat) will be permanently lost
+- **However**, your encrypted data (notes, reflections) will be permanently lost
 - Activity logs and profile data will remain accessible
 
 **Best practices:**

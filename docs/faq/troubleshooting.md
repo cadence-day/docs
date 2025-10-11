@@ -25,32 +25,6 @@ Don't worry! Your data is safely stored in the cloud:
 
 All data is backed up automatically - it's not lost!
 
-## Voice-to-text isn't working
-
-If voice transcription fails:
-
-1. **Check microphone permission**:
-   - iOS Settings > Cadence > Microphone
-   - Enable if disabled
-
-2. **Check internet**: Voice transcription requires connectivity
-
-3. **Try again**: Sometimes the first attempt times out
-
-4. **Check Premium**: Voice-to-text requires Cadence Premium
-
-5. **Update app**: Ensure you have the latest version
-
-## Sage AI isn't responding
-
-If Sage won't respond:
-
-1. **Check internet connection**: AI features require connectivity
-2. **Check Premium status**: Sage requires Cadence Premium
-3. **Wait a moment**: Complex queries can take 5-10 seconds
-4. **Restart app**: Close completely and reopen
-5. **Try shorter query**: Very long questions may time out
-
 ## The app keeps crashing
 
 If Cadence crashes frequently:

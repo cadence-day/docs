@@ -27,7 +27,6 @@ At Cadence, we believe:
 **Why we collect it:**
 - Enable core tracking functionality
 - Display your timeline and patterns
-- Generate insights through Sage AI
 - Sync across your devices
 
 **How it's protected:**
@@ -40,11 +39,9 @@ At Cadence, we believe:
 **What we collect:**
 - Text notes attached to activities
 - Longer reflections
-- Voice-to-text transcriptions (audio is not stored)
 
 **Why we collect it:**
 - Provide rich context for your history
-- Enable Sage AI insights
 - Build your personal journal
 
 **How it's protected:**
@@ -52,24 +49,6 @@ At Cadence, we believe:
 - Encryption keys stored only on your device
 - Even Cadence employees cannot read your notes
 - Securely backed up in encrypted form
-
-### Chat Conversations
-
-**What we collect:**
-- Your messages to Sage
-- Sage's responses
-- Conversation history
-
-**Why we collect it:**
-- Enable conversational context
-- Improve response quality
-- Let you review past insights
-
-**How it's protected:**
-- **End-to-end encrypted with AES-256**
-- Transmitted securely to OpenAI for processing
-- Never used to train AI models
-- You can delete chat history anytime
 
 ### Account Information
 
@@ -132,7 +111,7 @@ We use **AES-256-GCM** (Advanced Encryption Standard, 256-bit, Galois/Counter Mo
 
 1. **Key generation**: A unique 256-bit key is generated on your device
 2. **Secure storage**: Key stored in iOS Keychain (hardware-protected)
-3. **Encryption**: Notes/chats encrypted on your device before sending
+3. **Encryption**: Notes encrypted on your device before sending
 4. **Transmission**: Encrypted data sent over HTTPS
 5. **Storage**: Encrypted data stored in Supabase
 6. **Decryption**: Only your device can decrypt (it has the key!)
@@ -157,15 +136,7 @@ We use trusted partners for specific functions:
 - **Purpose**: Store your data, manage authentication
 - **Location**: EU/US data centers (you can choose region)
 - **Security**: SOC 2 certified, GDPR compliant
-- **Access**: Cadence engineers can access encrypted data (but can't decrypt notes/chats)
-
-### OpenAI (AI Processing)
-
-- **Purpose**: Power Sage AI conversations and voice-to-text
-- **What we send**: Your activities, notes (encrypted in transit), chat messages
-- **What they do**: Process with GPT models, transcribe audio with Whisper
-- **What they don't do**: Store your data long-term or use it for training
-- **Security**: Enterprise agreement with strict privacy terms
+- **Access**: Cadence engineers can access encrypted data (but can't decrypt notes)
 
 ### Apple (Payment Processing)
 
@@ -189,14 +160,12 @@ You can:
 
 - **View all data**: In the app at any time
 - **Export data**: Download all activities, notes, reflections (coming soon!)
-- **Review chat history**: See all Sage conversations
 
 ### Delete Your Data
 
 You can:
 
 - **Delete notes**: Remove individual notes anytime
-- **Delete chat history**: Clear Sage conversations
 - **Delete account**: Permanently delete all data
 
 To delete your account:
@@ -212,7 +181,6 @@ You can:
 
 - **Disable analytics**: Opt out of anonymous usage tracking
 - **Manage notifications**: Control what notifications you receive
-- **Revoke permissions**: Remove microphone access (disables voice notes)
 
 ## GDPR Compliance
 
@@ -267,7 +235,6 @@ As a company operating in Europe (Berlin & Copenhagen), we're committed to GDPR:
 ### Active Accounts
 
 - **Activities and notes**: Retained indefinitely while your account is active
-- **Chat history**: Retained until you delete it
 - **Backups**: 30-day rolling backups (encrypted)
 
 ### Deleted Accounts

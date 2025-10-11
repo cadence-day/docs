@@ -24,7 +24,6 @@ Currently, Cadence is available for:
 Yes, an account is required to:
 - Sync your data across devices
 - Back up your activities and notes
-- Use Sage AI features
 - Enable end-to-end encryption
 
 You can sign up with:

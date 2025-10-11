@@ -51,7 +51,7 @@ A clean, color-coded interface that makes time tracking feel natural, not like a
 
 ### 🔐 Privacy by Design
 
-End-to-end encryption for notes and chat. Your data belongs to you, not to us or advertisers.
+End-to-end encryption for notes and activities. Your data belongs to you, not to us or advertisers.
 
 ### 🌍 Built for Humans
 
@@ -66,7 +66,6 @@ Get answers to common questions:
 - [General Questions](/docs/faq/general) - Pricing, platforms, getting started
 - [Activities](/docs/faq/activities) - Creating and managing activities
 - [Notes & Reflections](/docs/faq/notes) - Capturing thoughts and insights
-- [Sage AI](/docs/faq/sage-ai) - Your AI companion
 - [Security & Privacy](/docs/faq/encryption) - How we protect your data
 
 ### Feature Guides
@@ -75,7 +74,6 @@ Deep dives into Cadence's core features:
 
 - [Activity Tracking](/docs/features/activity-tracking) - Visual timeline and time logging
 - [Note Taking](/docs/features/note-taking) - Reflections and journaling
-- [AI Chat](/docs/features/ai-chat) - Conversations with Sage
 - [Weekly Reflections](/docs/features/reflections) - Pattern discovery
 - [Privacy & Security](/docs/features/privacy-security) - Encryption and data protection
 

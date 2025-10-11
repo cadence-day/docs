@@ -20,7 +20,6 @@ const sidebars: SidebarsConfig = {
         'faq/general',
         'faq/activities',
         'faq/notes',
-        'faq/sage-ai',
         'faq/encryption',
         'faq/calendar',
         'faq/notifications',
@@ -38,7 +37,6 @@ const sidebars: SidebarsConfig = {
       items: [
         'features/activity-tracking',
         'features/note-taking',
-        'features/ai-chat',
         'features/reflections',
         'features/privacy-security',
       ],

@@ -9,7 +9,6 @@ Reflections in Cadence are longer-form thoughts about your days, weeks, or speci
 - **Synthesized insights**: Pulling together patterns from multiple activities
 - **Meaningful**: Focused on understanding, growth, and awareness
 - **Periodic**: Typically weekly, but can be daily or monthly
-- **AI-assisted**: Sage can help generate thoughtful reflections
 
 ## Why Reflect?
 
@@ -63,23 +62,6 @@ Write your own reflections:
 - What do I want to change?
 - What am I grateful for?
 
-### AI-Generated Reflections (Premium)
-
-Let Sage help you reflect:
-
-1. Open the Reflection screen
-2. Tap **"Generate Reflection with Sage"**
-3. Sage analyzes your week:
-   - Activity patterns
-   - Time allocation
-   - Notes you've added
-   - Changes from previous weeks
-4. Review Sage's reflection
-5. Edit and personalize
-6. Save!
-
-This creates a powerful reflection practice with minimal effort.
-
 ## Reflection Practices
 
 ### Daily Reflection (5 minutes)
@@ -92,28 +74,6 @@ This creates a powerful reflection practice with minimal effort.
    - **Went well**: What was good today?
    - **Challenging**: What was difficult?
    - **Learned**: One insight or lesson?
-
-### Weekly Reflection (15-20 minutes)
-
-**Sunday evening or Monday morning:**
-
-1. **Review**: Look at your weekly cadence view
-2. **Notice**: What patterns stand out?
-3. **Ask Sage**: "Help me reflect on this week"
-4. **Personalize**: Edit Sage's reflection with your own thoughts
-5. **Plan**: What do you want to adjust next week?
-6. **Save**: Keep your reflection for future reference
-
-### Monthly Reflection (30 minutes)
-
-**End of each month:**
-
-1. **Review weeks**: Look at all 4-5 weeks
-2. **Big patterns**: What themes emerge?
-3. **Ask Sage**: "What patterns do you notice over the past month?"
-4. **Celebrate**: What progress have you made?
-5. **Adjust**: What activities or habits need attention?
-6. **Set intentions**: What focus for next month?
 
 ## Reflection Frameworks
 
@@ -154,36 +114,6 @@ Focus on positives:
 - **People**: Who supported or inspired you?
 - **Learnings**: What did you discover?
 
-## Using Sage for Reflections
-
-### Prompts for Sage
-
-**Weekly reflections:**
-- "Help me reflect on this week"
-- "What patterns do you notice in my week?"
-- "Generate a weekly reflection"
-- "Highlight the good and challenging parts of my week"
-
-**Specific focus:**
-- "Reflect on my work-life balance this week"
-- "How was my health routine?"
-- "Did I spend enough time on creative activities?"
-- "What do my notes reveal about my week?"
-
-**Comparative:**
-- "How does this week compare to last week?"
-- "Am I making progress on my exercise goals?"
-- "Is my balance improving over time?"
-
-### Editing AI Reflections
-
-Sage provides a great starting point, but personalize:
-
-- **Add feelings**: How did you feel about the patterns?
-- **Add context**: What was happening in your life?
-- **Add intentions**: What do you want to change or continue?
-- **Make it yours**: Use your voice and perspective
-
 ## Building a Reflection Habit
 
 ### Start Small
@@ -192,14 +122,12 @@ Don't overwhelm yourself:
 
 - **Week 1-2**: Just review your timeline weekly, no writing
 - **Week 3-4**: Add 3-2-1 reflections (takes 5 minutes)
-- **Week 5+**: Use Sage for deeper reflections
 
 ### Make it Easy
 
 Remove friction:
 
 - **Set a reminder**: Same time every week
-- **Use Sage**: Let AI do the heavy lifting
 - **Keep it short**: 10-15 minutes is plenty
 - **No perfection**: Rough thoughts are valuable
 
@@ -209,7 +137,7 @@ Experiment to find what works:
 
 - **Day**: Sunday evening? Monday morning? Friday afternoon?
 - **Duration**: 5 minutes? 20 minutes?
-- **Format**: Free-form writing? Structured prompts? Sage-generated?
+- **Format**: Free-form writing? Structured prompts?
 - **Frequency**: Weekly? Bi-weekly? Monthly?
 
 ## Benefits of Regular Reflection
@@ -271,7 +199,6 @@ Test hypotheses:
 
 1. **Track**: Log activities and add notes about productivity
 2. **Experiment**: Try morning exercise for 2 weeks
-3. **Reflect**: Ask Sage to analyze productivity patterns
 4. **Decide**: Keep the change or try something else
 
 ### Seasonal Reviews
@@ -279,7 +206,6 @@ Test hypotheses:
 Quarterly deep reflections:
 
 - Review 12-13 weeks of data
-- Ask Sage for 3-month patterns
 - Identify major themes and shifts
 - Set intentions for next quarter
 - Celebrate significant progress
@@ -288,7 +214,7 @@ Quarterly deep reflections:
 
 Reflections are private and secure:
 
-- **End-to-end encrypted**: Like notes and chat
+- **End-to-end encrypted**: Like notes
 - **Only you can access**: Even Cadence employees can't read them
 - **Backed up safely**: Cloud-stored with encryption
 - **Delete anytime**: Full control over your data
@@ -304,7 +230,7 @@ Coming soon:
 
 ## Example Reflection
 
-**Sample weekly reflection (AI-generated then personalized):**
+**Sample weekly reflection:**
 
 > **Week of Oct 6-12, 2025**
 >

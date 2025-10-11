@@ -1,4 +1,4 @@
-# Note-Taking & Voice Capture
+# Note-Taking
 
 Capture thoughts, context, and insights alongside your activities.
 
@@ -9,7 +9,6 @@ Notes in Cadence serve multiple purposes:
 - **Remember context**: What happened during an activity?
 - **Capture feelings**: How did you feel?
 - **Track insights**: What did you learn?
-- **Feed Sage AI**: Give your AI companion more context for better insights
 
 Notes transform simple time tracking into a rich journal of your life.
 
@@ -45,37 +44,6 @@ To edit or delete a note:
 2. Edit the text or clear it entirely
 3. Changes save automatically
 
-## Voice Notes (Premium Feature)
-
-### How Voice-to-Text Works
-
-Cadence Premium includes voice-to-text powered by OpenAI's Whisper:
-
-1. Tap the microphone icon when adding a note
-2. Speak for up to 60 seconds
-3. Whisper transcribes your speech to text
-4. Review and edit if needed
-5. Save!
-
-### When to Use Voice
-
-Voice notes are perfect for:
-
-- **On the go**: Capture thoughts while walking or commuting
-- **Quick capture**: Faster than typing on mobile
-- **Rich context**: Express thoughts more naturally by speaking
-- **Accessibility**: Alternative input method
-
-### Voice Note Tips
-
-**For best results:**
-- **Speak clearly**: Enunciate for accurate transcription
-- **Quiet environment**: Minimize background noise
-- **Shorter segments**: Multiple 30-second notes are better than one 60-second note
-- **Review**: Always review transcriptions for accuracy
-
-**Privacy note**: Audio is transcribed and then discarded. Only the text is stored (encrypted!).
-
 ## Note Organization
 
 ### Connecting Notes to Activities
@@ -97,26 +65,6 @@ Full-text search across all notes is in development! Soon you'll be able to:
 - Recall when you learned something
 - Discover connections between ideas
 
-## Using Notes with Sage AI
-
-### How Sage Uses Your Notes
-
-When you chat with Sage, your notes provide crucial context:
-
-- **Sentiment analysis**: Sage can detect patterns in your emotional state
-- **Topic identification**: Understand what's on your mind most often
-- **Personalized insights**: More context leads to better advice
-- **Reflection generation**: Notes inform AI-generated reflections
-
-### Example Sage Queries
-
-With notes, you can ask Sage:
-
-- "What patterns do you notice in my work notes?"
-- "When do I write notes about feeling energized?"
-- "Summarize my thoughts from last week"
-- "What's been on my mind lately?"
-
 ## Privacy & Security
 
 ### Encryption
@@ -127,17 +75,6 @@ All notes are encrypted using AES-256:
 - **Your keys only**: Only you can decrypt your notes
 - **Secure storage**: Encrypted data stored in Supabase
 - **No access**: Even Cadence employees can't read your notes
-
-### Voice Note Privacy
-
-For voice-to-text:
-
-- **Audio not stored**: Recording is transcribed then immediately deleted
-- **Text encrypted**: Only the transcribed text is saved (encrypted)
-- **Secure processing**: Audio sent over encrypted connection to OpenAI
-- **No training data**: Your audio is never used to train AI models
-
-See our full [Encryption & Privacy](/docs/faq/encryption) guide for details.
 
 ## Advanced Note-Taking Strategies
 
@@ -189,7 +126,6 @@ Notes are quick captures. Reflections are longer, synthesized thoughts:
 
 **During the day**: Add quick notes to activities
 **End of week**: Review your notes
-**Ask Sage**: "Generate a reflection based on this week's notes"
 **Edit & save**: Personalize the AI-generated reflection
 
 This creates a powerful journaling practice with minimal effort.
@@ -200,7 +136,6 @@ This creates a powerful journaling practice with minimal effort.
    - Open Reflection view
    - Read through your week's notes
    - Notice patterns or themes
-   - Ask Sage for insights
    - Generate and save a weekly reflection
 
 2. **Monthly review**:
@@ -211,22 +146,10 @@ This creates a powerful journaling practice with minimal effort.
 
 ## Accessibility Features
 
-### Voice Notes for Accessibility
-
-Voice-to-text isn't just convenient - it's essential for users with:
-
-- **Motor impairments**: Difficulty typing on mobile
-- **Visual impairments**: Using VoiceOver with voice input
-- **Dyslexia**: Easier to speak than type/spell
-- **Hand injuries**: Temporary inability to type
-
-We're committed to making Cadence accessible to everyone.
-
 ### Future Accessibility Features
 
 Coming soon:
 
-- **Voice commands**: "Log exercise at 8 AM"
 - **Read notes aloud**: Hear your notes with TTS
 - **Dictation improvements**: Better punctuation and formatting
 - **Custom vocabulary**: Teach Whisper your unique terms
@@ -263,13 +186,6 @@ Coming soon:
 
 ## Troubleshooting
 
-### Voice transcription is inaccurate
-
-- **Speak clearly**: Enunciate and avoid mumbling
-- **Reduce noise**: Find a quieter environment
-- **Shorter segments**: Break into multiple shorter notes
-- **Edit after**: Always review and correct transcriptions
-
 ### Can't add notes
 
 - **Check activity**: Make sure you've logged an activity first
@@ -287,9 +203,7 @@ Coming soon:
 ## Next Steps
 
 1. **Start simple**: Add 1-2 notes per day
-2. **Build the habit**: Use voice notes for convenience
-3. **Review regularly**: Check notes in Reflection view
-4. **Chat with Sage**: Ask questions about your note patterns
-5. **Deepen practice**: Add more detailed notes as it becomes natural
+2. **Review regularly**: Check notes in Reflection view
+3. **Deepen practice**: Add more detailed notes as it becomes natural
 
 Note-taking transforms activity tracking from data collection into self-discovery!

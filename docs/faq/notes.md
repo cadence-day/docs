@@ -9,25 +9,13 @@ You can add notes in several ways:
 **While logging an activity:**
 1. Tap on a time slot to log an activity
 2. After selecting the activity, you'll see a note input field
-3. Type or use voice-to-text to add your note
+3. Type to add your note
 4. The note is saved automatically with the activity
 
 **From the Reflection screen:**
 1. Navigate to the **Reflection** tab
 2. View your activities for any day
 3. Tap on an activity to add or edit notes
-
-## Does Cadence have voice-to-text?
-
-Yes! Cadence includes built-in voice-to-text functionality powered by OpenAI's Whisper:
-
-1. When adding a note, tap the microphone icon
-2. Speak your thoughts (up to 60 seconds)
-3. The audio is transcribed to text automatically
-4. Review and edit if needed
-5. Tap **"Save"**
-
-Voice notes are processed securely and the audio is not stored permanently.
 
 ## Are my notes encrypted?
 
@@ -53,7 +41,7 @@ Note search is coming soon! This feature will allow you to search across all you
 ## What's the difference between notes and reflections?
 
 - **Notes**: Short thoughts or context added to individual activities (e.g., "Great energy during this workout")
-- **Reflections**: Longer-form insights about your day, patterns, or overall well-being, created with help from Sage AI
+- **Reflections**: Longer-form insights about your day, patterns, or overall well-being.
 
 Both are valuable for understanding your rhythms and growth over time.
 
