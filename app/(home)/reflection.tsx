@@ -5,11 +5,11 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ScreenHeader } from "@/shared/components/CadenceUI";
 import { useTheme } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
+import { useFeatureFlag } from "@/shared/hooks/useFeatureFlags";
 
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { useDialogStore } from "@/shared/stores";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { usePostHog } from "posthog-react-native";
 import LoadingScreen from "../(utils)/LoadingScreen";
 import { generalStyles } from "../../shared/styles";
 const ReflectionGrid = React.lazy(() =>
@@ -29,33 +29,17 @@ export default function Reflection() {
   const { t } = useI18n();
   const theme = useTheme();
   const openDialog = useDialogStore((s) => s.openDialog);
-  const posthog = usePostHog();
-  const [isMonthlyReflectionEnabled, setIsMonthlyReflectionEnabled] = useState<boolean>(false);
 
-  // Check the monthly-reflection feature flag
+  // Use the new feature flag system
+  const isMonthlyReflectionEnabled = useFeatureFlag("monthly-reflection");
+  const isWeeklyInsightsEnabled = useFeatureFlag("weekly-insights");
+
+  // If monthly reflection is disabled and we're in monthly mode, switch back to weekly
   useEffect(() => {
-    const checkFeatureFlag = async () => {
-      try {
-        const isEnabled = await posthog?.isFeatureEnabled("monthly-reflection");
-        setIsMonthlyReflectionEnabled(isEnabled ?? false);
-
-        // If feature is disabled and we're in monthly mode, switch back to weekly
-        if (!isEnabled && viewMode === "monthly") {
-          setViewMode("weekly");
-        }
-      } catch (error) {
-        console.error("Error checking monthly-reflection feature flag:", error);
-        setIsMonthlyReflectionEnabled(false);
-
-        // On error, default to weekly if in monthly mode
-        if (viewMode === "monthly") {
-          setViewMode("weekly");
-        }
-      }
-    };
-
-    checkFeatureFlag();
-  }, [posthog, viewMode]);
+    if (isMonthlyReflectionEnabled === false && viewMode === "monthly") {
+      setViewMode("weekly");
+    }
+  }, [isMonthlyReflectionEnabled, viewMode]);
 
   const getStartOfWeek = (date: Date) => {
     const localDate = new Date(date);
@@ -190,8 +174,12 @@ export default function Reflection() {
     return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
   };
 
-  // Open WeeklyInsightDialog when SageIcon is pressed
+  // Open WeeklyInsightDialog when SageIcon is pressed (only if feature flag is enabled)
   const handleSageIconPress = () => {
+    if (!isWeeklyInsightsEnabled) {
+      return; // Do nothing if the feature is disabled
+    }
+
     openDialog({
       type: "weekly-insight",
       props: {
@@ -206,12 +194,16 @@ export default function Reflection() {
 
   // Handle title press - only allow monthly view if feature flag is enabled
   const handleTitlePress = () => {
-    if (viewMode === "weekly" && isMonthlyReflectionEnabled) {
+    // Don't allow switching if the flag is still loading or explicitly disabled
+    if (isMonthlyReflectionEnabled === undefined || isMonthlyReflectionEnabled === false) {
+      return;
+    }
+
+    if (viewMode === "weekly") {
       setViewMode("monthly");
     } else if (viewMode === "monthly") {
       setViewMode("weekly");
     }
-    // If monthly is not enabled and we're in weekly mode, do nothing
   };
 
   return (
@@ -227,19 +219,21 @@ export default function Reflection() {
         <ScreenHeader
           title={title}
           onTitlePress={handleTitlePress}
-          OnRightElement={() => (
-            <TouchableOpacity
-              onPress={handleSageIconPress}
-              hitSlop={HIT_SLOP_10}
-            >
-              <SageIcon
-                size={40}
-                status="pulsating"
-                auto={false}
-                isLoggedIn={true}
-              />
-            </TouchableOpacity>
-          )}
+          OnRightElement={() =>
+            isWeeklyInsightsEnabled ? (
+              <TouchableOpacity
+                onPress={handleSageIconPress}
+                hitSlop={HIT_SLOP_10}
+              >
+                <SageIcon
+                  size={40}
+                  status="pulsating"
+                  auto={false}
+                  isLoggedIn={true}
+                />
+              </TouchableOpacity>
+            ) : null
+          }
           subtitle={
             viewMode === "weekly" ? (
               <View style={styles.dateNavigationContainer}>
