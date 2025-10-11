@@ -16,9 +16,9 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { TIMESLICE_CURRENT_WIDTH } from "../../constants/dimensions";
-import { styles } from "../../styles";
-import { getContrastColor } from "../../utils";
+import { TIMESLICE_CURRENT_WIDTH } from "../dimensions";
+import { styles } from "../styles";
+import { getContrastColor } from "../utils/utils";
 import MetadataVertical from "./MetadataVertical";
 
 export enum Mode {

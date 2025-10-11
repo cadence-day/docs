@@ -11,7 +11,7 @@ import { Logger } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
 import { ActionSheetIOS, Alert, Platform } from "react-native";
-import { hasNotesOrStates } from "../utils";
+import { hasNotesOrStates } from "../utils/utils";
 import usePendingTimeslicesStore from "./usePendingTimeslicesStore";
 /**
  * Custom hook to handle timeline actions (create, update, delete timeslices)
