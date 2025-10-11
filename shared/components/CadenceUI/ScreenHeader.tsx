@@ -9,7 +9,8 @@ import {
 import { cadenceUIStyles } from "./styles";
 
 export interface ScreenHeaderProps {
-  title: string;
+  title: string | React.ReactNode;
+  onTitlePress?: () => void;
   subtitle?: React.ReactNode;
   OnRightElement?: () => React.ReactNode;
   onSubtitlePress?: () => void;
@@ -20,6 +21,7 @@ export interface ScreenHeaderProps {
 
 export const ScreenHeader: React.FC<ScreenHeaderProps> = ({
   title,
+  onTitlePress,
   subtitle,
   OnRightElement,
   onSubtitlePress,
@@ -30,9 +32,15 @@ export const ScreenHeader: React.FC<ScreenHeaderProps> = ({
   return (
     <View style={[cadenceUIStyles.screenHeaderContainer, style]}>
       <View style={cadenceUIStyles.screenHeaderLeftSection}>
-        <Text style={[cadenceUIStyles.screenHeaderTitle, titleStyle]}>
-          {title}
-        </Text>
+        {typeof title === "string" ? (
+          <TouchableOpacity onPress={onTitlePress}>
+            <Text style={[cadenceUIStyles.screenHeaderTitle, titleStyle]}>
+              {title}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          title
+        )}
         {subtitle && (
           <TouchableOpacity
             onPress={onSubtitlePress}
