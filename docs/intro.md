@@ -2,46 +2,105 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Welcome to Cadence
 
-Let's discover **Docusaurus in less than 5 minutes**.
+**Track your time. Understand your rhythms. Live intentionally.**
 
-## Getting Started
+Cadence is a mindful time-tracking app that helps you understand how you spend your days. Instead of optimizing every minute, Cadence helps you discover your natural patterns and live more intentionally.
 
-Get started by **creating a new site**.
+## What is Cadence?
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+Cadence is more than just a time tracker—it's a tool for self-awareness:
 
-### What you'll need
+- **Visual Timeline**: See your entire day at a glance with color-coded activities
+- **Mindful Notes**: Capture reflections and thoughts with end-to-end encryption
+- **Pattern Recognition**: Discover your natural rhythms and energy patterns
+- **Privacy First**: Your data is encrypted and never shared
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## Quick Start
 
-## Generate a new site
+### 1. Download the App
 
-Generate a new Docusaurus site using the **classic template**.
+Get Cadence for iOS:
 
-The classic template will automatically be added to your project after you run the command:
+📱 [Download on the App Store](https://apps.apple.com/app/cadence-day/id6745115112)
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+### 2. Create Your First Activity
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+1. Open the app and sign up
+2. Complete the onboarding tutorial
+3. Tap any time slot on the timeline
+4. Choose an activity (Work, Exercise, Social, etc.)
+5. Customize with colors.
+6. See your day - week - month come to life!
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+### 3. Explore Features
 
-## Start your site
+- **📝 Notes**: Add reflections to any activity
+- **📊 Reflections**: Review your week at a glance
 
-Run the development server:
+## What Makes Cadence Different?
 
-```bash
-cd my-website
-npm run start
-```
+### 🧘 Mindfulness Over Productivity
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+Cadence isn't about squeezing more into your day. It's about understanding how you already spend your time and making conscious choices.
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+### 🎨 Beautiful & Intuitive
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+A clean, color-coded interface that makes time tracking feel natural, not like a chore.
+
+### 🔐 Privacy by Design
+
+End-to-end encryption for notes and chat. Your data belongs to you, not to us or advertisers.
+
+### 🌍 Built for Humans
+
+Available in 5 languages: English, Deutsch, Dansk, Español, and Français.
+
+## Learn More
+
+### Frequently Asked Questions
+
+Get answers to common questions:
+
+- [General Questions](/docs/faq/general) - Pricing, platforms, getting started
+- [Activities](/docs/faq/activities) - Creating and managing activities
+- [Notes & Reflections](/docs/faq/notes) - Capturing thoughts and insights
+- [Sage AI](/docs/faq/sage-ai) - Your AI companion
+- [Security & Privacy](/docs/faq/encryption) - How we protect your data
+
+### Feature Guides
+
+Deep dives into Cadence's core features:
+
+- [Activity Tracking](/docs/features/activity-tracking) - Visual timeline and time logging
+- [Note Taking](/docs/features/note-taking) - Reflections and journaling
+- [AI Chat](/docs/features/ai-chat) - Conversations with Sage
+- [Weekly Reflections](/docs/features/reflections) - Pattern discovery
+- [Privacy & Security](/docs/features/privacy-security) - Encryption and data protection
+
+## Need Help?
+
+We're here to support you:
+
+- **📧 Support**: [admin@cadence.day](mailto:admin@cadence.day)
+- **🐛 Bug Reports**: [Settings → Bug Report](https://app.cadence.day/support)
+
+## Join the Community
+
+Connect with other Cadence users:
+
+- **Discord**: [Join the Cadence Community](https://discord.gg/cW9gCRA6Kn)
+- **Instagram**: [@cadencedotday](https://instagram.com/cadencedotday)
+- **X (Twitter)**: [@cadencedotday](https://x.com/cadencedotday)
+- **GitHub**: [cadence-day-dev](https://github.com/cadence-day-dev)
+
+## About Cadence
+
+Cadence is built with ❤️ in **Berlin · Copenhagen · New York**
+
+We believe that understanding how you spend your time is the first step to living with intention. Cadence helps you see your patterns, celebrate your rhythms, and make mindful choices about how you want to live.
+
+---
+
+Ready to get started? [Download the app](https://apps.apple.com/app/cadence-day/id6745115112) or explore the [FAQ](/docs/faq/general) to learn more.
