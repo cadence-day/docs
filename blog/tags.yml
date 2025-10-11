@@ -1,19 +1,34 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
+development:
+  label: Development
+  permalink: /development
+  description: Development tag description
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+time:
+  label: Time
+  permalink: /time
+  description: Time tag description
 
-docusaurus:
-  label: Docusaurus
-  permalink: /docusaurus
-  description: Docusaurus tag description
+productivity:
+  label: Productivity
+  permalink: /productivity
+  description: Productivity tag description
 
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description
+design:
+  label: Design
+  permalink: /design
+  description: Design tag description
+
+release:
+  label: Release
+  permalink: /release
+  description: Release tag description
+
+team:
+  label: Team
+  permalink: /team
+  description: Team tag description
+
+founders:
+  label: Founders
+  permalink: /founders
+  description: Founders tag description
