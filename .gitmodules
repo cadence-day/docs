@@ -1,0 +1,3 @@
+[submodule "cadence-docs"]
+	path = cadence-docs
+	url = https://github.com/cadence-day/docs.git
