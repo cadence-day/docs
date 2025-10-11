@@ -22,9 +22,9 @@
  * // Feature enabled - render the component
  */
 
-import { useFeatureFlag as usePostHogFeatureFlag } from "posthog-react-native";
 import { isDev } from "@/shared/constants/isDev";
 import { Logger } from "@/shared/utils/errorHandler";
+import { useFeatureFlag as usePostHogFeatureFlag } from "posthog-react-native";
 
 /**
  * Manual feature flag toggles
@@ -33,8 +33,9 @@ import { Logger } from "@/shared/utils/errorHandler";
  */
 const MANUAL_FEATURE_TOGGLES: Record<string, boolean> = {
   "chat": false,
-  "weekly-insights": false,
-  "monthly-reflection": false,
+  "weekly-insights": true,
+  "monthly-reflection": true,
+  "timeline-view-toggle": true,
 };
 
 /**

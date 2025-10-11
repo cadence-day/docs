@@ -8,6 +8,7 @@ import { ScreenHeader } from "@/shared/components/CadenceUI";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
 import { useTheme, useViewDialogState } from "@/shared/hooks";
+import { useFeatureFlag } from "@/shared/hooks/useFeatureFlags";
 import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
 import { generalStyles } from "@/shared/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -31,8 +32,12 @@ export default function Today() {
   // Get dialog state for this view
   const dialogState = useViewDialogState("home");
 
+  // Use feature flag for timeline view toggle
+  const isTimelineViewToggleEnabled = useFeatureFlag("timeline-view-toggle");
+
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [viewMode, setViewMode] = useState<"linear" | "circular">("linear");
 
   // Derive dialog state from the hook instead of local state
   const isActivityDialogOpen = dialogState.dialogs.some(
@@ -65,7 +70,26 @@ export default function Today() {
           <ScreenHeader
             title={title}
             OnRightElement={() => (
-              <SageIcon size={40} status="pulsating" auto={false} />
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+                {isTimelineViewToggleEnabled && (
+                  <TouchableOpacity
+                    onPress={() =>
+                      setViewMode(viewMode === "linear" ? "circular" : "linear")
+                    }
+                    hitSlop={HIT_SLOP_10}
+                  >
+                    <Text
+                      style={[
+                        generalStyles.clickableText,
+                        { fontSize: 24, fontWeight: "600" },
+                      ]}
+                    >
+                      {viewMode === "linear" ? "◯" : "—"}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                <SageIcon size={40} status="pulsating" auto={false} />
+              </View>
             )}
             subtitle={
               <>
@@ -139,6 +163,7 @@ export default function Today() {
             <React.Suspense fallback={<LoadingScreen />}>
               <Timeline
                 date={selectedDate}
+                viewMode={viewMode}
                 bottomPadding={
                   isActivityDialogOpen && isActivityDialogCollapsed
                     ? DIALOG_HEIGHT_PLACEHOLDER
