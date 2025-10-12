@@ -94,10 +94,14 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
+      - name: 🔑 Setup App Store Connect API Key
+        run: |
+          echo "${{ secrets.APP_STORE_CONNECT_KEY }}" > ./asc-api-key.p8
+
       - name: EAS Build & Submit iOS
         id: build
         run: |
-          build_output=$(doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive --auto-submit --json")
+          build_output=$(doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit --json")
           echo "Full build output for debugging:"
           echo "$build_output"
           build_id=$(echo "$build_output" | jq -r 'if type == "array" then .[0].id else .id end')
