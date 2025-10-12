@@ -20,23 +20,5 @@
       "autoIncrement": true,
       "channel": "prd"
     }
-  },
-  "submit": {
-    "stg": {
-      "ios": {
-        "appleId": "${APPLE_DEVELOPER_EMAIL}",
-        "ascApiKeyId": "${APP_STORE_CONNECT_KEY_ID}",
-        "ascApiKeyIssuerId": "${APP_STORE_CONNECT_KEY_ISSUER_ID}",
-        "ascApiKeyPath": "./asc-api-key.p8"
-      }
-    },
-    "prd": {
-      "ios": {
-        "appleId": "${APPLE_DEVELOPER_EMAIL}",
-        "ascApiKeyId": "${APP_STORE_CONNECT_KEY_ID}",
-        "ascApiKeyIssuerId": "${APP_STORE_CONNECT_KEY_ISSUER_ID}",
-        "ascApiKeyPath": "./asc-api-key.p8"
-      }
-    }
   }
 }
