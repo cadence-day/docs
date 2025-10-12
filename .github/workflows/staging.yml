@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.sha }}
+          ref: dev
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
@@ -94,15 +94,15 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: EAS Build iOS
+      - name: EAS Build & Submit iOS
         id: build
         run: |
-          build_output=$(doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive --json")
-          build_id=$(echo "$build_output" | jq -r '.id')
+          build_output=$(doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive --auto-submit --json")
+          echo "Full build output for debugging:"
+          echo "$build_output"
+          build_id=$(echo "$build_output" | jq -r 'if type == "array" then .[0].id else .id end')
+          echo "Extracted build_id: $build_id"
           echo "build_id=$build_id" >> $GITHUB_OUTPUT
-
-      - name: Submit to App Store Connect
-        run: doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas submit -p ios --id ${{ steps.build.outputs.build_id }}"
 
       - name: Get group id
         id: group
