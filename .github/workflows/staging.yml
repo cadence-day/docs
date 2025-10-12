@@ -42,11 +42,11 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: EAS Update (preview)
-        run: doppler run --project cadence-day --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas update --profile preview --message 'Automated update from PR #${{ github.event.pull_request.number }}'"
+      - name: EAS Update (stg)
+        run: doppler run --project cadence-day --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas update --branch stg --message 'Automated update from PR #${{ github.event.pull_request.number }}'"
 
       - name: EAS Build iOS (no submit)
-        run: doppler run --project cadence-day --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --non-interactive"
+        run: doppler run --project cadence-day --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive"
 
   submit-on-merge:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
@@ -86,7 +86,7 @@ jobs:
         run: npm install
 
       - name: EAS Build iOS
-        run: doppler run --project cadence-day --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --non-interactive"
+        run: doppler run --project cadence-day --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive"
 
       - name: Submit to App Store Connect
         run: doppler run --project cadence-day --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas submit -p ios --asc-app-id ${{ secrets.APP_STORE_CONNECT_APP_ID }} --asc-api-key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} --asc-api-key-issuer-id ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }} --asc-api-key ${{ secrets.APP_STORE_CONNECT_KEY }}"

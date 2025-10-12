@@ -4,36 +4,21 @@
     "appVersionSource": "local"
   },
   "build": {
-    "development": {
+    "dev": {
       "developmentClient": true,
       "distribution": "internal",
-      "channel": "development",
-      "env": {
-        "NODE_ENV": "development"
-      },
+      "channel": "dev",
       "ios": {
         "simulator": false
       }
     },
-    "preview": {
+    "stg": {
       "distribution": "internal",
-      "channel": "preview",
-      "env": {
-        "NODE_ENV": "preview",
-        "SENTRY_ORG": "cadenceday",
-        "SENTRY_PROJECT": "cadence-app",
-        "SENTRY_ALLOW_FAILURE": "true"
-      }
+      "channel": "stg"
     },
-    "production": {
+    "prd": {
       "autoIncrement": true,
-      "channel": "production",
-      "env": {
-        "NODE_ENV": "production",
-        "SENTRY_ORG": "cadenceday",
-        "SENTRY_PROJECT": "cadence-app",
-        "SENTRY_ALLOW_FAILURE": "true"
-      }
+      "channel": "prd"
     }
   }
 }
