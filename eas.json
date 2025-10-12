@@ -20,5 +20,13 @@
       "autoIncrement": true,
       "channel": "prd"
     }
+  },
+  "submit": {
+    "prd": {
+      "ios": {
+        "ascAppId": "$APP_STORE_CONNECT_APP_ID",
+        "appleTeamId": "67DCNK6RL4"
+      }
+    }
   }
 }
