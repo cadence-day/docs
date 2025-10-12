@@ -1,7 +1,9 @@
 name: ASC Troubleshoot
 
 on:
-    workflow_dispatch:
+    pull_request:
+        branches: [staging]
+        types: [opened, synchronize, reopened, closed]
 
 jobs:
     asc-troubleshoot:
