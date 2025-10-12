@@ -71,7 +71,7 @@
       "edgeToEdgeEnabled": true,
       "icon": "./assets/images/icon.png",
       "package": "day.cadence.mobile",
-      "versionCode": 112,
+      "versionCode": 107,
       "permissions": ["android.permission.CAMERA"],
       "intentFilters": [
         {
