@@ -39,10 +39,12 @@ For example, you might want reflection reminders at 9 PM but activity reminders 
 To turn off notifications:
 
 **For specific types:**
+
 1. Go to **Settings** > **Notifications**
 2. Toggle off the notification types you don't want
 
 **For all notifications:**
+
 1. Go to iOS **Settings**
 2. Find **Cadence** in the app list
 3. Tap **Notifications**

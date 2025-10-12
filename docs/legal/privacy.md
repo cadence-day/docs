@@ -38,10 +38,9 @@ We do not sell, rent, or share your personal data with third parties for adverti
 - Request deletion of your data.
 - Withdraw consent and stop data syncing at any time.
 
-To exercise any of these rights, contact us at: [admin@cadence.day](mailto:admin@cadence.day) or [dev@cadence.day](mailto:dev@cadence.day)
+To exercise any of these rights, contact us at: [admin@cadence.day](mailto:admin@cadence.day) or [dev@cadence.day](mailto:dev@cadence.day).
 
-Office Address:
-2 Danziger Str, Berlin 10435, Germany
+Office Address: 2 Danziger Str, Berlin 10435, Germany
 
 ## Data Retention
 
@@ -52,6 +51,7 @@ Data is retained only as long as necessary to provide the service or as required
 The App is not intended for children under 16. We do not knowingly collect or store personal information from children.
 
 ## Jurisdiction
+
 This Privacy Policy is governed by the laws of Germany. All disputes shall be subject to the exclusive jurisdiction of the courts in Berlin, Germany.
 
 ## Changes to This Policy

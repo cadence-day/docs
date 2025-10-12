@@ -11,10 +11,12 @@ Your privacy and security are our top priorities. Learn how Cadence protects you
 Cadence uses **end-to-end encryption** for your most sensitive data:
 
 **What's encrypted:**
+
 - Notes and reflections
 - Personal insights and patterns
 
 **Encryption method:**
+
 - **AES-256-GCM**: Industry-standard encryption algorithm
 - **Unique keys**: Each user has their own encryption key
 - **Encrypted at rest**: Data is encrypted before leaving your device
@@ -35,11 +37,13 @@ This allows us to provide fast timeline views, pattern analysis, and sync across
 ## Where is my data stored?
 
 **Database**: Supabase (PostgreSQL) hosted on secure cloud infrastructure
+
 - Data centers with SOC 2 Type II compliance
 - Regular backups and disaster recovery
 - Network isolation and access controls
 
 **Local storage**: Some data is cached on your device for offline access:
+
 - Activity logs for the current week
 - User preferences
 - Encryption keys (stored in iOS Keychain)
@@ -54,6 +58,7 @@ Yes! You can export all your Cadence data at any time:
 4. Your data will be prepared and sent to your email
 
 Exported data includes:
+
 - All activities and time logs
 - Notes and reflections (decrypted)
 - Custom activities and preferences
@@ -69,6 +74,7 @@ Exported data includes:
 **No**, we never share your personal data with third parties for marketing or advertising purposes.
 
 **Service providers we use:**
+
 - **Supabase**: Database and authentication (with strict data processing agreements)
 - **Sentry**: Error tracking (anonymized error logs only)
 
@@ -97,6 +103,7 @@ When you delete your account:
 **Encryption is always enabled** for sensitive data (notes, reflections). You cannot disable it.
 
 For optional features:
+
 - **Biometric unlock**: Settings → Security → Face ID/Touch ID
 - **Auto-lock**: Settings → Security → Auto-lock (require authentication after inactivity)
 
@@ -109,6 +116,7 @@ For optional features:
 - Activity logs and profile data will remain accessible
 
 **Best practices:**
+
 - Use a strong, memorable password
 - Consider using a password manager
 - Keep your email address up to date for recovery
@@ -124,14 +132,14 @@ Yes! Cadence is fully compliant with GDPR (General Data Protection Regulation):
 - **Data minimization**: We only collect what's necessary
 - **Consent**: Clear opt-ins for data collection
 
-For GDPR inquiries, contact: privacy@cadence.day
+For GDPR inquiries, contact: [admin@cadence.day](mailto:admin@cadence.day)
 
 ## How do I report a security issue?
 
 If you discover a security vulnerability:
 
 1. **Do not** post it publicly
-2. Email us immediately at: security@cadence.day
+2. Email us immediately at: [admin@cadence.day](mailto:admin@cadence.day)
 3. Include:
    - Description of the vulnerability
    - Steps to reproduce
@@ -144,12 +152,13 @@ We take security seriously and will respond within 24 hours. We appreciate respo
 **No**, Cadence is not currently HIPAA-compliant and should not be used to store protected health information (PHI).
 
 While we use strong encryption, HIPAA compliance requires additional:
+
 - Business Associate Agreements (BAAs)
 - Specific audit logging
 - Physical safeguards
 - Employee training certifications
 
-If you need HIPAA compliance, please contact us at: enterprise@cadence.day
+If you need HIPAA compliance, please contact us at: [admin@cadence.day](mailto:admin@cadence.day) to discuss potential enterprise solutions.
 
 ## What encryption libraries does Cadence use?
 
@@ -165,7 +174,7 @@ All libraries are regularly updated to patch vulnerabilities.
 
 Not yet, but we're planning to launch one! In the meantime:
 
-- Report vulnerabilities to: security@cadence.day
+- Report vulnerabilities to: [admin@cadence.day](mailto:admin@cadence.day)
 - We may offer rewards on a case-by-case basis
 - You'll be credited in our security acknowledgments (with permission)
 
@@ -179,10 +188,12 @@ Not yet, but we're planning to launch one! In the meantime:
 ## Can I see Cadence's security certifications?
 
 We're working toward:
+
 - SOC 2 Type II certification (2025)
 - ISO 27001 certification (2026)
 
 Current security measures:
+
 - ✅ End-to-end encryption (AES-256-GCM)
 - ✅ HTTPS/TLS for all network traffic
 - ✅ Regular security updates
@@ -193,10 +204,10 @@ Current security measures:
 
 If you have additional security or privacy questions:
 
-- Email: security@cadence.day
-- View our [Privacy Policy](https://cadence.day/privacy)
-- View our [Terms of Service](https://cadence.day/terms)
+- Email: [admin@cadence.day](mailto:admin@cadence.day)
+- View our [Privacy Policy](/docs/legal/privacy)
+- View our [Terms of Service](/docs/legal/terms)
 
 ---
 
-*Last updated: January 2025*
+_Last updated: January 2025_

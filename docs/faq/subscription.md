@@ -7,6 +7,7 @@ Everything you need to know about Cadence pricing and premium features.
 Cadence offers both free and premium options:
 
 **Free Forever:**
+
 - Activity tracking with unlimited activities
 - Basic timeline view
 - Note-taking (text-based)

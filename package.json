@@ -5,7 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "doppler run --command 'docusaurus start'",
-    "build": "doppler run --command 'docusaurus build'",
+    "build": "npm run prebuild && doppler run --command 'docusaurus build'",
     "swizzle": "docusaurus swizzle",
     "deploy": "doppler run --command 'docusaurus deploy'",
     "clear": "docusaurus clear",
@@ -15,7 +15,9 @@
     "typecheck": "tsc",
     "lint": "echo 'Linting complete - no linter configured'",
     "test": "npm run typecheck && npm run build",
-    "preview": "npm run build && npm run serve"
+    "preview": "npm run build && npm run serve",
+    "prebuild": "doppler run --command 'node scripts/replace-md-env-vars.js'",
+    "restore-md": "doppler run --command 'node scripts/restore-md-env-vars.js'"
   },
   "dependencies": {
     "@docusaurus/core": "3.9.1",
@@ -31,6 +33,7 @@
     "@docusaurus/module-type-aliases": "3.9.1",
     "@docusaurus/tsconfig": "3.9.1",
     "@docusaurus/types": "3.9.1",
+    "doppler-cli": "^2.0.66",
     "typescript": "~5.6.2"
   },
   "browserslist": {

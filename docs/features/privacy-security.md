@@ -19,17 +19,20 @@ At Cadence, we believe:
 ### Activity Data
 
 **What we collect:**
+
 - Activity names (e.g., "Work", "Exercise")
 - Categories and colors
 - Time stamps (when activities occurred)
 - Duration of activities
 
 **Why we collect it:**
+
 - Enable core tracking functionality
 - Display your timeline and patterns
 - Sync across your devices
 
 **How it's protected:**
+
 - Stored securely in Supabase
 - Transmitted over encrypted connections (HTTPS)
 - Access controlled per-user (you only see your data)
@@ -37,14 +40,17 @@ At Cadence, we believe:
 ### Notes and Reflections
 
 **What we collect:**
+
 - Text notes attached to activities
 - Longer reflections
 
 **Why we collect it:**
+
 - Provide rich context for your history
 - Build your personal journal
 
 **How it's protected:**
+
 - **End-to-end encrypted with AES-256**
 - Encryption keys stored only on your device
 - Even Cadence employees cannot read your notes
@@ -53,16 +59,19 @@ At Cadence, we believe:
 ### Account Information
 
 **What we collect:**
+
 - Email address
 - Account creation date
 - Subscription status (if Premium)
 
 **Why we collect it:**
+
 - Enable sign-in and account recovery
 - Process subscription payments (via Apple)
 - Send important account notifications
 
 **How it's protected:**
+
 - Stored securely in Supabase
 - Passwords hashed with industry-standard algorithms
 - Never shared with third parties
@@ -70,16 +79,19 @@ At Cadence, we believe:
 ### Usage Analytics
 
 **What we collect (anonymously):**
+
 - App crashes and errors
 - Feature usage (which screens, which features)
 - Performance metrics
 
 **Why we collect it:**
+
 - Fix bugs and crashes
 - Understand which features are valuable
 - Improve app performance
 
 **How it's protected:**
+
 - **Fully anonymized** - not linked to your identity
 - Processed through Sentry for error tracking
 - Used only for improvement, never sold
@@ -198,7 +210,7 @@ As a company operating in Europe (Berlin & Copenhagen), we're committed to GDPR:
 ### For EU Users
 
 - Data can be stored in EU regions (Supabase EU servers)
-- GDPR data protection officer: privacy@cadence.day
+- GDPR data protection officer: [admin@cadence.day](mailto:admin@cadence.day)
 - Right to file complaints with supervisory authorities
 
 ## Security Practices
@@ -257,7 +269,7 @@ Our infrastructure partners (Supabase, AWS) already maintain these certification
 
 Found a vulnerability? We appreciate responsible disclosure:
 
-1. **Email**: security@cadence.day (not public GitHub, etc.)
+1. **Email**: [admin@cadence.day](mailto:admin@cadence.day) (not public GitHub, etc.)
 2. **Encrypt (optional)**: Use our PGP key (available on request)
 3. **Include**:
    - Description of the vulnerability
@@ -266,6 +278,7 @@ Found a vulnerability? We appreciate responsible disclosure:
    - Your contact info (for follow-up)
 
 **Our commitment:**
+
 - **24-hour response**: We'll acknowledge your report within 24 hours
 - **Regular updates**: We'll keep you informed as we address it
 - **Credit**: We'll recognize you (if desired) when we fix it
@@ -284,11 +297,10 @@ We're planning annual transparency reports to share:
 
 We're here to help:
 
-- **General questions**: admin@cadence.day
-- **Privacy questions**: privacy@cadence.day
-- **Security issues**: security@cadence.day
+- **General questions**: [admin@cadence.day](mailto:admin@cadence.day)
 
 **Full legal documentation:**
+
 - **Privacy Policy**: [https://cadence.day/privacy](https://cadence.day/privacy)
 - **Terms of Service**: [https://cadence.day/terms](https://cadence.day/terms)
 
