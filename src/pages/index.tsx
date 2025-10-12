@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Heading from "@theme/Heading";
 import Layout from "@theme/Layout";
@@ -9,21 +11,25 @@ import styles from "./index.module.css";
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
   return (
-    <header className={clsx("hero", styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          Cadence Docs
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.heroImage}>
-          <img
-            src="/img/docs-homepage.png"
-            alt="Cadence Logo"
-            className={styles.heroLogo}
-          />
+    <>
+      <Analytics />
+      <SpeedInsights />
+      <header className={clsx("hero", styles.heroBanner)}>
+        <div className="container">
+          <Heading as="h1" className="hero__title">
+            Cadence Docs
+          </Heading>
+          <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <div className={styles.heroImage}>
+            <img
+              src="/img/docs-homepage.png"
+              alt="Cadence Logo"
+              className={styles.heroLogo}
+            />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
 
