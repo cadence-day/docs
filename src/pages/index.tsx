@@ -12,7 +12,7 @@ function HomepageHeader() {
     <header className={clsx("hero", styles.heroBanner)}>
       <div className="container">
         <Heading as="h1" className="hero__title">
-          Cadence Documentation
+          Cadence Docs
         </Heading>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.heroImage}>
@@ -28,10 +28,9 @@ function HomepageHeader() {
 }
 
 export default function Home(): ReactNode {
-  const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
-      title="Cadence Documentation"
+      title="Cadence Docs"
       description="Track your time, understand your rhythms, live intentionally"
     >
       <HomepageHeader />
