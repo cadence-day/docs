@@ -105,7 +105,15 @@ jobs:
         run: |
           # Run the build and capture output, but also display it in real-time
           echo "Starting EAS build and submit..."
+          echo "APPLE_DEVELOPER_EMAIL: $APPLE_DEVELOPER_EMAIL"
+          echo "APP_STORE_CONNECT_KEY_ID: $APP_STORE_CONNECT_KEY_ID"
+          echo "APP_STORE_CONNECT_KEY_ISSUER_ID: $APP_STORE_CONNECT_KEY_ISSUER_ID"
+
           set +e  # Don't exit on error so we can capture the output
+          # Pass environment variables explicitly to doppler
+          APPLE_DEVELOPER_EMAIL="$APPLE_DEVELOPER_EMAIL" \
+          APP_STORE_CONNECT_KEY_ID="$APP_STORE_CONNECT_KEY_ID" \
+          APP_STORE_CONNECT_KEY_ISSUER_ID="$APP_STORE_CONNECT_KEY_ISSUER_ID" \
           doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit" 2>&1 | tee build_output.txt
           exit_code=${PIPESTATUS[0]}
           set -e  # Re-enable exit on error
