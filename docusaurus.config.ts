@@ -163,14 +163,14 @@ const config: Config = {
               label: 'Support',
               href: 'mailto:admin@cadence.day',
             },
-            {
-              label: 'Privacy Policy',
-              href: 'https://cadence.day/privacy',
-            },
-            {
-              label: 'Terms of Service',
-              href: 'https://cadence.day/terms',
-            },
+              {
+                label: 'Privacy Policy',
+                to: '/docs/legal/privacy',
+              },
+              {
+                label: 'Terms of Service',
+                to: '/docs/legal/terms',
+              },
           ],
         },
       ],
