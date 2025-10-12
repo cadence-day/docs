@@ -86,7 +86,7 @@ export const reflectionStyles = StyleSheet.create({
   // ReflectionCell component styles
   cell: {
     borderWidth: REFLECTION_LAYOUT.BORDER_WIDTH,
-    borderColor: COLORS.primary,
+    borderColor: REFLECTION_LAYOUT.BORDER_COLOR,
     marginBottom: REFLECTION_LAYOUT.CELL_MARGIN,
     marginRight: REFLECTION_LAYOUT.CELL_MARGIN,
     height: REFLECTION_LAYOUT.CELL_HEIGHT,
@@ -187,6 +187,9 @@ export const reflectionStyles = StyleSheet.create({
   },
   reflectionGridDateColumn: {
     flex: 1,
+  },
+  reflectionGridDateRow: {
+    flexDirection: "row",
   },
   reflectionGridSelectedDateColumn: {},
   reflectionGridNotSelectedDateColumn: {

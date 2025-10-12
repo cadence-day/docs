@@ -4,8 +4,13 @@ export {
   EmptyReflectionCell,
   ReflectionCell,
 } from "./components/ReflectionCell";
+export {
+  EmptyMonthlyReflectionCell,
+  MonthlyReflectionCell,
+} from "./components/MonthlyReflectionCell";
 export { default as ReflectionDateAxis } from "./components/ReflectionDateAxis";
 export { default as ReflectionGrid } from "./components/ReflectionGrid";
+export { default as MonthlyReflectionGrid } from "./components/MonthlyReflectionGrid";
 export { default as ReflectionTimeAxis } from "./components/ReflectionTimeAxis";
 export { default as ReflectionTimesliceInfo } from "./components/ReflectionTimesliceInfo";
 
