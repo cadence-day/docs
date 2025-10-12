@@ -82,7 +82,7 @@ Deep dives into Cadence's core features:
 We're here to support you:
 
 - **📧 Support**: [admin@cadence.day](mailto:admin@cadence.day)
-- **🐛 Bug Reports**: [Settings → Bug Report](https://app.cadence.day/support)
+- **🐛 Bug Reports**: [Settings → Bug Report](${CADENCE_DOCS_BASE_URL}/support)
 
 ## Join the Community
 
