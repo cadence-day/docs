@@ -34,4 +34,4 @@ jobs:
         run: doppler run --project cadence-day --config dev --token ${{ secrets.DOPPLER_TOKEN_DEV }} --command "env | grep EXPO_PUBLIC_"
 
       - name: 🚀 Create preview
-        run: doppler run --project cadence-day --config dev --token ${{ secrets.DOPPLER_TOKEN_DEV }} --command "eas update --auto --branch ${{ github.event.pull_request.head.ref }}"
+        run: doppler run --project cadence-day --config dev --token ${{ secrets.DOPPLER_TOKEN_DEV }} --command "eas update --auto --branch dev"
