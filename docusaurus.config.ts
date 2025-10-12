@@ -180,6 +180,10 @@ const config: Config = {
               label: "Terms of Service",
               to: "/docs/legal/terms",
             },
+            {
+              label: "EULA",
+              to: "/docs/legal/eula",
+            },
           ],
         },
       ],
