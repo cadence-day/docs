@@ -31,7 +31,7 @@ jobs:
         run: npm install
 
       - name: 🔍 Check env variables
-        run: doppler run --project cadence-day --config dev --token ${{ secrets.DOPPLER_TOKEN_DEV }} --command "env | grep EXPO_PUBLIC_"
+        run: doppler run --project cadence-app --config dev --token ${{ secrets.DOPPLER_TOKEN_DEV }} --command "env | grep EXPO_PUBLIC_"
 
       - name: 🚀 Create preview
-        run: doppler run --project cadence-day --config dev --token ${{ secrets.DOPPLER_TOKEN_DEV }} --command "eas update --auto --branch dev"
+        run: doppler run --project cadence-app --config dev --token ${{ secrets.DOPPLER_TOKEN_DEV }} --command "eas update --auto --branch dev"
