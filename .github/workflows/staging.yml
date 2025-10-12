@@ -103,22 +103,31 @@ jobs:
       - name: EAS Build & Submit iOS
         id: build_submit
         run: |
-          build_output=$(doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit" 2>&1)
-          echo "$build_output"
+          # Run the build and capture output
+          echo "Starting EAS build and submit..."
+          doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit" > build_output.txt 2>&1
 
-          # Extract the App Store Connect URL from the output
-          app_store_url=$(echo "$build_output" | grep -o 'https://appstoreconnect.apple.com/apps/[0-9]*/[a-zA-Z]*' || echo "")
+          # Display the output for debugging
+          echo "=== EAS Build Output ==="
+          cat build_output.txt
+          echo "========================"
+
+          # Extract App Store Connect URL
+          app_store_url=$(grep -o "https://appstoreconnect.apple.com/apps/[0-9]*/[a-zA-Z]*" build_output.txt || echo "")
           echo "app_store_url=$app_store_url" >> $GITHUB_OUTPUT
+          echo "Extracted App Store URL: $app_store_url"
 
-          # Extract build ID from the URL pattern (e.g., from build logs or submission confirmation)
-          # The build ID should be available in the EAS output after auto-submit
-          build_id=$(echo "$build_output" | grep -o 'Build ID: [a-f0-9-]*' | cut -d' ' -f3 || echo "")
+          # Try to extract build ID - first try simple pattern, then UUID pattern
+          build_id=$(grep -o "Build ID: [a-f0-9-]*" build_output.txt | cut -d' ' -f3 | head -1 || echo "")
           if [ -z "$build_id" ]; then
-            # Alternative pattern to extract build ID
-            build_id=$(echo "$build_output" | grep -oE '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}' | head -1 || echo "")
+            # Try UUID pattern
+            build_id=$(grep -oE "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}" build_output.txt | head -1 || echo "")
           fi
           echo "build_id=$build_id" >> $GITHUB_OUTPUT
           echo "Extracted build ID: $build_id"
+
+          # Clean up temp file
+          rm -f build_output.txt
 
       - name: Wait for App Store Connect Processing
         if: steps.build_submit.outputs.build_id != ''
