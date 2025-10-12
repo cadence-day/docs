@@ -1,4 +1,10 @@
-import { StyleSheet } from "react-native";
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
+import {
+  withDebugBorder,
+  withDebugBorderDashed,
+  withDebugBorderThick,
+} from "@/shared/constants/isDev";
+import { Platform, StyleSheet } from "react-native";
 import {
   TIMESLICE_BORDER_RADIUS,
   TIMESLICE_MARGIN_HORIZONTAL,
@@ -7,16 +13,12 @@ import {
 
 export const styles = StyleSheet.create({
   currentTimeLabel: {
-    fontWeight: "800",
-    fontFamily: "FoundersGrotesk-Medium",
-    fontSize: 12,
+    ...TYPOGRAPHY.specialized.time.regular,
     marginBottom: 4,
   },
   // Slightly smaller variants for 12-hour time strings so AM/PM fits on one line
   currentTimeLabel12: {
-    fontWeight: "800",
-    fontFamily: "FoundersGrotesk-Medium",
-    fontSize: 9,
+    ...TYPOGRAPHY.specialized.time.compact,
     marginBottom: 4,
   },
   emptyTimeslice: {
@@ -24,33 +26,35 @@ export const styles = StyleSheet.create({
   },
 
   // TimeSlice component styles
-  timeSliceContainer: {
+  timeSliceContainer: withDebugBorderThick({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
     width: TIMESLICE_WIDTH,
     marginHorizontal: TIMESLICE_MARGIN_HORIZONTAL,
-  },
+    // Ensure shadows can render on Android (avoid overflow hidden in parents)
+    overflow: Platform.OS === "android" ? "visible" : "visible",
+  }),
   timeSliceText: {
+    ...TYPOGRAPHY.specialized.time.regular,
     color: "#222",
-    fontFamily: "FoundersGrotesk-Medium",
-    fontSize: 12,
     marginBottom: 4,
   },
   timeSliceText12: {
+    ...TYPOGRAPHY.specialized.time.compact,
     color: "#222",
-    fontFamily: "FoundersGrotesk-Medium",
-    fontSize: 9,
     marginBottom: 4,
   },
-  timeSliceBox: {
+  timeSliceBox: withDebugBorder({
     flex: 1,
     width: "100%",
     borderRadius: TIMESLICE_BORDER_RADIUS,
     justifyContent: "flex-end",
     alignItems: "center",
     paddingBottom: 4,
-  },
+    // Use a small elevation baseline to prevent harsh Android shadow jumps
+    elevation: 1,
+  }),
   timeSliceIconContainer: {
     width: "100%",
     alignItems: "center",
@@ -61,9 +65,9 @@ export const styles = StyleSheet.create({
     right: 0,
   },
   // Timeline container wrappers
-  scrollWrapper: {
+  scrollWrapper: withDebugBorderDashed({
     flex: 1,
-  },
+  }),
   scrollWrapperContent: {
     flex: 1,
   },
@@ -74,7 +78,6 @@ export const styles = StyleSheet.create({
   },
   horizontalContent: {
     alignItems: "stretch",
-    paddingVertical: 6,
   },
   // TimeSlice overlay used for metadata vertical placement
   timeSliceOverlay: {
@@ -100,13 +103,11 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   metadataCountText: {
+    ...TYPOGRAPHY.specialized.metadata,
     marginLeft: 6,
-    fontSize: 10,
-    fontWeight: "700",
   },
   metadataEnergyText: {
+    ...TYPOGRAPHY.specialized.metadata,
     marginLeft: 4,
-    fontSize: 10,
-    fontWeight: "700",
   },
 });

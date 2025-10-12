@@ -2,13 +2,23 @@ import { CdButton, CdText, CdTextInput } from "@/shared/components/CadenceUI";
 import Toast from "@/shared/components/Toast";
 import SageIcon from "@/shared/components/icons/SageIcon";
 import { COLORS } from "@/shared/constants/COLORS";
+import { CONTAINER } from "@/shared/constants/CONTAINER";
+import { isDev } from "@/shared/constants/isDev";
 import { useToast } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 import { useSignIn } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   handleAuthError,
   isValidEmail,
@@ -24,7 +34,26 @@ const ForgotPasswordScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [fieldTouched, setFieldTouched] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const { toast, showError, showSuccess, hideToast } = useToast();
+
+  // Keyboard visibility listeners
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   // Real-time validation for touched field
   useEffect(() => {
@@ -53,18 +82,23 @@ const ForgotPasswordScreen = () => {
         identifier: email,
       });
 
+      setEmailSent(true);
       showSuccess(
         t(
           "forgot-password.if-this-email-is-registered-a-reset-code-has-been-sent"
         )
       );
-      // Navigate to password reset screen after short delay
-      setTimeout(() => {
-        router.push({
-          pathname: "/(auth)/password-reset",
-          params: { email: email },
-        });
-      }, 2000);
+
+      // In dev mode, don't auto-navigate to allow user to manually test
+      if (!isDev) {
+        // Navigate to password reset screen after short delay
+        setTimeout(() => {
+          router.push({
+            pathname: "/(auth)/password-reset",
+            params: { email: email },
+          });
+        }, 2000);
+      }
     } catch (err) {
       handleAuthError(err, "FORGOT_PASSWORD", {
         email: email,
@@ -108,81 +142,151 @@ const ForgotPasswordScreen = () => {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      <View style={styles.form}>
-        {isSubmitting ? (
-          <View style={styles.centerContent}>
-            <SageIcon status="pulsating" size={200} />
-          </View>
-        ) : (
-          <View style={styles.formContainer}>
-            <CdText variant="title" size="large" style={styles.title}>
-              {t("forgot-password.reset-password")}
-            </CdText>
-
-            <CdText
-              variant="body"
-              size="medium"
-              style={{ marginBottom: 24, textAlign: "center" }}
-            >
-              {t(
-                "forgot-password.enter-your-email-and-well-send-you-a-link-to-reset-your-password"
-              )}
-            </CdText>
-            <CdTextInput
-              placeholder={t("forgot-password.email")}
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                // Clear error when user starts typing
-                if (emailError) {
-                  setEmailError(null);
-                }
-              }}
-              onBlur={() => setFieldTouched(true)}
-              error={fieldTouched ? emailError : null}
-              keyboardType="email-address"
-              textContentType="emailAddress"
-              autoComplete="email"
-              autoCapitalize="none"
-              returnKeyType="done"
-              onSubmitEditing={handleResetPassword}
-            />
-
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{ marginTop: 20 }}
-            >
-              <CdText
-                variant="link"
-                size="medium"
-                style={{ textAlign: "center" }}
-              >
-                {t("forgot-password.back-to-sign-in")}
-              </CdText>
-            </TouchableOpacity>
+      <SafeAreaView
+        style={styles.container}
+        edges={["left", "right", "bottom"]}
+      >
+        {/* SageIcon at the top - matching onboarding position */}
+        {!isSubmitting && !isKeyboardVisible && (
+          <View style={styles.topIconContainer}>
+            <SageIcon status="pulsating" size={80} auto={false} />
           </View>
         )}
 
-        <View style={styles.actionButtonContainer}>
-          <CdButton
-            title={t("forgot-password.send-reset-link")}
-            onPress={handleResetPassword}
-            variant="text"
-            size="large"
-            disabled={!isFormValid() || isSubmitting}
-          />
-        </View>
-      </View>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={0}
+        >
+          <View style={styles.container}>
 
-      {/* Toast Notification */}
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        isVisible={toast.isVisible}
-        onHide={hideToast}
-      />
+            <View style={styles.form}>
+              {isSubmitting ? (
+                <View style={styles.centerContent}>
+                  <SageIcon status="pulsating" size={200} />
+                </View>
+              ) : (
+                <View style={styles.formContainer}>
+                  <CdText
+                    variant="title"
+                    size="large"
+                    style={styles.titleLarge}
+                  >
+                    {t("forgot-password.reset-password")}
+                  </CdText>
+
+                  <CdText
+                    variant="body"
+                    size="medium"
+                    style={localStyles.subtitle}
+                  >
+                    {t(
+                      "forgot-password.enter-your-email-and-well-send-you-a-link-to-reset-your-password"
+                    )}
+                  </CdText>
+                  <CdTextInput
+                    placeholder={t("forgot-password.email")}
+                    value={email}
+                    onChangeText={(text) => {
+                      setEmail(text);
+                      // Clear error when user starts typing
+                      if (emailError) {
+                        setEmailError(null);
+                      }
+                    }}
+                    onBlur={() => setFieldTouched(true)}
+                    error={fieldTouched ? emailError : null}
+                    keyboardType="email-address"
+                    textContentType="emailAddress"
+                    autoComplete="email"
+                    autoCapitalize="none"
+                    returnKeyType="done"
+                    onSubmitEditing={handleResetPassword}
+                  />
+
+                  <CdButton
+                    title={t("forgot-password.send-reset-link")}
+                    onPress={handleResetPassword}
+                    variant="outline"
+                    size="medium"
+                    disabled={!isFormValid() || isSubmitting}
+                    style={localStyles.submitButton}
+                  />
+
+                  {/* Dev button to navigate to password reset screen */}
+                  {isDev && emailSent && (
+                    <CdButton
+                      title="[DEV] Go to Password Reset"
+                      onPress={() => {
+                        router.push({
+                          pathname: "/(auth)/password-reset",
+                          params: { email: email },
+                        });
+                      }}
+                      variant="outline"
+                      size="medium"
+                      style={localStyles.devButton}
+                    />
+                  )}
+
+                  <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={localStyles.backLinkWrapper}
+                  >
+                    <CdText
+                      variant="link"
+                      size="medium"
+                      style={localStyles.centerText}
+                    >
+                      {t("forgot-password.back-to-sign-in")}
+                    </CdText>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+
+        {/* CADENCE text at the bottom - matching onboarding position */}
+        {!isSubmitting && (
+          <CdText variant="title" size="large" style={styles.cadenceText}>
+            CADENCE
+          </CdText>
+        )}
+
+        {/* Toast Notification */}
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          isVisible={toast.isVisible}
+          onHide={hideToast}
+        />
+      </SafeAreaView>
     </LinearGradient>
   );
 };
 
 export default ForgotPasswordScreen;
+
+const localStyles = StyleSheet.create({
+  subtitle: {
+    marginBottom: 24,
+    textAlign: "left",
+  },
+  submitButton: {
+    ...CONTAINER.size.width.full,
+    marginTop: 24,
+  },
+  devButton: {
+    ...CONTAINER.size.width.full,
+    marginTop: 16,
+    backgroundColor: COLORS.semantic.warning,
+    borderColor: COLORS.semantic.warning,
+  },
+  backLinkWrapper: {
+    marginTop: 20,
+  },
+  centerText: {
+    textAlign: "center",
+  },
+});

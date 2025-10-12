@@ -28,6 +28,25 @@ export const DialogHost: React.FC = () => {
             visible={true}
             collapsed={d.collapsed}
             onClose={() => useDialogStore.getState().closeDialog(d.id)}
+            onCollapsedChange={(isCollapsed) => {
+              // Update the dialog store with the dynamic collapsed state
+              if (d.collapsed !== isCollapsed) {
+                useDialogStore.getState().setDialogProps(d.id, {
+                  _isCollapsed: isCollapsed,
+                });
+                // Also update the collapsed property directly
+                const dialogs = useDialogStore.getState().dialogs;
+                const dialog = dialogs[d.id];
+                if (dialog) {
+                  useDialogStore.setState({
+                    dialogs: {
+                      ...dialogs,
+                      [d.id]: { ...dialog, collapsed: isCollapsed },
+                    },
+                  });
+                }
+              }
+            }}
             headerProps={{
               ...headerProps,
               rightActionElement:
@@ -40,7 +59,7 @@ export const DialogHost: React.FC = () => {
                       useDialogStore.getState().getDialog(d.id)?.props ?? {};
                     if (typeof props.onConfirm === "function")
                       props.onConfirm();
-                  } catch (e) {
+                  } catch {
                     // ignore
                   }
                   useDialogStore.getState().closeDialog(d.id);
@@ -55,6 +74,9 @@ export const DialogHost: React.FC = () => {
             // enabling dragging even when a dialog is initially collapsed so
             // the user can pull it up (useful for activity dialog on Today).
             enableDragging={d.props?.enableDragging ?? true}
+            // Pass dialog ID for height persistence
+            dialogId={d.id}
+            persistHeight={d.props?.persistHeight ?? false}
           >
             {Component ? (
               <Component {...(d.props ?? {})} _dialogId={d.id} />

@@ -1,4 +1,5 @@
 import { useI18n } from "@/shared/hooks/useI18n";
+import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   PanResponder,
@@ -185,11 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: ACTIVITY_THEME.SLIDER_THUMB_BG,
     borderWidth: 3,
     borderColor: ACTIVITY_THEME.WHITE,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    ...getShadowStyle(ShadowLevel.Medium),
   },
   sliderThumbDragging: {
     transform: [{ scale: 1.2 }],

@@ -17,9 +17,11 @@ import {
 
 import { profileStyles } from "@/features/profile/styles";
 import { COLORS } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import { CdButton } from "../../shared/components";
-import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
+import { HIT_SLOP_10 } from "../../shared/constants/hitSlop";
+import { Logger } from "../../shared/utils/errorHandler";
 
 const FeatureRequestScreen = () => {
   const [title, setTitle] = useState("");
@@ -29,6 +31,7 @@ const FeatureRequestScreen = () => {
   const [descriptionFocused, setDescriptionFocused] = useState(false);
   const { t } = useTranslation();
   const { user } = useUser();
+  const theme = useTheme();
   const appVersion =
     Constants.expoConfig?.version || t("settings.support.version-unknown");
 
@@ -77,7 +80,7 @@ const FeatureRequestScreen = () => {
           email:
             user?.primaryEmailAddress?.emailAddress || "unknown@cadence.day",
         });
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "FEATURE_REQUEST_SUBMITTED",
           "settings.feature-request",
           { feedback }
@@ -96,7 +99,7 @@ const FeatureRequestScreen = () => {
         ]
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         "Failed to submit feature request",
         "FEATURE_REQUEST_ERROR",
         { error, userId: user?.id ?? null }
@@ -115,13 +118,14 @@ const FeatureRequestScreen = () => {
           title: t("profile.support.feature"),
           headerShown: true,
           headerStyle: {
-            backgroundColor: COLORS.light.background,
+            backgroundColor: theme.background.primary,
           },
           headerShadowVisible: true,
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.push("/settings/customer-support")}
               style={styles.backButton}
+              hitSlop={HIT_SLOP_10}
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
               <Text style={styles.backText}>{t("settings.back")}</Text>
@@ -169,10 +173,7 @@ const FeatureRequestScreen = () => {
             >
               <View style={styles.noteContainerStyle}>
                 <TextInput
-                  style={[
-                    styles.noteInputStyle,
-                    { minHeight: 120, paddingRight: 16 },
-                  ]}
+                  style={[styles.noteInputStyle, styles.descriptionInputStyle]}
                   value={description}
                   onChangeText={setDescription}
                   placeholder={t("detailed-description-of-the-fe")}
@@ -209,11 +210,8 @@ const FeatureRequestScreen = () => {
             onPress={handleSubmit}
             disabled={!title.trim() || !description.trim() || isSubmitting}
             variant="outline"
-            style={{
-              borderColor: COLORS.primary,
-              marginHorizontal: 24,
-            }}
-            textStyle={{ color: COLORS.primary }}
+            style={styles.SubmitButtonStyle}
+            textStyle={styles.submitButtonText}
           />
         </ScrollView>
       </View>
@@ -224,7 +222,7 @@ const FeatureRequestScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
   },
   scrollableContent: {
     flex: 1,
@@ -233,13 +231,6 @@ const styles = StyleSheet.create({
   headerBorder: {
     height: 1,
     backgroundColor: COLORS.white,
-  },
-  fixedInfoSection: {
-    backgroundColor: COLORS.light.background,
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.white,
   },
   noteContainerStyle: {
     minHeight: 60,
@@ -266,26 +257,20 @@ const styles = StyleSheet.create({
     minHeight: 60,
     textAlignVertical: "top" as const,
   },
+  descriptionInputStyle: {
+    minHeight: 120,
+    paddingRight: 16,
+  },
   infoTextStyle: {
     fontSize: 14,
     color: "#000000",
     lineHeight: 20,
   },
-  submitButtonStyle: {
-    marginTop: 32,
-    marginHorizontal: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    backgroundColor: "#6366F1",
-    borderRadius: 8,
-    alignItems: "center" as const,
+  SubmitButtonStyle: {
+    borderColor: COLORS.primary,
   },
-  submitButtonDisabledStyle: {
-    backgroundColor: "#AAAAAA",
-  },
-  submitButtonTextStyle: {
-    color: "#FFFFFF",
-    fontSize: 16,
+  submitButtonText: {
+    color: COLORS.primary,
   },
   backButton: {
     flexDirection: "row",
@@ -301,16 +286,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     paddingVertical: 12,
-  },
-  infoIcon: {
-    marginTop: 2,
-    marginRight: 12,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 12,
-    color: COLORS.bodyText,
-    lineHeight: 18,
   },
 });
 

@@ -7,6 +7,10 @@ export const SECRETS = {
   EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
   EXPO_PUBLIC_SUPABASE_KEY: process.env.EXPO_PUBLIC_SUPABASE_KEY,
 
+  // Legacy Supabase Keys (for migration)
+  EXPO_PUBLIC_LEGACY_SUPABASE_URL: process.env.EXPO_PUBLIC_LEGACY_SUPABASE_URL,
+  EXPO_PUBLIC_LEGACY_SUPABASE_KEY: process.env.EXPO_PUBLIC_LEGACY_SUPABASE_KEY,
+
   // Clerk Authentication
   EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY:
     process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
@@ -16,6 +20,22 @@ export const SECRETS = {
 
   // Expo Notifications
   EXPO_PROJECT_ID: process.env.EXPO_PROJECT_ID,
+
+  // RevenueCat
+  EXPO_PUBLIC_REVENUECAT_IOS_API_KEY:
+    process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
+  EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY:
+    process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
+
+  // PostHog
+  EXPO_PUBLIC_POSTHOG_KEY: process.env.EXPO_PUBLIC_POSTHOG_KEY,
+  EXPO_PUBLIC_POSTHOG_HOST: process.env.EXPO_PUBLIC_POSTHOG_HOST,
+
+  // OpenAI
+  EXPO_PUBLIC_OPENAI_API_KEY: process.env.EXPO_PUBLIC_OPENAI_API_KEY,
+
+  // Anthropic (legacy)
+  EXPO_PUBLIC_ANTHROPIC_API_KEY: process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY,
 } as const;
 
 // Type guard to ensure required secrets are present
@@ -30,7 +50,7 @@ export const validateRequiredSecrets = () => {
 
   if (missing.length > 0) {
     throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`
+      `Missing required environment variables: ${missing.join(", ")}`,
     );
   }
 };

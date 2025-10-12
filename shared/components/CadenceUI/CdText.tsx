@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, Text, TextStyle } from "react-native";
+import { Text, TextStyle } from "react-native";
+import { cadenceUIStyles } from "./styles";
 
 interface CdTextProps {
   children: React.ReactNode;
@@ -16,10 +17,33 @@ export const CdText: React.FC<CdTextProps> = ({
   style,
   numberOfLines,
 }) => {
+  const variantStyleMap: Record<
+    NonNullable<CdTextProps["variant"]>,
+    TextStyle | undefined
+  > = {
+    title: cadenceUIStyles.cdTextTitle,
+    body: cadenceUIStyles.cdTextBody,
+    caption: cadenceUIStyles.cdTextCaption,
+    error: cadenceUIStyles.cdTextError,
+    message: cadenceUIStyles.cdTextMessage,
+    link: cadenceUIStyles.cdTextLink,
+  };
+
+  const sizeStyleMap: Record<
+    NonNullable<CdTextProps["size"]>,
+    TextStyle | undefined
+  > = {
+    small: cadenceUIStyles.cdTextSmall,
+    medium: cadenceUIStyles.cdTextMedium,
+    large: cadenceUIStyles.cdTextLarge,
+  };
+
+  const variantStyle = variantStyleMap[variant];
+  const sizeStyle = sizeStyleMap[size];
   const textStyle = [
-    localStyles.text,
-    localStyles[`${variant}Text`],
-    localStyles[`${size}Text`],
+    cadenceUIStyles.cdTextBase,
+    variantStyle,
+    sizeStyle,
     style,
   ];
 
@@ -29,45 +53,3 @@ export const CdText: React.FC<CdTextProps> = ({
     </Text>
   );
 };
-
-const localStyles = StyleSheet.create({
-  text: {
-    color: "#FFFFFF",
-  },
-
-  // Variant styles
-  titleText: {
-    textAlign: "center",
-    fontWeight: "600",
-  },
-  bodyText: {
-    fontWeight: "400",
-  },
-  captionText: {
-    fontWeight: "300",
-    opacity: 0.8,
-  },
-  errorText: {
-    color: "#FF6B5D",
-    textTransform: "uppercase",
-  },
-  messageText: {
-    color: "#6646EC",
-    textTransform: "uppercase",
-  },
-  linkText: {
-    color: "#FFFFFF",
-    textDecorationLine: "underline",
-  },
-
-  // Size styles
-  smallText: {
-    fontSize: 12,
-  },
-  mediumText: {
-    fontSize: 14,
-  },
-  largeText: {
-    fontSize: 20,
-  },
-});

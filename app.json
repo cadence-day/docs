@@ -10,10 +10,12 @@
     "newArchEnabled": true,
     "description": "A mobile app for recording daily activities and reflections",
     "ios": {
-      "buildNumber": "91",
+      "buildNumber": "108",
       "supportsTablet": false,
       "bundleIdentifier": "day.cadence.mobile",
-      "associatedDomains": ["applinks:app.cadence.day"],
+      "associatedDomains": [
+        "applinks:app.cadence.day"
+      ],
       "icon": "./assets/images/ios-light.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
@@ -49,15 +51,21 @@
         "NSPrivacyAccessedAPITypes": [
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
-            "NSPrivacyAccessedAPITypeReasons": ["35F9.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "35F9.1"
+            ]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
-            "NSPrivacyAccessedAPITypeReasons": ["C617.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "C617.1"
+            ]
           }
         ]
       },
@@ -66,13 +74,15 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/splash-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#151414"
       },
       "edgeToEdgeEnabled": true,
       "icon": "./assets/images/icon.png",
       "package": "day.cadence.mobile",
-      "versionCode": 87,
-      "permissions": ["android.permission.CAMERA"],
+      "versionCode": 99,
+      "permissions": [
+        "android.permission.CAMERA"
+      ],
       "intentFilters": [
         {
           "action": "VIEW",
@@ -81,15 +91,13 @@
             "host": "app.cadence.day",
             "pathPrefix": "/"
           },
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ],
       "runtimeVersion": "1.0.0"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",
@@ -110,7 +118,10 @@
           "project": "cadence-app",
           "organization": "cadenceday"
         }
-      ]
+      ],
+      "expo-background-task",
+      "expo-localization",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

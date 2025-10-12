@@ -1,22 +1,28 @@
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
   },
   scrollContainer: {
-    flexGrow: 1,
+    flex: 1,
+    marginTop: 20,
   },
   notesSection: {
     marginBottom: 24,
   },
   sectionTitle: {
+    ...TYPOGRAPHY.specialized.input,
     color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
+    fontWeight: TYPOGRAPHY.weights.semibold,
     marginBottom: 12,
+  },
+  scrollContentContainerKeyboard: {
+    paddingBottom: 120,
+  },
+  scrollContentContainer: {
+    paddingBottom: 20,
   },
   noteContainer: {
     marginBottom: 16,
@@ -25,9 +31,19 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.1)",
   },
+  addNewNoteButton: {
+    marginTop: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderWidth: 1,
+    borderRadius: 8,
+  },
+  addNewNoteButtonText: { color: "#fff", textAlign: "center" },
   noteInput: {
+    ...TYPOGRAPHY.specialized.input,
     color: "#FFFFFF",
-    fontSize: 16,
     padding: 16,
     minHeight: 80,
     textAlignVertical: "top",
@@ -87,8 +103,8 @@ export const styles = StyleSheet.create({
   },
   addNoteButtonText: {
     color: "#6366F1",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: TYPOGRAPHY.sizes.lg,
+    fontWeight: TYPOGRAPHY.weights.semibold,
     marginLeft: 8,
   },
   energySection: {
@@ -116,9 +132,9 @@ export const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   energyBarText: {
+    ...TYPOGRAPHY.body.small,
     color: "#FFFFFF",
-    fontSize: 12,
-    fontWeight: "600",
+    fontWeight: TYPOGRAPHY.weights.semibold,
     textTransform: "uppercase",
   },
   emptyState: {
@@ -128,7 +144,7 @@ export const styles = StyleSheet.create({
   },
   emptyStateText: {
     color: "rgba(255, 255, 255, 0.6)",
-    fontSize: 16,
+    fontSize: TYPOGRAPHY.sizes.lg,
     textAlign: "center",
     marginTop: 8,
   },
@@ -138,8 +154,8 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   loadingText: {
+    ...TYPOGRAPHY.body.medium,
     color: "#FFFFFF",
-    fontSize: 14,
     marginTop: 8,
   },
   errorContainer: {
@@ -151,8 +167,8 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
   },
   errorText: {
+    ...TYPOGRAPHY.body.medium,
     color: "#EF4444",
-    fontSize: 14,
     textAlign: "center",
   },
   // New styles for swipeable notes and keyboard toolbox
@@ -177,8 +193,8 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
   },
   swipeableNoteInput: {
+    ...TYPOGRAPHY.specialized.input,
     color: "#FFFFFF",
-    fontSize: 16,
     padding: 16,
     paddingRight: 40, // Space for pin indicator
     minHeight: 60,
@@ -224,9 +240,9 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   swipeActionText: {
+    ...TYPOGRAPHY.body.small,
     color: "#FFFFFF",
-    fontSize: 12,
-    fontWeight: "600",
+    fontWeight: TYPOGRAPHY.weights.semibold,
     marginTop: 4,
   },
   keyboardToolboxContainer: {
@@ -257,12 +273,12 @@ export const styles = StyleSheet.create({
   },
   keyboardStatusText: {
     color: "rgba(255, 255, 255, 0.7)",
-    fontSize: 14,
+    fontSize: TYPOGRAPHY.sizes.md,
     marginLeft: 6,
   },
   keyboardErrorText: {
     color: "#EF4444",
-    fontSize: 14,
+    fontSize: TYPOGRAPHY.sizes.md,
   },
   keyboardActionsSection: {
     flexDirection: "row",
@@ -295,8 +311,11 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   keyboardDoneButtonText: {
+    ...TYPOGRAPHY.specialized.input,
     color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
+    fontWeight: TYPOGRAPHY.weights.semibold,
+  },
+  moodSelectorWithMargin: {
+    marginTop: 16,
   },
 });

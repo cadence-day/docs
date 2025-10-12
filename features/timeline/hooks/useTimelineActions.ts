@@ -7,7 +7,7 @@ import {
   useTimeslicesStore,
 } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
 import { ActionSheetIOS, Alert, Platform } from "react-native";
@@ -18,42 +18,65 @@ import usePendingTimeslicesStore from "./usePendingTimeslicesStore";
  */
 export const useTimelineActions = (opts?: {
   // Optional injected operations to decouple from stores (useful for tests)
-  insertTimeslice?: (ts: Partial<Timeslice>) => Promise<any>;
-  updateTimeslice?: (ts: Timeslice) => Promise<any>;
+  insertTimeslice?: (ts: Partial<Timeslice>) => Promise<Timeslice>;
+  updateTimeslice?: (ts: Timeslice) => Promise<Timeslice>;
   deleteTimeslice?: (id: string) => Promise<void>;
   addPendingTimeslice?: (ts: Timeslice) => void;
-  openDialog?: (dialog: any) => void;
+  openDialog?: (dialog: React.ReactNode) => void;
   getDialogs?: () => Record<string, any>;
   bringToFront?: (id: string) => void;
   toggleCollapse?: (id: string) => void;
   closeDialog?: (id: string) => void;
 }) => {
   const selectedActivityId = useSelectionStore(
-    (state) => state.selectedActivityId
+    (state) => state.selectedActivityId,
   );
 
-  // Store-backed operations
-  const insertTimesliceInStore =
-    opts?.insertTimeslice ?? useTimeslicesStore((s) => s.insertTimeslice);
-  const updateTimesliceInStore =
-    opts?.updateTimeslice ?? useTimeslicesStore((s) => s.updateTimeslice);
-  const deleteTimesliceInStore =
-    opts?.deleteTimeslice ?? useTimeslicesStore((s) => s.deleteTimeslice);
-  const openDialog = opts?.openDialog ?? useDialogStore((s) => s.openDialog);
-  const getDialogs =
-    opts?.getDialogs ?? (() => useDialogStore.getState().dialogs);
-  const bringToFront =
-    opts?.bringToFront ?? useDialogStore((s) => s.bringToFront);
-  const toggleCollapse =
-    opts?.toggleCollapse ?? useDialogStore((s) => s.toggleCollapse);
-  const closeDialog = opts?.closeDialog ?? useDialogStore((s) => s.closeDialog);
+  // Store-backed operations: call hooks unconditionally and then allow
+  // `opts` to override selected implementations. This preserves the
+  // hook call order required by React rules-of-hooks while keeping the
+  // ability to inject test doubles.
+  // Select individual functions from the timeslices store but use the
+  // `shallow` comparator so the selector's returned array/object is stable
+  // and won't create a new reference on every render (which breaks
+  // getSnapshot caching and can cause infinite update loops).
+  // Select functions individually to avoid returning a new object each render
+  // and to keep TypeScript inference straightforward.
+  const _insertTimesliceFromStore = useTimeslicesStore((s) =>
+    s.insertTimeslice
+  );
+  const _updateTimesliceFromStore = useTimeslicesStore((s) =>
+    s.updateTimeslice
+  );
+  const _deleteTimesliceFromStore = useTimeslicesStore((s) =>
+    s.deleteTimeslice
+  );
+
+  const _toggleCollapseFromStore = useDialogStore((s) => s.toggleCollapse);
+  const _closeDialogFromStore = useDialogStore((s) => s.closeDialog);
 
   // Pending timeslices operations
-  const addPendingTimeslice =
-    opts?.addPendingTimeslice ??
-    usePendingTimeslicesStore((s) => s.addPendingTimeslice);
+  const _addPendingTimesliceFromStore = usePendingTimeslicesStore((s) =>
+    s.addPendingTimeslice
+  );
+  const _addPendingUpdateFromStore = usePendingTimeslicesStore((s) =>
+    s.addPendingUpdate
+  );
 
-  const addPendingUpdate = usePendingTimeslicesStore((s) => s.addPendingUpdate);
+  // Expose final callables, allowing `opts` to override store implementations
+  const insertTimesliceInStore = opts?.insertTimeslice ??
+    _insertTimesliceFromStore;
+  const updateTimesliceInStore = opts?.updateTimeslice ??
+    _updateTimesliceFromStore;
+  const deleteTimesliceInStore = opts?.deleteTimeslice ??
+    _deleteTimesliceFromStore;
+  // bringToFront support removed — it was declared but unused in this hook
+  const toggleCollapse = opts?.toggleCollapse ?? _toggleCollapseFromStore;
+  const closeDialog = opts?.closeDialog ?? _closeDialogFromStore;
+
+  const addPendingTimeslice = opts?.addPendingTimeslice ??
+    _addPendingTimesliceFromStore;
+  const addPendingUpdate = _addPendingUpdateFromStore;
 
   const { t } = useI18n();
   const { showWarning } = useToast();
@@ -68,28 +91,34 @@ export const useTimelineActions = (opts?: {
         if (isEmpty) {
           // Add empty timeslices to pending creation list
           addPendingTimeslice(timeslice);
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Added empty timeslice to pending list",
             "PENDING_TIMESLICE_ADDITION",
-            { timeslice }
+            { timeslice },
           );
         } else {
           // Add existing timeslices to pending update list
           addPendingUpdate(timeslice);
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Added existing timeslice to pending updates list",
             "PENDING_TIMESLICE_UPDATE",
-            { timeslice }
+            { timeslice },
           );
         }
 
-        // Find existing activity dialog and enter picking mode
-        const activityDialog = Object.values(getDialogs()).find(
-          (dialog) => dialog.type === "activity-legend"
+        // Resolve dialogs (opts.getDialogs may be provided for tests) and
+        // enter picking mode
+        const dialogs = opts?.getDialogs
+          ? opts.getDialogs()
+          : useDialogStore.getState().dialogs;
+
+        // Find existing activity dialog
+        const activityDialog = Object.values(dialogs).find(
+          (dialog) => dialog.type === "activity-legend",
         );
 
         // First, collapse/close other dialogs to ensure only one container is expanded
-        Object.entries(getDialogs()).forEach(([id, dialog]) => {
+        Object.entries(dialogs).forEach(([id, dialog]) => {
           if (dialog.type !== "activity") {
             try {
               if (dialog.props?.preventClose) {
@@ -97,15 +126,14 @@ export const useTimelineActions = (opts?: {
                 if (!dialog.collapsed) {
                   toggleCollapse(id);
                 }
-              } else {
                 // Close non-persistent dialogs
                 closeDialog(id);
               }
             } catch (err) {
-              GlobalErrorHandler.logWarning(
+              Logger.logWarning(
                 "Failed to adjust dialog during timeslice press",
                 "TIMELINE_DIALOGS",
-                { id, error: err }
+                { id, error: err },
               );
             }
           }
@@ -123,10 +151,10 @@ export const useTimelineActions = (opts?: {
               isPickingMode: true,
             });
           } catch (err) {
-            GlobalErrorHandler.logWarning(
+            Logger.logWarning(
               "setDialogProps failed",
               "TIMELINE_DIALOGS",
-              { id: activityDialog.id, error: err }
+              { id: activityDialog.id, error: err },
             );
           }
 
@@ -137,22 +165,29 @@ export const useTimelineActions = (opts?: {
               toggleCollapse(activityDialog.id);
             }
           } catch (err) {
-            GlobalErrorHandler.logWarning(
+            Logger.logWarning(
               "toggleCollapse failed",
               "TIMELINE_DIALOGS",
-              { id: activityDialog.id, error: err }
+              { id: activityDialog.id, error: err },
             );
           }
         } else {
-          // Fallback: open new dialog if none exists
-          openDialog({
+          const payload = {
             type: "activity-legend",
             props: {
               isPickingMode: true,
               preventClose: true,
+              enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas
+              persistHeight: true, // Enable height persistence
             },
-            position: "dock",
-          });
+            position: "dock" as const,
+          };
+
+          if (opts?.openDialog) {
+            opts.openDialog(payload as unknown as React.ReactNode);
+          } else {
+            useDialogStore.getState().openDialog(payload);
+          }
         }
 
         // Show warning message
@@ -171,17 +206,17 @@ export const useTimelineActions = (opts?: {
             user_id: timeslice.user_id,
             note_ids: timeslice.note_ids,
           };
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Creating new timeslice",
             "DYNAMIC_TIMESLICE_CREATION",
-            { newTimeslice }
+            { newTimeslice },
           );
           const created = await insertTimesliceInStore(newTimeslice);
           if (!created) {
-            GlobalErrorHandler.logError(
+            Logger.logError(
               new Error("Failed to create new timeslice"),
               "DYNAMIC_TIMESLICE_CREATION",
-              { newTimeslice }
+              { newTimeslice },
             );
           }
         } else {
@@ -193,15 +228,15 @@ export const useTimelineActions = (opts?: {
 
           const updated = await updateTimesliceInStore(updatedTimeslice);
           if (!updated) {
-            GlobalErrorHandler.logError(
+            Logger.logError(
               new Error("Failed to update timeslice"),
               "DYNAMIC_TIMESLICE_UPDATE",
-              { updatedTimeslice }
+              { updatedTimeslice },
             );
           }
         }
       } catch (error) {
-        GlobalErrorHandler.logError(error as Error, "DYNAMIC_TIMESLICE_PRESS", {
+        Logger.logError(error as Error, "DYNAMIC_TIMESLICE_PRESS", {
           timeslice,
         });
       }
@@ -211,14 +246,13 @@ export const useTimelineActions = (opts?: {
       insertTimesliceInStore,
       updateTimesliceInStore,
       addPendingTimeslice,
-      openDialog,
-      getDialogs,
-      bringToFront,
+      addPendingUpdate,
+      opts,
       toggleCollapse,
       closeDialog,
       t,
       showWarning,
-    ]
+    ],
   );
 
   const handleTimesliceLongPress = useCallback(
@@ -229,10 +263,10 @@ export const useTimelineActions = (opts?: {
       const isEmpty = timeslice.id == null;
 
       if (isEmpty) {
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           "Empty timeslice long pressed",
           "DYNAMIC_TIMESLICE_LONG_PRESS",
-          { start_time: timeslice.start_time }
+          { start_time: timeslice.start_time },
         );
         return;
       }
@@ -244,16 +278,16 @@ export const useTimelineActions = (opts?: {
       const performDelete = async () => {
         try {
           await deleteTimesliceInStore(timeslice.id ?? "");
-          GlobalErrorHandler.logDebug(
+          Logger.logDebug(
             "Timeslice deleted successfully",
             "DYNAMIC_TIMESLICE_DELETE",
-            { timesliceId: timeslice.id }
+            { timesliceId: timeslice.id },
           );
         } catch (error) {
-          GlobalErrorHandler.logError(
+          Logger.logError(
             error as Error,
             "DYNAMIC_TIMESLICE_DELETE",
-            { timesliceId: timeslice.id }
+            { timesliceId: timeslice.id },
           );
         }
       };
@@ -279,7 +313,7 @@ export const useTimelineActions = (opts?: {
             if (buttonIndex === 1) {
               void performDelete();
             }
-          }
+          },
         );
       } else {
         // Android fallback
@@ -293,7 +327,7 @@ export const useTimelineActions = (opts?: {
         ]);
       }
     },
-    [deleteTimesliceInStore, t]
+    [deleteTimesliceInStore, t],
   );
 
   return {

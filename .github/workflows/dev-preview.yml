@@ -7,11 +7,28 @@ on:
 jobs:
   preview:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v3
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
-      - run: npm install -g eas-cli
-      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
-      - run: eas update --branch development --message "Automated preview from GitHub Actions"
+          node-version: 22.x
+          cache: npm
+
+      - name: 🔐 Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🚀 Create preview
+        run: doppler run --project cadence-app --config dev --token ${{ secrets.DOPPLER_TOKEN_DEV }} --command "eas update --auto --branch dev"

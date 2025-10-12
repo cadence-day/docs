@@ -16,7 +16,7 @@ export interface BaseStoreState {
  * Set function type from zustand
  */
 type SetFunction<T> = (
-  partial: T | Partial<T> | ((state: T) => T | Partial<T>)
+  partial: T | Partial<T> | ((state: T) => T | Partial<T>),
 ) => void;
 
 /**
@@ -27,7 +27,7 @@ export async function handleApiCall<T, S extends BaseStoreState>(
   apiCall: () => Promise<T>,
   operationName: string,
   defaultReturnValue: T,
-  stateUpdater?: (result: T, state: S) => Partial<S>
+  stateUpdater?: (result: T, state: S) => Partial<S>,
 ): Promise<T> {
   set(createLoadingState() as Partial<S>);
 
@@ -57,7 +57,7 @@ export async function handleGetApiCall<T, S extends BaseStoreState>(
   set: SetFunction<S>,
   apiCall: () => Promise<T>,
   operationName: string,
-  defaultReturnValue: T
+  defaultReturnValue: T,
 ): Promise<T> {
   return handleApiCall(set, apiCall, operationName, defaultReturnValue);
 }
@@ -69,7 +69,7 @@ export async function handleVoidApiCall<S extends BaseStoreState>(
   set: SetFunction<S>,
   apiCall: () => Promise<any>,
   operationName: string,
-  stateUpdater: (state: S) => Partial<S>
+  stateUpdater: (state: S) => Partial<S>,
 ): Promise<void> {
   set(createLoadingState() as Partial<S>);
 
@@ -92,7 +92,7 @@ export async function handleVoidApiCallWithResult<T, S extends BaseStoreState>(
   set: SetFunction<S>,
   apiCall: () => Promise<T>,
   operationName: string,
-  stateUpdater: (result: T, state: S) => Partial<S>
+  stateUpdater: (result: T, state: S) => Partial<S>,
 ): Promise<void> {
   set(createLoadingState() as Partial<S>);
 

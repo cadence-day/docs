@@ -1,14 +1,15 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ScreenHeader } from "@/shared/components/CadenceUI";
-import SageIcon from "@/shared/components/icons/SageIcon";
-import { backgroundLinearColors } from "@/shared/constants/COLORS";
+import { useTheme } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 
+import SageIcon from "@/shared/components/icons/SageIcon";
+import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingScreen from "../(utils)/LoadingScreen";
+import { generalStyles } from "../../shared/styles";
 const ReflectionGrid = React.lazy(() =>
   import("@/features/reflection").then((m) => ({ default: m.ReflectionGrid }))
 );
@@ -16,9 +17,9 @@ const ReflectionGrid = React.lazy(() =>
 export default function Reflection() {
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
-  const [isWeeklyView, setIsWeeklyView] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useI18n();
+  const theme = useTheme();
 
   const getStartOfWeek = (date: Date) => {
     const localDate = new Date(date);
@@ -30,34 +31,18 @@ export default function Reflection() {
     return monday;
   };
 
-  const getLast7Days = (endDate: Date) => {
-    const start = new Date(endDate);
-    start.setDate(endDate.getDate() - 6);
-    start.setHours(0, 0, 0, 0); // Set to start of day in local time
-    return start;
-  };
-
   useEffect(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize to start of day
 
-    if (isWeeklyView) {
-      const startOfWeek = getStartOfWeek(today);
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      endOfWeek.setHours(23, 59, 59, 999);
+    const startOfWeek = getStartOfWeek(today);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
 
-      setFromDate(startOfWeek);
-      setToDate(endOfWeek);
-    } else {
-      const last7DaysStart = getLast7Days(today);
-      const last7DaysEnd = new Date(today);
-      last7DaysEnd.setHours(23, 59, 59, 999);
-
-      setFromDate(last7DaysStart);
-      setToDate(last7DaysEnd);
-    }
-  }, [isWeeklyView]);
+    setFromDate(startOfWeek);
+    setToDate(endOfWeek);
+  }, []);
 
   const handlePreviousWeek = () => {
     const newFromDate = new Date(fromDate);
@@ -101,107 +86,90 @@ export default function Reflection() {
     return fromDate.getTime() === currentWeekStart.getTime();
   };
 
-  function showInfo(message: string): void {
-    Alert.alert(
-      "Sage",
-      message,
-      [{ text: t?.("common.ok") ?? "OK", style: "default" }],
-      { cancelable: true }
-    );
-  }
   return (
-    <LinearGradient
-      colors={[
-        backgroundLinearColors.primary.start,
-        backgroundLinearColors.primary.end,
+    <View
+      // Keep general container behavior but allow children to stretch and start at the top
+      style={[
+        generalStyles.container,
+        styles.containerOverride,
+        { backgroundColor: theme.background.primary },
       ]}
-      style={{ flex: 1 }}
     >
-      <ScreenHeader
-        title={t("reflection.weekly-cadence")}
-        OnRightElement={() => (
-          <TouchableOpacity
-            onPress={() => showInfo(t("sage.unavailableMessage"))}
-          >
-            <SageIcon size={40} status={"pulsating"} auto={false} />
-          </TouchableOpacity>
-        )}
-        subtitle={
-          <View style={styles.dateNavigationContainer}>
-            <TouchableOpacity
-              onPress={handlePreviousWeek}
-              hitSlop={HIT_SLOP_10}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: "#444",
-                }}
+      <SafeAreaView style={generalStyles.flexContainer} edges={["top"]}>
+        <ScreenHeader
+          title={t("reflection.weekly-cadence")} // TODO: Make conditional with This Week Cadence or Weekly Cadence.
+          OnRightElement={() => (
+            <SageIcon
+              size={40}
+              status="pulsating"
+              auto={false}
+              isLoggedIn={true}
+            />
+          )}
+          subtitle={
+            <View style={styles.dateNavigationContainer}>
+              <TouchableOpacity
+                onPress={handlePreviousWeek}
+                hitSlop={HIT_SLOP_10}
               >
-                ←
+                <Text style={styles.dateRangeArrow}>←</Text>
+              </TouchableOpacity>
+
+              <Text style={styles.dateRangeText}>
+                {fromDate.toLocaleDateString()} to {toDate.toLocaleDateString()}
               </Text>
-            </TouchableOpacity>
 
-            <Text style={styles.dateRangeText}>
-              {fromDate.toLocaleDateString()} to {toDate.toLocaleDateString()}
-            </Text>
-
-            <TouchableOpacity
-              onPress={handleNextWeek}
-              disabled={isAtCurrentWeek()}
-              hitSlop={HIT_SLOP_10}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: isAtCurrentWeek() ? "#ccc" : "#444",
-                }}
+              <TouchableOpacity
+                onPress={handleNextWeek}
+                disabled={isAtCurrentWeek()}
+                hitSlop={HIT_SLOP_10}
               >
-                →
-              </Text>
-            </TouchableOpacity>
-          </View>
-        }
-      />
+                <Text
+                  style={[
+                    styles.dateRangeArrow,
+                    isAtCurrentWeek() && styles.dateRangeArrowDisabled,
+                  ]}
+                >
+                  →
+                </Text>
+              </TouchableOpacity>
+            </View>
+          }
+        />
 
-      <View style={styles.gridContainer}>
-        <React.Suspense fallback={<LoadingScreen />}>
-          <ReflectionGrid
-            fromDate={fromDate}
-            toDate={toDate}
-            refreshing={refreshing}
-            setRefreshing={setRefreshing}
-          />
-        </React.Suspense>
-      </View>
-    </LinearGradient>
+        <View style={generalStyles.flexContainerWithMargins}>
+          <React.Suspense fallback={<LoadingScreen />}>
+            <ReflectionGrid
+              fromDate={fromDate}
+              toDate={toDate}
+              refreshing={refreshing}
+              setRefreshing={setRefreshing}
+            />
+          </React.Suspense>
+        </View>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerOverride: {
-    margin: 0,
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginBottom: 10,
-  },
-  gridContainer: {
-    flex: 1,
-    marginHorizontal: 12,
-    marginBottom: 5,
+  containerOverride: {
+    alignItems: "stretch",
+    justifyContent: "flex-start",
   },
   dateNavigationContainer: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "flex-start",
   },
   dateRangeText: {
     marginHorizontal: 6,
-    fontSize: 14,
-    color: "#444",
+    ...generalStyles.subtitle,
+  },
+  dateRangeArrow: {
+    ...generalStyles.subtitle,
+  },
+  dateRangeArrowDisabled: {
+    ...generalStyles.subtitle,
+    color: "#ccc",
   },
 });

@@ -29,55 +29,41 @@ const TermsCheckbox: React.FC<TermsCheckboxProps> = ({
 }) => {
   const { t } = useI18n();
   return (
-    <View style={{ width: "100%", gap: 12, marginVertical: 8 }}>
+    <View style={styles.termsContainer}>
       <TouchableOpacity
-        style={{
-          flexDirection: "row",
-          alignItems: "flex-start",
-          gap: 12,
-        }}
+        style={styles.termsCheckboxRow}
         onPress={() => onToggle(!isChecked)}
         activeOpacity={0.7}
       >
         <View
-          style={{
-            width: 20,
-            height: 20,
-            borderWidth: 2,
-            borderColor: isChecked ? COLORS.primary : COLORS.white,
-            backgroundColor: isChecked ? COLORS.primary : "#666",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 2,
-          }}
+          style={[
+            styles.termsCheckboxBox,
+            isChecked
+              ? styles.termsCheckboxBoxChecked
+              : styles.termsCheckboxBoxUnchecked,
+          ]}
         >
           {isChecked && (
             <Ionicons name="checkmark" size={14} color={COLORS.white} />
           )}
         </View>
 
-        <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              alignItems: "flex-start",
-            }}
-          >
-            <CdText variant="body" size="medium">
+        <View style={styles.termsTextContainer}>
+          <View style={styles.termsTextRow}>
+            <CdText variant="body" size="small">
               {t("i-agree-to-the")}{" "}
             </CdText>
             <TouchableOpacity onPress={handleOpenPrivacy}>
-              <CdText variant="link" size="medium" style={styles.link}>
+              <CdText variant="link" size="small" style={styles.link}>
                 {t("privacy-policy")}
               </CdText>
             </TouchableOpacity>
-            <CdText variant="body" size="medium">
+            <CdText variant="body" size="small">
               {" "}
               and{" "}
             </CdText>
             <TouchableOpacity onPress={handleOpenTerms}>
-              <CdText variant="link" size="medium" style={styles.link}>
+              <CdText variant="link" size="small" style={styles.link}>
                 {t("terms-and-conditions")}
               </CdText>
             </TouchableOpacity>

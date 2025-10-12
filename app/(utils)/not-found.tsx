@@ -1,10 +1,13 @@
+import useTranslation from "@/shared/hooks/useI18n";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import HIT_SLOP_10 from "../../shared/constants/hitSlop";
 
 export default function NotFoundPage() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handleGoHome = () => {
     router.replace("/(home)");
@@ -19,12 +22,16 @@ export default function NotFoundPage() {
       style={styles.gradient}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Page Not Found</Text>
+        <Text style={styles.title}>{t("page-not-found")}</Text>
         <Text style={styles.message}>
-          Sorry, the page you are looking for does not exist.
+          {t("sorry-the-page-you-are-looking")}
         </Text>
-        <TouchableOpacity style={styles.button} onPress={handleGoHome}>
-          <Text style={styles.buttonText}>Go back</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleGoHome}
+          hitSlop={HIT_SLOP_10}
+        >
+          <Text style={styles.buttonText}>{t("go-back")}</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>

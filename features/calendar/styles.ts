@@ -1,0 +1,76 @@
+import { COLORS } from "@/shared/constants/COLORS";
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+    container: { marginTop: 20, alignItems: "center" },
+    headerRow: {
+        width: "100%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 10,
+        marginBottom: 8,
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: "700",
+        marginBottom: 12,
+        color: "#fff",
+        textAlign: "center",
+    },
+    shortcuts: { flexDirection: "row", gap: 12 },
+    shortcutsRow: { flexDirection: "row", gap: 24, marginBottom: 12 },
+    link: {
+        color: COLORS.primary,
+        fontWeight: "800",
+        textTransform: "uppercase",
+    },
+    note: { marginTop: 12, color: "#666" },
+    calendarGrid: {
+        flexDirection: "row",
+        width: "100%",
+        flexWrap: "wrap",
+        paddingHorizontal: 10,
+        gap: 6,
+        justifyContent: "center",
+        marginTop: 15,
+    },
+    weekRow: {
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 6,
+    },
+    weekdayLabel: {
+        width: 36,
+        height: 36,
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 6,
+    },
+    weekdayLabelText: {
+        color: "#fff",
+        textAlign: "center",
+    },
+    dateCell: {
+        width: 36,
+        height: 36,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 18,
+    },
+    dateCellSelected: { backgroundColor: COLORS.primary },
+    dateCellDisabled: { opacity: 0.35 },
+    dateText: { color: "#fff" },
+    dateTextSelected: { color: "white", fontWeight: "700" },
+    dateTextDisabled: { color: "#fff" },
+    actionRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingTop: 12,
+        width: "100%",
+    },
+    pickerButton: { color: COLORS.primary, fontSize: 20 },
+    pickerButtonDisabled: { color: "#666" },
+});

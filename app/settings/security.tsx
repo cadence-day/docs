@@ -3,7 +3,7 @@ import { profileStyles } from "@/features/profile/styles";
 import { CdTextInputOneLine } from "@/shared/components/CadenceUI/CdTextInputOneLine";
 import Toast from "@/shared/components/Toast";
 import { COLORS } from "@/shared/constants/COLORS";
-import { useToast } from "@/shared/hooks";
+import { useTheme, useToast } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
 import {
   useActivitiesStore,
@@ -14,7 +14,7 @@ import {
   useStatesStore,
   useTimeslicesStore,
 } from "@/shared/stores";
-import { useAuth, useSignIn, useUser } from "@clerk/clerk-expo";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -26,16 +26,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
+import { Logger } from "../../shared/utils/errorHandler";
 
 export default function SecuritySettings() {
   const { t } = useTranslation();
   const router = useRouter();
   const { user } = useUser();
   const { signOut } = useAuth();
-  const { signIn } = useSignIn();
   const { toast, showError, showSuccess, hideToast } = useToast();
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const theme = useTheme();
 
   // Store reset functions
   const resetProfileStore = useProfileStore((state) => state.reset);
@@ -61,11 +61,7 @@ export default function SecuritySettings() {
       resetDialogStore();
       resetSelectionStore();
     } catch (error) {
-      GlobalErrorHandler.logError(
-        "Error clearing stores",
-        "CLEAR_STORES_ERROR",
-        { error }
-      );
+      Logger.logError("Error clearing stores", "CLEAR_STORES_ERROR", { error });
     }
   };
 
@@ -146,32 +142,18 @@ export default function SecuritySettings() {
               await signOut();
               router.replace("/(auth)/sign-in");
             } catch (error) {
-              GlobalErrorHandler.logError(
-                "Error signing out",
-                "SIGN_OUT_ERROR",
-                { error }
-              );
+              Logger.logError("Error signing out", "SIGN_OUT_ERROR", { error });
               router.replace("/(auth)/sign-in");
             }
           },
         },
       ]);
-    } catch (error: any) {
-      GlobalErrorHandler.logError(
-        "Password change error",
-        "PASSWORD_CHANGE_ERROR",
-        { error }
-      );
-
-      if (error?.errors) {
-        const errorMessage =
-          error.errors[0]?.message || t("failed-to-change-password");
-        showError(errorMessage);
-      } else if (error?.message) {
-        showError(error.message);
-      } else {
-        showError(t("failed-to-change-password-plea"));
-      }
+    } catch {
+      const error = "Failed to change password";
+      Logger.logError("Password change error", "PASSWORD_CHANGE_ERROR", {
+        error,
+      });
+      showError(error);
     } finally {
       setIsChangingPassword(false);
     }
@@ -218,7 +200,7 @@ export default function SecuritySettings() {
             await signOut();
             router.replace("/(auth)/sign-in");
           } catch (error) {
-            GlobalErrorHandler.logError("Error signing out", "SIGN_OUT_ERROR", {
+            Logger.logError("Error signing out", "SIGN_OUT_ERROR", {
               error,
             });
             showError(t("failed-to-sign-out-please-try"));
@@ -235,7 +217,7 @@ export default function SecuritySettings() {
           title: t("profile.security"),
           headerShown: true,
           headerStyle: {
-            backgroundColor: COLORS.light.background,
+            backgroundColor: theme.background.primary,
           },
           headerShadowVisible: true,
           headerLeft: () => (
@@ -331,14 +313,14 @@ export default function SecuritySettings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
   },
   scrollableContent: {
     flex: 1,
     paddingTop: 16,
   },
   fixedInfoSection: {
-    backgroundColor: COLORS.light.background,
+    backgroundColor: COLORS.light.background.primary,
     paddingHorizontal: 24,
     paddingVertical: 24,
     borderTopWidth: 1,

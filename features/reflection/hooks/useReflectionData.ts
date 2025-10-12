@@ -6,7 +6,7 @@ import {
   useTimeslicesStore,
 } from "@/shared/stores";
 import { Timeslice } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { timeslicesParser } from "../utils";
@@ -32,7 +32,7 @@ export interface UseReflectionDataReturn {
 
 export function useReflectionData(
   fromDate: Date,
-  toDate: Date
+  toDate: Date,
 ): UseReflectionDataReturn {
   // Use Clerk's React hook to obtain the current user in a testable, react-friendly way
   const { user, isSignedIn } = useUser();
@@ -44,7 +44,7 @@ export function useReflectionData(
   // Memoize the locale to prevent infinite re-renders
   const currentLocale = useMemo(
     () => getCurrentLanguage(),
-    [getCurrentLanguage]
+    [getCurrentLanguage],
   );
 
   const [timeslices, setTimeslices] = useState<Timeslice[]>([]);
@@ -60,13 +60,13 @@ export function useReflectionData(
       setIsLoading(true);
       setError(null);
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "Starting refetch for date range",
         "useReflectionData",
         {
           fromDate: fromDate.toLocaleDateString(),
           toDate: toDate.toLocaleDateString(),
-        }
+        },
       );
 
       // Get store state and API methods directly (like timeline refresh)
@@ -81,20 +81,20 @@ export function useReflectionData(
 
       if (!currentUserId || sessionStatus !== "active") {
         throw new Error(
-          "User must be authenticated with an active session to fetch reflection data"
+          "User must be authenticated with an active session to fetch reflection data",
         );
       }
 
       // Fetch data in parallel using the same pattern as timeline refresh
-      const [timeslicesResult, activitiesResult, statesResult, notesResult] =
-        await Promise.allSettled([
+      const [timeslicesResult, activitiesResult, statesResult] = await Promise
+        .allSettled([
           timeslicesStoreState.getTimeslicesFromTo(fromDate, toDate),
           activitiesStoreState.getAllActivities(),
           statesStoreState.getAllStates(),
           notesStoreState.getUserNotes(currentUserId),
         ]);
 
-      GlobalErrorHandler.logDebug("Fetch results", "useReflectionData", {
+      Logger.logDebug("Fetch results", "useReflectionData", {
         timeslicesStatus: timeslicesResult.status,
         activitiesStatus: activitiesResult.status,
         statesStatus: statesResult.status,
@@ -105,9 +105,9 @@ export function useReflectionData(
       if (timeslicesResult.status === "fulfilled" && timeslicesResult.value) {
         const fetchedTimeslices = timeslicesResult.value;
 
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `Fetched ${fetchedTimeslices.length} timeslices`,
-          "useReflectionData"
+          "useReflectionData",
         );
 
         // Update the store directly with fresh data (timeline refresh pattern)
@@ -127,49 +127,49 @@ export function useReflectionData(
           });
         }
       } else if (timeslicesResult.status === "rejected") {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to refetch timeslices",
           "useReflectionData",
           {
             reason: timeslicesResult.reason,
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
-        GlobalErrorHandler.logError(
+        Logger.logError(
           timeslicesResult.reason,
           "useReflectionData.refetch.timeslices",
           {
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
         setError(
           timeslicesResult.reason instanceof Error
             ? timeslicesResult.reason.message
-            : "Failed to refetch timeslices"
+            : "Failed to refetch timeslices",
         );
       }
 
       // Handle activities result - update the activities store
       if (activitiesResult.status === "fulfilled" && activitiesResult.value) {
         const fetchedActivities = activitiesResult.value;
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `Fetched ${fetchedActivities.length} activities`,
-          "useReflectionData"
+          "useReflectionData",
         );
 
         // Update activities store with fresh data
         if (fetchedActivities.length > 0) {
-          useActivitiesStore.setState((state) => {
+          useActivitiesStore.setState((_state) => {
             const enabledActivities = fetchedActivities.filter(
-              (a) => a.status === "ENABLED"
+              (a) => a.status === "ENABLED",
             );
             const disabledActivities = fetchedActivities.filter(
-              (a) => a.status === "DISABLED"
+              (a) => a.status === "DISABLED",
             );
             const deletedActivities = fetchedActivities.filter(
-              (a) => a.status === "DELETED"
+              (a) => a.status === "DELETED",
             );
 
             return {
@@ -180,72 +180,71 @@ export function useReflectionData(
           });
         }
       } else if (activitiesResult.status === "rejected") {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to refetch activities",
           "useReflectionData",
           {
             reason: activitiesResult.reason,
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
-        GlobalErrorHandler.logError(
+        Logger.logError(
           activitiesResult.reason,
           "useReflectionData.refetch.activities",
           {
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
       }
 
       // Handle states result - update the states store
       if (statesResult.status === "fulfilled" && statesResult.value) {
         const fetchedStates = statesResult.value;
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `Fetched ${fetchedStates.length} states`,
-          "useReflectionData"
+          "useReflectionData",
         );
 
         // Update states store with fresh data
         if (fetchedStates.length > 0) {
-          useStatesStore.setState((state) => ({
+          useStatesStore.setState((_state) => ({
             states: fetchedStates,
           }));
         }
       } else if (statesResult.status === "rejected") {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to refetch states",
           "useReflectionData",
           {
             reason: statesResult.reason,
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
-        GlobalErrorHandler.logError(
+        Logger.logError(
           statesResult.reason,
           "useReflectionData.refetch.states",
           {
             fromDate: fromDate.toISOString(),
             toDate: toDate.toISOString(),
-          }
+          },
         );
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to refetch reflection data";
+      const errorMessage = err instanceof Error
+        ? err.message
+        : "Failed to refetch reflection data";
       setError(errorMessage);
-      GlobalErrorHandler.logError(err, "useReflectionData.refetch", {
+      Logger.logError(err, "useReflectionData.refetch", {
         fromDate: fromDate.toISOString(),
         toDate: toDate.toISOString(),
       });
     } finally {
       setIsLoading(false);
     }
-  }, [fromDate, toDate, user]);
+  }, [fromDate, toDate, user, isSignedIn]);
 
   // Initial fetch when dates change (using refetch logic)
   useEffect(() => {
@@ -273,10 +272,11 @@ export function useReflectionData(
       return startTime >= fromDate && startTime <= toDate;
     });
 
-    GlobalErrorHandler.logDebug("Syncing timeslices", "useReflectionData", {
+    Logger.logDebug("Syncing timeslices", "useReflectionData", {
       allTimeslicesCount: allTimeslices.length,
       filteredCount: filteredTimeslices.length,
-      dateRange: `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
+      dateRange:
+        `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
     });
 
     setTimeslices(filteredTimeslices);
@@ -284,12 +284,12 @@ export function useReflectionData(
 
   // Parse timeslices for reflection display
   useEffect(() => {
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       `Parsing ${timeslices.length} timeslices`,
-      "useReflectionData"
+      "useReflectionData",
     );
     const parsed = timeslicesParser(timeslices, currentLocale);
-    GlobalErrorHandler.logDebug("Parsed timeslices", "useReflectionData", {
+    Logger.logDebug("Parsed timeslices", "useReflectionData", {
       timeslicesCount: timeslices.length,
       parsedDatesCount: Object.keys(parsed).length,
       sampleParsedKeys: Object.keys(parsed).slice(0, 3),
@@ -300,15 +300,15 @@ export function useReflectionData(
 
   // Function to get the date range of displayed data
   const getDateRange = useCallback(() => {
-    const totalDays =
-      Math.ceil(
-        (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24)
-      ) + 1;
+    const totalDays = Math.ceil(
+      (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24),
+    ) + 1;
 
     return {
       from: fromDate,
       to: toDate,
-      formattedRange: `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
+      formattedRange:
+        `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`,
       totalDays,
     };
   }, [fromDate, toDate]);
@@ -338,7 +338,7 @@ export function useReflectionData(
       timeslicesStore.timeslices.length,
       activitiesStore.activities.length,
       statesStore.states.length,
-    ]
+    ],
   );
 
   return returnValue;

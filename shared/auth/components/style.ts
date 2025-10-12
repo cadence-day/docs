@@ -1,283 +1,382 @@
+import { COLORS } from "@/shared/constants/COLORS";
+import { CONTAINER } from "@/shared/constants/CONTAINER";
+import { TYPOGRAPHY } from "@/shared/constants/TYPOGRAPHY";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   // Common styles
   container: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
+    ...CONTAINER.layout.flex.grow,
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.size.height.full,
   },
   content: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 40,
-    paddingVertical: 40,
+    ...CONTAINER.layout.flex.grow,
+    ...CONTAINER.layout.justify.center,
+    paddingHorizontal: CONTAINER.spacing["4xl"],
+    paddingVertical: CONTAINER.spacing["4xl"],
   },
   centerContent: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
+    ...CONTAINER.layout.flex.grow,
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.size.width.full,
     minHeight: 400,
-    paddingHorizontal: 16,
+    ...CONTAINER.padding.horizontal.lg,
   },
 
   // Form styles
   form: {
-    width: "100%",
-    paddingVertical: 100,
-    paddingHorizontal: 40,
-    alignItems: "center",
-    minHeight: "100%",
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.layout.flex.grow,
+    ...CONTAINER.layout.justify.center,
+    paddingHorizontal: CONTAINER.spacing["4xl"],
   },
   formContainer: {
-    width: "100%",
-    alignItems: "center",
+    ...CONTAINER.size.width.full,
   },
 
   // Title styles
   title: {
-    fontSize: 20,
-    fontWeight: "normal",
-    marginBottom: 20,
-    marginTop: 0,
-    textAlign: "center",
-    color: "#FFFFFF",
+    ...TYPOGRAPHY.heading.h2,
+    ...CONTAINER.margin.bottom.xl,
+    ...CONTAINER.margin.top.none,
+    textAlign: "left",
+    color: COLORS.neutral.white,
   },
   titleLarge: {
-    fontSize: 24,
-    marginBottom: 30,
-    marginTop: 20,
-    color: "#fff",
-    fontWeight: "600",
+    ...TYPOGRAPHY.heading.h1,
+    ...CONTAINER.margin.bottom["3xl"],
+    ...CONTAINER.margin.top.none,
+    textAlign: "left",
+    color: COLORS.neutral.white,
   },
 
   // Input styles
   input: {
-    width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: "#B9B9B9",
-    color: "#fff",
-    fontSize: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 4,
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.border.bottom.thin,
+    borderBottomColor: COLORS.light.ui.border,
+    color: COLORS.neutral.white,
+    ...TYPOGRAPHY.specialized.input,
+    ...CONTAINER.padding.vertical.base,
+    ...CONTAINER.padding.horizontal.sm,
   },
   passwordContainer: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    position: "relative",
-    marginBottom: 24,
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.layout.position.relative,
+    ...CONTAINER.margin.bottom["2xl"],
   },
   passwordInput: {
-    marginBottom: 0,
+    ...CONTAINER.margin.bottom.none,
     paddingRight: 50, // Make room for the eye icon
   },
   eyeIcon: {
-    position: "absolute",
+    ...CONTAINER.layout.position.absolute,
     right: 0,
-    height: "100%",
-    justifyContent: "center",
-    paddingHorizontal: 10,
-    paddingBottom: 12,
+    ...CONTAINER.size.height.full,
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.padding.horizontal.md,
+    ...CONTAINER.padding.bottom.md,
   },
 
   // Error and message styles
   error: {
-    marginBottom: 20,
+    ...CONTAINER.margin.bottom.xl,
     textAlign: "center",
   },
   message: {
-    marginBottom: 20,
+    ...CONTAINER.margin.bottom.xl,
     textAlign: "center",
   },
   errorContainer: {
-    position: "absolute",
+    ...CONTAINER.layout.position.absolute,
     bottom: 140,
     left: 0,
     right: 0,
-    alignItems: "center",
+    ...CONTAINER.layout.align.center,
   },
   passwordMismatchText: {
-    color: "#ff6b6b",
-    fontSize: 12,
-    marginTop: 4,
-    marginBottom: 4,
+    color: COLORS.semantic.error,
+    ...TYPOGRAPHY.body.small,
+    ...CONTAINER.margin.top.sm,
+    ...CONTAINER.margin.bottom.sm,
   },
 
   // Forgot password styles
   forgotPasswordContainer: {
     alignSelf: "flex-start",
-    marginBottom: 30,
+    ...CONTAINER.margin.bottom["3xl"],
   },
   forgotPasswordText: {
-    fontSize: 14,
-    fontWeight: "normal",
+    ...TYPOGRAPHY.body.medium,
     textDecorationLine: "underline",
-    color: "#FFFFFF",
+    color: COLORS.neutral.white,
   },
 
   // Social button styles
   socialContainer: {
-    marginBottom: 30,
-    gap: 16,
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.margin.bottom["3xl"],
+    ...CONTAINER.gap.lg,
   },
   socialButton: {
-    width: "100%",
+    ...CONTAINER.size.width.full,
   },
   socialButtons: {
-    width: "100%",
+    ...CONTAINER.size.width.full,
     height: 100,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginTop: 30,
+    ...CONTAINER.layout.direction.column,
+    ...CONTAINER.layout.justify.between,
+    ...CONTAINER.margin.top["3xl"],
   },
   socialButtonText: {
-    color: "#fff",
-    fontSize: 16,
+    color: COLORS.neutral.white,
+    ...TYPOGRAPHY.body.large,
   },
 
   // Sign up/in text styles
   signupContainer: {
-    marginBottom: 30,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
+    ...CONTAINER.margin.bottom["3xl"],
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.gap.sm,
   },
   signupText: {
     textAlign: "center",
   },
   signInTextContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    width: "100%",
-    marginTop: 8,
-    marginBottom: 12,
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.layout.justify.start,
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.margin.top.base,
+    ...CONTAINER.margin.bottom.md,
   },
   signInText: {
-    color: "#B9B9B9",
-    fontSize: 14,
-    marginTop: 20,
-    marginBottom: 20,
+    color: COLORS.light.ui.border,
+    ...TYPOGRAPHY.body.medium,
+    ...CONTAINER.margin.top.xl,
+    ...CONTAINER.margin.bottom.xl,
     textAlign: "left",
   },
 
   // Action button styles
   actionButtonContainer: {
-    position: "absolute",
+    ...CONTAINER.layout.position.absolute,
     bottom: 70,
     left: 0,
     right: 0,
-    alignItems: "center",
+    ...CONTAINER.layout.align.center,
   },
   signinButton: {
-    width: "100%",
+    ...CONTAINER.size.width.full,
   },
   signupButton: {
-    width: "100%",
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: "#fff",
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: "center",
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.margin.top.md,
+    ...CONTAINER.border.width.thin,
+    borderColor: COLORS.neutral.white,
+    ...CONTAINER.border.radius.base,
+    ...CONTAINER.padding.vertical.lg,
+    ...CONTAINER.layout.align.center,
     backgroundColor: "transparent",
   },
   signupButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+    color: COLORS.neutral.white,
+    ...TYPOGRAPHY.button.medium,
   },
   verifyButton: {
-    width: "100%",
-    marginTop: 10,
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.margin.top.md,
+  },
+  // Email verification styles
+  emailBody: {
+    color: COLORS.light.ui.border,
+    ...CONTAINER.margin.bottom.xl,
+    textAlign: "left",
+  },
+  emailBold: {
+    fontWeight: TYPOGRAPHY.weights.semibold,
+  },
+  verificationInput: {
+    textAlign: "center",
+    ...TYPOGRAPHY.heading.h3,
+    color: COLORS.neutral.white,
+  },
+  resendContainer: {
+    ...CONTAINER.margin.top.xl,
+    ...CONTAINER.layout.align.center,
+  },
+  resendTouchableEnabled: {
+    ...CONTAINER.opacity.full,
+  },
+  resendTouchableDisabled: {
+    ...CONTAINER.opacity.high,
+  },
+  resendText: {
+    color: COLORS.brand.primary,
+    fontWeight: TYPOGRAPHY.weights.semibold,
+  },
+  placeholderText: {
+    color: COLORS.light.ui.border,
+    ...CONTAINER.margin.bottom.md,
+  },
+  // Generic spacer
+  spacer20: {
+    height: CONTAINER.spacing.xl,
   },
 
   // Checkbox styles
   checkboxRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginTop: 20,
-    marginBottom: 30,
-    width: "100%",
+    ...CONTAINER.layout.direction.row,
+    ...CONTAINER.layout.align.start,
+    ...CONTAINER.margin.top.xl,
+    ...CONTAINER.margin.bottom["3xl"],
+    ...CONTAINER.size.width.full,
   },
   checkboxBox: {
     width: 20,
     height: 20,
-    borderWidth: 1,
-    borderColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#181818",
+    ...CONTAINER.border.width.thin,
+    borderColor: COLORS.neutral.white,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.layout.justify.center,
+    backgroundColor: COLORS.dark.background.primary,
   },
   checkboxBoxChecked: {
-    borderColor: "#6646EC",
+    borderColor: COLORS.brand.primary,
   },
   checkboxCheck: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    color: COLORS.neutral.white,
+    ...TYPOGRAPHY.button.medium,
   },
   checkboxText: {
-    color: "#B9B9B9",
-    fontSize: 14,
-    marginLeft: 12,
-    flex: 1,
+    color: COLORS.light.ui.border,
+    ...TYPOGRAPHY.body.medium,
+    ...CONTAINER.margin.left.md,
+    ...CONTAINER.layout.flex.grow,
     flexWrap: "wrap",
-    lineHeight: 20,
+    lineHeight: TYPOGRAPHY.lineHeights.normal,
   },
 
   // Link styles
   link: {
     textDecorationLine: "underline",
-    color: "#fff",
+    color: COLORS.neutral.white,
   },
 
   // Password requirements styles
   passwordRequirements: {
-    width: "100%",
-    marginTop: 8,
-    marginBottom: 20,
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.margin.top.base,
+    ...CONTAINER.margin.bottom.xl,
   },
   requirementText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    marginTop: 2,
-    marginBottom: 2,
+    color: COLORS.neutral.white,
+    ...TYPOGRAPHY.body.medium,
+    ...CONTAINER.margin.top.xs,
+    ...CONTAINER.margin.bottom.xs,
   },
   requirementMet: {
-    color: "#A5A1A0",
+    color: COLORS.light.text.tertiary,
     textDecorationLine: "line-through",
   },
   termsText: {
-    color: "#B9B9B9",
-    fontSize: 12,
+    color: COLORS.light.ui.border,
+    ...TYPOGRAPHY.body.small,
     textAlign: "left",
-    lineHeight: 18,
+    lineHeight: TYPOGRAPHY.lineHeights.base,
   },
   termsLink: {
     textDecorationLine: "underline",
-    color: "#FFFFFF",
-    fontSize: 12,
-    marginBottom: 6,
+    color: COLORS.neutral.white,
+    ...TYPOGRAPHY.body.small,
+    ...CONTAINER.margin.bottom.sm,
+  },
+
+  // Terms checkbox styles
+  termsContainer: {
+    ...CONTAINER.size.width.full,
+    ...CONTAINER.gap.base,
+    ...CONTAINER.margin.vertical.base,
+  },
+  termsCheckboxRow: {
+    ...CONTAINER.basic.row,
+    ...CONTAINER.layout.align.start,
+    ...CONTAINER.gap.base,
+  },
+  termsCheckboxBox: {
+    width: 20,
+    height: 20,
+    borderWidth: CONTAINER.border.width.base.borderWidth,
+    ...CONTAINER.layout.align.center,
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.margin.top.xs,
+  },
+  termsCheckboxBoxChecked: {
+    borderColor: COLORS.brand.primary,
+    backgroundColor: COLORS.brand.primary,
+  },
+  termsCheckboxBoxUnchecked: {
+    borderColor: COLORS.neutral.white,
+    backgroundColor: COLORS.light.ui.disabled,
+  },
+  termsTextContainer: {
+    ...CONTAINER.layout.flex.grow,
+  },
+  termsTextRow: {
+    ...CONTAINER.basic.row,
+    flexWrap: "wrap",
+    ...CONTAINER.layout.align.start,
   },
 
   // Loading and success styles
+  loadingOverlay: {
+    ...CONTAINER.layout.position.absolute,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    ...CONTAINER.layout.justify.center,
+    ...CONTAINER.layout.align.center,
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Semi-transparent overlay
+    zIndex: 1000, // Ensure it's on top of all content
+  },
   loadingText: {
-    color: "#fff",
-    fontSize: 16,
-    marginTop: 16,
+    ...TYPOGRAPHY.body.large,
+    color: COLORS.neutral.white,
+    ...CONTAINER.margin.top.lg,
   },
   successTitle: {
-    color: "#fff",
-    fontSize: 24,
-    marginBottom: 16,
+    ...TYPOGRAPHY.heading.h1,
+    color: COLORS.neutral.white,
+    ...CONTAINER.margin.bottom.lg,
   },
   successText: {
-    color: "grey",
-    fontSize: 16,
-    marginBottom: 20,
+    color: COLORS.light.text.secondary,
+    ...TYPOGRAPHY.body.large,
+    ...CONTAINER.margin.bottom.xl,
     textAlign: "center",
+  },
+
+  // Top icon container - matching onboarding position
+  topIconContainer: {
+    ...CONTAINER.layout.position.absolute,
+    top: 70,
+    left: 30,
+    zIndex: 10,
+  },
+
+  // Bottom CADENCE text - matching onboarding position
+  cadenceText: {
+    ...CONTAINER.layout.position.absolute,
+    bottom: 40,
+    left: 30,
+    fontSize: 24,
+    color: COLORS.neutral.white,
+    fontFamily: "FoundersGrotesk-Regular",
   },
 });

@@ -33,7 +33,7 @@ const useActivityCategoriesStore = create<ActivityCategoriesStore>((set) => ({
       set,
       () => activitiesCategoriesApi.getAllActivityCategories(),
       "get all activity categories",
-      []
+      [],
     );
   },
 
@@ -45,7 +45,7 @@ const useActivityCategoriesStore = create<ActivityCategoriesStore>((set) => ({
       "refresh activity categories",
       (categories) => ({
         categories,
-      })
+      }),
     );
   },
 

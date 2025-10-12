@@ -1,6 +1,5 @@
 import { ActivityBox } from "@/features/activity/components/ui";
 import { ACTIVITY_THEME } from "@/features/activity/constants";
-import { COLORS } from "@/shared/constants/COLORS";
 import { useI18n } from "@/shared/hooks/useI18n";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import type { Activity } from "@/shared/types/models/activity";
@@ -11,6 +10,7 @@ import ColorPicker, {
   HueSlider,
   SaturationSlider,
 } from "reanimated-color-picker";
+import { getShadowStyle, ShadowLevel } from "../../../shared/utils/shadowUtils";
 
 export type ColorFormatsObject = Record<
   "hex" | "rgb" | "rgba" | "hsl" | "hsla" | "hsv" | "hsva" | "hwb" | "hwba",
@@ -29,7 +29,6 @@ type Props = {
 const ColorPickerDialog: React.FC<Props> = ({
   _dialogId,
   initialColor,
-  categoryId,
   activityName,
   activity,
   onConfirm,
@@ -85,7 +84,7 @@ const ColorPickerDialog: React.FC<Props> = ({
           if (_dialogId) useDialogStore.getState().closeDialog(_dialogId);
         },
       },
-      height: 85,
+      height: 100,
       preventClose: false,
     });
   }, [_dialogId, t, onConfirm, currentColor]);
@@ -108,12 +107,12 @@ const ColorPickerDialog: React.FC<Props> = ({
           showTitle={true}
           boxHeight={56}
           boxWidth={220}
-          style={{ marginBottom: 0, width: 220, alignItems: "flex-start" }}
+          style={styles.activityBoxPreview}
         />
       </View>
 
       {/* Palette swatches grid */}
-      <View style={{ alignItems: "center", marginBottom: 10 }}>
+      <View style={styles.swatchesGrid}>
         <View style={styles.swatchesContainer}>
           {paletteRows.map((row, ri) => (
             <View key={`row-${ri}`} style={styles.swatchesRow}>
@@ -138,7 +137,7 @@ const ColorPickerDialog: React.FC<Props> = ({
       </View>
 
       <View style={styles.pickerSection}>
-        <View style={{ paddingHorizontal: 20, paddingVertical: 20 }}>
+        <View style={styles.colorPickerContainer}>
           <ColorPicker
             value={currentColor}
             sliderThickness={50}
@@ -178,30 +177,30 @@ const ColorPickerDialog: React.FC<Props> = ({
                   setCurrentColor(rgb);
                   return;
                 }
-              } catch (e) {
+              } catch {
                 // ignore
               }
             }}
           >
-            <View style={{ alignItems: "center" }}>
+            <View style={styles.sliderContainer}>
               <HueSlider
-                style={[colorPickerStyle.sliderStyle, { height: sliderHeight }]}
+                style={[styles.sliderStyle, { height: sliderHeight }]}
                 vertical
                 reverse
               />
             </View>
 
-            <View style={{ alignItems: "center" }}>
+            <View style={styles.sliderContainer}>
               <SaturationSlider
-                style={[colorPickerStyle.sliderStyle, { height: sliderHeight }]}
+                style={[styles.sliderStyle, { height: sliderHeight }]}
                 vertical
                 reverse
               />
             </View>
 
-            <View style={{ alignItems: "center" }}>
+            <View style={styles.sliderContainer}>
               <BrightnessSlider
-                style={[colorPickerStyle.sliderStyle, { height: sliderHeight }]}
+                style={[styles.sliderStyle, { height: sliderHeight }]}
                 vertical
                 reverse
               />
@@ -214,6 +213,9 @@ const ColorPickerDialog: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
+  swatchesGrid: { alignItems: "center", marginBottom: 10 },
+  activityBoxPreview: { marginBottom: 0, width: 220, alignItems: "flex-start" },
+  colorPickerContainer: { paddingHorizontal: 20, paddingVertical: 20 },
   container: {
     flex: 1,
     backgroundColor: "transparent",
@@ -223,37 +225,6 @@ const styles = StyleSheet.create({
   previewSection: {
     alignItems: "center",
     marginBottom: 24,
-  },
-  colorPreview: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 12,
-    borderWidth: 3,
-    borderColor: ACTIVITY_THEME.WHITE,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
-  },
-  colorPreviewRect: {
-    width: 220,
-    height: 80,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: ACTIVITY_THEME.WHITE,
-    shadowColor: "#000",
-    shadowOpacity: 0.18,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  previewLabelWrap: {
-    paddingHorizontal: 12,
   },
   swatchesContainer: {
     flexDirection: "row",
@@ -276,67 +247,13 @@ const styles = StyleSheet.create({
   swatchSelected: {
     borderWidth: 3,
     borderColor: ACTIVITY_THEME.WHITE,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 6,
-  },
-  colorText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: ACTIVITY_THEME.WHITE,
-    fontFamily: "FoundersGrotesk-Regular",
-  },
-  lockSection: {
-    alignItems: "center",
-    marginBottom: 24,
-    paddingHorizontal: 16,
-  },
-  lockLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: ACTIVITY_THEME.WHITE,
-    marginBottom: 8,
-    fontFamily: "FoundersGrotesk-Regular",
-  },
-  lockButton: {
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  lockButtonInner: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: ACTIVITY_THEME.WHITE,
-  },
-  lockDescription: {
-    fontSize: 12,
-    color: ACTIVITY_THEME.GRAY_LIGHT,
-    textAlign: "center",
-    lineHeight: 16,
-    maxWidth: 280,
+    ...getShadowStyle(ShadowLevel.High),
   },
   pickerSection: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
-  },
-  colorPicker: {
-    width: "100%",
-    maxWidth: 300,
-  },
-  colorPickerContainer: {
-    width: "100%",
-    paddingHorizontal: 20,
-  },
-  sliderContainer: {
-    marginVertical: 10,
-    alignItems: "center",
   },
   slidersRow: {
     flexDirection: "row",
@@ -345,193 +262,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 20,
   },
-  slidersColumn: {
-    flexDirection: "column",
-    gap: 20,
-    paddingHorizontal: 20,
-  },
-  verticalSliderContainer: {
+  sliderContainer: {
     alignItems: "center",
-    flex: 1,
-  },
-  horizontalSliderContainer: {
-    alignItems: "center",
-    width: "100%",
-  },
-  sliderWrapper: {
-    position: "relative",
-    height: 180,
-    width: 40,
-  },
-  verticalSlider: {
-    height: 180,
-    width: 40,
-    borderRadius: 20,
-  },
-  horizontalSlider: {
-    height: 40,
-    width: "90%",
-    borderRadius: 20,
-    marginTop: 8,
-  },
-  lockOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 10,
-  },
-  lockOverlayButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
-  },
-  sliders: {
-    width: "100%",
-    height: 30,
-    borderRadius: 15,
-  },
-  slider: {
-    width: "90%",
-    height: 40,
-    borderRadius: 20,
-    marginVertical: 10,
-  },
-  sliderLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: ACTIVITY_THEME.WHITE,
-    marginBottom: 8,
-    textAlign: "center",
-    fontFamily: "FoundersGrotesk-Regular",
-  },
-  recommendationSection: {
-    backgroundColor: `${COLORS.primary}20`,
-    borderRadius: 12,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: COLORS.primary,
-  },
-  recommendationText: {
-    fontSize: 13,
-    color: ACTIVITY_THEME.WHITE,
-    textAlign: "center",
-    lineHeight: 18,
-    fontStyle: "italic",
-  },
-});
-
-export default ColorPickerDialog;
-
-export const colorPickerStyle = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignContent: "center",
-    backgroundColor: "orange",
-  },
-  pickerContainer: {
-    marginTop: Dimensions.get("window").width < 380 ? 0 : 20,
-    alignSelf: "center",
-    justifyContent: "center",
-    width: "100%",
-    height: 260,
-    marginBottom: Dimensions.get("window").width < 380 ? 20 : 40,
-    padding: 20,
-    borderRadius: 20,
-  },
-  colorPickerWrapper: {
-    padding: 10,
-    marginTop: 10,
-    gap: Dimensions.get("window").width < 380 ? 3 : 20,
-    width: Dimensions.get("window").width < 380 ? 300 : 340,
-    height: Dimensions.get("window").width < 380 ? 260 : 300,
-  },
-  buttonsContainer: {
-    borderRadius: 10,
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    padding: 10,
-    gap: Dimensions.get("window").width < 380 ? 3 : 20,
-    height: Dimensions.get("window").width < 380 ? 106 : 190,
-  },
-  title: {
-    textAlign: "center",
-    fontFamily: "Quicksand",
-    fontWeight: "bold",
-    marginVertical: 20,
-  },
-  picker: {
-    gap: Dimensions.get("window").width < 380 ? 20 : 30,
-    borderRadius: 50,
-  },
-  panelStyle: {
-    borderRadius: 16,
   },
   sliderStyle: {
     borderRadius: 60,
     borderWidth: 1,
     borderColor: "white",
   },
-  sliderVerticalStyle: {
-    borderRadius: 20,
-    height: 300,
-  },
-  sliderTitle: {
-    color: "#000",
-    fontWeight: "bold",
-    marginBottom: 5,
-    paddingHorizontal: 4,
-    fontFamily: "Quicksand",
-  },
-  previewStyle: {
-    height: 40,
-    borderRadius: 14,
-  },
-  previewTxt: {
-    color: "#707070",
-    fontFamily: "Quicksand",
-  },
-  inputStyle: {
-    color: "#707070",
-    paddingVertical: 2,
-    borderColor: "#707070",
-    fontSize: 12,
-    marginLeft: 5,
-  },
-  swatchesContainer: {
-    alignItems: "center",
-    flexWrap: "nowrap",
-    gap: 10,
-  },
-  swatchStyle: {
-    borderRadius: 20,
-    height: 30,
-    width: 30,
-    margin: 0,
-    marginBottom: 0,
-    marginHorizontal: 0,
-    marginVertical: 0,
-  },
-  sliderThumbInner: {
-    borderWidth: 3,
-    borderColor: "white",
-    shadowOpacity: 0,
-  },
-  sliderThumbInnerLight: {
-    borderWidth: 1,
-    borderColor: "white",
-    shadowOpacity: 0,
-  },
-  sliderThumbInnerMedium: {
-    borderWidth: 2,
-    borderColor: "white",
-    shadowOpacity: 0,
-  },
 });
+
+export default ColorPickerDialog;

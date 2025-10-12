@@ -1,3 +1,4 @@
+import { ToastService } from "@/shared/context/ToastProvider";
 import { ToastType } from "@/shared/types/toast.types";
 import { useCallback, useState } from "react";
 
@@ -33,28 +34,51 @@ export const useToast = () => {
     (message: string) => {
       showToast(message, "success");
     },
-    [showToast]
+    [showToast],
   );
 
   const showError = useCallback(
     (message: string) => {
       showToast(message, "error");
     },
-    [showToast]
+    [showToast],
   );
 
   const showWarning = useCallback(
     (message: string) => {
       showToast(message, "warning");
     },
-    [showToast]
+    [showToast],
   );
 
   const showInfo = useCallback(
     (message: string) => {
       showToast(message, "info");
     },
-    [showToast]
+    [showToast],
+  );
+
+  const showConfirm = useCallback(
+    async (
+      messageOrTitle: string,
+      body?: string,
+      confirmText: string = "Confirm",
+      cancelText: string = "Cancel",
+    ) => {
+      // Delegate to the provider-level confirm that returns a Promise<boolean>
+      try {
+        const result = await ToastService.showConfirm(
+          messageOrTitle,
+          body,
+          confirmText,
+          cancelText,
+        );
+        return result;
+      } catch {
+        return false;
+      }
+    },
+    [],
   );
 
   return {
@@ -65,5 +89,6 @@ export const useToast = () => {
     showError,
     showWarning,
     showInfo,
+    showConfirm,
   };
 };

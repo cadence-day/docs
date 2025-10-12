@@ -1,55 +1,38 @@
-import { checkAndPromptEncryptionLinking } from "@/features/encryption/detectNewDevice";
+import { checkAndPromptEncryptionLinking } from "@/features/encryption/utils/detectNewDevice";
+import { revenueCatService } from "@/features/purchases";
 import { DialogHost } from "@/shared/components/DialogHost";
 import { COLORS } from "@/shared/constants/COLORS";
-import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
+import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
+import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
-import { userOnboardingStorage } from "@/shared/storage/user/onboarding";
-import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
 import useDialogStore from "@/shared/stores/useDialogStore";
+import { generalStyles } from "@/shared/styles";
+import { Logger } from "@/shared/utils/errorHandler";
+import { getShadowStyle, ShadowLevel } from "@/shared/utils/shadowUtils";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
-import React, { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { GlobalErrorHandler } from "../../shared/utils/errorHandler";
+import { usePostHog } from "posthog-react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // Custom TabLabel component to have more control over the appearance
-function TabLabel({
-  focused,
-  color,
-  label,
-}: {
-  focused: boolean;
-  color: string;
-  label: string;
-}) {
+function TabLabel({ focused, label }: { focused: boolean; label: string }) {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: NAV_BAR_SIZE,
-        minWidth: 80,
-      }}
-    >
+    <View style={styles.tabLabelContainer}>
       <Text
-        style={{
-          fontSize: 10,
-          textTransform: "uppercase",
-          letterSpacing: 1.2,
-          color: COLORS.light.text,
-          textAlign: "center",
-          textDecorationLine: focused ? "underline" : "none",
-          fontWeight: focused ? "700" : "400",
-          verticalAlign: "middle",
-        }}
+        style={[styles.tabLabelText, focused && styles.tabLabelTextFocused]}
       >
         {label}
       </Text>
     </View>
   );
+}
+
+interface TabBarIconProps {
+  focused: boolean;
 }
 
 export default function TabLayout() {
@@ -58,6 +41,64 @@ export default function TabLayout() {
   const setCurrentView = useDialogStore((state) => state.setCurrentView);
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
+  const theme = useTheme();
+  const posthog = usePostHog();
+  const [isChatEnabled, setIsChatEnabled] = useState(false);
+
+  // Check chat feature flag
+  useEffect(() => {
+    const checkChatFlag = async () => {
+      try {
+        const isEnabled = await posthog?.isFeatureEnabled("chat");
+        setIsChatEnabled(isEnabled ?? false);
+      } catch (error) {
+        Logger.logWarning("Error checking chat feature flag", "CHAT_FLAG", {
+          error,
+        });
+        setIsChatEnabled(false);
+      }
+    };
+
+    checkChatFlag();
+  }, [posthog]);
+
+  // Initialize RevenueCat when user is signed in
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const initializeRevenueCat = async () => {
+      try {
+        await revenueCatService.configure();
+        Logger.logDebug(
+          "RevenueCat configured successfully for signed-in user",
+          "REVENUECAT_INIT",
+          { userId: user.id }
+        );
+      } catch (error) {
+        Logger.logError(
+          error,
+          "Failed to initialize RevenueCat for signed-in user",
+          { userId: user.id }
+        );
+      }
+    };
+
+    initializeRevenueCat();
+    // Fetch activities on sign-in so the home screen has up-to-date data
+    try {
+      // Non-blocking: fire-and-forget refresh of activities store
+      // Use the store directly to avoid rendering dependencies
+      require("@/shared/stores/resources/useActivitiesStore")
+        .default.getState()
+        .refresh();
+    } catch (err) {
+      Logger.logWarning(
+        "Failed to kick off activities refresh on sign-in",
+        "ACTIVITIES_REFRESH",
+        { error: err, userId: user.id }
+      );
+    }
+  }, [user?.id]);
 
   // Consolidated effect to track view and manage ActivityLegendDialog
   useEffect(() => {
@@ -88,8 +129,11 @@ export default function TabLayout() {
         if (!activityLegendDialog) {
           dialogStore.openDialog({
             type: "activity-legend",
+            id: "activity-legend-home", // Fixed ID for height persistence
             props: {
               preventClose: true,
+              enableSwipeOnAllAreas: true, // Allow swipe to resize on all areas
+              persistHeight: true, // Enable height persistence
             },
             position: "dock",
           });
@@ -117,83 +161,26 @@ export default function TabLayout() {
       await checkAndPromptEncryptionLinking(userId);
       setDidCheckEncryption(true);
     })();
-     
   }, [user, segments, didCheckEncryption]);
-
-  // On initial mount when signed-in, open onboarding if the user has no timeslices
-  useEffect(() => {
-    // Only run once per mount
-    let didRun = false;
-    const rawView = segments[segments.length - 1];
-    const currentView = String(rawView ?? "index");
-    if (currentView !== "index") return;
-
-    const tryOpenOnboarding = async () => {
-      if (didRun) return;
-      didRun = true;
-
-      const userId = user?.id ?? null;
-      if (!userId) return;
-
-      try {
-        const shown = await userOnboardingStorage.getShown();
-        if (shown) return;
-
-        const timeslices = await useTimeslicesStore
-          .getState()
-          .getAllTimeslices();
-        if (!timeslices || timeslices.length === 0) {
-          // Open onboarding dialog with requested props
-          useDialogStore.getState().openDialog({
-            type: "onboarding",
-            props: {
-              height: 85,
-              enableDragging: false,
-              headerProps: {
-                title: t("welcome-to-cadence"),
-                rightActionElement: t("common.close"),
-                onRightAction: () => {
-                  useDialogStore.getState().closeAll();
-                },
-              },
-            },
-            position: "dock",
-            viewSpecific: "profile",
-          });
-        }
-      } catch (err) {
-        // Ignore errors here - non-fatal
-        GlobalErrorHandler.logWarning(
-          "Error checking timeslices for onboarding",
-          "ONBOARDING_CHECK",
-          { error: err, userId }
-        );
-      }
-    };
-
-    tryOpenOnboarding();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, segments]);
 
   return (
     <>
       <SignedIn>
         <Tabs
           screenOptions={{
-            tabBarActiveTintColor: COLORS.light.text,
-            tabBarInactiveTintColor: COLORS.light.text,
+            tabBarActiveTintColor: COLORS.light.text.primary,
+            tabBarInactiveTintColor: COLORS.light.text.tertiary,
             tabBarShowLabel: false,
             headerShown: false,
             tabBarHideOnKeyboard: false,
             tabBarStyle: {
-              backgroundColor: COLORS.light.background,
-              borderTopWidth: 1,
-              borderTopColor: COLORS.light.border,
-              height: NAV_BAR_SIZE,
-              elevation: 10, // Android shadow
-              shadowOffset: { width: 0, height: -2 }, // iOS shadow
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
+              backgroundColor: theme.background.primary,
+              borderTopWidth: 0,
+              borderTopColor: COLORS.light.ui.border,
+              height: useNavBarSize(),
+              ...getShadowStyle(ShadowLevel.Low),
+              justifyContent: "center",
+              alignItems: "center",
             },
             tabBarItemStyle: {
               flex: 1,
@@ -201,17 +188,15 @@ export default function TabLayout() {
               alignItems: "center",
               alignSelf: "stretch",
               alignContent: "center",
-              marginTop: 12,
             },
             // Ensure each tab's touch target is larger via a custom tabBarButton
-            tabBarButton: (props: any) => {
-              // If the underlying component is provided we wrap it in a TouchableOpacity
+            tabBarButton: (props: BottomTabBarButtonProps) => {
               const { children, onPress } = props;
               return (
                 <TouchableOpacity
                   onPress={onPress}
                   hitSlop={HIT_SLOP_24}
-                  style={{ flex: 1 }}
+                  style={styles.tabBarButton}
                 >
                   {children}
                 </TouchableOpacity>
@@ -223,8 +208,8 @@ export default function TabLayout() {
             name="index"
             options={{
               title: t("today"),
-              tabBarIcon: ({ focused, color }: any) => (
-                <TabLabel focused={focused} color={color} label={t("today")} />
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("today")} />
               ),
             }}
           />
@@ -233,12 +218,19 @@ export default function TabLayout() {
             name="reflection"
             options={{
               title: t("reflection.title"),
-              tabBarIcon: ({ focused, color }: any) => (
-                <TabLabel
-                  focused={focused}
-                  color={color}
-                  label={t("reflection.title")}
-                />
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("reflection.title")} />
+              ),
+            }}
+          />
+
+          <Tabs.Screen
+            name="chat"
+            options={{
+              title: "Chat",
+              href: isChatEnabled ? "/chat" : null,
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label="Chat" />
               ),
             }}
           />
@@ -247,12 +239,8 @@ export default function TabLayout() {
             name="profile"
             options={{
               title: t("profile.title"),
-              tabBarIcon: ({ focused, color }: any) => (
-                <TabLabel
-                  focused={focused}
-                  color={color}
-                  label={t("profile.title")}
-                />
+              tabBarIcon: ({ focused }: TabBarIconProps) => (
+                <TabLabel focused={focused} label={t("profile.title")} />
               ),
             }}
           />
@@ -266,3 +254,24 @@ export default function TabLayout() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBarButton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tabLabelContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 90,
+  },
+  tabLabelText: {
+    ...generalStyles.smallText,
+    marginTop: 10,
+  },
+  tabLabelTextFocused: {
+    ...generalStyles.focusedText,
+  },
+});

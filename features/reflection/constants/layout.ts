@@ -15,7 +15,8 @@ export const REFLECTION_LAYOUT = {
   TIME_COLUMN_WIDTH: 22,
   HEADER_HEIGHT: 35,
   CELL_HEIGHT: 18,
-  CELL_MARGIN: 2,
+  CELL_MARGIN: 1,
+  CELL_BORDER_RADIUS: 5,
 
   // Computed dimensions for consistency
   get ROW_HEIGHT() {

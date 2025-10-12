@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import i18n, { availableLanguages, locale } from "@/shared/locales";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 
 /**
  * Preferences discovered from the device/runtime Intl environment.
@@ -22,19 +22,21 @@ export type DateTimePreferences = {
  * Intl.resolvedOptions. Returns { preferredLocale, timeZone, resolved }.
  */
 const resolveLocaleAndTimeZone = () => {
-  const resolved =
-    typeof Intl !== "undefined"
-      ? (Intl.DateTimeFormat().resolvedOptions() as any)
-      : {};
+  const resolved = typeof Intl !== "undefined"
+    ? (Intl.DateTimeFormat().resolvedOptions() as {
+      locale?: string;
+      timeZone?: string;
+      hour12?: boolean;
+      localeMatcher?: string;
+    })
+    : {};
   const deviceLocale = resolved.locale || resolved.localeMatcher || undefined;
-  const code =
-    typeof locale === "string"
-      ? String(locale).split(/[-_]/)[0].toLowerCase()
-      : null;
-  const preferredLocale =
-    code && availableLanguages.includes(code)
-      ? locale
-      : deviceLocale || undefined;
+  const code = typeof locale === "string"
+    ? String(locale).split(/[-_]/)[0].toLowerCase()
+    : null;
+  const preferredLocale = code && availableLanguages.includes(code)
+    ? locale
+    : deviceLocale || undefined;
   const timeZone = resolved.timeZone || undefined;
   return { preferredLocale, timeZone, resolved };
 };
@@ -45,15 +47,48 @@ const resolveLocaleAndTimeZone = () => {
 export const getDeviceDateTimePreferences = (): DateTimePreferences => {
   try {
     const { preferredLocale, timeZone, resolved } = resolveLocaleAndTimeZone();
-    const hour12 =
-      typeof resolved.hour12 === "boolean" ? resolved.hour12 : undefined;
-    const timeFormat =
-      hour12 === true ? "12h" : hour12 === false ? "24h" : undefined;
-    return { locale: preferredLocale, timezone: timeZone, timeFormat };
+    const hour12 = typeof resolved.hour12 === "boolean"
+      ? resolved.hour12
+      : undefined;
+    let timeFormat: string | undefined;
+    if (hour12 === true) {
+      timeFormat = "12h";
+    } else if (hour12 === false) {
+      timeFormat = "24h";
+    } else {
+      timeFormat = undefined;
+    }
+    let result: DateTimePreferences;
+    switch (timeFormat) {
+      case "12h":
+        result = {
+          locale: preferredLocale,
+          timezone: timeZone,
+          timeFormat: "12h",
+        };
+        break;
+      case "24h":
+        result = {
+          locale: preferredLocale,
+          timezone: timeZone,
+          timeFormat: "24h",
+        };
+        break;
+      default:
+        result = {
+          locale: preferredLocale,
+          timezone: timeZone,
+          timeFormat: undefined,
+        };
+        break;
+    }
+    return result;
   } catch (err) {
     try {
-      GlobalErrorHandler.logError(err, "getDeviceDateTimePreferences", {});
-    } catch (_) {}
+      Logger.logError(err, "getDeviceDateTimePreferences", {});
+    } catch {
+      // ignore
+    }
     return { locale: locale, timeFormat: undefined };
   }
 };
@@ -70,7 +105,7 @@ export const formatTimeForDisplay = (
   options: { hour?: string; minute?: string } = {
     hour: "numeric",
     minute: "2-digit",
-  }
+  },
 ): string => {
   try {
     const date = typeof utcDate === "string" ? new Date(utcDate) : utcDate;
@@ -81,21 +116,21 @@ export const formatTimeForDisplay = (
 
     // Determine hour12: prefer explicit prefs, then resolved, then probe via toLocaleTimeString
     let hour12: boolean | undefined = undefined;
-    if (prefs && typeof prefs.timeFormat === "string")
+    if (prefs && typeof prefs.timeFormat === "string") {
       hour12 = prefs.timeFormat.startsWith("12");
-    else if (resolved && typeof resolved.hour12 === "boolean")
+    } else if (resolved && typeof resolved.hour12 === "boolean") {
       hour12 = resolved.hour12;
-    else {
+    } else {
       try {
         hour12 = /AM|PM|am|pm/.test(
-          date.toLocaleTimeString(localeToUse as any)
+          date.toLocaleTimeString(localeToUse),
         );
       } catch {
         hour12 = undefined;
       }
     }
 
-    return new Intl.DateTimeFormat(localeToUse as any, {
+    return new Intl.DateTimeFormat(localeToUse, {
       hour: (options.hour as "numeric" | "2-digit") || "numeric",
       minute: (options.minute as "numeric" | "2-digit") || "2-digit",
       hour12,
@@ -103,14 +138,16 @@ export const formatTimeForDisplay = (
     }).format(date);
   } catch (error) {
     try {
-      GlobalErrorHandler.logError(error, "formatTimeForDisplay", {
+      Logger.logError(error, "formatTimeForDisplay", {
         utcDate,
         prefs,
       });
-    } catch (_) {}
+    } catch {
+      // ignore
+    }
     try {
       return new Date(
-        typeof utcDate === "string" ? utcDate : utcDate.toString()
+        typeof utcDate === "string" ? utcDate : utcDate.toString(),
       ).toLocaleTimeString();
     } catch {
       return "";
@@ -132,7 +169,7 @@ export const formatDateWithWeekday = (
     weekdayPosition?: "before" | "after";
     dateTimeSeparator?: string;
     includeYear?: boolean;
-  } = {}
+  } = {},
 ): string => {
   const {
     weekdayFormat = "short",
@@ -146,23 +183,23 @@ export const formatDateWithWeekday = (
     const date = typeof utcDate === "string" ? new Date(utcDate) : utcDate;
     const { preferredLocale, timeZone } = resolveLocaleAndTimeZone();
 
-    let weekday = new Intl.DateTimeFormat(preferredLocale as any, {
+    let weekday = new Intl.DateTimeFormat(preferredLocale, {
       weekday: weekdayFormat,
     }).format(date);
-    if (weekday && weekday.length)
+    if (weekday && weekday.length) {
       weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+    }
 
-    const dateString = new Intl.DateTimeFormat(preferredLocale as any, {
+    const dateString = new Intl.DateTimeFormat(preferredLocale, {
       year: includeYear ? "numeric" : undefined,
       month: monthFormat,
       day: "numeric",
       timeZone,
     }).format(date);
 
-    let result =
-      weekdayPosition === "before"
-        ? `${weekday}, ${dateString}`
-        : `${dateString}, ${weekday}`;
+    let result = weekdayPosition === "before"
+      ? `${weekday}, ${dateString}`
+      : `${dateString}, ${weekday}`;
 
     if (includeTime) {
       const timeString = formatTimeForDisplay(date, prefs);
@@ -172,23 +209,24 @@ export const formatDateWithWeekday = (
         if (t && typeof t === "string") preposition = t;
       } catch {}
       const sep = dateTimeSeparator || " ";
-      result =
-        weekdayPosition === "before"
-          ? `${weekday}, ${dateString}${sep}${preposition}${sep}${timeString}`
-          : `${dateString}${sep}${preposition}${sep}${timeString}, ${weekday}`;
+      result = weekdayPosition === "before"
+        ? `${weekday}, ${dateString}${sep}${preposition}${sep}${timeString}`
+        : `${dateString}${sep}${preposition}${sep}${timeString}, ${weekday}`;
     }
     return result;
   } catch (error) {
     try {
-      GlobalErrorHandler.logError(error, "formatDateWithWeekday", {
+      Logger.logError(error, "formatDateWithWeekday", {
         utcDate,
         prefs,
         options,
       });
-    } catch (_) {}
+    } catch {
+      // ignore
+    }
     try {
       return new Date(
-        typeof utcDate === "string" ? utcDate : utcDate.toString()
+        typeof utcDate === "string" ? utcDate : utcDate.toString(),
       ).toLocaleDateString();
     } catch {
       return "";
@@ -207,7 +245,7 @@ export const useDeviceDateTime = () => {
   const prefs: DateTimePreferences = useMemo(() => {
     try {
       return getDeviceDateTimePreferences();
-    } catch (err) {
+    } catch {
       // If the probe fails, return a sensible fallback
       return { locale: undefined, timezone: undefined, timeFormat: undefined };
     }
@@ -222,7 +260,7 @@ export const useDeviceDateTime = () => {
       weekdayPosition?: "before" | "after";
       dateTimeSeparator?: string;
       includeYear?: boolean;
-    } = {}
+    } = {},
   ) => {
     return formatDateWithWeekday(date, prefs, options);
   };
@@ -247,7 +285,7 @@ export const useDeviceDateTime = () => {
       weekdayPosition?: "before" | "after";
       dateTimeSeparator?: string;
       includeTime?: boolean;
-    } = {}
+    } = {},
   ) => {
     const sep = options.dateTimeSeparator ?? getDateTimeSeparator();
 
@@ -286,7 +324,7 @@ export const useDeviceDateTime = () => {
     options: { hour?: string; minute?: string } = {
       hour: "numeric",
       minute: "2-digit",
-    }
+    },
   ) => {
     return formatTimeForDisplay(date, prefs, options);
   };

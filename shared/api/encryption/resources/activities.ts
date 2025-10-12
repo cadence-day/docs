@@ -1,5 +1,5 @@
 import type { Activity } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { decryptString, encryptString } from "../core";
 // Get isDev from global config to avoid cycle
 import { isDev } from "@/shared/constants/isDev";
@@ -9,7 +9,7 @@ import { isDev } from "@/shared/constants/isDev";
  * @returns Promise<Activity> - The activity with encrypted name
  */
 export async function encryptActivityName(
-  activity: Activity
+  activity: Activity,
 ): Promise<Activity> {
   if (!activity.name) {
     return activity;
@@ -23,7 +23,7 @@ export async function encryptActivityName(
     };
   } catch (error) {
     // If encryption fails, return original activity
-    GlobalErrorHandler.logError(error, "ENCRYPTION_ACTIVITY_NAME", {
+    Logger.logError(error, "ENCRYPTION_ACTIVITY_NAME", {
       activityId: activity.id,
       operation: "encrypt",
       fallbackBehavior: "return_original",
@@ -38,7 +38,7 @@ export async function encryptActivityName(
  * @returns Promise<Activity> - The activity with decrypted name
  */
 export async function decryptActivityName(
-  activity: Activity
+  activity: Activity,
 ): Promise<Activity> {
   if (!activity.name) {
     return activity;
@@ -52,7 +52,7 @@ export async function decryptActivityName(
     };
   } catch (error) {
     // If decryption fails, return original activity
-    GlobalErrorHandler.logError(error, "DECRYPTION_ACTIVITY_NAME", {
+    Logger.logError(error, "DECRYPTION_ACTIVITY_NAME", {
       activityId: activity.id,
       operation: "decrypt",
       fallbackBehavior: "return_original",
@@ -67,7 +67,7 @@ export async function decryptActivityName(
  * @returns Promise<Activity[]> - Array of activities with encrypted names
  */
 export async function encryptActivitiesNames(
-  activities: Activity[]
+  activities: Activity[],
 ): Promise<Activity[]> {
   return Promise.all(activities.map(encryptActivityName));
 }
@@ -78,7 +78,7 @@ export async function encryptActivitiesNames(
  * @returns Promise<Activity[]> - Array of activities with decrypted names
  */
 export async function decryptActivitiesNames(
-  activities: Activity[]
+  activities: Activity[],
 ): Promise<Activity[]> {
   return Promise.all(activities.map(decryptActivityName));
 }
@@ -89,7 +89,7 @@ export async function decryptActivitiesNames(
  * @returns Promise<Omit<Activity, "id">> - The activity ready for insertion with encrypted name
  */
 export async function encryptActivityForInsertion(
-  activity: Omit<Activity, "id">
+  activity: Omit<Activity, "id">,
 ): Promise<Omit<Activity, "id">> {
   if (!activity.name) {
     return activity;
@@ -102,7 +102,7 @@ export async function encryptActivityForInsertion(
       name: encryptedName,
     };
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_ACTIVITY_INSERTION", {
+    Logger.logError(error, "ENCRYPTION_ACTIVITY_INSERTION", {
       operation: "encrypt_for_insertion",
       fallbackBehavior: "return_original",
     });
@@ -116,7 +116,7 @@ export async function encryptActivityForInsertion(
  * @returns Promise<Omit<Activity, "id">[]> - Array of activities ready for insertion with encrypted names
  */
 export async function encryptActivitiesForInsertion(
-  activities: Omit<Activity, "id">[]
+  activities: Omit<Activity, "id">[],
 ): Promise<Omit<Activity, "id">[]> {
   return Promise.all(activities.map(encryptActivityForInsertion));
 }

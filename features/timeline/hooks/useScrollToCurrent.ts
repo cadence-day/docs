@@ -1,4 +1,4 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import { RefObject } from "react";
 import { Dimensions } from "react-native";
 
@@ -7,10 +7,12 @@ import { Dimensions } from "react-native";
  * roughly 1/3 of the screen width.
  */
 export const scrollToIndexAtOneThird = (
-  scrollRef: RefObject<any>,
+  scrollRef: RefObject<
+    { scrollTo: (options: { x: number; animated: boolean }) => void }
+  >,
   itemIndex: number,
   itemWidth: number,
-  itemMarginHorizontal: number
+  itemMarginHorizontal: number,
 ) => {
   if (!scrollRef?.current || typeof itemIndex !== "number") return;
 
@@ -27,10 +29,10 @@ export const scrollToIndexAtOneThird = (
     scrollRef.current?.scrollTo({ x: targetScrollX, animated: true });
   } catch (err) {
     // Route warnings through global handler for consistent reporting
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       "scrollToIndexAtOneThird failed",
       "Timeline:scroll",
-      { error: err }
+      { error: err },
     );
   }
 };

@@ -1,12 +1,14 @@
-import { Note } from "@/shared/types/models";
-
-export interface NoteItem extends Note {
-  isNew: boolean;
+// NoteItem type for dialog UI
+export interface NoteItem {
+  id?: string;
+  timeslice_id?: string | null;
+  message?: string; // Added message property
+  isNew?: boolean;
+  isPinned?: boolean;
   isSaving?: boolean;
   hasError?: boolean;
-  isPinned?: boolean;
+  // Add other properties as needed
 }
-
 export interface CreateNoteItem {
   id?: string | null;
   timeslice_id?: string | null;
@@ -30,9 +32,8 @@ export interface NoteDialogState {
 export interface UseNoteHandlersProps {
   notes: NoteItem[];
   setNotes: React.Dispatch<React.SetStateAction<NoteItem[]>>;
-  deletedNoteIds: string[];
-  setDeletedNoteIds: React.Dispatch<React.SetStateAction<string[]>>;
   energy: number;
+  mood: number;
   timeslice: {
     id?: string;
     activity_id?: string;
@@ -42,7 +43,6 @@ export interface UseNoteHandlersProps {
   noteIds: string[];
   activeNoteIndex: number | null;
   setActiveNoteIndex: React.Dispatch<React.SetStateAction<number | null>>;
-  onClose: () => void;
 }
 
 export interface NoteDialogProps {

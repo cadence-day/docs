@@ -4,7 +4,6 @@ export * from "./types";
 
 // Activity storage
 export * from "./activities";
-
 // UI storage
 export * from "./ui";
 

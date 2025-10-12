@@ -16,11 +16,16 @@ jobs:
       APP_STORE_CONNECT_APP_ID: ${{ secrets.APP_STORE_CONNECT_APP_ID }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm install -g eas-cli jq
-      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
+          node-version: 22.x
+          cache: npm
+
+      - name: 🔐 Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
 
       - name: Bump build number
         run: |
@@ -29,15 +34,23 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add app.json
           git commit -m "ci: bump build number (staging)"
-          git push
+          git push origin ${{ github.head_ref }}
 
-      - name: EAS Update (staging)
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: EAS Update (stg)
         run: |
-          eas update --profile preview             --message "Automated update from PR #${{ github.event.pull_request.number }}"
+          doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas update --branch stg --message 'Automated update from PR #${{ github.event.pull_request.number }}'"
 
       - name: EAS Build iOS (no submit)
-        run: |
-          eas build --platform ios --profile preview --non-interactive --wait
+        run: doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive"
 
   submit-on-merge:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
@@ -50,11 +63,16 @@ jobs:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm install -g eas-cli jq
-      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
+          node-version: 22.x
+          cache: npm
+
+      - name: 🔐 Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
 
       - name: Bump build number
         run: |
@@ -63,15 +81,22 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add app.json
           git commit -m "ci: bump build number (staging merged)"
-          git push
+          git push origin ${{ github.head_ref }}
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm install
 
       - name: EAS Build iOS
-        run: |
-          eas build --platform ios --profile production --non-interactive --wait
+        run: doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive"
 
       - name: Submit to App Store Connect
-        run: |
-          eas submit -p ios             --asc-app-id ${{ secrets.APP_STORE_CONNECT_APP_ID }}             --asc-api-key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }}             --asc-api-key-issuer-id ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }}             --asc-api-key ${{ secrets.APP_STORE_CONNECT_KEY }}
+        run: doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas submit -p ios --asc-app-id ${{ secrets.APP_STORE_CONNECT_APP_ID }} --asc-api-key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} --asc-api-key-issuer-id ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }} --asc-api-key ${{ secrets.APP_STORE_CONNECT_KEY }}"
 
       - name: Get group id
         id: group

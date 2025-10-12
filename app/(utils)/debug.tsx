@@ -1,4 +1,3 @@
-import { supabaseClient } from "@/shared/api/client";
 import {
   clearEncryptionKey,
   exportEncryptionKey,
@@ -9,7 +8,7 @@ import useActivityCategoriesStore from "@/shared/stores/resources/useActivityCat
 import useNotesStore from "@/shared/stores/resources/useNotesStore";
 import useStatesStore from "@/shared/stores/resources/useStatesStore";
 import useTimeslicesStore from "@/shared/stores/resources/useTimeslicesStore";
-import { Link } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
@@ -19,6 +18,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import HIT_SLOP_10 from "../../shared/constants/hitSlop";
+import { debugStyles } from "../../shared/styles/debug";
 
 const StoreStateDisplay = ({
   storeName,
@@ -34,6 +35,7 @@ const StoreStateDisplay = ({
       <TouchableOpacity
         onPress={() => setIsOpen(!isOpen)}
         style={styles.storeHeader}
+        hitSlop={HIT_SLOP_10}
       >
         <Text style={styles.storeName}>{storeName}</Text>
         <Text>{isOpen ? "▼" : "▶"}</Text>
@@ -48,53 +50,45 @@ const StoreStateDisplay = ({
 };
 
 const DebugScreen = () => {
-  const isDev = typeof __DEV__ !== "undefined" ? __DEV__ : false;
-
-  if (!isDev) {
-    return (
-      <View style={styles.container}>
-        <Link href="/(home)">
-          <Text style={styles.link}>Back to Home</Text>
-        </Link>
-        <Text style={styles.title}>Debug Screen (development only)</Text>
-        <Text>
-          This page is only available in development builds. Rebuild in dev to
-          access debug tools.
-        </Text>
-      </View>
-    );
-  }
   const activityCategoriesState = useActivityCategoriesStore();
   const activitiesState = useActivitiesStore();
   const notesState = useNotesStore();
   const statesState = useStatesStore();
   const timeslicesState = useTimeslicesStore();
+  const isDev = typeof __DEV__ !== "undefined" ? __DEV__ : false;
+  const router = useRouter();
 
-  const showSessionInfo = async () => {
-    const {
-      data: { session },
-      error,
-    } = await supabaseClient.auth.getSession();
-
-    if (error) {
-      Alert.alert("Error fetching session", error.message);
-      return;
-    }
-
-    if (session) {
-      Alert.alert(
-        "Supabase Session Details",
-        `Access Token: \n${session.access_token} \n\nSession: \n${JSON.stringify(
-          session,
-          null,
-          2
-        )}`,
-        [{ text: "OK" }]
-      );
-    } else {
-      Alert.alert("No active session found.");
-    }
-  };
+  if (!isDev) {
+    return (
+      <View style={debugStyles.container}>
+        <Stack.Screen
+          options={{
+            title: "Debug",
+            headerShown: true,
+            headerBackTitle: "Back",
+            headerBackVisible: true,
+            headerTintColor: "#007AFF",
+          }}
+        />
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => router.push("/profile")}
+            style={styles.backButton}
+            hitSlop={HIT_SLOP_10}
+          >
+            <Text style={styles.backButtonText}>{"< Back"}</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>Debug (Dev only)</Text>
+        </View>
+        <View style={styles.body}>
+          <Text>
+            This page is only available in development builds. Rebuild in dev to
+            access debug tools.
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   const handleEncryptionKeyInfo = async () => {
     try {
@@ -155,55 +149,70 @@ const DebugScreen = () => {
       Alert.alert("Error", `Failed to check encryption key: ${error}`);
     }
   };
-
   return (
-    <View style={styles.container}>
-      <Link href="/(home)">
-        <Text style={styles.link}>Back to Home</Text>
-      </Link>
-      <Text style={styles.title}>Debug Screen</Text>
-      <TouchableOpacity onPress={showSessionInfo} style={styles.button}>
-        <Text style={styles.buttonText}>Show Supabase Session</Text>
-      </TouchableOpacity>
+    <View style={debugStyles.container}>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: "Debug",
+          headerStyle: {
+            backgroundColor: "transparent",
+          },
+          headerLeft: () => (
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.push("/profile")}
+              hitSlop={HIT_SLOP_10}
+            >
+              <Text style={styles.backButtonText}>Back</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      {/* Body */}
+      <View style={styles.body}>
+        <TouchableOpacity
+          onPress={handleEncryptionKeyInfo}
+          style={styles.button}
+          hitSlop={HIT_SLOP_10}
+        >
+          <Text style={styles.buttonText}>Show Encryption Key Info</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleEncryptionKeyInfo} style={styles.button}>
-        <Text style={styles.buttonText}>Show Encryption Key Info</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={handleRemoveEncryptionKey}
-        style={[styles.button, styles.dangerButton]}
-      >
-        <Text style={[styles.buttonText, styles.dangerButtonText]}>
-          Remove Encryption Key
-        </Text>
-      </TouchableOpacity>
-      <ScrollView style={styles.scrollView}>
-        <StoreStateDisplay
-          storeName="useActivityCategoriesStore"
-          storeData={activityCategoriesState}
-        />
-        <StoreStateDisplay
-          storeName="useActivitiesStore"
-          storeData={activitiesState}
-        />
-        <StoreStateDisplay storeName="useNotesStore" storeData={notesState} />
-        <StoreStateDisplay storeName="useStatesStore" storeData={statesState} />
-        <StoreStateDisplay
-          storeName="useTimeslicesStore"
-          storeData={timeslicesState}
-        />
-      </ScrollView>
+        <TouchableOpacity
+          onPress={handleRemoveEncryptionKey}
+          style={[styles.button, styles.dangerButton]}
+          hitSlop={HIT_SLOP_10}
+        >
+          <Text style={[styles.buttonText, styles.dangerButtonText]}>
+            Remove Encryption Key
+          </Text>
+        </TouchableOpacity>
+        <ScrollView style={styles.scrollView}>
+          <StoreStateDisplay
+            storeName="useActivityCategoriesStore"
+            storeData={activityCategoriesState}
+          />
+          <StoreStateDisplay
+            storeName="useActivitiesStore"
+            storeData={activitiesState}
+          />
+          <StoreStateDisplay storeName="useNotesStore" storeData={notesState} />
+          <StoreStateDisplay
+            storeName="useStatesStore"
+            storeData={statesState}
+          />
+          <StoreStateDisplay
+            storeName="useTimeslicesStore"
+            storeData={timeslicesState}
+          />
+        </ScrollView>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
-  },
   button: {
     backgroundColor: "#007BFF",
     padding: 10,
@@ -222,12 +231,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  link: {
-    fontSize: 16,
-    color: "blue",
-    marginBottom: 10,
-    textAlign: "center",
-  },
+  // link style removed (unused)
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -256,6 +260,29 @@ const styles = StyleSheet.create({
   storeData: {
     padding: 12,
     backgroundColor: "#fafafa",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    marginBottom: 8,
+  },
+  backButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    marginRight: 12,
+    borderRadius: 6,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: "#007AFF",
+  },
+  body: {
+    flex: 1,
   },
 });
 

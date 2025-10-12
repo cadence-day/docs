@@ -1,4 +1,4 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { StorageResult } from "./types";
 
@@ -25,7 +25,7 @@ export class BaseStorage {
    */
   protected async get<T>(
     key: string,
-    defaultValue: T
+    defaultValue: T,
   ): Promise<StorageResult<T>> {
     const namespacedKey = this.getKey(key);
 
@@ -35,24 +35,12 @@ export class BaseStorage {
       if (stored !== null) {
         const data = JSON.parse(stored) as T;
 
-        GlobalErrorHandler.logDebug(
-          `Storage retrieved: ${namespacedKey}`,
-          "STORAGE_GET",
-          { key: namespacedKey, hasData: true }
-        );
-
         return { success: true, data };
       }
 
-      GlobalErrorHandler.logDebug(
-        `Storage key not found, using default: ${namespacedKey}`,
-        "STORAGE_GET",
-        { key: namespacedKey, hasData: false }
-      );
-
       return { success: true, data: defaultValue };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "STORAGE_GET_ERROR", {
+      Logger.logError(error, "STORAGE_GET_ERROR", {
         key: namespacedKey,
         operation: "get",
       });
@@ -74,15 +62,9 @@ export class BaseStorage {
     try {
       await AsyncStorage.setItem(namespacedKey, JSON.stringify(data));
 
-      GlobalErrorHandler.logDebug(
-        `Storage saved: ${namespacedKey}`,
-        "STORAGE_SET",
-        { key: namespacedKey, dataType: typeof data }
-      );
-
       return { success: true, data };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "STORAGE_SET_ERROR", {
+      Logger.logError(error, "STORAGE_SET_ERROR", {
         key: namespacedKey,
         operation: "set",
         dataType: typeof data,
@@ -104,15 +86,15 @@ export class BaseStorage {
     try {
       await AsyncStorage.removeItem(namespacedKey);
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `Storage removed: ${namespacedKey}`,
         "STORAGE_REMOVE",
-        { key: namespacedKey }
+        { key: namespacedKey },
       );
 
       return { success: true };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "STORAGE_REMOVE_ERROR", {
+      Logger.logError(error, "STORAGE_REMOVE_ERROR", {
         key: namespacedKey,
         operation: "remove",
       });
@@ -137,16 +119,16 @@ export class BaseStorage {
       if (namespacedKeys.length > 0) {
         await AsyncStorage.multiRemove(namespacedKeys);
 
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `Storage namespace cleared: ${this.namespace}`,
           "STORAGE_CLEAR",
-          { namespace: this.namespace, keysRemoved: namespacedKeys.length }
+          { namespace: this.namespace, keysRemoved: namespacedKeys.length },
         );
       }
 
       return { success: true };
     } catch (error) {
-      GlobalErrorHandler.logError(error, "STORAGE_CLEAR_ERROR", {
+      Logger.logError(error, "STORAGE_CLEAR_ERROR", {
         namespace: this.namespace,
         operation: "clear",
       });

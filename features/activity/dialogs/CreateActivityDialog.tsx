@@ -13,7 +13,7 @@ const CreateActivityDialog: React.FC<Props> = ({ _dialogId }) => {
   const insertActivity = useActivitiesStore((s) => s.insertActivity);
   const formRef = useRef<{ submit: () => void }>(null);
 
-  const handleBackToManage = () => {
+  const handleBackToManage = React.useCallback(() => {
     if (_dialogId) {
       useDialogStore.getState().closeDialog(_dialogId);
     }
@@ -23,10 +23,10 @@ const CreateActivityDialog: React.FC<Props> = ({ _dialogId }) => {
       position: "dock",
       props: {
         headerProps: { title: t("activity.legend.editActivities") },
-        height: 85,
+        height: 100,
       },
     });
-  };
+  }, [_dialogId, t]);
 
   useEffect(() => {
     if (!_dialogId) return;
@@ -38,9 +38,9 @@ const CreateActivityDialog: React.FC<Props> = ({ _dialogId }) => {
         rightActionElement: t("save"),
         onRightAction: () => formRef.current?.submit(),
       },
-      height: 85,
+      height: 1000,
     });
-  }, [_dialogId, t]);
+  }, [_dialogId, t, handleBackToManage]);
 
   const handleSubmit = async (values: Partial<Activity>) => {
     const created = await insertActivity({

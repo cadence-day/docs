@@ -1,5 +1,7 @@
-import { NotificationProvider, NotificationMessage } from "../types";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { ToastService } from "@/shared/context/ToastProvider";
+import { ToastType } from "@/shared/types/toast.types";
+import { Logger } from "@/shared/utils/errorHandler";
+import { NotificationMessage, NotificationProvider } from "../types";
 
 export interface InAppNotificationDisplay {
   id: string;
@@ -32,11 +34,29 @@ export class InAppNotificationProvider implements NotificationProvider {
     };
   }
 
+  private mapNotificationTypeToToastType(notificationType: string): ToastType {
+    switch (notificationType) {
+      case "achievement":
+        return "success";
+      case "reminder":
+      case "streak-reminder":
+        return "warning";
+      case "system":
+      case "midday-reflection":
+      case "evening-reflection":
+        return "info";
+      case "test":
+        return "info";
+      default:
+        return "info";
+    }
+  }
+
   async initialize(): Promise<void> {
     // In-app notifications don't require initialization
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       "In-app notification provider initialized",
-      "InAppNotificationProvider.initialize"
+      "InAppNotificationProvider.initialize",
     );
   }
 
@@ -53,6 +73,16 @@ export class InAppNotificationProvider implements NotificationProvider {
       this.notifications.set(notification.id, display);
       this.notifySubscribers();
 
+      // Show toast notification
+      const toastType = this.mapNotificationTypeToToastType(notification.type);
+
+      ToastService.show({
+        title: notification.title,
+        body: notification.body,
+        type: toastType,
+        duration: this.options.autoHideDuration || 5000,
+      });
+
       // Auto-hide notification if configured
       if (this.options.autoHideDuration && this.options.autoHideDuration > 0) {
         setTimeout(() => {
@@ -65,18 +95,18 @@ export class InAppNotificationProvider implements NotificationProvider {
         this.enforceDisplayLimit();
       }
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `In-app notification sent: ${notification.title}`,
         "InAppNotificationProvider.sendNotification",
-        { notificationId: notification.id }
+        { notificationId: notification.id },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "InAppNotificationProvider.sendNotification",
         {
           notificationId: notification.id,
-        }
+        },
       );
       throw error;
     }
@@ -84,7 +114,7 @@ export class InAppNotificationProvider implements NotificationProvider {
 
   async scheduleNotification(
     notification: NotificationMessage,
-    scheduledFor: Date
+    scheduledFor: Date,
   ): Promise<void> {
     try {
       const delay = scheduledFor.getTime() - Date.now();
@@ -99,19 +129,19 @@ export class InAppNotificationProvider implements NotificationProvider {
         await this.sendNotification(notification);
       }, delay);
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         `In-app notification scheduled for: ${scheduledFor.toISOString()}`,
         "InAppNotificationProvider.scheduleNotification",
-        { notificationId: notification.id, delay }
+        { notificationId: notification.id, delay },
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "InAppNotificationProvider.scheduleNotification",
         {
           notificationId: notification.id,
           scheduledFor: scheduledFor.toISOString(),
-        }
+        },
       );
       throw error;
     }
@@ -123,19 +153,19 @@ export class InAppNotificationProvider implements NotificationProvider {
         this.notifications.delete(notificationId);
         this.notifySubscribers();
 
-        GlobalErrorHandler.logDebug(
+        Logger.logDebug(
           `In-app notification cancelled`,
           "InAppNotificationProvider.cancelNotification",
-          { notificationId }
+          { notificationId },
         );
       }
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
         "InAppNotificationProvider.cancelNotification",
         {
           notificationId,
-        }
+        },
       );
       throw error;
     }
@@ -146,14 +176,14 @@ export class InAppNotificationProvider implements NotificationProvider {
       this.notifications.clear();
       this.notifySubscribers();
 
-      GlobalErrorHandler.logDebug(
+      Logger.logDebug(
         "All in-app notifications cancelled",
-        "InAppNotificationProvider.cancelAllNotifications"
+        "InAppNotificationProvider.cancelAllNotifications",
       );
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error,
-        "InAppNotificationProvider.cancelAllNotifications"
+        "InAppNotificationProvider.cancelAllNotifications",
       );
       throw error;
     }
@@ -166,7 +196,7 @@ export class InAppNotificationProvider implements NotificationProvider {
   // In-app specific methods
 
   subscribe(
-    callback: (notifications: InAppNotificationDisplay[]) => void
+    callback: (notifications: InAppNotificationDisplay[]) => void,
   ): () => void {
     this.subscribers.push(callback);
 
@@ -190,7 +220,7 @@ export class InAppNotificationProvider implements NotificationProvider {
 
   getAllNotifications(): InAppNotificationDisplay[] {
     return Array.from(this.notifications.values()).sort(
-      (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
+      (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
     );
   }
 
@@ -236,7 +266,7 @@ export class InAppNotificationProvider implements NotificationProvider {
 
   getUnreadCount(): number {
     return Array.from(this.notifications.values()).filter(
-      (notification) => !notification.isRead
+      (notification) => !notification.isRead,
     ).length;
   }
 
@@ -251,9 +281,9 @@ export class InAppNotificationProvider implements NotificationProvider {
       try {
         callback(visibleNotifications);
       } catch (error) {
-        GlobalErrorHandler.logError(
+        Logger.logError(
           error,
-          "InAppNotificationProvider.notifySubscribers"
+          "InAppNotificationProvider.notifySubscribers",
         );
       }
     });
@@ -266,7 +296,7 @@ export class InAppNotificationProvider implements NotificationProvider {
     if (visibleNotifications.length > this.options.maxDisplayedNotifications) {
       // Hide oldest notifications that exceed the limit
       const notificationsToHide = visibleNotifications.slice(
-        this.options.maxDisplayedNotifications
+        this.options.maxDisplayedNotifications,
       );
 
       notificationsToHide.forEach((notification) => {

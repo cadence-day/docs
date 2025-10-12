@@ -4,7 +4,7 @@ import {
   useActivityCategoriesStore,
 } from "@/shared/stores";
 import useDialogStore from "@/shared/stores/useDialogStore";
-import type { Activity } from "@/shared/types/models";
+import type { Activity, ActivityCategory } from "@/shared/types/models";
 import React, {
   forwardRef,
   useCallback,
@@ -23,7 +23,6 @@ import {
 } from "react-native";
 import { ACTIVITY_THEME, WEIGHT_CONFIG } from "../../constants";
 import { useActivityValidation } from "../../hooks";
-import { CustomSlider } from "./form/CustomSlider";
 import { FormInput } from "./form/FormInput";
 
 interface ActivityFormProps {
@@ -48,88 +47,62 @@ const CategoryPicker = React.memo<{
   showPicker: boolean;
   disabled?: boolean;
   t: (key: string) => string;
-}>(
-  ({
-    selectedCategoryId,
-    onCategorySelect,
-    onToggle,
-    showPicker,
-    disabled = false,
-    t,
-  }) => {
-    const categories = useActivityCategoriesStore((state) => state.categories);
+}>(({ selectedCategoryId, onToggle, disabled = false, t }) => {
+  const categories = useActivityCategoriesStore((state) => state.categories);
 
-    const selectedCategory = useMemo(
-      () => categories.find((cat) => cat.id === selectedCategoryId),
-      [categories, selectedCategoryId]
-    );
+  const selectedCategory = useMemo(
+    () => categories.find((cat) => cat.id === selectedCategoryId),
+    [categories, selectedCategoryId]
+  );
 
-    const getCategoryDisplayName = useCallback(
-      (categoryKey: string) => {
-        const translatedName = t(`activity-categories.${categoryKey}`);
-        return translatedName !== `activity-categories.${categoryKey}`
-          ? translatedName
-          : categoryKey;
-      },
-      [t]
-    );
+  const getCategoryDisplayName = useCallback(
+    (categoryKey: string) => {
+      const translatedName = t(`activity-categories.${categoryKey}`);
+      return translatedName !== `activity-categories.${categoryKey}`
+        ? translatedName
+        : categoryKey;
+    },
+    [t]
+  );
 
-    const renderCategoryItem = useCallback(
-      ({ item }: { item: any }) => (
-        <Pressable
-          style={styles.pickerItem}
-          onPress={() => {
-            onCategorySelect(item.id || null);
-            onToggle();
-          }}
+  return (
+    <View style={styles.fieldContainer}>
+      <Text style={styles.label}>{t("category")}</Text>
+
+      <TouchableOpacity
+        style={[styles.inputContainer, styles.categoryInputContainer]}
+        onPress={onToggle}
+        disabled={disabled}
+      >
+        {/* Color swatch */}
+        <View
+          style={[
+            styles.categorySwatch,
+            {
+              backgroundColor:
+                selectedCategory?.color || ACTIVITY_THEME.GRAY_DARK,
+            },
+          ]}
+        />
+
+        <Text
+          style={[
+            styles.textInput,
+            {
+              color: selectedCategory
+                ? ACTIVITY_THEME.WHITE
+                : ACTIVITY_THEME.GRAY_LIGHT,
+            },
+          ]}
         >
-          <Text style={styles.pickerItemText}>
-            {item.key ? getCategoryDisplayName(item.key) : item.key}
-          </Text>
-        </Pressable>
-      ),
-      [onCategorySelect, onToggle, getCategoryDisplayName]
-    );
-
-    return (
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>{t("category")}</Text>
-
-        <TouchableOpacity
-          style={[styles.inputContainer, styles.categoryInputContainer]}
-          onPress={onToggle}
-          disabled={disabled}
-        >
-          {/* Color swatch */}
-          <View
-            style={[
-              styles.categorySwatch,
-              {
-                backgroundColor:
-                  selectedCategory?.color || ACTIVITY_THEME.GRAY_DARK,
-              },
-            ]}
-          />
-
-          <Text
-            style={[
-              styles.textInput,
-              {
-                color: selectedCategory
-                  ? ACTIVITY_THEME.WHITE
-                  : ACTIVITY_THEME.GRAY_LIGHT,
-              },
-            ]}
-          >
-            {selectedCategory?.key
-              ? getCategoryDisplayName(selectedCategory.key)
-              : t("select-a-category")}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-);
+          {selectedCategory?.key
+            ? getCategoryDisplayName(selectedCategory.key)
+            : t("select-a-category")}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+});
 
 CategoryPicker.displayName = "CategoryPicker";
 
@@ -228,14 +201,7 @@ ParentActivityPicker.displayName = "ParentActivityPicker";
 
 export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
   (
-    {
-      initialValues = {},
-      activity,
-      onSubmit,
-      onCancel,
-      isSubmitting = false,
-      _dialogId,
-    },
+    { initialValues = {}, activity, onSubmit, isSubmitting = false, _dialogId },
     ref
   ) => {
     const { t } = useI18n();
@@ -257,10 +223,6 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
     const [status, setStatus] = useState<
       "ENABLED" | "DISABLED" | "DELETED" | null
     >(initialValues.status ?? "ENABLED");
-
-    // UI state
-    const [showCategoryPicker, setShowCategoryPicker] = useState(false);
-    const [showParentPicker, setShowParentPicker] = useState(false);
 
     // Validation hook - destructure stable callbacks to avoid unstable object identity
     const validation = useActivityValidation(name, selectedCategoryId);
@@ -337,6 +299,16 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
       validateField("name", name);
     }, [validateField, name]);
 
+    // Helper to create an Activity-like object to pass into picker dialogs
+    const getActivityForDialogs = useCallback(() => {
+      if (activity) return activity;
+      return {
+        id: initialValues.id ?? "preview",
+        name: name || initialValues.name || "",
+        color,
+      } as Partial<Activity>;
+    }, [activity, initialValues.id, initialValues.name, name, color]);
+
     const handleCategoryToggle = useCallback(() => {
       // Open full-screen category dialog using the centralized CdDialog registry
 
@@ -350,7 +322,7 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
       useDialogStore.getState().openDialog({
         type: "activity-category-picker",
         props: {
-          onConfirm: (category: any) => {
+          onConfirm: (category: ActivityCategory | null) => {
             setSelectedCategoryId(category?.id ?? null);
 
             // Remove persistent flag from parent dialog after category selection
@@ -363,24 +335,10 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
           activity: getActivityForDialogs(),
         },
       });
-    }, [_dialogId]);
-
-    // Helper to create an Activity-like object to pass into picker dialogs
-    const getActivityForDialogs = useCallback(() => {
-      if (activity) return activity;
-      return {
-        id: initialValues.id ?? "preview",
-        name: name || initialValues.name || "",
-        color,
-      } as Partial<Activity>;
-    }, [activity, initialValues.id, initialValues.name, name, color]);
+    }, [_dialogId, getActivityForDialogs]);
 
     const handleCategorySelect = useCallback((categoryId: string | null) => {
       setSelectedCategoryId(categoryId);
-    }, []);
-
-    const handleParentToggle = useCallback(() => {
-      setShowParentPicker((prev) => !prev);
     }, []);
 
     const handleColorPickerOpen = useCallback(() => {
@@ -409,7 +367,7 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
           },
         },
       });
-    }, [color, selectedCategoryId, _dialogId]);
+    }, [color, selectedCategoryId, _dialogId, getActivityForDialogs]);
 
     const handleSubmit = useCallback(async () => {
       const activity: Partial<Activity> = {
@@ -436,7 +394,6 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
     ]);
 
     // Computed values
-    const isEditingExisting = !!initialValues.id;
     const isDisabled = status === "DISABLED";
 
     // Expose submit method
@@ -466,15 +423,15 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
         />
 
         {/* Category Picker */}
+        {/* Category Picker */}
         <CategoryPicker
           selectedCategoryId={selectedCategoryId}
           onCategorySelect={handleCategorySelect}
           onToggle={handleCategoryToggle}
-          showPicker={showCategoryPicker}
+          showPicker={false}
           disabled={isDisabled}
           t={t}
         />
-
         {/* Color Picker */}
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>
@@ -492,13 +449,13 @@ export const ActivityForm = forwardRef<ActivityFormHandle, ActivityFormProps>(
         </View>
 
         {/* Weight Slider */}
-        <CustomSlider
+        {/* <CustomSlider
           value={weight}
           onValueChange={setWeight}
           disabled={isDisabled}
           leftLabel={t("laid-back")}
           rightLabel={t("highly-energetic")}
-        />
+        /> */}
       </View>
     );
   }
@@ -656,8 +613,5 @@ const styles = StyleSheet.create({
     color: ACTIVITY_THEME.WHITE,
     fontSize: 14,
     fontWeight: "500",
-    textShadowColor: "rgba(0,0,0,0.5)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
 });

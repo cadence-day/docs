@@ -1,9 +1,21 @@
 {
   "about-encryption": "About Encryption",
   "about-notifications": "About Notifications",
+  "about-subscription": "About Subscriptions",
   "account-management": "Account Management",
   "account-verified-successfully-welcome": "Account verified successfully! Welcome!",
   "active-activities": "Active Activities",
+  "activities": {
+    "categories": {
+      "creative": "Creative",
+      "health": "Health",
+      "learning": "Learning",
+      "other": "Other",
+      "personal": "Personal",
+      "social": "Social",
+      "work": "Work"
+    }
+  },
   "activity": {
     "color-picker": {
       "done": "Done",
@@ -36,10 +48,23 @@
   },
   "actual-behavior": "Actual Behavior",
   "actual-behavior-optional": "Actual behavior (optional)",
+  "add-a-new-note": "Add a new note...",
   "add-new-activity": "Add New Activity",
+  "add-new-note": "Add a new note.",
   "allow-notifications": "Allow notifications",
   "already-have-an-account": "Already have an account?",
+  "already-subscribed-premium": "You are already subscribed to Premium!",
   "app-information": "App Information",
+  "app-update": {
+    "new-version-available": "New Version Available",
+    "update-benefits": "Update now to get the latest features, improvements, and bug fixes.",
+    "update-description": "A new version ({{latestVersion}}) of the app is available. You're currently using version {{currentVersion}}.",
+    "update-later": "Update Later",
+    "update-now": "Update Now",
+    "update-required": "Update Required",
+    "update-required-benefits": "This update includes important security fixes and compatibility improvements that are required for the app to function properly.",
+    "update-required-description": "A critical update ({{latestVersion}}) is required to continue using the app. You're currently using version {{currentVersion}}."
+  },
   "app-version-and-platform": "• App version and platform",
   "are-you-sure-you-want-to-sign": "Are you sure you want to sign out?",
   "back": "Back",
@@ -62,7 +87,9 @@
   "cannot-find-native-module": "Cannot find native module",
   "category": "Category",
   "change-password": "Change Password",
+  "change-plan": "Change Plan",
   "check-your-inbox-for-verification-email": "Check your inbox for verification email.",
+  "choose-your-plan": "Choose Your Plan",
   "choose_action": "Choose Action",
   "close": "Close",
   "color": "Color",
@@ -74,6 +101,7 @@
     "error": "Error",
     "ok": "OK",
     "saving": "Saving...",
+    "select": "Select",
     "submitting": "Submitting..."
   },
   "confirm": "Confirm",
@@ -84,6 +112,7 @@
   "contain-one-uppercase-letter": "- Contain one uppercase letter.",
   "continue": "Continue",
   "current-password-is-required": "Current password is required.",
+  "daily-total": "DAILY TOTAL",
   "dateTime": {
     "preposition": "at"
   },
@@ -98,12 +127,16 @@
   "disabled-activities": "Disabled Activities",
   "dont-have-an-account": "Don't have an account?",
   "edit": "Edit",
+  "edit-your-note": "Edit your note...",
   "email-not-available": "Email Not Available",
   "email-support": "Email Support",
   "enabled": "Enabled",
   "encryption": "Encryption",
   "encryption-key": "Encryption Key",
   "encryption-key-present-exportf": "Encryption key present ({0})",
+  "energyHigh": "High",
+  "energyLabel": "Energy",
+  "energyLow": "Low",
   "enter-6-digit-code": "Enter 6-digit code",
   "enter-64-character-encryption": "Enter 64-character encryption key",
   "enter-activity-name": "Enter activity name",
@@ -144,12 +177,14 @@
   "fr": "Fri",
   "frequently-asked-questions": "Frequently asked questions",
   "get-help": "Get Help",
+  "go-back": "Go back",
   "hi-cadence-day-support-team-pl": "Hi Cadence.day Support Team, Please describe your issue or question below: [Your message here] --- App Version: {0} ({1}) User ID: {2} User Email: {3} Device: {4}",
   "highly-energetic": "Highly Energetic",
   "home": {
     "title": "Daily Cadence",
     "todayTitle": "Today's Cadence"
   },
+  "hours": "hours",
   "i-agree-to-the": "I agree to the",
   "import-encryption-key": "Import Encryption Key",
   "import-key": "Import Key",
@@ -162,12 +197,82 @@
   "key-imported-successfully-fing": "Key imported successfully! Fingerprint: {0}",
   "laid-back": "Laid Back",
   "legal": "Legal",
+  "loading-plans": "Loading subscription plans...",
+  "long-press-to-copy": "Long press to copy!",
   "make-cadence-yours": "Make Cadence Yours",
   "meet-sage": "Meet Sage",
   "midday-reflection": "Midday Reflection",
+  "migration": {
+    "actions": {
+      "dry-run": "Dry Run",
+      "full-run": "Full Migration",
+      "migrate-activities": "Migrate Activities",
+      "migrate-notes": "Migrate Notes",
+      "migrate-states": "Migrate States",
+      "migrate-timeslices": "Migrate Timeslices",
+      "title": "Migration Actions"
+    },
+    "activities": {
+      "category": "Category",
+      "color": "Color",
+      "create-new": "Create new activity",
+      "create-new-activity": "Create New Activity",
+      "enter-name": "Enter activity name",
+      "name": "Name",
+      "name-required": "Activity name is required",
+      "new": "New",
+      "no-mappings": "Please configure activity mappings first",
+      "select-category": "Select category...",
+      "select-mapping": "Select mapping...",
+      "title": "Activity Mapping"
+    },
+    "auth": {
+      "connect": "Connect & Migrate",
+      "email": "Email",
+      "email-placeholder": "Enter your email",
+      "failed": "Authentication failed. Please check your credentials.",
+      "fields-required": "Email and password are required",
+      "password": "Password",
+      "password-placeholder": "Enter your password",
+      "subtitle": "Sign in to your legacy account to migrate your data to the new system"
+    },
+    "encryption": {
+      "checking": "Checking encryption key...",
+      "key-found": "Encryption key found ✓",
+      "unable-to-decrypt": "Unable to decrypt encrypted notes"
+    },
+    "errors": {
+      "title": "Errors"
+    },
+    "full-run": {
+      "confirm": "This will migrate all your data from the source database to the target database. This action cannot be undone. Are you sure?",
+      "title": "Confirm Full Migration"
+    },
+    "logs": {
+      "title": "Logs"
+    },
+    "progress": {
+      "activities": "Activities",
+      "notes": "Notes",
+      "states": "States",
+      "timeslices": "Timeslices",
+      "title": "Progress"
+    },
+    "title": "Migrate V1 Account"
+  },
   "mo": "Mon",
+  "monthly": "Monthly",
+  "mood": "Mood",
+  "mood-labels": {
+    "sad": "Sad",
+    "melancholic": "Melancholic",
+    "neutral": "Neutral",
+    "content": "Content",
+    "happy": "Happy"
+  },
   "morning-reminders": "Morning Reminders",
   "morning-reminders-are-sent-aft": "Morning reminders are sent after your wake time, and evening reminders before your sleep time. Weekly streak updates celebrate your achievements every Sunday.",
+  "morning-time": "Morning Reflection",
   "name": "Name",
   "new-password": "New Password",
   "new-password-must-be-at-least": "New password must be at least 8 characters long.",
@@ -178,12 +283,76 @@
   "not-available-in-this-build": "not available in this build",
   "notification-schedule": "Notification Schedule",
   "notification-types": "Notification Types",
+  "ok": "OK",
   "onboarding": {
+    "activities": {
+      "admin": "Admin",
+      "caregiving": "Caregiving",
+      "chores": "Chores",
+      "commute": "Commute",
+      "cooking": "Cooking",
+      "creative-work": "Creative Work",
+      "doomscrolling": "Doomscrolling",
+      "email": "Email",
+      "exercise": "Exercise",
+      "family-time": "Family Time",
+      "friends": "Friends",
+      "groceries": "Groceries",
+      "health": "Health",
+      "hobby": "Hobby",
+      "home-admin": "Home Admin",
+      "learning": "Learning",
+      "meal": "Meal",
+      "meditation": "Meditation",
+      "meetings": "Meetings",
+      "nature": "Nature",
+      "planning": "Planning",
+      "reading": "Reading",
+      "reflection": "Reflection",
+      "relax": "Relax",
+      "sleep": "Sleep",
+      "tv": "TV",
+      "walking": "Walking",
+      "work": "Work"
+    },
+    "activity-selection": {
+      "content": "Pick activities that are relevant to you:",
+      "footer": "You can edit, add, remove activities later.",
+      "title": "Start by logging your daily activities and patterns will emerge"
+    },
     "missed-intro": "In case you missed the introduction",
+    "note-taking": {
+      "title": "Add a note to each activity to record your thoughts and feelings"
+    },
+    "notifications": {
+      "button": "Allow notifications",
+      "schedule": {
+        "evening": "Evening",
+        "morning": "Morning",
+        "noon": "Noon"
+      },
+      "title": "Turn on notifications for gentle reminders to log your activities throughout the day."
+    },
+    "pattern-view": {
+      "title": "As the daily patterns emerge you will be able to see weekly rhythm"
+    },
+    "privacy": {
+      "button": "Download the encryption key",
+      "content": "Text about encryption key.",
+      "title": "Your time is yours alone. Everything you log is encrypted and stored securely, so only you have access."
+    },
+    "time-logging": {
+      "content": "Select the activity and tap into a time slot.",
+      "title": "Start by logging your daily activities and patterns will emerge"
+    },
     "title": "Welcome to Cadence",
-    "view-again": "View Onboarding Again"
+    "view-again": "View Onboarding Again",
+    "welcome": {
+      "title": "Cadence helps you find the best rhythm of your life"
+    }
   },
   "or-paste-encryption-key": "Or paste encryption key:",
+  "page-not-found": "Page Not Found",
   "parent-activity": "Parent Activity",
   "password-changed": "Password Changed",
   "password-changed-successfully": "Password changed successfully!",
@@ -220,6 +389,23 @@
   "permanently-delete-account": "Permanently delete account",
   "permission-required": "Permission Required",
   "pick-activity-first": "Pick an activity first.",
+  "plan": {
+    "feature": {
+      "all_free": "Everything in Free",
+      "all_supporter": "Everything in Supporter",
+      "beta_access": "You will have premium access to our latest beta with latest functionalities.",
+      "community": "Access to our community",
+      "free": "All the functionalities",
+      "premium_support": "Decide what is coming next",
+      "roadmap": "Co-design with us"
+    },
+    "free": "Free Explorer",
+    "free_price": "Free",
+    "premium": "Premium Supporter",
+    "premium_price": "$9.99/mo",
+    "supporter": "Supporter",
+    "supporter_price": "$4.99/mo"
+  },
   "please-enable-camera-access-in": "Please enable camera access in your device settings to scan QR codes.",
   "please-enter-a-bug-description": "Please enter a bug description.",
   "please-enter-a-bug-title": "Please enter a bug title.",
@@ -227,8 +413,10 @@
   "please-enter-time-in-hh-mm-for": "Please enter time in HH:MM format (e.g., 12:00)",
   "please-enter-time-in-hh-mm-for-0": "Please enter time in HH:MM format (e.g., 20:00)",
   "please-fill-in-both-title-and": "Please fill in both title and description",
+  "please-select-subscription-plan": "Please select a subscription plan",
   "please-visit-https-cadence-day": "Please visit https://cadence.day/faq in your browser",
   "point-your-camera-at-the-qr-co": "Point your camera at the QR code containing the encryption key",
+  "press-to-edit": "Click to edit!",
   "privacy-policy": "Privacy Policy",
   "profile": {
     "actions": {
@@ -248,15 +436,20 @@
     "app-version": "App Version",
     "current-plan": "Current Plan",
     "customer-support": "Customer Support",
+    "data": "Data",
     "deep-cadence": "Deep Cadence",
     "deep-cadence-description": "Deep Cadence Description",
     "delete-account": "Delete Account",
     "developer": {
       "open-debug-page": "Open Debug Page",
       "section-title": "Developer",
-      "show-onboarding": "Show Onboarding (debug)"
+      "show-onboarding": "Show Onboarding (debug)",
+      "test-notification": "Test Notification BG Task"
     },
-    "edit-photo": "Edit Photo",
+    "development": {
+      "test-notifications": "Test Notifications"
+    },
+    "edit-photo": "Edit Profile Photo",
     "email": "Email",
     "error-messages": {
       "sleep-time-range": "Sleep time should be between 8:00 PM and 2:00 AM",
@@ -284,6 +477,7 @@
       "take-photo": "Take Photo"
     },
     "logout": "Log Out",
+    "migrate-data": "Migrate Previous Account",
     "name": "Name",
     "notifications": "Notifications",
     "phone": "Phone Number",
@@ -322,6 +516,7 @@
     "wake-time": "Wake Time",
     "whats-inside": "What's Inside:"
   },
+  "purchases-restored-successfully": "Your purchases have been restored successfully!",
   "push-notification-permissions": "Push notification permissions are required to receive notifications. You can enable them in your device settings.",
   "push-notifications-disabled": "Push Notifications Disabled",
   "push-notifications-have-been-d": "Push notifications have been disabled. You can re-enable them anytime.",
@@ -330,6 +525,7 @@
   "read-more-about-how-we-protect": "Read more about how we protect your privacy →",
   "reflection": {
     "activityLabel": "Activity",
+    "daily-cadence": "Daily Cadence",
     "details": "Details",
     "noTimesliceInfo": "No additional info for this timeslice.",
     "title": "Reflection",
@@ -340,8 +536,10 @@
   "requesting-camera-permission": "Requesting camera permission...",
   "resend-code": "Resend Code",
   "resend-in-resendcooldown-s": "Resend in {0}s",
+  "restore-purchases": "Restore Purchases",
   "sa": "Sat",
   "sage": {
+    "title": "Sage Notifications",
     "unavailableMessage": "Cadence AI is currently not available."
   },
   "sage-your-friendly-ai-guide-wi": "Sage your friendly AI guide will help you notice the patterns in your time.\\n\\nAsk Sage to summarize your day, help you remember your goals, or notice your time patterns. The more you log, the more Sage can help.",
@@ -351,6 +549,7 @@
   "security-information": "Security Information",
   "select-a-category": "Select a Category",
   "select-activity": "Select Activity",
+  "select-billing-period": "Select Billing Period",
   "send-feedback": "Send Feedback",
   "send-reset-email": "Send reset email",
   "sending": "Sending...",
@@ -437,6 +636,8 @@
   },
   "sign-up-now": "Sign Up Now",
   "since-all-notification-types-a": "Since all notification types are disabled, push notifications have been turned off automatically.",
+  "sorry-the-page-you-are-looking": "Sorry, the page you are looking for does not exist.",
+  "start-free-trial": "Start Free Trial",
   "stay-in-sync-nwith-your-time": "Stay in sync\\nwith your time",
   "steps-to-reproduce": "Steps to Reproduce",
   "steps-to-reproduce-optional": "Steps to reproduce (optional)",
@@ -447,6 +648,12 @@
   "submit-bug-reports": "Submit bug reports",
   "submit-feature-request": "Submit Feature Request",
   "submit-feature-suggestions": "Submit feature suggestions",
+  "subscription": {
+    "choose_plan": "Decide to support Cadence"
+  },
+  "subscription-activated-successfully": "Your subscription has been activated successfully!",
+  "subscription-info-text": "Currently, we do not have premium functionalities, all our users have access to all our latest functionalities. However, we need to crowdfund our platform to continue developing and help people manage their life. If you are enthusiast to mental health, support us. You will be named on our Sponsor website.",
+  "subscription-terms": "Subscription auto-renews unless cancelled. Terms and conditions apply.",
   "success": "Success",
   "support-information": "Support Information",
   "system-settings": "System Settings",
@@ -468,12 +675,29 @@
   "to-modify-notification-permiss": "To modify notification permissions at the system level, please go to your device's Settings app and find this app's notification settings.",
   "today": "Today",
   "tu": "Tue",
+  "tuning-cadence-at-your-rhythm": "Tuning Cadence at your rhythm",
   "turn-on-notifications-for-gent": "Turn on notifications for gentle reminders to log your activities throughout the day. No pressure, just a daily nudge to help you stay aware of your time.\\n\\n✨ Your future self will thank you. Take a moment to log your day.",
   "unable-to-open-email-app-pleas": "Unable to open email app. Please send your support request to: dev@cadence.day",
   "unable-to-open-link": "Unable to Open Link",
   "unable-to-submit-bug-report-pl": "Unable to submit bug report. Please try again or contact support.",
   "use-camera-to-scan-qr-code": "Use camera to scan QR code",
   "user-not-found-please-sign-in": "User not found. Please sign in again.",
+  "v2-welcome": {
+    "close": "Close",
+    "go-to-profile": "Go to Profile",
+    "how-to-migrate": "How to Migrate Your Data",
+    "important-changes": "Important Changes",
+    "legacy-users-description": "If you previously used Cadence 1.0 and want to migrate your data, you can do so from your Profile screen. You'll need your old account email address to initiate the migration process.",
+    "legacy-users-title": "For Previous Cadence Users",
+    "new-account-required": "Cadence 2.0 uses a new authentication system. If you had an account with Cadence 1.0, you'll need to create a new account.",
+    "new-features": "Cadence 2.0 brings a completely redesigned experience with improved security, better performance, and new features to help you track your time more effectively.",
+    "step-1": "Go to your Profile screen",
+    "step-2": "Find the 'Migrate V1 Account' section",
+    "step-3": "Enter your old Cadence 1.0 email address",
+    "step-4": "Click 'Start Migration' to begin the process",
+    "title": "Welcome to Cadence 2.0",
+    "whats-new": "What's New?"
+  },
   "validate": "Validate",
   "verification-code-sent-check-your-email": "Verification code sent. Check your email.",
   "verification-incomplete": "Verification incomplete.",
@@ -489,6 +713,7 @@
   "welcome-to-cadence": "Welcome to Cadence",
   "were-here-to-help-our-support": "We're here to help! Our support team typically responds within 24 hours. For urgent issues, please include as much detail as possible in your message.",
   "weve-sent-a-verification-code-to": "We've sent a verification code to",
+  "yearly": "Yearly",
   "yesterday": "Yesterday",
   "you-have-a-new-notification": "You have a new notification",
   "your-account-security-is-impor": "Your account security is important to us. Password changes require email verification for your protection. Contact support for account deletion requests.",
@@ -496,5 +721,8 @@
   "your-email-address-for-follow": "• Your email address (for follow-up)",
   "your-encryption-key-protects-s": "Your encryption key protects sensitive data. Keep it secure and don't share it with others. You'll need this key to access your encrypted data on new devices.",
   "your-password-has-been-changed": "Your password has been changed successfully. For security reasons, you'll be signed out now.",
-  "your-time-is-yours-alone-every": "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection."
+  "your-time-is-yours-alone-every": "Your time is yours alone. Everything you log is encrypted and stored securely. No ads, no tracking, no sharing your information—just a safe space for self-reflection.",
+  "enter-6-digit-code-from-your-email": "Enter 6 digit code\nfrom your email",
+  "code": "Code",
+  "verifying": "Verifying..."
 }

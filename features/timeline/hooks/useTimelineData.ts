@@ -1,14 +1,14 @@
 // useTimelineData.ts
 import { useActivitiesStore, useTimeslicesStore } from "@/shared/stores";
-import { Timeslice } from "@/shared/types/models";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Activity, Timeslice } from "@/shared/types/models";
+import { Logger } from "@/shared/utils/errorHandler";
 import { useUser } from "@clerk/clerk-expo";
 import { useMemo } from "react";
 
 // Optional external listeners can be passed in via a small options bag.
 export interface UseTimelineDataOptions {
   // A lightweight activity provider to avoid importing the full activities store
-  getActivities?: () => any[];
+  getActivities?: () => Activity[];
 }
 
 /**
@@ -16,15 +16,40 @@ export interface UseTimelineDataOptions {
  */
 export const useTimelineData = (
   date: Date,
-  options?: UseTimelineDataOptions
+  options?: UseTimelineDataOptions,
 ) => {
-  const user_id = useUser().user?.id ?? null;
+  // Guard access to Clerk's user object. In some environments `useUser()` result
+  // may not be what we expect. We destructure carefully to prevent telemetry errors
+  // like "Value is a number, expected an Object". We extract the result first,
+  // then safely access the user property.
+  let user_id: string | null = null;
+  try {
+    const userResult = useUser();
+    // Defensive check: ensure userResult has a user property that is an object with an id
+    if (
+      userResult &&
+      typeof userResult === "object" &&
+      "user" in userResult &&
+      userResult.user &&
+      typeof userResult.user === "object" &&
+      "id" in userResult.user
+    ) {
+      user_id = userResult.user.id as string;
+    }
+  } catch (error) {
+    Logger.logWarning(
+      "Failed to get user from Clerk",
+      "useTimelineData:userId",
+      { error },
+    );
+  }
+
   // Prefer injected activities getter, otherwise fall back to empty array
   // Grab enabled/disabled activities from the activities store so disabled
   // activities' colors/metadata are available to timeline rendering.
   const enabledActivitiesFromStore = useActivitiesStore((s) => s.activities);
   const disabledActivitiesFromStore = useActivitiesStore(
-    (s) => s.disabledActivities
+    (s) => s.disabledActivities,
   );
 
   const activities = useMemo(() => {
@@ -38,10 +63,10 @@ export const useTimelineData = (
         ...(disabledActivitiesFromStore || []),
       ];
     } catch (error) {
-      GlobalErrorHandler.logError(
+      Logger.logError(
         error as Error,
         "useTimelineData:getActivities",
-        {}
+        {},
       );
       return [];
     }
@@ -52,10 +77,10 @@ export const useTimelineData = (
   // Ensure date is a valid Date object
   const validDate = useMemo(() => {
     if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "useTimelineData received invalid date",
         "useTimelineData:date",
-        { date }
+        { date },
       );
       return new Date();
     }
@@ -95,7 +120,7 @@ export const useTimelineData = (
   const mergeTimeslices = useMemo(() => {
     return (
       slots: Timeslice[],
-      existingTimeslices: Timeslice[]
+      existingTimeslices: Timeslice[],
     ): Timeslice[] => {
       const merged = slots.map((slot) => {
         const existing = existingTimeslices.find((ts) => {
@@ -108,7 +133,7 @@ export const useTimelineData = (
           // Match if the times are within the same 30-minute slot
           return (
             Math.abs(existingStartUtc.getTime() - slotStartUtc.getTime()) <
-            30 * 60 * 1000
+              30 * 60 * 1000
           );
         });
         return existing || slot;
@@ -144,19 +169,19 @@ export const useTimelineData = (
   // Generate time slot placeholders
   const TimeslicePlaceholders = useMemo(
     () => generateTimeSlots(dateForDisplay),
-    [generateTimeSlots, dateForDisplay]
+    [generateTimeSlots, dateForDisplay],
   );
 
   // Get existing timeslices for today and yesterday
   const ExistingTimeslices = useMemo(
     () => filterTimeslicesByDate(dateForDisplay),
-    [filterTimeslicesByDate, dateForDisplay]
+    [filterTimeslicesByDate, dateForDisplay],
   );
 
   // Merge empty slots with existing timeslices
   const Timeslices = useMemo(
     () => mergeTimeslices(TimeslicePlaceholders, ExistingTimeslices),
-    [mergeTimeslices, TimeslicePlaceholders, ExistingTimeslices]
+    [mergeTimeslices, TimeslicePlaceholders, ExistingTimeslices],
   );
 
   return {

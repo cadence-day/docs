@@ -1,17 +1,143 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { BaseStorage } from "@/shared/storage/base";
+import { Logger } from "@/shared/utils/errorHandler";
+import * as CryptoJS from "crypto-js";
 import * as Crypto from "expo-crypto";
 import * as SecureStore from "expo-secure-store";
-import * as CryptoJS from "crypto-js";
 
 // Constants for encryption
 const ENCRYPTION_KEY_NAME = "cadence_app_encryption_key";
-const KEY_SIZE = 256; // AES-256
-const ALGORITHM = "AES";
-const IV_BYTES = 16; // AES block size in bytes (128 bits)
 const ENCRYPTED_PREFIX = "enc:"; // Prefix to identify encrypted strings
 
-// Export the prefix for external use if needed
-export { ENCRYPTED_PREFIX };
+// Storage for checking encryption state
+class EncryptionCoreStorage extends BaseStorage {
+  constructor() {
+    super("encryption");
+  }
+
+  async getEncryptedDataDetected(): Promise<boolean> {
+    const result = await this.get("encrypted_data_detected", false);
+    return result.data || false;
+  }
+
+  async setEncryptedDataDetected(detected: boolean): Promise<void> {
+    await this.set("encrypted_data_detected", detected);
+  }
+}
+
+const encryptionStorage = new EncryptionCoreStorage();
+
+// Global callback for encrypted data detection
+let onEncryptedDataDetected: (() => void) | null = null;
+
+// Global callback for encryption key changes
+let onEncryptionKeyChanged: (() => Promise<void>) | null = null;
+
+/**
+ * Set a callback to be called when encrypted data is detected
+ * This is used by the EncryptionProvider to be notified when encrypted data is found
+ */
+export function setEncryptedDataDetectedCallback(
+  callback: (() => void) | null,
+): void {
+  onEncryptedDataDetected = callback;
+}
+
+/**
+ * Set a callback to be called when encryption key changes
+ * This is used by the EncryptionProvider to refresh stores when keys change
+ */
+export function setEncryptionKeyChangedCallback(
+  callback: (() => Promise<void>) | null,
+): void {
+  onEncryptionKeyChanged = callback;
+}
+
+/**
+ * Trigger the encrypted data detected callback
+ * This should be called when encrypted data is found in the API responses
+ */
+export function triggerEncryptedDataDetected(): void {
+  // Mark encrypted data as detected in storage
+  encryptionStorage.setEncryptedDataDetected(true).catch((error) => {
+    Logger.logError(
+      error,
+      "ENCRYPTION_SET_DATA_DETECTED_FAILED",
+      {},
+    );
+  });
+
+  if (onEncryptedDataDetected) {
+    try {
+      onEncryptedDataDetected();
+    } catch (error) {
+      Logger.logError(
+        error,
+        "ENCRYPTION_DATA_DETECTED_CALLBACK_FAILED",
+        {},
+      );
+    }
+  }
+}
+
+/**
+ * Trigger the encryption key changed callback
+ * This should be called when encryption key is imported or changes
+ */
+export async function triggerEncryptionKeyChanged(): Promise<void> {
+  if (onEncryptionKeyChanged) {
+    try {
+      await onEncryptionKeyChanged();
+    } catch (error) {
+      Logger.logError(
+        error,
+        "ENCRYPTION_KEY_CHANGED_CALLBACK_FAILED",
+        {},
+      );
+    }
+  }
+}
+
+/**
+ * Function to refresh all stores when encryption key changes
+ * This is called automatically from the core when keys are imported or changed
+ */
+export async function refreshAllStoresFromCore(): Promise<void> {
+  try {
+    Logger.logWarning(
+      "Refreshing all stores due to encryption key change (from core)",
+      "ENCRYPTION_CORE_STORE_REFRESH",
+      {},
+    );
+
+    // Dynamic import to avoid circular dependencies
+    const stores = await import("@/shared/stores/resources");
+
+    // Get all store instances and call their refresh methods
+    const storeRefreshPromises = [
+      stores.useActivitiesStore.getState().refresh(),
+      stores.useActivityCategoriesStore.getState().refresh(),
+      // Note: For notes and other user-specific stores, we'll refresh them too
+      // The stores should handle the case where user context isn't available
+    ];
+
+    await Promise.allSettled(storeRefreshPromises);
+
+    Logger.logWarning(
+      "All stores refreshed successfully (from core)",
+      "ENCRYPTION_CORE_STORE_REFRESH_COMPLETE",
+      {},
+    );
+
+    // Also trigger the callback if set
+    await triggerEncryptionKeyChanged();
+  } catch (error) {
+    Logger.logError(
+      error,
+      "ENCRYPTION_CORE_STORE_REFRESH_FAILED",
+      {},
+    );
+  }
+}
 
 /**
  * Simple XOR encryption with base64 encoding
@@ -22,7 +148,7 @@ export { ENCRYPTED_PREFIX };
 function xorEncrypt(text: string, key: string): string {
   const textBytes = new TextEncoder().encode(text);
   const keyBytes = new Uint8Array(
-    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)),
   );
 
   const encrypted = new Uint8Array(textBytes.length);
@@ -45,11 +171,11 @@ function xorDecrypt(encryptedBase64: string, key: string): string {
   const encrypted = new Uint8Array(
     atob(encryptedBase64)
       .split("")
-      .map((char) => char.charCodeAt(0))
+      .map((char) => char.charCodeAt(0)),
   );
 
   const keyBytes = new Uint8Array(
-    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+    key.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)),
   );
 
   const decrypted = new Uint8Array(encrypted.length);
@@ -86,10 +212,10 @@ async function generateRandomKey(): Promise<string> {
       .map((byte) => byte.toString(16).padStart(2, "0"))
       .join("");
   } catch (error) {
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       "Expo crypto random failed, using fallback generator",
       "encryption.generateRandomKey",
-      { error }
+      { error },
     );
     // Fallback to pseudo-random generation when native crypto is unavailable
     return generateFallbackRandomString(64); // 64 chars = 256 bits in hex
@@ -102,7 +228,7 @@ async function generateRandomKey(): Promise<string> {
 export class EncryptionError extends Error {
   constructor(
     message: string,
-    public originalError?: any
+    public originalError?: Error | null,
   ) {
     super(`[Encryption] ${message}`);
     this.name = "EncryptionError";
@@ -119,10 +245,10 @@ export function getKeyFingerprint(key: string, length: number = 8): string {
     const hash = CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex);
     return hash.slice(0, Math.max(1, Math.min(length, hash.length)));
   } catch (error) {
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       "Failed to compute key fingerprint",
       "encryption.getKeyFingerprint",
-      {}
+      { error },
     );
     return "";
   }
@@ -145,7 +271,7 @@ async function generateAndStoreKey(): Promise<string> {
     // If SecureStore fails, log and return an ephemeral key. We intentionally
     // removed AsyncStorage persistence to avoid storing sensitive keys in
     // less-secure storage.
-    GlobalErrorHandler.logError(error, "ENCRYPTION_SECURESTORE_FAILED", {
+    Logger.logError(error, "ENCRYPTION_SECURESTORE_FAILED", {
       operation: "generate_and_store",
     });
 
@@ -164,14 +290,33 @@ export async function getEncryptionKey(): Promise<string> {
     // Try to get existing key
     let key = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
 
-    // If no key found, generate one and attempt to persist to SecureStore.
+    // If no key found, check if encrypted data has been detected
     if (!key) {
+      const encryptedDataDetected = await encryptionStorage
+        .getEncryptedDataDetected();
+
+      if (encryptedDataDetected) {
+        // User has encrypted data but no key - don't generate a new key
+        throw new EncryptionError(
+          "Encrypted data detected but no encryption key found. Please import your encryption key to access your data.",
+        );
+      }
+
+      // No encrypted data detected, safe to generate a new key
       key = await generateAndStoreKey();
     }
 
     return key;
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_GET_KEY_FAILED", {});
+    // If this is our specific error about encrypted data detection, re-throw it
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      throw error;
+    }
+
+    Logger.logError(error, "ENCRYPTION_GET_KEY_FAILED", {});
     // As a last resort, return an ephemeral key
     return await generateRandomKey();
   }
@@ -189,8 +334,20 @@ export async function getEncryptionKeyWithSource(): Promise<{
     const secureKey = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
     if (secureKey) return { key: secureKey, source: "securestore" };
 
-    // No key stored yet; generate and persist using SecureStore path. If
-    // persistence fails, generateAndStoreKey will return an ephemeral key.
+    // Check if encrypted data has been detected
+    const encryptedDataDetected = await encryptionStorage
+      .getEncryptedDataDetected();
+
+    if (encryptedDataDetected) {
+      // User has encrypted data but no key - don't generate a new key
+      // This prevents data loss by forcing the user to import their existing key
+      throw new EncryptionError(
+        "Encrypted data detected but no encryption key found. Please import your encryption key to access your data.",
+      );
+    }
+
+    // No key stored yet and no encrypted data detected; generate and persist using SecureStore path.
+    // If persistence fails, generateAndStoreKey will return an ephemeral key.
     const generated = await generateAndStoreKey();
 
     // Check SecureStore again to see if persistence succeeded.
@@ -200,11 +357,19 @@ export async function getEncryptionKeyWithSource(): Promise<{
     // Return ephemeral
     return { key: generated, source: "ephemeral" };
   } catch (error) {
-    // On any error, try AsyncStorage then return ephemeral
-    GlobalErrorHandler.logError(
+    // If this is our specific error about encrypted data detection, re-throw it
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      throw error;
+    }
+
+    // On any other error, try AsyncStorage then return ephemeral
+    Logger.logError(
       error,
       "ENCRYPTION_GET_KEY_WITH_SOURCE_FAILED",
-      {}
+      {},
     );
     const ephemeral = await generateRandomKey();
     return { key: ephemeral, source: "ephemeral" };
@@ -220,9 +385,22 @@ export async function exportEncryptionKey(): Promise<{
   fingerprint: string;
   source: "securestore" | "ephemeral" | "asyncstorage";
 }> {
-  const { key, source } = await getEncryptionKeyWithSource();
-  const fingerprint = getKeyFingerprint(key);
-  return { key, fingerprint, source };
+  try {
+    const { key, source } = await getEncryptionKeyWithSource();
+    const fingerprint = getKeyFingerprint(key);
+    return { key, fingerprint, source };
+  } catch (error) {
+    // If this is our specific error about encrypted data detection, provide a clearer message
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      throw new EncryptionError(
+        "Cannot export encryption key: No key available on this device. Please import your encryption key first.",
+      );
+    }
+    throw error;
+  }
 }
 
 /**
@@ -238,21 +416,30 @@ export async function importEncryptionKey(key: string): Promise<{
     const isValid = /^[0-9a-f]{64}$/.test(normalized);
     if (!isValid) {
       throw new EncryptionError(
-        "Invalid key format. Expected 64 hex characters"
+        "Invalid key format. Expected 64 hex characters",
       );
     }
 
     await SecureStore.setItemAsync(ENCRYPTION_KEY_NAME, normalized);
     const fp = getKeyFingerprint(normalized);
-    GlobalErrorHandler.logWarning(
+    Logger.logWarning(
       `Encryption key imported (fp=${fp})`,
       "encryption.importEncryptionKey",
-      { fp }
+      { fp },
     );
+
+    // Automatically refresh all stores when a new key is imported
+    await refreshAllStoresFromCore();
+
     return { fingerprint: fp };
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_IMPORT_KEY_FAILED", {});
-    throw new EncryptionError("Failed to import encryption key", error);
+    Logger.logError(error, "ENCRYPTION_IMPORT_KEY_FAILED", {
+      error,
+    });
+    throw new EncryptionError(
+      "Failed to import encryption key",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 
@@ -269,7 +456,7 @@ export async function importEncryptionKey(key: string): Promise<{
  */
 export async function encryptString(
   plaintext: string,
-  allowFallback: boolean = false
+  allowFallback: boolean = false,
 ): Promise<string> {
   if (!plaintext || typeof plaintext !== "string") {
     return plaintext; // Return as-is if invalid input
@@ -282,33 +469,55 @@ export async function encryptString(
 
   try {
     const keyHex = await getEncryptionKey();
-    GlobalErrorHandler.logDebug(
+    Logger.logDebug(
       "Got encryption key for encrypt",
       "encryption.encryptString",
       {
         length: keyHex?.length,
-      }
+      },
     );
 
     // Use simple XOR encryption with base64 encoding
     const encrypted = xorEncrypt(plaintext, keyHex);
     return ENCRYPTED_PREFIX + encrypted;
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_ENCRYPT_FAILED", {
+    // If this is our specific error about encrypted data detection, handle it appropriately
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      Logger.logWarning(
+        "Cannot encrypt new data: encryption key not available due to existing encrypted data",
+        "ENCRYPTION_KEY_NOT_AVAILABLE_FOR_NEW_DATA",
+        { plaintextLength: plaintext?.length },
+      );
+
+      if (allowFallback) {
+        return plaintext; // Return plaintext when encryption not possible
+      }
+
+      // Re-throw the error to let the caller handle it
+      throw error;
+    }
+
+    Logger.logError(error, "ENCRYPTION_ENCRYPT_FAILED", {
       plaintextLength: plaintext?.length,
       plaintextSample: plaintext?.substring(0, 20),
     });
 
     if (allowFallback) {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Encryption fallback: returning plaintext due to error",
         "encryption.encryptString",
-        {}
+        {},
       );
       return plaintext;
     }
 
-    throw new EncryptionError("Failed to encrypt string", error);
+    throw new EncryptionError(
+      "Failed to encrypt string",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 /**
@@ -326,12 +535,15 @@ export async function decryptString(encryptedData: string): Promise<string> {
     return encryptedData; // Not encrypted, return as-is
   }
 
+  // Trigger encrypted data detection callback
+  triggerEncryptedDataDetected();
+
   try {
     const keyHex = await getEncryptionKey();
 
     // Remove the prefix before decrypting
     const encryptedDataWithoutPrefix = encryptedData.substring(
-      ENCRYPTED_PREFIX.length
+      ENCRYPTED_PREFIX.length,
     );
 
     // Use simple XOR decryption
@@ -342,8 +554,25 @@ export async function decryptString(encryptedData: string): Promise<string> {
 
     return plaintext;
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_DECRYPT_FAILED", {});
-    throw new EncryptionError("Failed to decrypt string", error);
+    // If this is our specific error about encrypted data detection, handle it gracefully
+    if (
+      error instanceof EncryptionError &&
+      error.message.includes("Encrypted data detected")
+    ) {
+      Logger.logWarning(
+        "Cannot decrypt data: encryption key not available",
+        "ENCRYPTION_KEY_NOT_AVAILABLE",
+        { hasPrefix: encryptedData.startsWith(ENCRYPTED_PREFIX) },
+      );
+      // Return the encrypted data as-is with a visual indicator
+      return `🔒 [Encrypted data - key required]`;
+    }
+
+    Logger.logError(error, "ENCRYPTION_DECRYPT_FAILED", {});
+    throw new EncryptionError(
+      "Failed to decrypt string",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 
@@ -356,8 +585,11 @@ async function _clearEncryptionKey(): Promise<void> {
   try {
     await SecureStore.deleteItemAsync(ENCRYPTION_KEY_NAME);
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_CLEAR_KEY_FAILED", {});
-    throw new EncryptionError("Failed to clear encryption key", error);
+    Logger.logError(error, "ENCRYPTION_CLEAR_KEY_FAILED", {});
+    throw new EncryptionError(
+      "Failed to clear encryption key",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 
@@ -371,15 +603,18 @@ export async function clearEncryptionKey(): Promise<void> {
       await SecureStore.deleteItemAsync(ENCRYPTION_KEY_NAME);
     } catch (secureErr) {
       // log and continue to try AsyncStorage
-      GlobalErrorHandler.logError(
+      Logger.logError(
         secureErr,
         "ENCRYPTION_CLEAR_SECURESTORE_FAILED",
-        {}
+        {},
       );
     }
     // We purposely removed AsyncStorage cleanup — the key should only be in SecureStore.
   } catch (err) {
-    throw new EncryptionError("Failed to clear encryption key", err);
+    throw new EncryptionError(
+      "Failed to clear encryption key",
+      err instanceof Error ? err : new Error(String(err)),
+    );
   }
 }
 
@@ -394,7 +629,10 @@ async function _rotateEncryptionKey(): Promise<string> {
     await _clearEncryptionKey();
     return await generateAndStoreKey();
   } catch (error) {
-    throw new EncryptionError("Failed to rotate encryption key", error);
+    throw new EncryptionError(
+      "Failed to rotate encryption key",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }
 
@@ -408,6 +646,36 @@ export function isEncrypted(value: string): boolean {
 }
 
 /**
+ * Format encrypted text for display purposes
+ * @param value The text to format
+ * @param showAsStars Whether to show as stars (*) or truncated binary
+ * @param isVisualizationMode Whether visualization mode is enabled
+ * @returns The formatted text for display
+ */
+export function formatEncryptedText(
+  value: string,
+  showAsStars: boolean = true,
+  isVisualizationMode: boolean = false,
+): string {
+  if (!isVisualizationMode || !isEncrypted(value)) {
+    return value;
+  }
+
+  if (showAsStars) {
+    // Show as asterisks - create a reasonable length based on content
+    const baseLength = Math.min(Math.max(8, Math.floor(value.length / 4)), 20);
+    return "*".repeat(baseLength);
+  } else {
+    // Show truncated encrypted content with prefix
+    const encryptedContent = value.substring(ENCRYPTED_PREFIX.length);
+    const truncated = encryptedContent.length > 16
+      ? `${encryptedContent.substring(0, 16)}...`
+      : encryptedContent;
+    return `${ENCRYPTED_PREFIX}${truncated}`;
+  }
+}
+
+/**
  * Check if encryption key exists
  * @returns Promise<boolean> True if key exists, false otherwise
  */
@@ -415,7 +683,7 @@ export async function hasEncryptionKey(): Promise<boolean> {
   try {
     const key = await SecureStore.getItemAsync(ENCRYPTION_KEY_NAME);
     return !!key;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -432,7 +700,7 @@ export async function hasEncryptionKey(): Promise<boolean> {
  * both the encryption utilities and the API resources.
  */
 export async function rotateEncryptionKeyAndReEncryptData(
-  userId: string
+  userId: string,
 ): Promise<void> {
   try {
     // Dynamic import to avoid circular dependency at module load time.
@@ -455,14 +723,14 @@ export async function rotateEncryptionKeyAndReEncryptData(
     // Step 4: Re-encrypt all data using the update functions which handle encryption with the new key
     await Promise.all([updateActivities(activities), updateNotes(notes)]);
   } catch (error) {
-    GlobalErrorHandler.logError(error, "ENCRYPTION_KEY_ROTATION", {
+    Logger.logError(error, "ENCRYPTION_KEY_ROTATION", {
       userId,
       operation: "rotate_key_and_reencrypt",
       step: "re_encrypt_all_data",
     });
     throw new EncryptionError(
       "Failed to rotate encryption key and re-encrypt data",
-      error
+      error instanceof Error ? error : new Error(String(error)),
     );
   }
 }

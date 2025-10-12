@@ -1,6 +1,7 @@
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useRef } from "react";
+import { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 
 /**
  * Hook that provides handlers for wheel-like haptics on horizontal scroll
@@ -18,10 +19,10 @@ export const useWheelHaptics = () => {
 
   const safeImpact = useCallback((style: Haptics.ImpactFeedbackStyle) => {
     Haptics.impactAsync(style).catch((err) => {
-      GlobalErrorHandler.logWarning(
+      Logger.logWarning(
         "Wheel haptic impact failed",
         "WHEEL_HAPTICS",
-        { error: err }
+        { error: err },
       );
     });
   }, []);
@@ -65,15 +66,15 @@ export const useWheelHaptics = () => {
           }, i * spacingMs) as unknown as number;
           momentumTimeoutsRef.current.push(timeoutId);
         }
-      } catch (err) {
+      } catch {
         // ignore
       }
     },
-    [safeImpact]
+    [safeImpact],
   );
 
   const handleScroll = useCallback(
-    (event: any) => {
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       try {
         const offsetX = event?.nativeEvent?.contentOffset?.x ?? 0;
         const delta = offsetX - lastOffsetXRef.current;
@@ -100,14 +101,14 @@ export const useWheelHaptics = () => {
           lastHapticTimeRef.current = now;
         }
       } catch (err) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Wheel haptic failed during scroll",
           "WHEEL_HAPTICS",
-          { error: err }
+          { error: err },
         );
       }
     },
-    [triggerPulses, velocityToPulses, velocityToSpacing, velocityToStyle]
+    [triggerPulses, velocityToPulses, velocityToSpacing, velocityToStyle],
   );
 
   const startMomentumHaptics = useCallback(
@@ -148,15 +149,15 @@ export const useWheelHaptics = () => {
             const style = velocityToStyle(absV);
             const spacing = velocityToSpacing(absV);
             triggerPulses(pulses, style, spacing);
-          } catch (err) {
+          } catch {
             // ignore internal errors
           }
         }, TICK_MS) as unknown as number;
       } catch (err) {
-        GlobalErrorHandler.logWarning(
+        Logger.logWarning(
           "Failed to start momentum haptics",
           "WHEEL_HAPTICS",
-          { error: err }
+          { error: err },
         );
       }
     },
@@ -166,7 +167,7 @@ export const useWheelHaptics = () => {
       velocityToPulses,
       velocityToSpacing,
       velocityToStyle,
-    ]
+    ],
   );
 
   const stopMomentumHaptics = useCallback(() => {
@@ -176,13 +177,13 @@ export const useWheelHaptics = () => {
         momentumIntervalRef.current = null;
       }
       clearMomentumTimeouts();
-    } catch (err) {
+    } catch {
       // ignore
     }
   }, [clearMomentumTimeouts]);
 
   const handleScrollEndDrag = useCallback(
-    (event: any) => {
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       try {
         const nativeVel = event?.nativeEvent?.velocity?.x;
         if (typeof nativeVel === "number") {
@@ -190,31 +191,32 @@ export const useWheelHaptics = () => {
           return;
         }
 
-        const offsetX =
-          event?.nativeEvent?.contentOffset?.x ?? lastOffsetXRef.current;
+        const offsetX = event?.nativeEvent?.contentOffset?.x ??
+          lastOffsetXRef.current;
         const now = Date.now();
         const delta = offsetX - lastOffsetXRef.current;
         const deltaMs = Math.max(1, now - lastTimeRef.current);
         const velocityPxPerSec = (delta / deltaMs) * 1000;
-        if (Math.abs(velocityPxPerSec) >= 200)
+        if (Math.abs(velocityPxPerSec) >= 200) {
           startMomentumHaptics(velocityPxPerSec);
-      } catch (err) {
+        }
+      } catch {
         // ignore
       }
     },
-    [startMomentumHaptics]
+    [startMomentumHaptics],
   );
 
   const handleMomentumScrollBegin = useCallback(
-    (event: any) => {
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       try {
         const nativeVel = event?.nativeEvent?.velocity?.x;
         if (typeof nativeVel === "number") startMomentumHaptics(nativeVel);
-      } catch (err) {
+      } catch {
         // ignore
       }
     },
-    [startMomentumHaptics]
+    [startMomentumHaptics],
   );
 
   const handleMomentumScrollEnd = useCallback(() => {
@@ -229,7 +231,7 @@ export const useWheelHaptics = () => {
           momentumIntervalRef.current = null;
         }
         clearMomentumTimeouts();
-      } catch (err) {
+      } catch {
         // ignore
       }
     };

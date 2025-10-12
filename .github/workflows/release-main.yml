@@ -17,6 +17,9 @@ jobs:
       - run: npm install -g eas-cli jq
       - run: eas login --token ${{ secrets.EXPO_TOKEN }}
 
+      - name: 🔐 Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
       - name: Bump version and build number (pre-merge)
         run: |
           node scripts/bump_version.js --mode=main --prTitle="${{ github.event.pull_request.title }}"
@@ -27,8 +30,7 @@ jobs:
           git push
 
       - name: EAS Update (production)
-        run: |
-          eas update --branch main --profile production             --message "Automated update from PR #${{ github.event.pull_request.number }}"
+        run: doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_PRD }} --command "eas update --branch prd --message 'Automated update from PR #${{ github.event.pull_request.number }}'"
 
   release-on-merge:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
@@ -47,6 +49,9 @@ jobs:
       - run: npm install -g eas-cli jq
       - run: eas login --token ${{ secrets.EXPO_TOKEN }}
 
+      - name: 🔐 Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
       - name: Bump version and build number
         run: |
           node scripts/bump_version.js --mode=main --prTitle="${{ github.event.pull_request.title }}"
@@ -57,12 +62,10 @@ jobs:
           git push --follow-tags
 
       - name: EAS Build iOS
-        run: |
-          eas build --platform ios --profile production --non-interactive --wait
+        run: doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_PRD }} --command "eas build --platform ios --profile prd --non-interactive --wait"
 
       - name: Submit to App Store Connect
-        run: |
-          eas submit -p ios             --asc-app-id ${{ secrets.APP_STORE_CONNECT_APP_ID }}             --asc-api-key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }}             --asc-api-key-issuer-id ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }}             --asc-api-key ${{ secrets.APP_STORE_CONNECT_KEY }}
+        run: doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_PRD }} --command "eas submit -p ios --asc-app-id ${{ secrets.APP_STORE_CONNECT_APP_ID }} --asc-api-key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} --asc-api-key-issuer-id ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }} --asc-api-key ${{ secrets.APP_STORE_CONNECT_KEY }}"
 
       - name: Get group id
         id: group

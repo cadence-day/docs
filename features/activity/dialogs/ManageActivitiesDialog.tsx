@@ -16,7 +16,7 @@ const ManageActivitiesDialog: React.FC<Props> = ({ _dialogId }) => {
       headerProps: {
         title: t("activity.legend.editActivities"),
       },
-      height: 85,
+      height: 100,
     });
   }, [_dialogId, t]);
 
@@ -26,7 +26,7 @@ const ManageActivitiesDialog: React.FC<Props> = ({ _dialogId }) => {
       position: "dock",
       props: {
         headerProps: { title: t("activity.legend.createActivity") },
-        height: 85,
+        height: 100,
       },
     });
   }, [t]);
@@ -39,7 +39,7 @@ const ManageActivitiesDialog: React.FC<Props> = ({ _dialogId }) => {
         props: {
           activity,
           headerProps: { title: t("activity.legend.editActivity") },
-          height: 85,
+          height: 100,
         },
       });
     },

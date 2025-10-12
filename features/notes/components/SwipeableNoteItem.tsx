@@ -3,7 +3,6 @@ import { Check, Star, StarHalf, Trash } from "phosphor-react-native";
 import React, { useRef } from "react";
 import {
   Animated,
-  Dimensions,
   Text,
   TextInput,
   TouchableOpacity,
@@ -17,7 +16,6 @@ import {
 
 import type { NoteItem } from "../types";
 
-const { width: screenWidth } = Dimensions.get("window");
 const SWIPE_THRESHOLD = 80;
 const ACTION_WIDTH = 70;
 
@@ -40,7 +38,6 @@ interface SwipeableNoteItemProps {
 
 export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
   note,
-  index,
   isActive,
   isPinned = false,
   placeholder,
@@ -91,9 +88,10 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
         useNativeDriver: true,
         tension: 150,
         friction: 8,
-      }).start();
-
-      isSwipeActive.current = false;
+      }).start(() => {
+        // Only reset swipe active after animation completes
+        isSwipeActive.current = false;
+      });
     }
   };
 
@@ -109,14 +107,6 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
     } else {
       onPin?.();
     }
-  };
-
-  const getSwipeProgress = () => {
-    return translateX.interpolate({
-      inputRange: [-screenWidth, 0, screenWidth],
-      outputRange: [-1, 0, 1],
-      extrapolate: "clamp",
-    });
   };
 
   const getLeftActionOpacity = () => {
@@ -180,9 +170,10 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
       <PanGestureHandler
         onGestureEvent={onGestureEvent}
         onHandlerStateChange={onHandlerStateChange}
-        activeOffsetX={[-10, 10]}
-        failOffsetY={[-30, 30]}
+        activeOffsetX={[-20, 20]}
+        failOffsetY={[-50, 50]}
         enabled={!isActive} // Disable swipe when editing
+        shouldCancelWhenOutside={true}
       >
         <Animated.View
           style={[
@@ -209,7 +200,9 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
             onFocus={() => {
               onFocus();
             }}
-            editable={!isSwipeActive.current}
+            editable={true}
+            textAlignVertical="top"
+            blurOnSubmit={false}
           />
 
           {isPinned && (
@@ -223,70 +216,81 @@ export const SwipeableNoteItem: React.FC<SwipeableNoteItemProps> = ({
       {/* Action buttons outside the note container - only show when input is focused */}
       {isActive && (
         <View style={styles.actionButtonsContainer}>
-          {/* Case 1: New note with content (not yet saved) - show only V */}
-          {!note.id && canSave ? (
-            <TouchableOpacity
-              style={[styles.actionButton, styles.saveButton]}
-              onPress={onSave}
-              disabled={isSaving}
-            >
-              <Check size={18} color="#10B981" />
-            </TouchableOpacity>
-          ) : /* Case 2: Existing note being edited with changes - show V, trash, star */ note.id &&
-            canSave ? (
-            <>
-              <TouchableOpacity
-                style={[styles.actionButton, styles.saveButton]}
-                onPress={onSave}
-                disabled={isSaving}
-              >
-                <Check size={18} color="#10B981" />
-              </TouchableOpacity>
+          {(() => {
+            // Case 1: New note with content (not yet saved) - show only V
+            if (!note.id && canSave) {
+              return (
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.saveButton]}
+                  onPress={onSave}
+                  disabled={isSaving}
+                >
+                  <Check size={18} color="#10B981" />
+                </TouchableOpacity>
+              );
+            }
+            // Case 2: Existing note being edited with changes - show V, trash, star
+            if (note.id && canSave) {
+              return (
+                <>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.saveButton]}
+                    onPress={onSave}
+                    disabled={isSaving}
+                  >
+                    <Check size={18} color="#10B981" />
+                  </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={onDelete}
-                disabled={isSaving}
-              >
-                <Trash size={16} color="#EF4444" />
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={onDelete}
+                    disabled={isSaving}
+                  >
+                    <Trash size={16} color="#EF4444" />
+                  </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={isPinned ? onUnpin : onPin}
-                disabled={isSaving}
-              >
-                {isPinned ? (
-                  <StarHalf size={16} color="#F59E0B" />
-                ) : (
-                  <Star size={16} color="#6B7280" />
-                )}
-              </TouchableOpacity>
-            </>
-          ) : /* Case 3: Existing note focused but no changes - show trash, star */ note.id &&
-            !canSave ? (
-            <>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={onDelete}
-                disabled={isSaving}
-              >
-                <Trash size={16} color="#EF4444" />
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={isPinned ? onUnpin : onPin}
+                    disabled={isSaving}
+                  >
+                    {isPinned ? (
+                      <StarHalf size={16} color="#F59E0B" />
+                    ) : (
+                      <Star size={16} color="#6B7280" />
+                    )}
+                  </TouchableOpacity>
+                </>
+              );
+            }
+            // Case 3: Existing note focused but no changes - show trash, star
+            if (note.id && !canSave) {
+              return (
+                <>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={onDelete}
+                    disabled={isSaving}
+                  >
+                    <Trash size={16} color="#EF4444" />
+                  </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={isPinned ? onUnpin : onPin}
-                disabled={isSaving}
-              >
-                {isPinned ? (
-                  <StarHalf size={16} color="#F59E0B" />
-                ) : (
-                  <Star size={16} color="#6B7280" />
-                )}
-              </TouchableOpacity>
-            </>
-          ) : null}
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={isPinned ? onUnpin : onPin}
+                    disabled={isSaving}
+                  >
+                    {isPinned ? (
+                      <StarHalf size={16} color="#F59E0B" />
+                    ) : (
+                      <Star size={16} color="#6B7280" />
+                    )}
+                  </TouchableOpacity>
+                </>
+              );
+            }
+            return null;
+          })()}
         </View>
       )}
     </View>

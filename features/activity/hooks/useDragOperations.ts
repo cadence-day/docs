@@ -1,7 +1,7 @@
 import type { Activity } from "@/shared/types/models/activity";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
-import { GlobalErrorHandler } from "../../../shared/utils/errorHandler";
+import { Logger } from "../../../shared/utils/errorHandler";
 
 interface UseDragOperationsProps {
   activities: Activity[];
@@ -14,7 +14,9 @@ interface UseDragOperationsReturn {
   draggedActivityId: string | null;
   dragPlaceholderIndex: number | null;
   isShakeMode: boolean;
+  isActivelyDragging: boolean;
   handleDragStart: (activityId: string) => void;
+  handleDragMove: () => void;
   handleDragEnd: () => void;
   handleReorder: (fromIndex: number, toIndex: number) => void;
   handlePlaceholderChange: (index: number | null) => void;
@@ -28,12 +30,13 @@ export const useDragOperations = ({
 }: UseDragOperationsProps): UseDragOperationsReturn => {
   const [activityOrder, setActivityOrder] = useState<Activity[]>(activities);
   const [draggedActivityId, setDraggedActivityId] = useState<string | null>(
-    null
+    null,
   );
   const [dragPlaceholderIndex, setDragPlaceholderIndex] = useState<
     number | null
   >(null);
   const [isShakeMode, setIsShakeMode] = useState(false);
+  const [isActivelyDragging, setIsActivelyDragging] = useState(false);
 
   // Update local order when activities prop changes (only if not dragging)
   useEffect(() => {
@@ -46,19 +49,29 @@ export const useDragOperations = ({
     (activityId: string) => {
       setDraggedActivityId(activityId);
       setIsShakeMode(true);
-      onDragStateChange?.(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     },
-    [onDragStateChange]
+    [],
   );
+
+  const handleDragMove = useCallback(() => {
+    if (!isActivelyDragging) {
+      setIsActivelyDragging(true);
+      onDragStateChange?.(true);
+    }
+  }, [isActivelyDragging, onDragStateChange]);
 
   const handleDragEnd = useCallback(() => {
     setDraggedActivityId(null);
     setDragPlaceholderIndex(null);
     setIsShakeMode(false);
-    onDragStateChange?.(false);
+    // Reset actively dragging immediately
+    if (isActivelyDragging) {
+      setIsActivelyDragging(false);
+      onDragStateChange?.(false);
+    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  }, [onDragStateChange]);
+  }, [isActivelyDragging, onDragStateChange]);
 
   const handleReorder = useCallback(
     async (fromIndex: number, toIndex: number) => {
@@ -83,17 +96,17 @@ export const useDragOperations = ({
           await onOrderChange(newOrder);
         }
       } catch (error) {
-        GlobalErrorHandler.logError(
+        Logger.logError(
           "Failed to reorder activities",
           "REORDER_ACTIVITIES_ERROR",
-          { error }
+          { error },
         );
         // Revert on error
         setActivityOrder(activities);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
     },
-    [activityOrder, onOrderChange, activities]
+    [activityOrder, onOrderChange, activities],
   );
 
   const handlePlaceholderChange = useCallback((index: number | null) => {
@@ -105,7 +118,9 @@ export const useDragOperations = ({
     draggedActivityId,
     dragPlaceholderIndex,
     isShakeMode,
+    isActivelyDragging,
     handleDragStart,
+    handleDragMove,
     handleDragEnd,
     handleReorder,
     handlePlaceholderChange,

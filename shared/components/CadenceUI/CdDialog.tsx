@@ -1,19 +1,21 @@
 import { COLORS } from "@/shared/constants/COLORS";
-import { NAV_BAR_SIZE } from "@/shared/constants/VIEWPORT";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { useNavBarSize } from "@/shared/constants/VIEWPORT";
+import { Logger } from "@/shared/utils/errorHandler";
+import { GlassView, isLiquidGlassAvailable } from "expo-glass-effect";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   Animated,
-  Dimensions,
   PanResponder,
+  Platform,
   StyleSheet,
   useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CdDialogHeader, CdDialogHeaderProps } from "./CdDialogHeader";
+import { useDialogHeight } from "./useDialogHeight";
 interface CdDialogProps {
   visible: boolean;
   onClose: () => void;
@@ -24,6 +26,7 @@ interface CdDialogProps {
   headerProps?: CdDialogHeaderProps;
   enableCloseOnBackgroundPress?: boolean;
   onHeightChange?: (height: number) => void;
+  onCollapsedChange?: (isCollapsed: boolean) => void; // Callback when collapsed state changes based on height
   enableDragging?: boolean; // Whether dragging is enabled, defaults to true
   onDoubleTapResize?: (originalHeight: number) => void; // Callback when double tap resize occurs
 
@@ -34,99 +37,96 @@ interface CdDialogProps {
   id?: string;
   zIndex?: number;
   collapsed?: boolean;
+
+  // Height persistence
+  dialogId?: string; // Dialog ID for persisting height (unique per dialog instance)
+  persistHeight?: boolean; // Whether to persist height changes to storage
 }
 
 export const CdDialog: React.FC<CdDialogProps> = ({
   visible = false,
-  onClose,
   children,
   height = 100,
   maxHeight = 100,
-  showCloseButton = true,
   headerProps,
-  enableCloseOnBackgroundPress = true,
   onHeightChange,
+  onCollapsedChange,
   enableDragging = true,
   onDoubleTapResize,
-  collapsed = false,
   allowedViews = [],
   currentView = "",
   isGlobal = false,
-  id,
   zIndex,
+  dialogId,
+  persistHeight = false,
 }) => {
+  const NavBarSize = useNavBarSize();
   const [isDragging, setIsDragging] = useState(false);
-  const animatedHeight = useRef(new Animated.Value(height)).current;
-  const dragStartHeight = useRef(0);
-  const currentHeight = useRef(height);
-  const originalHeight = useRef(height); // Store original height
-  const lastTap = useRef<number | null>(null);
   const { height: screenHeight } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+
+  // Use custom hook for height management
+  const {
+    animatedHeight,
+    currentHeight,
+    originalHeight,
+    updateHeight,
+    dragStartHeight,
+    clampHeight,
+  } = useDialogHeight({
+    height,
+    maxHeight,
+    dialogId,
+    persistHeight,
+    onHeightChange,
+    enableDragging,
+    screenHeight,
+    topInset: insets.top,
+    navBarSize: NavBarSize,
+  });
+
+  const lastTap = React.useRef<number | null>(null);
+  const COLLAPSED_HEIGHT_THRESHOLD = 10; // Height percentage below which dialog is considered collapsed
+  const previousCollapsedState = React.useRef<boolean | null>(null);
+
+  // Check if glass effect is available
+  const canUseGlassEffect = useMemo(() => {
+    // Only available on iOS 18+ (iOS 26 refers to internal version)
+    if (Platform.OS !== "ios") return false;
+    return isLiquidGlassAvailable();
+  }, []);
+
+  // Wrapper to clamp height before updating and notify collapsed state changes
+  const updateHeightClamped = useCallback(
+    (newHeight: number) => {
+      const clampedHeight = clampHeight(newHeight);
+      updateHeight(clampedHeight);
+
+      // Check if collapsed state changed and notify parent
+      if (onCollapsedChange) {
+        const isCollapsed = clampedHeight < COLLAPSED_HEIGHT_THRESHOLD;
+        if (previousCollapsedState.current !== isCollapsed) {
+          previousCollapsedState.current = isCollapsed;
+          onCollapsedChange(isCollapsed);
+        }
+      }
+    },
+    [clampHeight, updateHeight, onCollapsedChange]
+  );
 
   // Check if dialog should be visible in current view
   const shouldShowInView =
     isGlobal || allowedViews.length === 0 || allowedViews.includes(currentView);
   const shouldRender = visible && shouldShowInView;
 
-  // Update height when prop changes
-  React.useEffect(() => {
-    originalHeight.current = height; // Update original height when prop changes
-    currentHeight.current = height;
-    Animated.timing(animatedHeight, {
-      toValue: height,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  }, [height, animatedHeight]);
-
-  const clampHeight = useCallback(
-    (newHeight: number) => {
-      const headerHeight = 35; // Height of DialogHeader in pixels
-      const pullIndicatorHeight = enableDragging ? 30 : 0; // Height of pull indicator
-      const minHeightRequired = headerHeight + pullIndicatorHeight;
-      const minHeightPercent = (minHeightRequired / screenHeight) * 100;
-      // Compute maximum available percent while respecting safe area and nav bar.
-      const maxAvailablePixels = Math.max(
-        0,
-        screenHeight - insets.top - NAV_BAR_SIZE
-      );
-      const maxAvailablePercent = (maxAvailablePixels / screenHeight) * 100;
-      const effectiveMax = Math.max(
-        0,
-        Math.min(maxHeight, maxAvailablePercent)
-      );
-      return Math.max(minHeightPercent, Math.min(effectiveMax, newHeight));
-    },
-    [enableDragging, screenHeight, maxHeight]
-  );
-
-  const updateHeight = useCallback(
-    (newHeight: number) => {
-      const clampedHeight = clampHeight(newHeight);
-      currentHeight.current = clampedHeight;
-
-      Animated.spring(animatedHeight, {
-        toValue: clampedHeight,
-        damping: 15,
-        stiffness: 150,
-        mass: 1,
-        useNativeDriver: false,
-      }).start();
-
-      onHeightChange?.(clampedHeight);
-    },
-    [clampHeight, onHeightChange, animatedHeight]
-  );
-
   const handleDoubleTap = useCallback(() => {
     // Medium haptic feedback for double tap
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     // Resize to original height
-    updateHeight(originalHeight.current);
+    updateHeightClamped(originalHeight.current);
     onDoubleTapResize?.(originalHeight.current);
-  }, [updateHeight, onDoubleTapResize]);
+  }, [updateHeightClamped, onDoubleTapResize, originalHeight]);
 
   // Create PanResponder for drag gestures (memoized)
   const pullLabel =
@@ -137,7 +137,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
   const panResponder = React.useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: (evt) => {
+        onStartShouldSetPanResponder: (_evt) => {
           if (!enableDragging) return false;
 
           // Check for potential double tap
@@ -158,7 +158,7 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         onMoveShouldSetPanResponder: (evt, gestureState) => {
           return enableDragging && Math.abs(gestureState.dy) > 3;
         },
-        onPanResponderGrant: (evt) => {
+        onPanResponderGrant: (_evt) => {
           if (!enableDragging) return;
 
           // Light haptic feedback when drag starts
@@ -168,7 +168,13 @@ export const CdDialog: React.FC<CdDialogProps> = ({
         },
         onPanResponderMove: (evt, gestureState) => {
           if (!enableDragging) return;
-          const heightChangePercent = (-gestureState.dy / screenHeight) * 100;
+          // Calculate available height for proper percentage calculation
+          const maxAvailablePixels = Math.max(
+            0,
+            screenHeight - insets.top - NavBarSize
+          );
+          const heightChangePercent =
+            (-gestureState.dy / maxAvailablePixels) * 100;
           const newHeight = dragStartHeight.current + heightChangePercent;
           const clampedHeight = clampHeight(newHeight);
 
@@ -180,33 +186,54 @@ export const CdDialog: React.FC<CdDialogProps> = ({
           // Light haptic feedback when drag ends
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           setIsDragging(false);
-          const screenHeight = Dimensions.get("window").height;
-          const heightChangePercent = (-gestureState.dy / screenHeight) * 100;
+          // Calculate available height for proper percentage calculation
+          const maxAvailablePixels = Math.max(
+            0,
+            screenHeight - insets.top - NavBarSize
+          );
+          const heightChangePercent =
+            (-gestureState.dy / maxAvailablePixels) * 100;
           const newHeight = dragStartHeight.current + heightChangePercent;
           // Set a maximum height of 90%
-          updateHeight(newHeight);
-          GlobalErrorHandler.logDebug(
-            "Dialog height updated",
-            "DYNAMIC_DIALOG_RESIZE",
-            { newHeight, heightChangePercent }
-          );
+          updateHeightClamped(newHeight);
+          Logger.logDebug("Dialog height updated", "DYNAMIC_DIALOG_RESIZE", {
+            newHeight,
+            heightChangePercent,
+          });
         },
         onPanResponderTerminationRequest: () => false,
       }),
-    [enableDragging, clampHeight, screenHeight, handleDoubleTap]
+    [
+      enableDragging,
+      clampHeight,
+      screenHeight,
+      handleDoubleTap,
+      animatedHeight,
+      updateHeightClamped,
+      NavBarSize,
+      insets.top,
+      currentHeight,
+      dragStartHeight,
+    ]
   );
 
   if (!shouldRender) return null;
+
+  // Calculate available height for the dialog (between nav bar and top inset)
+  const maxAvailablePixels = Math.max(
+    0,
+    screenHeight - insets.top - NavBarSize
+  );
 
   return (
     <Animated.View
       style={[
         styles.container,
         {
-          bottom: NAV_BAR_SIZE,
+          bottom: NavBarSize,
           height: animatedHeight.interpolate({
             inputRange: [0, 100],
-            outputRange: ["0%", "100%"],
+            outputRange: [0, maxAvailablePixels],
             extrapolate: "clamp",
           }),
           zIndex: zIndex ?? 1000,
@@ -221,75 +248,124 @@ export const CdDialog: React.FC<CdDialogProps> = ({
           accessibilityLabel={String(pullLabel)}
           style={[
             styles.pullIndicator,
-            {
-              opacity: isDragging ? 1.0 : 0.8,
-            },
+            isDragging
+              ? styles.pullIndicatorDragging
+              : styles.pullIndicatorNormal,
           ]}
           {...panResponder.panHandlers}
         >
           <View
-            style={[
-              styles.pullHandle,
-              {
-                backgroundColor: isDragging ? "#333" : "#000",
-                width: isDragging ? 50 : 40,
-                height: isDragging ? 5 : 4,
-              },
-            ]}
+            style={[styles.pullHandle, isDragging && styles.pullHandleDragging]}
           />
         </View>
       )}
 
-      <LinearGradient
-        colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={{
-          flex: 1,
-          borderTopLeftRadius: 10,
-          borderTopRightRadius: 10,
-          borderBottomLeftRadius: 0,
-          borderBottomRightRadius: 0,
-          marginTop: enableDragging ? 10 : 0, // Only add space for pull handle when dragging is enabled
-        }}
-      >
-        {/* Make the entire top area draggable when header is not present */}
-        {!headerProps && enableDragging && (
-          <View style={styles.topDragArea} {...panResponder.panHandlers} />
-        )}
+      {canUseGlassEffect ? (
+        <GlassView
+          glassEffectStyle="regular"
+          isInteractive={true}
+          tintColor={COLORS.light.glassTint}
+          style={[
+            styles.gradientContainer,
+            styles.glassContainer,
+            enableDragging && styles.gradientContainerWithDragging,
+          ]}
+        >
+          {/* Make the entire top area draggable when header is not present */}
+          {!headerProps && enableDragging && (
+            <View style={styles.topDragArea} {...panResponder.panHandlers} />
+          )}
 
-        {headerProps && (
-          <CdDialogHeader
-            {...headerProps}
-            onTitleDoubleTap={enableDragging ? handleDoubleTap : undefined}
-            onTitlePress={() => {
-              // Cycle between collapsed -> default -> full-screen
-              // collapsed: small header-only height (12%),
-              // default: originalHeight.current
-              // full: 100% minus safe area (we treat as 100)
-              const collapsedHeight = 0;
-              const defaultHeight = originalHeight.current || height;
-              // Full-screen state should be a maximum of 80% height per spec
-              const fullHeight = 100;
+          {headerProps && (
+            <CdDialogHeader
+              {...headerProps}
+              onTitleDoubleTap={enableDragging ? handleDoubleTap : undefined}
+              onTitlePress={() => {
+                // Cycle between collapsed -> default -> full-screen
+                // collapsed: small header-only height (12%),
+                // default: originalHeight.current
+                // full: 100% minus safe area (we treat as 100)
+                const collapsedHeight = 0;
+                const defaultHeight = originalHeight.current || height;
+                // Full-screen state should be a maximum of 80% height per spec
+                const fullHeight = 100;
 
-              const current = currentHeight.current;
-              if (Math.abs(current - collapsedHeight) < 1) {
-                // collapsed -> default
-                updateHeight(defaultHeight);
-              } else if (Math.abs(current - defaultHeight) < 1) {
-                // default -> full
-                updateHeight(fullHeight);
-              } else {
-                // full -> collapsed
-                updateHeight(collapsedHeight);
-              }
-            }}
-          />
-        )}
-        <View style={[styles.content, { marginTop: enableDragging ? 10 : 0 }]}>
-          {children}
-        </View>
-      </LinearGradient>
+                const current = currentHeight.current;
+                if (Math.abs(current - collapsedHeight) < 1) {
+                  // collapsed -> default
+                  updateHeightClamped(defaultHeight);
+                } else if (Math.abs(current - defaultHeight) < 1) {
+                  // default -> full
+                  updateHeightClamped(fullHeight);
+                } else {
+                  // full -> collapsed
+                  updateHeightClamped(collapsedHeight);
+                }
+              }}
+            />
+          )}
+          <View
+            style={[
+              styles.content,
+              enableDragging && styles.contentWithDragging,
+            ]}
+          >
+            {children}
+          </View>
+        </GlassView>
+      ) : (
+        <LinearGradient
+          colors={[COLORS.linearGradient.start, COLORS.linearGradient.end]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={[
+            styles.gradientContainer,
+            enableDragging && styles.gradientContainerWithDragging,
+          ]}
+        >
+          {/* Make the entire top area draggable when header is not present */}
+          {!headerProps && enableDragging && (
+            <View style={styles.topDragArea} {...panResponder.panHandlers} />
+          )}
+
+          {headerProps && (
+            <CdDialogHeader
+              {...headerProps}
+              onTitleDoubleTap={enableDragging ? handleDoubleTap : undefined}
+              onTitlePress={() => {
+                // Cycle between collapsed -> default -> full-screen
+                // collapsed: small header-only height (12%),
+                // default: originalHeight.current
+                // full: 100% minus safe area (we treat as 100)
+                const collapsedHeight = 0;
+                const defaultHeight = originalHeight.current || height;
+                // Full-screen state should be a maximum of 80% height per spec
+                const fullHeight = 100;
+
+                const current = currentHeight.current;
+                if (Math.abs(current - collapsedHeight) < 1) {
+                  // collapsed -> default
+                  updateHeightClamped(defaultHeight);
+                } else if (Math.abs(current - defaultHeight) < 1) {
+                  // default -> full
+                  updateHeightClamped(fullHeight);
+                } else {
+                  // full -> collapsed
+                  updateHeightClamped(collapsedHeight);
+                }
+              }}
+            />
+          )}
+          <View
+            style={[
+              styles.content,
+              enableDragging && styles.contentWithDragging,
+            ]}
+          >
+            {children}
+          </View>
+        </LinearGradient>
+      )}
     </Animated.View>
   );
 };
@@ -305,6 +381,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
     zIndex: 1000,
   },
+  gradientContainer: {
+    flex: 1,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  glassContainer: {
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  gradientContainerWithDragging: {
+    marginTop: 10,
+  },
   pullIndicator: {
     position: "absolute",
     top: -10, // Position above the modal
@@ -314,6 +404,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 30,
     zIndex: 20, // Higher z-index to ensure it's above everything
+  },
+  pullIndicatorDragging: {
+    opacity: 1.0,
+  },
+  pullIndicatorNormal: {
+    opacity: 0.8,
   },
   topDragArea: {
     position: "absolute",
@@ -327,30 +423,20 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
+    backgroundColor: "#000",
   },
-  closeButton: {
-    position: "absolute",
-    top: 16,
-    right: 16,
-    width: 24,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  closeButtonLine: {
-    position: "absolute",
-    width: 20,
-    height: 2,
-    borderRadius: 1,
-  },
-  closeButtonLineRotated: {
-    transform: [{ rotate: "45deg" }],
+  pullHandleDragging: {
+    width: 50,
+    height: 5,
+    backgroundColor: "#333",
   },
   content: {
     flex: 1,
     alignSelf: "center",
     paddingVertical: "2%",
     width: "90%",
+  },
+  contentWithDragging: {
+    marginTop: 10,
   },
 });

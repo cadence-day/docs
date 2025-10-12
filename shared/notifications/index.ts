@@ -1,35 +1,27 @@
-// Core engine
-export { NotificationEngine } from "./NotificationEngine";
+// New unified notification system
+export { NotificationEngine, notificationEngine } from "./NotificationEngine";
 
-// Singleton
-export {
-  getNotificationEngineSingleton,
-  notificationEngineSingleton,
-} from "./NotificationEngineSingleton";
+// Import notification store from shared stores
+export { default as useNotificationStore } from "@/shared/stores/resources/useNotificationsStore";
 
 // Types
 export * from "./types";
 
-// Providers
+// Providers (keep useful ones)
 export { ExpoNotificationProvider } from "./providers/ExpoNotificationProvider";
 export { InAppNotificationProvider } from "./providers/InAppNotificationProvider";
-export { LocaleNotificationProvider } from "./providers/LocaleNotificationProvider";
 
-// Context and hooks
+// Context (if still needed)
 export {
   NotificationProvider,
   useNotifications,
 } from "./context/NotificationContext";
-export {
-  useAutoNotificationScheduler,
-  useNotificationScheduler,
-} from "./hooks/useNotificationScheduler";
 
-// Services
-export { NotificationScheduler } from "./services/NotificationScheduler";
+// Services (keep useful ones)
+export { BackgroundTaskManager } from "./services/BackgroundTaskManager";
 
 // Messages and defaults
-export * from "./cadenceMessages";
+export * from "./constants/CADENCE_MESSAGES";
 
-// Re-export utilities from a dedicated utils module to avoid circular imports
+// Re-export utilities
 export * from "./utils";

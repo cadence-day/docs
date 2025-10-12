@@ -1,6 +1,6 @@
 // Centralized error handler for API functions
 import { ToastService } from "@/shared/context/ToastProvider";
-import { GlobalErrorHandler } from "@/shared/utils/errorHandler";
+import { Logger } from "@/shared/utils/errorHandler";
 
 export interface RetryOptions {
   maxRetries?: number;
@@ -12,8 +12,8 @@ export interface RetryOptions {
 export class ApiError extends Error {
   constructor(
     public context: string,
-    public originalError: any,
-    public isRetryable: boolean = false
+    public originalError: unknown,
+    public isRetryable: boolean = false,
   ) {
     super(`[${context}] ${getErrorMessage(originalError)}`);
     this.name = "ApiError";
@@ -24,7 +24,7 @@ export class ApiError extends Error {
  * Map a technical error to a friendly, user-facing message.
  * Keep messages short and actionable; loggers still receive full details.
  */
-function getUserFriendlyMessage(error: any): string {
+function getUserFriendlyMessage(error: unknown): string {
   const message = getErrorMessage(error).toLowerCase();
 
   if (
@@ -73,16 +73,19 @@ function getUserFriendlyMessage(error: any): string {
   return "Something went wrong. Please try again.";
 }
 
-function getErrorMessage(error: any): string {
-  return (
-    error?.message ||
-    error?.error_description ||
-    String(error) ||
-    "Unknown error"
-  );
+function getErrorMessage(error: unknown): string {
+  if (typeof error === "object" && error !== null) {
+    const err = error as Record<string, unknown>;
+    if (typeof err.message === "string") return err.message;
+    if (typeof err.error_description === "string") return err.error_description;
+  }
+  return String(error ?? "Unknown error");
 }
 
-function isRetryableError(error: any, retryableErrors: string[] = []): boolean {
+function isRetryableError(
+  error: unknown,
+  retryableErrors: string[] = [],
+): boolean {
   const message = getErrorMessage(error).toLowerCase();
   const defaultRetryableErrors = [
     "network error",
@@ -113,7 +116,7 @@ async function delay(ms: number): Promise<void> {
 export async function handleApiErrorWithRetry<T>(
   context: string,
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const {
     maxRetries = 3,
@@ -122,7 +125,7 @@ export async function handleApiErrorWithRetry<T>(
     retryableErrors = [],
   } = options;
 
-  let lastError: any;
+  let lastError: unknown;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -138,18 +141,20 @@ export async function handleApiErrorWithRetry<T>(
       // Exponential backoff with jitter
       const delayMs = Math.min(
         baseDelay * Math.pow(2, attempt) + Math.random() * 1000,
-        maxDelay
+        maxDelay,
       );
 
-      GlobalErrorHandler.logWarning(
-        `Attempt ${attempt + 1}/${maxRetries + 1} failed, retrying in ${delayMs}ms`,
+      Logger.logWarning(
+        `Attempt ${attempt + 1}/${
+          maxRetries + 1
+        } failed, retrying in ${delayMs}ms`,
         `API_RETRY_${context}`,
         {
           attempt: attempt + 1,
           maxRetries: maxRetries + 1,
           delayMs,
           error: getErrorMessage(error),
-        }
+        },
       );
       await delay(delayMs);
     }
@@ -158,10 +163,10 @@ export async function handleApiErrorWithRetry<T>(
   const apiError = new ApiError(
     context,
     lastError,
-    isRetryableError(lastError, retryableErrors)
+    isRetryableError(lastError, retryableErrors),
   );
 
-  GlobalErrorHandler.logError(apiError, "API_ERROR", {
+  Logger.logError(apiError, "API_ERROR", {
     context,
     originalError: getErrorMessage(lastError),
     isRetryable: apiError.isRetryable,
@@ -169,7 +174,7 @@ export async function handleApiErrorWithRetry<T>(
   });
 
   // Show a friendly message to the user while logging full details for developers
-  ToastService.showError(getUserFriendlyMessage(lastError));
+  ToastService.showError("Request Failed", getUserFriendlyMessage(lastError));
 
   throw apiError;
 }
@@ -185,17 +190,21 @@ export async function handleApiErrorWithRetry<T>(
  * @throws {ApiError} Always throws a formatted ApiError containing the context and original error.
  * @returns {never} This function never returns.
  */
-export function handleApiError(context: string, error: any): never {
+export function handleApiError(context: string, error: unknown): never {
   const apiError = new ApiError(context, error);
 
-  GlobalErrorHandler.logError(apiError, "API_ERROR", {
+  Logger.logError(apiError, "API_ERROR", {
     context,
     originalError: getErrorMessage(error),
-    errorType: error?.constructor?.name || "Unknown",
+    errorType:
+      typeof error === "object" && error !== null && "constructor" in error
+        ? (error as { constructor: { name?: string } }).constructor.name ||
+          "Unknown"
+        : "Unknown",
   });
 
   // Show a concise, user-friendly message instead of the raw technical message
-  ToastService.showError(getUserFriendlyMessage(error));
+  ToastService.showError("Error", getUserFriendlyMessage(error));
 
   throw apiError;
 }

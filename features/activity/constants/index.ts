@@ -23,11 +23,12 @@ export const ACTIVITY_COLOR_PALETTE = [
 export const GRID_CONFIG = {
   DEFAULT_COLUMNS: 4,
   ITEM_HEIGHT: 80,
-  GRID_GAP: 5,
+  GRID_GAP: 2,
   MIN_DRAG_SENSITIVITY: 0.4,
   DEFAULT_SPACING: 15,
   DEFAULT_PADDING: 16,
   MAX_WIDTH: 400,
+  BORDER_RADIUS: 5,
 } as const;
 
 // Activity Theme Colors
@@ -38,8 +39,8 @@ export const ACTIVITY_THEME = {
   PLACEHOLDER_TEXT: "#9CA3AF",
 
   // Action colors
-  ENABLE_BUTTON_BG: "#4CAF50",
-  DELETE_BUTTON_BG: "#ff4444",
+  ENABLE_BUTTON_BG: "#4caf4fa9",
+  DELETE_BUTTON_BG: "#A1A1A1",
   ADD_PLACEHOLDER_BORDER: "#A1A1A1",
 
   // Form colors

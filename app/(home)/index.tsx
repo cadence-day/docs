@@ -1,15 +1,16 @@
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
 import { SignedIn, SignedOut } from "@clerk/clerk-expo";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-
-import { CdButton, ScreenHeader } from "@/shared/components/CadenceUI";
-import SageIcon from "@/shared/components/icons/SageIcon";
-import { backgroundLinearColors } from "@/shared/constants/COLORS";
-import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
-import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SignIn from "../(auth)/sign-in";
+
+import { ScreenHeader } from "@/shared/components/CadenceUI";
+import SageIcon from "@/shared/components/icons/SageIcon";
+import { DIALOG_HEIGHT_PLACEHOLDER } from "@/shared/constants/VIEWPORT";
+import { useTheme, useViewDialogState } from "@/shared/hooks";
+import { useDeviceDateTime } from "@/shared/hooks/useDeviceDateTime";
+import { generalStyles } from "@/shared/styles";
+import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingScreen from "../(utils)/LoadingScreen";
 const Timeline = React.lazy(() => import("@/features/timeline/Timeline"));
 
@@ -19,25 +20,29 @@ const ErrorBoundary: React.FC<{ children?: React.ReactNode }> = ({
 }) => <>{children}</>;
 
 // Stores
-
-import { useToast } from "@/shared/hooks";
 import { useI18n } from "@/shared/hooks/useI18n";
 import useDialogStore from "@/shared/stores/useDialogStore";
 
 export default function Today() {
   const { t } = useI18n();
-  const {
-    prefs,
-    formatDate,
-    formatTime,
-    getDateTimeSeparator,
-    displayDateTime,
-  } = useDeviceDateTime();
-  const { showInfo } = useToast();
+  const { getDateTimeSeparator, displayDateTime } = useDeviceDateTime();
+  const theme = useTheme();
+
+  // Get dialog state for this view
+  const dialogState = useViewDialogState("home");
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
+
+  // Derive dialog state from the hook instead of local state
+  const isActivityDialogOpen = dialogState.dialogs.some(
+    (d) => d.dialogType === "activity-legend"
+  );
+  const activityDialog = dialogState.dialogs.find(
+    (d) => d.dialogType === "activity-legend"
+  );
+  const isActivityDialogCollapsed = activityDialog?.isCollapsed ?? false;
+
   // isToday is true if selectedDate is today's date (but ignore time)
   const isToday = selectedDate.toDateString() === new Date().toDateString();
   const title = isToday ? t("home.todayTitle") : t("home.title");
@@ -48,47 +53,19 @@ export default function Today() {
     return () => clearInterval(interval);
   }, []);
 
-  // Listen to dialog store changes to track activity dialog state
-  useEffect(() => {
-    const unsubscribe = useDialogStore.subscribe((state) => {
-      const hasActivityDialog = Object.values(state.dialogs).some(
-        (dialog) => dialog.type === "activity-legend"
-      );
-      setIsActivityDialogOpen(hasActivityDialog);
-    });
-
-    return unsubscribe;
-  }, []);
-
-  // Function to reopen activity dialog
-  const reopenActivityDialog = () => {
-    useDialogStore.getState().openDialog({
-      type: "activity-legend",
-      props: {
-        preventClose: true,
-      },
-      position: "dock",
-    });
-  };
-
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={[
+        generalStyles.flexContainer,
+        { backgroundColor: theme.background.primary },
+      ]}
+    >
       <SignedIn>
-        <LinearGradient
-          colors={[
-            backgroundLinearColors.primary.end,
-            backgroundLinearColors.primary.end,
-          ]}
-          style={{ flex: 1 }}
-        >
+        <SafeAreaView style={generalStyles.flexContainer} edges={["top"]}>
           <ScreenHeader
             title={title}
             OnRightElement={() => (
-              <TouchableOpacity
-                onPress={() => showInfo(t("sage.unavailableMessage"))}
-              >
-                <SageIcon size={40} status={"pulsating"} auto={false} />
-              </TouchableOpacity>
+              <SageIcon size={40} status="pulsating" auto={false} />
             )}
             subtitle={
               <>
@@ -101,7 +78,7 @@ export default function Today() {
                       type: "calendar",
                       props: {
                         selectedDate,
-                        height: 60,
+                        height: 85,
                         enableDragging: false,
                         headerProps: {
                           title: t("calendarDialog.pick-a-date"),
@@ -133,13 +110,7 @@ export default function Today() {
                       }
                     );
                     return (
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: "#444",
-                          textDecorationLine: "underline",
-                        }}
-                      >
+                      <Text style={generalStyles.clickableText}>
                         {displayed}
                       </Text>
                     );
@@ -149,34 +120,11 @@ export default function Today() {
                 {selectedDate.toDateString() !== new Date().toDateString() && (
                   <TouchableOpacity
                     onPress={() => setSelectedDate(new Date())}
-                    style={{ marginLeft: 12 }}
+                    hitSlop={HIT_SLOP_10}
                   >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 4,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          textTransform: "uppercase",
-                          color: "#444",
-                          fontSize: 12,
-                          letterSpacing: 0.5,
-                        }}
-                      >
-                        {" < "}
-                      </Text>
-                      <Text
-                        style={{
-                          textDecorationLine: "underline",
-                          textTransform: "uppercase",
-                          color: "#444",
-                          fontSize: 12,
-                          letterSpacing: 0.5,
-                        }}
-                      >
+                    <View style={style.backToTodayButtonContainer}>
+                      <Text style={style.backToTodayButtonText}>{" < "}</Text>
+                      <Text style={generalStyles.clickableText}>
                         {t("back-to-today")}
                       </Text>
                     </View>
@@ -189,38 +137,19 @@ export default function Today() {
           <ErrorBoundary>
             {/* Pass selected date into the timeline so it renders the chosen day */}
             <React.Suspense fallback={<LoadingScreen />}>
-              <Timeline date={selectedDate} />
+              <Timeline
+                date={selectedDate}
+                bottomPadding={
+                  isActivityDialogOpen && isActivityDialogCollapsed
+                    ? DIALOG_HEIGHT_PLACEHOLDER
+                    : 5
+                }
+              />
             </React.Suspense>
           </ErrorBoundary>
 
-          {/* Spacer to ensure there's room below the timeline (e.g., above nav) */}
-          <View
-            style={{
-              height: DIALOG_HEIGHT_PLACEHOLDER,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {/* Reopen Activity Dialog Button - shown when dialog is closed */}
-            {!isActivityDialogOpen && (
-              <CdButton
-                title={t("activity.legend.reopen")}
-                onPress={reopenActivityDialog}
-                variant="outline"
-                size="medium"
-                style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  borderColor: "rgba(255, 255, 255, 0.3)",
-                }}
-                textStyle={{
-                  color: "#333",
-                }}
-              />
-            )}
-          </View>
-
           {/* Share modal could be added here when available */}
-        </LinearGradient>
+        </SafeAreaView>
       </SignedIn>
       <SignedOut>
         <SignIn />
@@ -228,3 +157,14 @@ export default function Today() {
     </View>
   );
 }
+
+const style = StyleSheet.create({
+  backToTodayButtonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  backToTodayButtonText: {
+    ...generalStyles.clickableText,
+    textDecorationLine: "none",
+  },
+});
