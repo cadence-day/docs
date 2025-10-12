@@ -58,7 +58,7 @@ Cadence is developed by a distributed team based in:
 We're here to help! You can:
 
 - Browse this FAQ documentation
-- Contact us at [admin@cadence.day](mailto:admin@cadence.day)
+- Contact us at [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})
 - Report bugs through the app (Profile → Customer Support → Bug Report)
 - Request features through the app (Profile → Customer Support → Feature Request)
 
@@ -70,7 +70,7 @@ Yes! Cadence works offline. Your data will sync automatically when you're back o
 
 ## How do I delete my account?
 
-To delete your account, please contact our support team at [admin@cadence.day](mailto:admin@cadence.day). They will help you with the account deletion process and ensure all your data is properly removed.
+To delete your account, please contact our support team at [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}). They will help you with the account deletion process and ensure all your data is properly removed.
 
 ## What languages does Cadence support?
 

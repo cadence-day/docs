@@ -81,7 +81,7 @@ Deep dives into Cadence's core features:
 
 We're here to support you:
 
-- **📧 Support**: [admin@cadence.day](mailto:admin@cadence.day)
+- **📧 Support**: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})
 
 ## Join the Community
 

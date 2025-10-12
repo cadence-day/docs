@@ -4,8 +4,13 @@
 const fs = require("fs");
 const path = require("path");
 
-// Get all environment variable names and values from process.env
-const envVars = Object.keys(process.env);
+// Only restore these environment variables
+const envVars = [
+  "CONTACT_EMAIL",
+  "CADENCE_DOCS_BASE_URL",
+  "CONTACT_DEV_EMAIL",
+  "OFFICE_ADDRESS",
+];
 
 // Directory to search for markdown files
 const docsDir = path.resolve(__dirname, "../docs");

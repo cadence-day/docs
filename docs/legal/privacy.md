@@ -38,9 +38,9 @@ We do not sell, rent, or share your personal data with third parties for adverti
 - Request deletion of your data.
 - Withdraw consent and stop data syncing at any time.
 
-To exercise any of these rights, contact us at: [admin@cadence.day](mailto:admin@cadence.day) or [dev@cadence.day](mailto:dev@cadence.day).
+To exercise any of these rights, contact us at: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}) or [${CONTACT_DEV_EMAIL}](mailto:${CONTACT_DEV_EMAIL}).
 
-Office Address: 2 Danziger Str, Berlin 10435, Germany
+Office Address: ${OFFICE_ADDRESS}
 
 ## Data Retention
 
