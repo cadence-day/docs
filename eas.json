@@ -25,7 +25,7 @@
     "prd": {
       "ios": {
         "ascAppId": "$APP_STORE_CONNECT_APP_ID",
-        "appleTeamId": "67DCNK6RL4"
+        "appleTeamId": "$APP_STORE_CONNECT_TEAM_ID"
       }
     }
   }
