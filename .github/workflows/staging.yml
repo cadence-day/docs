@@ -18,7 +18,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22.x
@@ -34,7 +35,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add app.json
           git commit -m "ci: bump build number (staging)"
-          git push origin ${{ github.head_ref }}
+          git push origin HEAD
 
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
@@ -65,7 +66,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22.x
@@ -81,7 +83,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add app.json
           git commit -m "ci: bump build number (staging merged)"
-          git push origin ${{ github.head_ref }}
+          git push origin staging
 
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
@@ -93,10 +95,14 @@ jobs:
         run: npm install
 
       - name: EAS Build iOS
-        run: doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive"
+        id: build
+        run: |
+          build_output=$(doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive --json")
+          build_id=$(echo "$build_output" | jq -r '.id')
+          echo "build_id=$build_id" >> $GITHUB_OUTPUT
 
       - name: Submit to App Store Connect
-        run: doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas submit -p ios --asc-app-id ${{ secrets.APP_STORE_CONNECT_APP_ID }} --asc-api-key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} --asc-api-key-issuer-id ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }} --asc-api-key ${{ secrets.APP_STORE_CONNECT_KEY }}"
+        run: doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas submit -p ios --id ${{ steps.build.outputs.build_id }}"
 
       - name: Get group id
         id: group
@@ -105,7 +111,7 @@ jobs:
           echo "group_id=$group_id" >> $GITHUB_OUTPUT
 
       - name: Add build to group
-        run: ./scripts/asc_api_add_build_to_group.sh $BUILD_ID ${{ steps.group.outputs.group_id }}
+        run: ./scripts/asc_api_add_build_to_group.sh ${{ steps.build.outputs.build_id }} ${{ steps.group.outputs.group_id }}
 
       - name: Get public TestFlight link
         id: link
