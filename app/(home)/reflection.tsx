@@ -182,10 +182,7 @@ export default function Reflection() {
 
     openDialog({
       type: "weekly-insight",
-      props: {
-        startDate: fromDate,
-        endDate: toDate,
-      },
+      props: {},
     });
   };
 

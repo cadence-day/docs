@@ -1,5 +1,6 @@
 import { Smiley, SmileyMeh, SmileySad } from "phosphor-react-native";
 import React from "react";
+import { MOOD_VALUES, getMoodLabel } from "@/shared/constants/Mood";
 
 export interface MoodIconOptions {
   size?: number;
@@ -23,13 +24,13 @@ export const getMoodIcon = (
   if (mood === null || mood === undefined) return null;
 
   switch (mood) {
-    case 1:
-    case 2:
+    case MOOD_VALUES.SAD:
+    case MOOD_VALUES.MELANCHOLIC:
       return <SmileySad size={size} color={iconColor} weight={weight} />; // Sad/Melancholic
-    case 3:
+    case MOOD_VALUES.NEUTRAL:
       return <SmileyMeh size={size} color={iconColor} weight={weight} />; // Neutral
-    case 4:
-    case 5:
+    case MOOD_VALUES.CONTENT:
+    case MOOD_VALUES.HAPPY:
       return <Smiley size={size} color={iconColor} weight={weight} />; // Content/Happy
     default:
       return null;
@@ -42,22 +43,7 @@ export const getMoodIcon = (
  * @returns String representation of mood
  */
 export const getMoodText = (mood: number | null): string | null => {
-  if (mood === null || mood === undefined) return null;
-
-  switch (mood) {
-    case 1:
-      return "Very Sad";
-    case 2:
-      return "Sad";
-    case 3:
-      return "Neutral";
-    case 4:
-      return "Happy";
-    case 5:
-      return "Very Happy";
-    default:
-      return null;
-  }
+  return getMoodLabel(mood);
 };
 
 /**
@@ -69,13 +55,13 @@ export const getMoodEmoji = (mood: number | null): string | null => {
   if (mood === null || mood === undefined) return null;
 
   switch (mood) {
-    case 1:
-    case 2:
+    case MOOD_VALUES.SAD:
+    case MOOD_VALUES.MELANCHOLIC:
       return "😢"; // Sad/Melancholic
-    case 3:
+    case MOOD_VALUES.NEUTRAL:
       return "😐"; // Neutral
-    case 4:
-    case 5:
+    case MOOD_VALUES.CONTENT:
+    case MOOD_VALUES.HAPPY:
       return "😊"; // Content/Happy
     default:
       return null;
