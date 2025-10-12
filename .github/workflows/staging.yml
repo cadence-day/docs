@@ -7,8 +7,7 @@ on:
 
 jobs:
   build-only:
-    # TEMPORARILY DISABLED - change 'false' to 'github.event.action != "closed"' to re-enable
-    if: false && github.event.action != 'closed'
+    if: github.event.action != 'closed'
     runs-on: macos-latest
     env:
       APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
@@ -56,7 +55,7 @@ jobs:
         run: doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive"
 
   submit-on-merge:
-    if: false # Deactivated for troubleshooting
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: macos-latest
     env:
       APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
@@ -115,31 +114,6 @@ jobs:
         run: |
           doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_PRD }} --command "eas build -p ios --profile prd --non-interactive --auto-submit"
 
-      - name: Wait for App Store Connect Processing
-        run: |
-          echo "Waiting 300 seconds for App Store Connect to process the build..."
-          sleep 300
-
-      - name: Get Latest Build from ASC
-        id: asc_build
-        run: |
-          echo "Fetching latest build for version ${{ steps.get_version.outputs.version }} from App Store Connect..."
-          build_id=$(./scripts/asc_api_get_latest_build.sh "${{ secrets.APP_STORE_CONNECT_APP_ID }}" "${{ steps.get_version.outputs.version }}")
-          echo "build_id=$build_id" >> $GITHUB_OUTPUT
-          echo "Found build ID: $build_id"
-
-      - name: Add Build to Alpha Users Group
-        run: |
-          echo "Adding build ${{ steps.asc_build.outputs.build_id }} to group ${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}"
-          ./scripts/asc_api_add_build_to_group.sh "${{ steps.asc_build.outputs.build_id }}" "${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}"
-
-      - name: Get Public TestFlight Link
-        id: testflight
-        run: |
-          link=$(./scripts/asc_api_get_public_link.sh "${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}")
-          echo "testflight_link=$link" >> $GITHUB_OUTPUT
-          echo "TestFlight public link: $link"
-
       - name: Comment on PR with Build Info
         uses: marocchino/sticky-pull-request-comment@v2
         with:
@@ -148,18 +122,12 @@ jobs:
             **Version:** ${{ steps.get_version.outputs.version }}
             **Build:** ${{ steps.get_version.outputs.build }}
 
-            [View on App Store Connect](https://appstoreconnect.apple.com/apps/${{ secrets.APP_STORE_CONNECT_APP_ID }}/distribution)
-
-            ${{ steps.testflight.outputs.testflight_link && format('🧪 [Open TestFlight]({0})', steps.testflight.outputs.testflight_link) || '⏳ TestFlight link will be available after processing' }}
-
       - name: Notify Discord
         run: |
           pr_title="${{ github.event.pull_request.title }}"
           pr_body="${{ github.event.pull_request.body }}"
           version="${{ steps.get_version.outputs.version }}"
           build="${{ steps.get_version.outputs.build }}"
-          app_store_link="https://appstoreconnect.apple.com/apps/${{ secrets.APP_STORE_CONNECT_APP_ID }}/distribution"
-          testflight_link="${{ steps.testflight.outputs.testflight_link }}"
 
           if [ -n "$testflight_link" ]; then
             payload=$(jq -n \
@@ -167,8 +135,6 @@ jobs:
               --arg body "$pr_body" \
               --arg ver "$version" \
               --arg bld "$build" \
-              --arg asc_link "$app_store_link" \
-              --arg tf_link "$testflight_link" \
               '{
                 username: "CI/CD Bot",
                 embeds: [
@@ -178,8 +144,6 @@ jobs:
                     fields: [
                       {name: "Version", value: $ver, inline: true},
                       {name: "Build", value: $bld, inline: true},
-                      {name: "App Store Connect", value: $asc_link, inline: false},
-                      {name: "🧪 TestFlight (Alpha Users)", value: $tf_link, inline: false}
                     ],
                     color: 5814783
                   }
@@ -201,8 +165,6 @@ jobs:
                     fields: [
                       {name: "Version", value: $ver, inline: true},
                       {name: "Build", value: $bld, inline: true},
-                      {name: "App Store Connect", value: $asc_link, inline: false},
-                      {name: "TestFlight Status", value: "⏳ Processing - link will be available soon", inline: false}
                     ],
                     color: 5814783
                   }
