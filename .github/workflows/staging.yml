@@ -103,14 +103,25 @@ jobs:
       - name: EAS Build & Submit iOS
         id: build_submit
         run: |
-          # Run the build and capture output
+          # Run the build and capture output, but also display it in real-time
           echo "Starting EAS build and submit..."
-          doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit" > build_output.txt 2>&1
+          set +e  # Don't exit on error so we can capture the output
+          doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit" 2>&1 | tee build_output.txt
+          exit_code=${PIPESTATUS[0]}
+          set -e  # Re-enable exit on error
 
-          # Display the output for debugging
-          echo "=== EAS Build Output ==="
-          cat build_output.txt
           echo "========================"
+          echo "EAS command exit code: $exit_code"
+          echo "========================"
+
+          # If the build failed, show the error and exit
+          if [ $exit_code -ne 0 ]; then
+            echo "EAS build failed with exit code $exit_code"
+            echo "Last 20 lines of output:"
+            tail -20 build_output.txt
+            rm -f build_output.txt
+            exit $exit_code
+          fi
 
           # Extract App Store Connect URL
           app_store_url=$(grep -o "https://appstoreconnect.apple.com/apps/[0-9]*/[a-zA-Z]*" build_output.txt || echo "")
