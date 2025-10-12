@@ -22,7 +22,11 @@ All data is stored locally on your device unless you explicitly opt-in to sync w
 
 ## Data Storage and Security
 
-All data is end-to-end encrypted during transmission and encrypted at rest on our servers. We employ industry-standard safeguards including TLS, AES-256 encryption, and secure key management.
+All data is end-to-end encrypted during transmission and encrypted at rest on our servers. We employ industry-standard safeguards including TLS, AES-256 encryption, and secure key management. We use Supabase for secure cloud storage and authentication, Clerk for user authentication, and RevenueCat for subscription management. Data shared with these services is protected according to their privacy policies:
+
+- [Supabase Privacy Policy](https://supabase.com/privacy)
+- [Clerk Privacy Policy](https://clerk.com/privacy)
+- [RevenueCat Privacy Policy](https://www.revenuecat.com/privacy)
 
 ## Data Sharing and Disclosure
 
@@ -34,7 +38,9 @@ We do not sell, rent, or share your personal data with third parties for adverti
 - Request deletion of your data.
 - Withdraw consent and stop data syncing at any time.
 
-To exercise any of these rights, contact us at: [admin@cadence.day](mailto:admin@cadence.day)
+To exercise any of these rights, contact us at: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}) or [${CONTACT_DEV_EMAIL}](mailto:${CONTACT_DEV_EMAIL}).
+
+Office Address: ${OFFICE_ADDRESS}
 
 ## Data Retention
 
@@ -43,6 +49,10 @@ Data is retained only as long as necessary to provide the service or as required
 ## Children's Privacy
 
 The App is not intended for children under 16. We do not knowingly collect or store personal information from children.
+
+## Jurisdiction
+
+This Privacy Policy is governed by the laws of Germany. All disputes shall be subject to the exclusive jurisdiction of the courts in Berlin, Germany.
 
 ## Changes to This Policy
 

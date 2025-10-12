@@ -1,186 +1,201 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
-import type * as Preset from '@docusaurus/preset-classic';
+import type * as Preset from "@docusaurus/preset-classic";
+import type { Config } from "@docusaurus/types";
+import { themes as prismThemes } from "prism-react-renderer";
 
 const config: Config = {
-  title: 'Cadence Documentation',
-  tagline: 'Track your time, understand your rhythms, live intentionally',
-  favicon: 'img/favicon.ico',
+  title: "Cadence Docs",
+  tagline: "Track your time, understand your rhythms, live intentionally",
+  favicon: "img/favicon.ico",
 
   future: {
     v4: true,
   },
 
-  url: 'https://docs.cadence.day',
-  baseUrl: '/',
+  url: process.env.CADENCE_DOCS_BASE_URL,
 
-  organizationName: 'cadence-day',
-  projectName: 'docs',
+  baseUrl: "/",
 
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  organizationName: "cadence-day",
+  projectName: "docs",
+
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
 
   presets: [
     [
-      'classic',
+      "classic",
       {
         docs: {
-          sidebarPath: './sidebars.ts',
-          routeBasePath: 'docs',
-          editUrl: 'https://github.com/cadence-day/docs/edit/main/',
+          sidebarPath: "./sidebars.ts",
+          routeBasePath: "docs",
+          editUrl: "https://github.com/cadence-day/docs/edit/main/",
         },
         blog: {
           showReadingTime: true,
           feedOptions: {
-            type: ['rss', 'atom'],
+            type: ["rss", "atom"],
             xslt: true,
           },
-          editUrl: 'https://github.com/cadence-day/docs/edit/main/',
-          onInlineAuthors: 'throw',
-          onUntruncatedBlogPosts: 'warn',
+          editUrl: "https://github.com/cadence-day/docs/edit/main/",
+          onInlineAuthors: "throw",
+          onUntruncatedBlogPosts: "warn",
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
       } satisfies Preset.Options,
     ],
   ],
 
   themeConfig: {
-    image: 'img/cadence-social-card.png',
+    image: "img/cadence-social-card.png",
     metadata: [
-      {name: 'keywords', content: 'cadence, time tracking, activity tracking, productivity, reflection, self-awareness'},
-      {name: 'description', content: 'Learn how to use Cadence.day - track your time, understand your rhythms, and live more intentionally.'},
+      {
+        name: "keywords",
+        content:
+          "cadence, time tracking, activity tracking, productivity, reflection, self-awareness",
+      },
+      {
+        name: "description",
+        content:
+          "Learn how to use Cadence.day - track your time, understand your rhythms, and live more intentionally.",
+      },
     ],
-    
+
     colorMode: {
-      defaultMode: 'dark',
+      defaultMode: "dark",
       disableSwitch: false,
       respectPrefersColorScheme: true,
     },
-    
+
     algolia: {
-      appId: 'QYNNN8YBZD',
-      apiKey: 'ae3c21956a4ee3a8f161fea63ad25a2a',
-      indexName: 'cadence-docs',
+      appId: "QYNNN8YBZD",
+      apiKey: "ae3c21956a4ee3a8f161fea63ad25a2a",
+      indexName: "cadence-docs",
       contextualSearch: true,
       searchParameters: {},
-      searchPagePath: 'search',
+      searchPagePath: "search",
       insights: false,
     },
-    
+
     navbar: {
-      title: 'CADENCE',
+      title: "CADENCE",
       logo: {
-        alt: 'Cadence Logo',
-        src: 'img/logo.png',
-        srcDark: 'img/logo.png',
+        alt: "Cadence Logo",
+        src: "img/logo.png",
+        srcDark: "img/logo.png",
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'faqSidebar',
-          position: 'left',
-          label: 'FAQ',
+          type: "docSidebar",
+          sidebarId: "faqSidebar",
+          position: "left",
+          label: "FAQ",
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'featuresSidebar',
-          position: 'left',
-          label: 'Features',
+          type: "docSidebar",
+          sidebarId: "featuresSidebar",
+          position: "left",
+          label: "Features",
         },
         {
-          to: '/blog',
-          label: 'Blog',
-          position: 'left'
+          to: "/blog",
+          label: "Blog",
+          position: "left",
         },
         {
-          href: 'https://apps.apple.com/app/cadence-day/id6745115112',
-          label: 'Download App',
-          position: 'right',
+          href: "https://apps.apple.com/app/cadence-day/id6745115112",
+          label: "Download App",
+          position: "right",
         },
         {
-          href: 'https://github.com/cadence-day-dev',
-          label: 'GitHub',
-          position: 'right',
+          href: "https://github.com/cadence-day-dev",
+          label: "GitHub",
+          position: "right",
         },
       ],
     },
-    
+
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
-          title: 'Documentation',
+          title: "Documentation",
           items: [
             {
-              label: 'Getting Started',
-              to: '/docs/intro',
+              label: "Getting Started",
+              to: "/docs/intro",
             },
             {
-              label: 'FAQ',
-              to: '/docs/faq/general',
+              label: "FAQ",
+              to: "/docs/faq/general",
             },
             {
-              label: 'Features',
-              to: '/docs/features/activity-tracking',
+              label: "Features",
+              to: "/docs/features/activity-tracking",
             },
           ],
         },
         {
-          title: 'Community',
+          title: "Community",
           items: [
             {
-              label: 'Discord',
-              href: 'https://discord.gg/',
+              label: "Discord",
+              href: "https://discord.gg/",
             },
             {
-              label: 'Instagram',
-              href: 'https://instagram.com/cadencedotday',
+              label: "Instagram",
+              href: "https://instagram.com/cadencedotday",
             },
             {
-              label: 'X (Twitter)',
-              href: 'https://x.com/cadencedotday',
+              label: "X (Twitter)",
+              href: "https://x.com/cadencedotday",
             },
             {
-              label: 'GitHub',
-              href: 'https://github.com/cadence-day-dev',
+              label: "GitHub",
+              href: "https://github.com/cadence-day-dev",
             },
             {
-              label: 'LinkedIn',
-              href: 'https://www.linkedin.com/company/cadence-day',
-            }
+              label: "LinkedIn",
+              href: "https://www.linkedin.com/company/cadence-day",
+            },
           ],
         },
         {
-          title: 'More',
+          title: "More",
           items: [
             {
-              label: 'Download App',
-              href: 'https://apps.apple.com/app/cadence-day/id6745115112',
+              label: "Download App",
+              href: "https://apps.apple.com/app/cadence-day/id6745115112",
             },
             {
-              label: 'Support',
-              href: 'mailto:admin@cadence.day',
+              label: "Support",
+              href: `mailto:${process.env.CONTACT_EMAIL}`,
             },
-              {
-                label: 'Privacy Policy',
-                to: '/docs/legal/privacy',
-              },
-              {
-                label: 'Terms of Service',
-                to: '/docs/legal/terms',
-              },
+            {
+              label: "Privacy Policy",
+              to: "/docs/legal/privacy",
+            },
+            {
+              label: "Terms of Service",
+              to: "/docs/legal/terms",
+            },
+            {
+              label: "EULA",
+              to: "/docs/legal/eula",
+            },
           ],
         },
       ],
-      copyright: `© ${new Date().getFullYear()} Cadence.day. All rights reserved.<br/><span style="opacity: 0.7; font-size: 0.875rem;">Based in Berlin · Copenhagen · New York</span>`,
+      copyright: `© ${
+        new Date().getFullYear()
+      } Cadence.day. All rights reserved.<br/><span style="opacity: 0.7; font-size: 0.875rem;">Based in Berlin · Copenhagen · New York</span>`,
     },
-    
+
     prism: {
       theme: prismThemes.duotoneDark,
       darkTheme: prismThemes.duotoneDark,
-      additionalLanguages: ['bash', 'json', 'typescript', 'javascript'],
+      additionalLanguages: ["bash", "json", "typescript", "javascript"],
     },
   } satisfies Preset.ThemeConfig,
 };

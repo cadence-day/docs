@@ -4,18 +4,20 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
+    "start": "doppler run --command 'docusaurus start'",
+    "build": "npm run prebuild && doppler run --command 'docusaurus build'",
     "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
+    "deploy": "doppler run --command 'docusaurus deploy'",
     "clear": "docusaurus clear",
-    "serve": "docusaurus serve",
+    "serve": "doppler run --command 'docusaurus serve'",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
     "lint": "echo 'Linting complete - no linter configured'",
     "test": "npm run typecheck && npm run build",
-    "preview": "npm run build && npm run serve"
+    "preview": "npm run build && npm run serve",
+    "prebuild": "doppler run --command 'node scripts/replace-md-env-vars.js'",
+    "restore-md": "doppler run --command 'node scripts/restore-md-env-vars.js'"
   },
   "dependencies": {
     "@docusaurus/core": "3.9.1",

@@ -18,7 +18,7 @@ We reserve the right to modify these Terms at any time without notice. Your cont
 
 ## Intellectual Property
 
-All content, features, and functionality (including text, graphics, logos, and software) are the exclusive property of Cadence.day and are protected by intellectual property laws. No part may be copied, modified, distributed, or used without prior written consent.
+All content, features, and functionality (including text, graphics, logos, and software) are the exclusive property of Cadence.day and are protected by intellectual property laws. No part may be copied, modified, distributed, or used without prior written consent. The App integrates third-party services including Supabase (database, authentication, storage), Clerk (authentication), and RevenueCat (subscription management). Use of these services is subject to their respective privacy policies and terms.
 
 ## User Obligations
 
@@ -46,6 +46,6 @@ You agree to defend, indemnify, and hold harmless cadence.day, its affiliates, a
 
 ## Governing Law
 
-These Terms shall be governed by and construed in accordance with the laws of [Jurisdiction], without regard to conflict of law principles. Any legal action shall be brought exclusively in the courts of [Jurisdiction].
+These Terms shall be governed by and construed in accordance with the laws of Germany, without regard to conflict of law principles. Any legal action shall be brought exclusively in the courts of Berlin, Germany.
 
 </div>

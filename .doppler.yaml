@@ -1,0 +1,3 @@
+setup:
+  - project: cadence-docs
+    config: prd

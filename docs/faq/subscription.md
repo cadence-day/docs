@@ -7,6 +7,7 @@ Everything you need to know about Cadence pricing and premium features.
 Cadence offers both free and premium options:
 
 **Free Forever:**
+
 - Activity tracking with unlimited activities
 - Basic timeline view
 - Note-taking (text-based)
@@ -54,7 +55,7 @@ The App Store doesn't allow direct plan switching, but this process is straightf
 
 ## Do you offer student discounts?
 
-Not currently, but we're exploring student and nonprofit pricing! Contact us at admin@cadence.day if you're interested.
+Not currently, but we're exploring student and nonprofit pricing! Contact us at ${CONTACT_EMAIL} if you're interested.
 
 ## Is there a lifetime option?
 
@@ -128,7 +129,7 @@ For billing questions or issues:
 
 1. **Check your App Store subscription** first
 2. **Contact Apple Support** for payment/billing problems
-3. **Email us** at admin@cadence.day for account-specific questions
+3. **Email us** at ${CONTACT_EMAIL} for account-specific questions
 
 We're here to help!
 

@@ -10,7 +10,7 @@ We're excited to announce that the official **Cadence Documentation** is now liv
 
 <!-- truncate -->
 
-![Cadence Documentation](https://docs.cadence.day/img/cadence-social-card.png)
+![Cadence Documentation](${CADENCE_DOCS_BASE_URL}img/cadence-social-card.png)
 
 ## What You'll Find Here
 
@@ -36,6 +36,6 @@ The documentation will be regularly updated as we add new features and improve e
 
 Explore the [documentation](/docs/intro) today to enhance your Cadence experience. If you haven't downloaded the app yet, get it on the [App Store](https://apps.apple.com/app/cadence-day/id6745115112).
 
-Have suggestions for topics we should cover? Let us know at [admin@cadence.day](mailto:admin@cadence.day).
+Have suggestions for topics we should cover? Let us know at [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}).
 
 —The Cadence Team
