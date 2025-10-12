@@ -1,5 +1,4 @@
 import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Heading from "@theme/Heading";
 import Layout from "@theme/Layout";
@@ -13,7 +12,6 @@ function HomepageHeader() {
   return (
     <>
       <Analytics />
-      <SpeedInsights />
       <header className={clsx("hero", styles.heroBanner)}>
         <div className="container">
           <Heading as="h1" className="hero__title">
