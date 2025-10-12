@@ -1,8 +1,8 @@
-name: Expo Go Preview (dev)
+name: Expo Go Preview (dev) - DISABLED
 
 on:
-  push:
-    branches: [dev]
+  # TEMPORARILY DISABLED - workflow_dispatch allows manual trigger only
+  workflow_dispatch:
 
 jobs:
   preview:
