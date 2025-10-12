@@ -62,6 +62,7 @@ jobs:
       APP_STORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }}
       APP_STORE_CONNECT_APP_ID: ${{ secrets.APP_STORE_CONNECT_APP_ID }}
       APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
+      TESTFLIGHT_ALPHA_GROUP_ID: ${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
     steps:
       - uses: actions/checkout@v4
@@ -125,13 +126,14 @@ jobs:
           echo "Waiting 60 seconds for App Store Connect to process the build..."
           sleep 60
 
-      - name: Get or Create Alpha Users Group
+      - name: Use Alpha Users Group
         if: steps.build_submit.outputs.build_id != ''
         id: group
         run: |
-          group_id=$(./scripts/asc_api_beta_groups.sh get-or-create "alpha-users")
+          # Use the specific alpha-users group ID from GitHub secrets
+          group_id="${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}"
           echo "group_id=$group_id" >> $GITHUB_OUTPUT
-          echo "Alpha users group ID: $group_id"
+          echo "Using alpha users group ID: $group_id"
 
       - name: Add Build to Alpha Users Group
         if: steps.build_submit.outputs.build_id != '' && steps.group.outputs.group_id != ''
