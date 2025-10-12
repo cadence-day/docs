@@ -7,6 +7,7 @@ import ManageActivitiesDialog from "@/features/activity/dialogs/ManageActivities
 import ReassignActivityDialog from "@/features/activity/dialogs/ReassignActivityDialog";
 import CalendarDialog from "@/features/calendar/dialogs/CalendarDialog";
 import EncryptionLinkDialog from "@/features/encryption/dialogs/EncryptionLinkDialog";
+import { WeeklyInsightDialog } from "@/features/insights/dialog/WeeklyInsightDialog";
 import { NoteDialog } from "@/features/notes/dialogs/NoteDialog";
 import { ReflectionTimesliceInfoDialog } from "@/features/reflection/dialogs";
 import AppUpdateDialog from "@/features/update/AppUpdateDialog";
@@ -30,6 +31,8 @@ export const DialogRegistry: Record<string, React.ComponentType<any>> = {
   "reflection-timeslice-info": ReflectionTimesliceInfoDialog,
   // App update dialog
   "app-update": AppUpdateDialog,
+  // Insights dialogs
+  "weekly-insight": WeeklyInsightDialog,
 };
 
 export default DialogRegistry;

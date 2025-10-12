@@ -1,31 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { ChatScreen } from "@/features/chat/components/ChatScreen";
 import { useTheme } from "@/shared/hooks";
-import { usePostHog } from "posthog-react-native";
+import { useFeatureFlag } from "@/shared/hooks/useFeatureFlags";
 
 export default function ChatPage() {
   const theme = useTheme();
-  const posthog = usePostHog();
-  const [isChatEnabled, setIsChatEnabled] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    // Check if the 'chat' feature flag is enabled
-    const checkFeatureFlag = async () => {
-      try {
-        const isEnabled = await posthog?.isFeatureEnabled("chat");
-        setIsChatEnabled(isEnabled ?? false);
-      } catch (error) {
-        console.error("Error checking feature flag:", error);
-        setIsChatEnabled(false);
-      }
-    };
-
-    checkFeatureFlag();
-  }, [posthog]);
+  const isChatEnabled = useFeatureFlag("chat");
 
   // Show loading state while checking feature flag
-  if (isChatEnabled === null) {
+  if (isChatEnabled === undefined) {
     return (
       <View
         style={[

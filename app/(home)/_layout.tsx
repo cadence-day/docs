@@ -6,6 +6,7 @@ import { useNavBarSize } from "@/shared/constants/VIEWPORT";
 import { HIT_SLOP_24 } from "@/shared/constants/hitSlop";
 import { useTheme } from "@/shared/hooks";
 import useTranslation from "@/shared/hooks/useI18n";
+import { useFeatureFlag } from "@/shared/hooks/useFeatureFlags";
 import useDialogStore from "@/shared/stores/useDialogStore";
 import { generalStyles } from "@/shared/styles";
 import { Logger } from "@/shared/utils/errorHandler";
@@ -14,8 +15,7 @@ import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Tabs, useSegments } from "expo-router";
 import { Stack } from "expo-router/stack";
-import { usePostHog } from "posthog-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // Custom TabLabel component to have more control over the appearance
@@ -42,25 +42,9 @@ export default function TabLayout() {
   const { user } = useUser();
   const [didCheckEncryption, setDidCheckEncryption] = React.useState(false);
   const theme = useTheme();
-  const posthog = usePostHog();
-  const [isChatEnabled, setIsChatEnabled] = useState(false);
 
-  // Check chat feature flag
-  useEffect(() => {
-    const checkChatFlag = async () => {
-      try {
-        const isEnabled = await posthog?.isFeatureEnabled("chat");
-        setIsChatEnabled(isEnabled ?? false);
-      } catch (error) {
-        Logger.logWarning("Error checking chat feature flag", "CHAT_FLAG", {
-          error,
-        });
-        setIsChatEnabled(false);
-      }
-    };
-
-    checkChatFlag();
-  }, [posthog]);
+  // Use the new feature flag system
+  const isChatEnabled = useFeatureFlag("chat");
 
   // Initialize RevenueCat when user is signed in
   useEffect(() => {
@@ -228,7 +212,8 @@ export default function TabLayout() {
             name="chat"
             options={{
               title: "Chat",
-              href: isChatEnabled ? "/chat" : null,
+              // Only show the chat tab if the feature is explicitly enabled (not undefined/loading)
+              href: isChatEnabled === true ? "/chat" : null,
               tabBarIcon: ({ focused }: TabBarIconProps) => (
                 <TabLabel focused={focused} label="Chat" />
               ),

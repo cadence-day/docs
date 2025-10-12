@@ -10,6 +10,7 @@ import {
 import { COLORS } from "../../constants/COLORS";
 import HIT_SLOP_10 from "../../constants/hitSlop";
 import { useI18n } from "../../hooks/useI18n";
+import { MOOD_LABEL_KEYS_ARRAY } from "../../constants/Mood";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -45,15 +46,6 @@ interface CdMoodSelectorProps {
 
 const CIRCLE_COUNT = 5;
 const ACTIVE_COLOR = COLORS.primary;
-
-// Mood label keys for localization
-const MOOD_LABEL_KEYS = [
-  "mood-labels.sad",
-  "mood-labels.melancholic",
-  "mood-labels.neutral",
-  "mood-labels.content",
-  "mood-labels.happy",
-];
 
 export const CdMoodSelector: React.FC<CdMoodSelectorProps> = ({
   label = "MOOD",
@@ -139,7 +131,7 @@ export const CdMoodSelector: React.FC<CdMoodSelectorProps> = ({
 
         {/* Labels positioned to align with circles */}
         <View style={styles.labelRow}>
-          {MOOD_LABEL_KEYS.map((labelKey, i) => (
+          {MOOD_LABEL_KEYS_ARRAY.map((labelKey, i) => (
             <Text
               key={i}
               style={[styles.circleLabel, dynamicStyles.circleLabel]}

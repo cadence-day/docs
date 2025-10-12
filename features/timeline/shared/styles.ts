@@ -9,7 +9,7 @@ import {
   TIMESLICE_BORDER_RADIUS,
   TIMESLICE_MARGIN_HORIZONTAL,
   TIMESLICE_WIDTH,
-} from "./constants/dimensions";
+} from "./dimensions";
 
 export const styles = StyleSheet.create({
   currentTimeLabel: {
