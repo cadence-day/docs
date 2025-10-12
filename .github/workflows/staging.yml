@@ -62,6 +62,7 @@ jobs:
       APP_STORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }}
       APP_STORE_CONNECT_APP_ID: ${{ secrets.APP_STORE_CONNECT_APP_ID }}
       APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
+      TESTFLIGHT_ALPHA_GROUP_ID: ${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
     steps:
       - uses: actions/checkout@v4
@@ -100,29 +101,53 @@ jobs:
           echo "${{ secrets.APP_STORE_CONNECT_KEY }}" > ./asc-api-key.p8
 
       - name: EAS Build & Submit iOS
-        id: build
+        id: build_submit
         run: |
-          build_output=$(doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit --json")
-          echo "Full build output for debugging:"
+          build_output=$(doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit" 2>&1)
           echo "$build_output"
-          build_id=$(echo "$build_output" | jq -r 'if type == "array" then .[0].id else .id end')
-          echo "Extracted build_id: $build_id"
-          echo "build_id=$build_id" >> $GITHUB_OUTPUT
 
-      - name: Get group id
+          # Extract the App Store Connect URL from the output
+          app_store_url=$(echo "$build_output" | grep -o 'https://appstoreconnect.apple.com/apps/[0-9]*/[a-zA-Z]*' || echo "")
+          echo "app_store_url=$app_store_url" >> $GITHUB_OUTPUT
+
+          # Extract build ID from the URL pattern (e.g., from build logs or submission confirmation)
+          # The build ID should be available in the EAS output after auto-submit
+          build_id=$(echo "$build_output" | grep -o 'Build ID: [a-f0-9-]*' | cut -d' ' -f3 || echo "")
+          if [ -z "$build_id" ]; then
+            # Alternative pattern to extract build ID
+            build_id=$(echo "$build_output" | grep -oE '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}' | head -1 || echo "")
+          fi
+          echo "build_id=$build_id" >> $GITHUB_OUTPUT
+          echo "Extracted build ID: $build_id"
+
+      - name: Wait for App Store Connect Processing
+        if: steps.build_submit.outputs.build_id != ''
+        run: |
+          echo "Waiting 60 seconds for App Store Connect to process the build..."
+          sleep 60
+
+      - name: Use Alpha Users Group
+        if: steps.build_submit.outputs.build_id != ''
         id: group
         run: |
-          group_id=$(./scripts/asc_api_beta_groups.sh get-or-create "alpha-users")
+          # Use the specific alpha-users group ID from GitHub secrets
+          group_id="${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}"
           echo "group_id=$group_id" >> $GITHUB_OUTPUT
+          echo "Using alpha users group ID: $group_id"
 
-      - name: Add build to group
-        run: ./scripts/asc_api_add_build_to_group.sh ${{ steps.build.outputs.build_id }} ${{ steps.group.outputs.group_id }}
+      - name: Add Build to Alpha Users Group
+        if: steps.build_submit.outputs.build_id != '' && steps.group.outputs.group_id != ''
+        run: |
+          echo "Adding build ${{ steps.build_submit.outputs.build_id }} to group ${{ steps.group.outputs.group_id }}"
+          ./scripts/asc_api_add_build_to_group.sh ${{ steps.build_submit.outputs.build_id }} ${{ steps.group.outputs.group_id }}
 
-      - name: Get public TestFlight link
-        id: link
+      - name: Get Public TestFlight Link
+        if: steps.group.outputs.group_id != ''
+        id: testflight
         run: |
           link=$(./scripts/asc_api_get_public_link.sh ${{ steps.group.outputs.group_id }})
-          echo "link=$link" >> $GITHUB_OUTPUT
+          echo "testflight_link=$link" >> $GITHUB_OUTPUT
+          echo "TestFlight public link: $link"
 
       - name: Get App Version & Build Number
         id: get_version
@@ -132,14 +157,19 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "build=$build" >> $GITHUB_OUTPUT
 
-      - name: Comment on PR with TestFlight URL
+      - name: Comment on PR with Build Info
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
-            🚀 TestFlight build uploaded for alpha-users  
+            🚀 Build uploaded to App Store Connect  
             **Version:** ${{ steps.get_version.outputs.version }}  
             **Build:** ${{ steps.get_version.outputs.build }}  
-            [Open TestFlight](${{ steps.link.outputs.link }})
+
+            ${{ steps.build_submit.outputs.app_store_url && format('[View on App Store Connect]({0})', steps.build_submit.outputs.app_store_url) || format('[View on App Store Connect](https://appstoreconnect.apple.com/apps/{0}/distribution)', secrets.APP_STORE_CONNECT_APP_ID) }}
+
+            ${{ steps.testflight.outputs.testflight_link && format('🧪 [Open TestFlight]({0})', steps.testflight.outputs.testflight_link) || '⏳ TestFlight link will be available after processing' }}
+
+            Check App Store Connect for processing status.
 
       - name: Notify Discord
         run: |
@@ -147,22 +177,51 @@ jobs:
           pr_body="${{ github.event.pull_request.body }}"
           version="${{ steps.get_version.outputs.version }}"
           build="${{ steps.get_version.outputs.build }}"
-          link="${{ steps.link.outputs.link }}"
 
-          payload=$(jq -n             --arg title "$pr_title"             --arg body "$pr_body"             --arg ver "$version"             --arg bld "$build"             --arg url "$link"             '{
-              username: "CI/CD Bot",
-              embeds: [
-                {
-                  title: "🚀 New TestFlight build",
-                  description: $body,
-                  fields: [
-                    {name: "Version", value: $ver, inline: true},
-                    {name: "Build", value: $bld, inline: true},
-                    {name: "TestFlight Link", value: $url, inline: false}
-                  ],
-                  color: 5814783
-                }
-              ]
-            }')
+          # Use extracted URL or fallback to constructed URL
+          if [ -n "${{ steps.build_submit.outputs.app_store_url }}" ]; then
+            app_store_link="${{ steps.build_submit.outputs.app_store_url }}"
+          else
+            app_store_link="https://appstoreconnect.apple.com/apps/${{ secrets.APP_STORE_CONNECT_APP_ID }}/distribution"
+          fi
+
+          # Prepare TestFlight link if available
+          testflight_link="${{ steps.testflight.outputs.testflight_link }}"
+
+          if [ -n "$testflight_link" ]; then
+            payload=$(jq -n               --arg title "$pr_title"               --arg body "$pr_body"               --arg ver "$version"               --arg bld "$build"               --arg asc_link "$app_store_link"               --arg tf_link "$testflight_link"               '{
+                username: "CI/CD Bot",
+                embeds: [
+                  {
+                    title: "🚀 New build submitted to App Store Connect",
+                    description: $body,
+                    fields: [
+                      {name: "Version", value: $ver, inline: true},
+                      {name: "Build", value: $bld, inline: true},
+                      {name: "App Store Connect", value: $asc_link, inline: false},
+                      {name: "🧪 TestFlight (Alpha Users)", value: $tf_link, inline: false}
+                    ],
+                    color: 5814783
+                  }
+                ]
+              }')
+          else
+            payload=$(jq -n               --arg title "$pr_title"               --arg body "$pr_body"               --arg ver "$version"               --arg bld "$build"               --arg asc_link "$app_store_link"               '{
+                username: "CI/CD Bot",
+                embeds: [
+                  {
+                    title: "🚀 New build submitted to App Store Connect",
+                    description: $body,
+                    fields: [
+                      {name: "Version", value: $ver, inline: true},
+                      {name: "Build", value: $bld, inline: true},
+                      {name: "App Store Connect", value: $asc_link, inline: false},
+                      {name: "TestFlight Status", value: "⏳ Processing - link will be available soon", inline: false}
+                    ],
+                    color: 5814783
+                  }
+                ]
+              }')
+          fi
 
           curl -H "Content-Type: application/json"             -X POST -d "$payload" $DISCORD_WEBHOOK
