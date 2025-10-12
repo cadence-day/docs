@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "description": "A mobile app for recording daily activities and reflections",
     "ios": {
-      "buildNumber": "124",
+      "buildNumber": "125",
       "supportsTablet": false,
       "bundleIdentifier": "day.cadence.mobile",
       "associatedDomains": [
@@ -79,7 +79,7 @@
       "edgeToEdgeEnabled": true,
       "icon": "./assets/images/icon.png",
       "package": "day.cadence.mobile",
-      "versionCode": 114,
+      "versionCode": 115,
       "permissions": [
         "android.permission.CAMERA"
       ],
