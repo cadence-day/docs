@@ -24,8 +24,8 @@
   "submit": {
     "prd": {
       "ios": {
-        "ascAppId": "$APP_STORE_CONNECT_APP_ID",
-        "appleTeamId": "$APP_STORE_CONNECT_TEAM_ID"
+        "ascAppId": "6745115112",
+        "appleTeamId": "67DCNK6RL4"
       }
     }
   }
