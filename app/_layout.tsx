@@ -22,7 +22,7 @@ import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { PostHogProvider } from "posthog-react-native";
 import { I18nextProvider } from "react-i18next";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import { Logger } from "../shared/utils/errorHandler";
@@ -98,6 +98,10 @@ if (
   );
 }
 
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+});
+
 const RootLayout = function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -118,42 +122,50 @@ const RootLayout = function RootLayout() {
     return null;
   }
 
-  return (
-    <PostHogProvider
-      apiKey={SECRETS.EXPO_PUBLIC_POSTHOG_KEY!}
-      options={{ host: SECRETS.EXPO_PUBLIC_POSTHOG_HOST! }}
-    >
-      <GestureHandlerRootView style={styles.container}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <I18nextProvider i18n={i18n}>
-            <NetworkProvider>
-              <EncryptionProvider>
-                <ToastProvider>
-                  <ClerkProvider
-                    publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-                    tokenCache={tokenCache}
-                  >
-                    <OnboardingProvider>
-                      <NotificationProvider>
-                        <Slot />
-                      </NotificationProvider>
-                    </OnboardingProvider>
-                  </ClerkProvider>
-                </ToastProvider>
-              </EncryptionProvider>
-            </NetworkProvider>
-            <StatusBar style="auto" />
-          </I18nextProvider>
-        </ThemeProvider>
-      </GestureHandlerRootView>
-    </PostHogProvider>
+  // PostHog should only initialize on native platforms, not during web SSR
+  const shouldUsePostHog =
+    Platform.OS !== "web" &&
+    SECRETS.EXPO_PUBLIC_POSTHOG_KEY &&
+    SECRETS.EXPO_PUBLIC_POSTHOG_HOST;
+
+  const content = (
+    <GestureHandlerRootView style={styles.container}>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <I18nextProvider i18n={i18n}>
+          <NetworkProvider>
+            <EncryptionProvider>
+              <ToastProvider>
+                <ClerkProvider
+                  publishableKey={SECRETS.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+                  tokenCache={tokenCache}
+                >
+                  <OnboardingProvider>
+                    <NotificationProvider>
+                      <Slot />
+                    </NotificationProvider>
+                  </OnboardingProvider>
+                </ClerkProvider>
+              </ToastProvider>
+            </EncryptionProvider>
+          </NetworkProvider>
+          <StatusBar style="auto" />
+        </I18nextProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
+
+  if (shouldUsePostHog) {
+    return (
+      <PostHogProvider
+        apiKey={SECRETS.EXPO_PUBLIC_POSTHOG_KEY!}
+        options={{ host: SECRETS.EXPO_PUBLIC_POSTHOG_HOST! }}
+      >
+        {content}
+      </PostHogProvider>
+    );
+  }
+
+  return content;
 };
 
 export default Sentry.getClient() ? Sentry.wrap(RootLayout) : RootLayout;
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-});
