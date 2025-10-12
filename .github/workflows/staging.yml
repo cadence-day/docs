@@ -100,83 +100,6 @@ jobs:
         run: |
           echo "${{ secrets.APP_STORE_CONNECT_KEY }}" > ./asc-api-key.p8
 
-      - name: EAS Build & Submit iOS
-        id: build_submit
-        run: |
-          # Run the build and capture output, but also display it in real-time
-          echo "Starting EAS build and submit..."
-          echo "APPLE_DEVELOPER_EMAIL: $APPLE_DEVELOPER_EMAIL"
-          echo "APP_STORE_CONNECT_KEY_ID: $APP_STORE_CONNECT_KEY_ID"
-          echo "APP_STORE_CONNECT_KEY_ISSUER_ID: $APP_STORE_CONNECT_KEY_ISSUER_ID"
-
-          set +e  # Don't exit on error so we can capture the output
-          # Pass environment variables explicitly to doppler
-          APPLE_DEVELOPER_EMAIL="$APPLE_DEVELOPER_EMAIL" \
-          APP_STORE_CONNECT_KEY_ID="$APP_STORE_CONNECT_KEY_ID" \
-          APP_STORE_CONNECT_KEY_ISSUER_ID="$APP_STORE_CONNECT_KEY_ISSUER_ID" \
-          doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit" 2>&1 | tee build_output.txt
-          exit_code=${PIPESTATUS[0]}
-          set -e  # Re-enable exit on error
-
-          echo "========================"
-          echo "EAS command exit code: $exit_code"
-          echo "========================"
-
-          # If the build failed, show the error and exit
-          if [ $exit_code -ne 0 ]; then
-            echo "EAS build failed with exit code $exit_code"
-            echo "Last 20 lines of output:"
-            tail -20 build_output.txt
-            rm -f build_output.txt
-            exit $exit_code
-          fi
-
-          # Extract App Store Connect URL
-          app_store_url=$(grep -o "https://appstoreconnect.apple.com/apps/[0-9]*/[a-zA-Z]*" build_output.txt || echo "")
-          echo "app_store_url=$app_store_url" >> $GITHUB_OUTPUT
-          echo "Extracted App Store URL: $app_store_url"
-
-          # Try to extract build ID - first try simple pattern, then UUID pattern
-          build_id=$(grep -o "Build ID: [a-f0-9-]*" build_output.txt | cut -d' ' -f3 | head -1 || echo "")
-          if [ -z "$build_id" ]; then
-            # Try UUID pattern
-            build_id=$(grep -oE "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}" build_output.txt | head -1 || echo "")
-          fi
-          echo "build_id=$build_id" >> $GITHUB_OUTPUT
-          echo "Extracted build ID: $build_id"
-
-          # Clean up temp file
-          rm -f build_output.txt
-
-      - name: Wait for App Store Connect Processing
-        if: steps.build_submit.outputs.build_id != ''
-        run: |
-          echo "Waiting 60 seconds for App Store Connect to process the build..."
-          sleep 60
-
-      - name: Use Alpha Users Group
-        if: steps.build_submit.outputs.build_id != ''
-        id: group
-        run: |
-          # Use the specific alpha-users group ID from GitHub secrets
-          group_id="${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}"
-          echo "group_id=$group_id" >> $GITHUB_OUTPUT
-          echo "Using alpha users group ID: $group_id"
-
-      - name: Add Build to Alpha Users Group
-        if: steps.build_submit.outputs.build_id != '' && steps.group.outputs.group_id != ''
-        run: |
-          echo "Adding build ${{ steps.build_submit.outputs.build_id }} to group ${{ steps.group.outputs.group_id }}"
-          ./scripts/asc_api_add_build_to_group.sh ${{ steps.build_submit.outputs.build_id }} ${{ steps.group.outputs.group_id }}
-
-      - name: Get Public TestFlight Link
-        if: steps.group.outputs.group_id != ''
-        id: testflight
-        run: |
-          link=$(./scripts/asc_api_get_public_link.sh ${{ steps.group.outputs.group_id }})
-          echo "testflight_link=$link" >> $GITHUB_OUTPUT
-          echo "TestFlight public link: $link"
-
       - name: Get App Version & Build Number
         id: get_version
         run: |
@@ -185,19 +108,46 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "build=$build" >> $GITHUB_OUTPUT
 
+      - name: EAS Build & Submit iOS
+        run: |
+          doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit"
+
+      - name: Wait for App Store Connect Processing
+        run: |
+          echo "Waiting 300 seconds for App Store Connect to process the build..."
+          sleep 300
+
+      - name: Get Latest Build from ASC
+        id: asc_build
+        run: |
+          echo "Fetching latest build for version ${{ steps.get_version.outputs.version }} from App Store Connect..."
+          build_id=$(./scripts/asc_api_get_latest_build.sh "${{ secrets.APP_STORE_CONNECT_APP_ID }}" "${{ steps.get_version.outputs.version }}")
+          echo "build_id=$build_id" >> $GITHUB_OUTPUT
+          echo "Found build ID: $build_id"
+
+      - name: Add Build to Alpha Users Group
+        run: |
+          echo "Adding build ${{ steps.asc_build.outputs.build_id }} to group ${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}"
+          ./scripts/asc_api_add_build_to_group.sh "${{ steps.asc_build.outputs.build_id }}" "${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}"
+
+      - name: Get Public TestFlight Link
+        id: testflight
+        run: |
+          link=$(./scripts/asc_api_get_public_link.sh "${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}")
+          echo "testflight_link=$link" >> $GITHUB_OUTPUT
+          echo "TestFlight public link: $link"
+
       - name: Comment on PR with Build Info
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
-            🚀 Build uploaded to App Store Connect  
-            **Version:** ${{ steps.get_version.outputs.version }}  
-            **Build:** ${{ steps.get_version.outputs.build }}  
+            🚀 Build uploaded to App Store Connect
+            **Version:** ${{ steps.get_version.outputs.version }}
+            **Build:** ${{ steps.get_version.outputs.build }}
 
-            ${{ steps.build_submit.outputs.app_store_url && format('[View on App Store Connect]({0})', steps.build_submit.outputs.app_store_url) || format('[View on App Store Connect](https://appstoreconnect.apple.com/apps/{0}/distribution)', secrets.APP_STORE_CONNECT_APP_ID) }}
+            [View on App Store Connect](https://appstoreconnect.apple.com/apps/${{ secrets.APP_STORE_CONNECT_APP_ID }}/distribution)
 
             ${{ steps.testflight.outputs.testflight_link && format('🧪 [Open TestFlight]({0})', steps.testflight.outputs.testflight_link) || '⏳ TestFlight link will be available after processing' }}
-
-            Check App Store Connect for processing status.
 
       - name: Notify Discord
         run: |
@@ -205,19 +155,18 @@ jobs:
           pr_body="${{ github.event.pull_request.body }}"
           version="${{ steps.get_version.outputs.version }}"
           build="${{ steps.get_version.outputs.build }}"
-
-          # Use extracted URL or fallback to constructed URL
-          if [ -n "${{ steps.build_submit.outputs.app_store_url }}" ]; then
-            app_store_link="${{ steps.build_submit.outputs.app_store_url }}"
-          else
-            app_store_link="https://appstoreconnect.apple.com/apps/${{ secrets.APP_STORE_CONNECT_APP_ID }}/distribution"
-          fi
-
-          # Prepare TestFlight link if available
+          app_store_link="https://appstoreconnect.apple.com/apps/${{ secrets.APP_STORE_CONNECT_APP_ID }}/distribution"
           testflight_link="${{ steps.testflight.outputs.testflight_link }}"
 
           if [ -n "$testflight_link" ]; then
-            payload=$(jq -n               --arg title "$pr_title"               --arg body "$pr_body"               --arg ver "$version"               --arg bld "$build"               --arg asc_link "$app_store_link"               --arg tf_link "$testflight_link"               '{
+            payload=$(jq -n \
+              --arg title "$pr_title" \
+              --arg body "$pr_body" \
+              --arg ver "$version" \
+              --arg bld "$build" \
+              --arg asc_link "$app_store_link" \
+              --arg tf_link "$testflight_link" \
+              '{
                 username: "CI/CD Bot",
                 embeds: [
                   {
@@ -234,7 +183,13 @@ jobs:
                 ]
               }')
           else
-            payload=$(jq -n               --arg title "$pr_title"               --arg body "$pr_body"               --arg ver "$version"               --arg bld "$build"               --arg asc_link "$app_store_link"               '{
+            payload=$(jq -n \
+              --arg title "$pr_title" \
+              --arg body "$pr_body" \
+              --arg ver "$version" \
+              --arg bld "$build" \
+              --arg asc_link "$app_store_link" \
+              '{
                 username: "CI/CD Bot",
                 embeds: [
                   {
@@ -252,4 +207,4 @@ jobs:
               }')
           fi
 
-          curl -H "Content-Type: application/json"             -X POST -d "$payload" $DISCORD_WEBHOOK
+          curl -H "Content-Type: application/json" -X POST -d "$payload" $DISCORD_WEBHOOK
