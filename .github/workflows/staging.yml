@@ -110,7 +110,7 @@ jobs:
 
       - name: EAS Build & Submit iOS
         run: |
-          doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile prd --non-interactive --auto-submit"
+          doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_PRD }} --command "eas build -p ios --profile prd --non-interactive --auto-submit"
 
       - name: Wait for App Store Connect Processing
         run: |
