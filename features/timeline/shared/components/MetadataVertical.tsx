@@ -1,4 +1,4 @@
-import { styles } from "@/features/timeline/styles";
+import { styles } from "../styles";
 import NoteIcon from "@/shared/components/icons/NoteIcon";
 import { COLORS } from "@/shared/constants/COLORS";
 import { HIT_SLOP_10 } from "@/shared/constants/hitSlop";
