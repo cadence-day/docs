@@ -1,0 +1,138 @@
+name: ASC Troubleshoot
+
+on:
+    workflow_dispatch:
+
+jobs:
+    asc-troubleshoot:
+        runs-on: macos-latest
+        env:
+            APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
+            APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+            APP_STORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }}
+            APP_STORE_CONNECT_APP_ID: ${{ secrets.APP_STORE_CONNECT_APP_ID }}
+            APP_STORE_CONNECT_TEAM_ID: ${{ secrets.APP_STORE_CONNECT_TEAM_ID }}
+            APPLE_DEVELOPER_EMAIL: ${{ secrets.APPLE_DEVELOPER_EMAIL }}
+            TESTFLIGHT_ALPHA_GROUP_ID: ${{ secrets.TESTFLIGHT_ALPHA_GROUP_ID }}
+            DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+            EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  ref: staging
+                  fetch-depth: 0
+            - name: Get App Version & Build Number
+              id: get_version
+              run: |
+                  version=$(jq -r '.expo.version' app.json)
+                  build=$(jq -r '.expo.ios.buildNumber' app.json)
+                  echo "version=$version" >> $GITHUB_OUTPUT
+                  echo "build=$build" >> $GITHUB_OUTPUT
+                  echo "VERSION=$version" >> $GITHUB_ENV
+                  echo "BUILD=$build" >> $GITHUB_ENV
+            - name: Get Latest Build from ASC
+              id: asc_build
+              run: |
+                  set -x
+                  echo "Fetching latest build for version $VERSION from App Store Connect..."
+                  build_id=$(./scripts/asc_api_get_latest_build.sh "${{ secrets.APP_STORE_CONNECT_APP_ID }}" "$VERSION" 2>&1)
+                  status=$?
+                  echo "Script output: $build_id"
+                  if [ $status -ne 0 ]; then
+                    echo "ERROR: asc_api_get_latest_build.sh failed with exit code $status"
+                    exit $status
+                  fi
+                  echo "build_id=$build_id" >> $GITHUB_OUTPUT
+                  echo "BUILD_ID=$build_id" >> $GITHUB_ENV
+                  echo "Found build ID: $build_id"
+              shell: /bin/bash -e {0}
+            - name: Add Build to Alpha Users Group
+              run: |
+                  set -x
+                  echo "Adding build $BUILD_ID to group $TESTFLIGHT_ALPHA_GROUP_ID"
+                  output=$(./scripts/asc_api_add_build_to_group.sh "$BUILD_ID" "$TESTFLIGHT_ALPHA_GROUP_ID" 2>&1)
+                  status=$?
+                  echo "Script output: $output"
+                  if [ $status -ne 0 ]; then
+                    echo "ERROR: asc_api_add_build_to_group.sh failed with exit code $status"
+                    exit $status
+                  fi
+                  echo "Build added to group."
+              shell: /bin/bash -e {0}
+            - name: Get Public TestFlight Link
+              id: testflight
+              run: |
+                  set -x
+                  link=$(./scripts/asc_api_get_public_link.sh "$TESTFLIGHT_ALPHA_GROUP_ID" 2>&1)
+                  status=$?
+                  echo "Script output: $link"
+                  if [ $status -ne 0 ]; then
+                    echo "ERROR: asc_api_get_public_link.sh failed with exit code $status"
+                    exit $status
+                  fi
+                  echo "testflight_link=$link" >> $GITHUB_OUTPUT
+                  echo "TESTFLIGHT_LINK=$link" >> $GITHUB_ENV
+                  echo "TestFlight public link: $link"
+              shell: /bin/bash -e {0}
+            - name: Notify Discord
+              run: |
+                  set -x
+                  pr_title="${{ github.event.pull_request.title }}"
+                  pr_body="${{ github.event.pull_request.body }}"
+                  version="$VERSION"
+                  build="$BUILD"
+                  app_store_link="https://appstoreconnect.apple.com/apps/${{ secrets.APP_STORE_CONNECT_APP_ID }}/distribution"
+                  testflight_link="$TESTFLIGHT_LINK"
+
+                  if [ -n "$testflight_link" ]; then
+                    payload=$(jq -n \
+                      --arg title "$pr_title" \
+                      --arg body "$pr_body" \
+                      --arg ver "$version" \
+                      --arg bld "$build" \
+                      --arg asc_link "$app_store_link" \
+                      --arg tf_link "$testflight_link" \
+                      '{
+                        username: "CI/CD Bot",
+                        embeds: [
+                          {
+                            title: "🚀 New build submitted to App Store Connect",
+                            description: $body,
+                            fields: [
+                              {name: "Version", value: $ver, inline: true},
+                              {name: "Build", value: $bld, inline: true},
+                              {name: "App Store Connect", value: $asc_link, inline: false},
+                              {name: "🧪 TestFlight (Alpha Users)", value: $tf_link, inline: false}
+                            ],
+                            color: 5814783
+                          }
+                        ]
+                      }')
+                  else
+                    payload=$(jq -n \
+                      --arg title "$pr_title" \
+                      --arg body "$pr_body" \
+                      --arg ver "$version" \
+                      --arg bld "$build" \
+                      --arg asc_link "$app_store_link" \
+                      '{
+                        username: "CI/CD Bot",
+                        embeds: [
+                          {
+                            title: "🚀 New build submitted to App Store Connect",
+                            description: $body,
+                            fields: [
+                              {name: "Version", value: $ver, inline: true},
+                              {name: "Build", value: $bld, inline: true},
+                              {name: "App Store Connect", value: $asc_link, inline: false},
+                              {name: "TestFlight Status", value: "⏳ Processing - link will be available soon", inline: false}
+                            ],
+                            color: 5814783
+                          }
+                        ]
+                      }')
+                  fi
+
+                  curl -H "Content-Type: application/json" -X POST -d "$payload" $DISCORD_WEBHOOK
+              shell: /bin/bash -e {0}

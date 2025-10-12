@@ -56,7 +56,7 @@ jobs:
         run: doppler run --project cadence-app --config stg --token ${{ secrets.DOPPLER_TOKEN_STG }} --command "eas build -p ios --profile stg --non-interactive"
 
   submit-on-merge:
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: false # Deactivated for troubleshooting
     runs-on: macos-latest
     env:
       APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
