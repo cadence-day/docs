@@ -133,7 +133,7 @@
 .button--outline,
 button {
   border-radius: var(--ifm-button-border-radius);
-  font-weight: 600;
+  font-weight: 400;
   transition: all 0.2s ease;
   border: 1px solid #6646ec;
 }
@@ -181,9 +181,32 @@ button {
 
 /* Search Bar - Rounded */
 .navbar__search-input {
-  border-radius: 20px;
-  background-color: var(--ifm-background-surface-color);
+  border-radius: 100px;
+  background-color: transparent;
   border: 1px solid var(--ifm-border-color);
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(102, 70, 236, 0.08);
+    transition: all 0.2s ease;
+    color: var(--ifm-font-color-base);
+  }
+
+  .navbar__search-input:focus {
+    outline: none;
+    background-color: transparent;
+    color: var(--ifm-font-color-base);
+    border-color: transparent;
+    border-radius: 50px;
+    box-shadow: 0 4px 16px rgba(102, 70, 236, 0.18);
+  }
+
+  .navbar__search-input::placeholder {
+    color: var(--ifm-font-color-secondary);
+    opacity: 0.7;
+  }
+
+  .navbar__search-input:focus::placeholder {
+    color: var(--ifm-font-color-secondary);
 }
 
 /* Cards - enhanced readability with purple borders */
@@ -224,9 +247,57 @@ code {
 
 /* Navbar - Cadence styling */
 .navbar {
-  background-color: var(--ifm-background-surface-color);
+  background: var(--ifm-navbar-background-color);
   border-bottom: 1px solid var(--ifm-border-color);
   box-shadow: var(--ifm-navbar-shadow);
+}
+
+.navbar__brand {
+  font-weight: 300;
+  letter-spacing: 1.5px;
+  font-size: 1.2rem;
+  color: var(--ifm-font-color-base);
+}
+
+.navbar__item {
+  font-weight: 400;
+}
+
+.navbar__link {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s ease;
+  color: var(--ifm-font-color-secondary);
+}
+
+.navbar__link:hover {
+  background: rgba(102, 70, 236, 0.1);
+  text-decoration: none;
+  color: var(--ifm-font-color-base);
+}
+
+.navbar__link--active {
+  background: linear-gradient(135deg, rgba(102, 70, 236, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+  font-weight: 400;
+  color: var(--ifm-font-color-base);
+}
+
+/* Dark mode navbar */
+[data-theme="dark"] .navbar {
+  background: #2B2B2B;
+}
+
+[data-theme="dark"] .navbar__brand {
+  color: white;
+}
+
+[data-theme="dark"] .navbar__link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] .navbar__link:hover,
+[data-theme="dark"] .navbar__link--active {
+  color: white;
 }
 
 /* Sidebar - Cadence styling with clean background like navbar */
@@ -248,7 +319,7 @@ code {
 
 .menu__link--active {
   background: rgba(102, 70, 236, 0.15);
-  font-weight: 600;
+  font-weight: 400;
   color: var(--ifm-font-color-base);
 }
 
@@ -295,7 +366,7 @@ code {
 
 .footer__title {
   color: white;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .footer__item {
@@ -316,69 +387,6 @@ code {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Navbar - Enhanced styling */
-.navbar {
-  background: var(--ifm-navbar-background-color);
-  border-bottom: 1px solid var(--ifm-border-color);
-  box-shadow: var(--ifm-navbar-shadow);
-}
-
-.navbar__brand {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--ifm-font-color-base);
-}
-
-.navbar__item {
-  font-weight: 500;
-}
-
-.navbar__link {
-  border-radius: 6px;
-  padding: 0.5rem 0.75rem;
-  transition: all 0.2s ease;
-  color: var(--ifm-font-color-secondary);
-}
-
-.navbar__link:hover {
-  background: rgba(102, 70, 236, 0.1);
-  text-decoration: none;
-  color: var(--ifm-font-color-base);
-}
-
-.navbar__link--active {
-  background: linear-gradient(135deg, rgba(102, 70, 236, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
-  font-weight: 600;
-  color: var(--ifm-font-color-base);
-}
-
-/* Dark mode navbar adjustments */
-[data-theme="dark"] .navbar {
-  background: #2B2B2B;
-}
-
-[data-theme="dark"] .navbar__brand {
-  color: white;
-}
-
-[data-theme="dark"] .navbar__link {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-[data-theme="dark"] .navbar__link:hover,
-[data-theme="dark"] .navbar__link--active {
-  color: white;
-}
-
-/* Dark mode navbar */
-[data-theme="dark"] .navbar {
-  background: #2B2B2B;
-}
-
-[data-theme="dark"] .footer {
-  background: #151414;
-}
-
 /* Hero Section - Cadence styling */
 .hero {
   background: transparent;
@@ -386,7 +394,8 @@ code {
 }
 
 .hero__title {
-  font-weight: 700;
+  font-weight: 400;
+  letter-spacing: 1.5px;
   background: linear-gradient(135deg, #6646EC 0%, #8B5CF6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -427,7 +436,7 @@ code {
 }
 
 .table-of-contents__link--active {
-  font-weight: 600;
+  font-weight: 400;
   color: var(--ifm-font-color-base);
   background: rgba(102, 70, 236, 0.15);
   border-color: #6646ec;
@@ -475,7 +484,7 @@ code {
 }
 
 .tabs__item--active {
-  font-weight: 600;
+  font-weight: 400;
   border-color: #6646ec;
   border-bottom-color: transparent;
   background: rgba(102, 70, 236, 0.1);
@@ -612,27 +621,215 @@ a[target="_blank"]::after {
 }
 
 /* Show caret icon for navbar and footer external links */
-.navbar a[href*="://"]::after,
-.footer a[href*="://"]::after,
-.navbar a[target="_blank"]::after,
-.footer a[target="_blank"]::after {
-  content: "";
-  display: inline-block;
-  width: 0.875em;
-  height: 0.875em;
-  margin-left: 0.25em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%236646ec'%3E%3Cpath d='M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z'%3E%3C/path%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  vertical-align: middle;
-  text-decoration: none;
+
+/* Fine-tuned DocSearch Modal and SearchBar */
+[data-theme='light'] .DocSearch {
+  --docsearch-primary-color: #6646ec;
+  --docsearch-text-color: #f5f5f5;
+  --docsearch-muted-color: #b3b3b3;
+  --docsearch-container-background: rgba(94, 100, 112, 0.8);
+  --docsearch-modal-background: #2B2B2B;
+  --docsearch-searchbox-background: #1a1a1a;
+  --docsearch-searchbox-focus-background: #1a1a1a;
+  --docsearch-searchbox-shadow: 0 4px 12px rgba(102, 70, 236, 0.15);
+  --docsearch-separator-color: rgba(102, 70, 236, 0.2);
+  --docsearch-hit-color: #f5f5f5;
+  --docsearch-hit-active-color: #ffffff;
+  --docsearch-hit-background: #1a1a1a;
+  --docsearch-hit-shadow: 0 1px 3px rgba(102, 70, 236, 0.1);
+  --docsearch-key-gradient: linear-gradient(135deg, #2B2B2B 0%, #1a1a1a 100%);
+  --docsearch-key-shadow: inset 0 -2px 0 0 rgba(102, 70, 236, 0.2);
 }
 
-/* Dark theme for navbar and footer external link icons */
-[data-theme="dark"] .navbar a[href*="://"]::after,
-[data-theme="dark"] .footer a[href*="://"]::after,
-[data-theme="dark"] .navbar a[target="_blank"]::after,
-[data-theme="dark"] .footer a[target="_blank"]::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%238870f2'%3E%3Cpath d='M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z'%3E%3C/path%3E%3C/svg%3E");
+[data-theme='dark'] .DocSearch {
+  --docsearch-primary-color: #8B5CF6;
+  --docsearch-text-color: #f5f5f5;
+  --docsearch-muted-color: #b3b3b3;
+  --docsearch-container-background: rgba(21, 20, 20, 0.85);
+  --docsearch-modal-background: #2B2B2B;
+  --docsearch-searchbox-background: #1a1a1a;
+  --docsearch-searchbox-focus-background: #1a1a1a;
+  --docsearch-searchbox-shadow: 0 4px 12px rgba(102, 70, 236, 0.15);
+  --docsearch-separator-color: rgba(139, 92, 246, 0.3);
+  --docsearch-hit-color: #f5f5f5;
+  --docsearch-hit-active-color: #ffffff;
+  --docsearch-hit-background: #1a1a1a;
+  --docsearch-hit-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --docsearch-key-gradient: linear-gradient(135deg, #2B2B2B 0%, #1a1a1a 100%);
+  --docsearch-key-shadow: inset 0 -2px 0 0 rgba(139, 92, 246, 0.3);
+}
+
+/* DocSearch Modal Customization */
+.DocSearch-Modal {
+  border-radius: 1.25rem !important;
+  border: 2px solid #8B5CF6 !important;
+  box-shadow: 0 8px 32px rgba(102, 70, 236, 0.2) !important;
+  backdrop-filter: blur(10px) !important;
+  background: linear-gradient(135deg, #2B2B2B 0%, #151414 100%) !important;
+}
+
+[data-theme='dark'] .DocSearch-Modal {
+  background: linear-gradient(135deg, #3a3a3a 0%, #2B2B2B 100%) !important;
+  box-shadow: 0 8px 32px rgba(102, 70, 236, 0.3) !important;
+}
+
+/* DocSearch SearchBar */
+.DocSearch-SearchBar {
+  padding: 0 1.5rem !important;
+  border-radius: 1rem !important;
+  background: transparent !important;
+}
+
+/* DocSearch Form */
+.DocSearch-Form {
+  border-radius: 0.75rem !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+  padding: 0 1rem !important;
+}
+
+/* DocSearch Input */
+.DocSearch-Input {
+  font-size: 1rem !important;
+  color: var(--docsearch-text-color) !important;
+  font-family: 'Founders Grotesk', sans-serif !important;
+  padding-left: 1rem !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.DocSearch-Input:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.DocSearch-Input::placeholder {
+  color: var(--docsearch-muted-color) !important;
+  opacity: 0.7 !important;
+}
+
+/* DocSearch Search Icon */
+.DocSearch-MagnifierLabel {
+  transition: all 0.2s ease !important;
+}
+
+.DocSearch-MagnifierLabel .DocSearch-Search-Icon {
+  color: var(--docsearch-muted-color) !important;
+  transition: all 0.2s ease !important;
+}
+
+.DocSearch-Form:focus-within .DocSearch-MagnifierLabel .DocSearch-Search-Icon {
+  color: #8B5CF6 !important;
+}
+
+/* DocSearch Close Button */
+.DocSearch-Close {
+  border-radius: 0.5rem !important;
+  background: rgba(102, 70, 236, 0.1) !important;
+  color: var(--docsearch-primary-color) !important;
+  transition: all 0.2s ease !important;
+}
+
+.DocSearch-Close:hover {
+  background: rgba(102, 70, 236, 0.2) !important;
+  transform: scale(1.05) !important;
+}
+
+/* DocSearch Hits Container */
+.DocSearch-Dropdown {
+  border-radius: 0.75rem !important;
+  padding: 0.5rem !important;
+}
+
+/* DocSearch Hit (Result Item) */
+.DocSearch-Hit {
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important;
+  margin-bottom: 0.25rem !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+}
+
+.DocSearch-Hit[aria-selected='true'] {
+  background: linear-gradient(135deg, rgba(102, 70, 236, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%) !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(102, 70, 236, 0.15) !important;
+}
+
+/* DocSearch Hit Title */
+.DocSearch-Hit-title {
+  font-family: 'Founders Grotesk', sans-serif !important;
+  font-weight: 500 !important;
+}
+
+/* DocSearch Footer */
+.DocSearch-Footer {
+  border-radius: 0 0 1rem 1rem !important;
+  padding: 1rem 1.5rem !important;
+  border-top: 1px solid #444 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* DocSearch Commands Keys */
+.DocSearch-Commands-Key {
+  border-radius: 0.375rem !important;
+  background: var(--docsearch-key-gradient) !important;
+  border: none !important;
+  box-shadow: var(--docsearch-key-shadow) !important;
+  padding: 0.25rem 0.5rem !important;
+  font-family: 'Founders Grotesk', sans-serif !important;
+  font-size: 0.75rem !important;
+}
+
+/* DocSearch Logo Link */
+.DocSearch-Logo a {
+  transition: all 0.2s ease !important;
+}
+
+.DocSearch-Logo a:hover {
+  opacity: 0.8 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Algolia logo adjustments */
+.DocSearch-Logo svg, .DocSearch-Commands-Key {
+  border-radius: 0.375rem !important;
+  background: linear-gradient(135deg, #2B2B2B 0%, #1a1a1a 100%) !important;
+  box-shadow: none !important;
+  padding: 0.25rem 0.5rem !important;
+  font-family: 'Founders Grotesk', sans-serif !important;
+  font-size: 0.75rem !important;
+}
+
+/* DocSearch Button - Fully rounded for pill-shaped appearance */
+.DocSearch-Button {
+  border-radius: 999px !important;
+  background: #f7f7f6 !important;
+}
+
+[data-theme="dark"] .DocSearch-Button {
+  background: #2B2B2B !important;
+}
+
+/* Clear the query button - purple color */
+.DocSearch-Clear {
+  border: none !important;
+  color: #8B5CF6 !important;
+  background: transparent !important;
+}
+
+/* Set all SVG icons to use the highlight purple color for consistency */
+svg {
+  color: #8B5CF6 !important;
+  fill: #8B5CF6 !important;
+}
+
+/* Add horizontal padding to sidebar back button */
+.clean-btn.navbar-sidebar__back {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }

@@ -46,9 +46,9 @@ This Agreement is governed by the laws of Germany. All disputes shall be subject
 
 ## 9. Contact
 
-For questions about this EULA, contact us at [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}).
+For questions about this EULA, contact us at [admin@cadence.day](mailto:admin@cadence.day).
 
-Office Address: ${OFFICE_ADDRESS}
+Office Address: 2 Danziger Str, Berlin 10435, Germany
 
 ---
 

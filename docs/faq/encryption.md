@@ -132,14 +132,14 @@ Yes! Cadence is fully compliant with GDPR (General Data Protection Regulation):
 - **Data minimization**: We only collect what's necessary
 - **Consent**: Clear opt-ins for data collection
 
-For GDPR inquiries, contact: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})
+For GDPR inquiries, contact: [admin@cadence.day](mailto:admin@cadence.day)
 
 ## How do I report a security issue?
 
 If you discover a security vulnerability:
 
 1. **Do not** post it publicly
-2. Email us immediately at: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})
+2. Email us immediately at: [admin@cadence.day](mailto:admin@cadence.day)
 3. Include:
    - Description of the vulnerability
    - Steps to reproduce
@@ -158,7 +158,7 @@ While we use strong encryption, HIPAA compliance requires additional:
 - Physical safeguards
 - Employee training certifications
 
-If you need HIPAA compliance, please contact us at: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}) to discuss potential enterprise solutions.
+If you need HIPAA compliance, please contact us at: [admin@cadence.day](mailto:admin@cadence.day) to discuss potential enterprise solutions.
 
 ## What encryption libraries does Cadence use?
 
@@ -174,7 +174,7 @@ All libraries are regularly updated to patch vulnerabilities.
 
 Not yet, but we're planning to launch one! In the meantime:
 
-- Report vulnerabilities to: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})
+- Report vulnerabilities to: [admin@cadence.day](mailto:admin@cadence.day)
 - We may offer rewards on a case-by-case basis
 - You'll be credited in our security acknowledgments (with permission)
 
@@ -204,7 +204,7 @@ Current security measures:
 
 If you have additional security or privacy questions:
 
-- Email: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})
+- Email: [admin@cadence.day](mailto:admin@cadence.day)
 - View our [Privacy Policy](/docs/legal/privacy)
 - View our [Terms of Service](/docs/legal/terms)
 
