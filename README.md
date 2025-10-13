@@ -9,23 +9,21 @@ Get access to FAQ/Blog and Docs on [docs.cadence.day](https://docs.cadence.day)
 
 ## 🚀 Quick Start
 
-1. **Prerequisites**: Node.js 18+, npm, Expo CLI
+1. **Prerequisites**: Node.js 22, npm, Expo CLI
 2. **Install**: `npm install`
-3. **Environment**: Copy `.env.example` → `.env.development` and configure
-4. **Start**: `npm start`
+3. **Environment**: integrated with Doppler
+4. **Clean Start**: `npm run clean`
 5. **Run**: `npm run ios` or `npm run android`
-
-> Note: Android has not been tested yet.
 
 **📖 [Full Setup Guide](docs/getting-started.md)** | **🐛 [Known Issues](docs/known-issues.md)**
 
 ## 🏗️ Architecture
 
-- **Feature-based**: Modular features in `features/` with their own components, hooks, services
-- **Shared foundation**: Common UI, stores, utils in `shared/`
+- **Feature-based**: Modular features in `features/` with their own components, hooks, services, stores, api, ...
+- **Shared foundation**: Common UI, stores, utils, api client, constants, styles in `shared/`
 - **Type-safe**: Auto-generated Supabase types + TypeScript throughout
 - **State management**: Zustand stores with consistent API patterns
-- **Error handling**: Global error system with user feedback using toasts and dialogs.
+- **Error handling**: Integrated error Logging system with custom user feedback using toasts and dialogs.
 
 **📖 [Architecture Guide](docs/feature-architecture.md)** | **📖 [Coding Standards](docs/coding-standards.md)**
 
@@ -37,10 +35,13 @@ Get access to FAQ/Blog and Docs on [docs.cadence.day](https://docs.cadence.day)
 - **Supabase**: Backend, database, authentication
 - **Clerk**: User authentication and management
 - **Sentry**: Error tracking and monitoring
+- **Posthog**: Feature flag system
+- **Doppler**: Environment variables manager
+
+> - Check [cadence-docs](/cadence-docs/README.md) for its own Stack
+> - Check [supabase](/supabase/README.md) for our database information
 
 ---
-
-MIT License
 
 ## 📝 Development Scripts
 
@@ -61,25 +62,29 @@ MIT License
 ## 📁 Project Structure
 
 ```
-features/               # Feature modules
-  activity/            # Activity tracking
-    components/        # Feature-specific components
+features/             # Feature modules
+  activity/           # Activity tracking
+    components/       # Feature-specific components
     dialogs/          # Feature dialogs
     hooks/            # Feature hooks
     index.ts          # Public API
     types.ts          # Feature types
+    styles.ts         # Specific styling elements
     utils.ts          # Feature utilities
 
-shared/                # Shared code
-  api/                 # API clients
-  components/          # Reusable UI components
+shared/               # Shared code
+  api/                # API clients
+  components/         # Reusable UI components
   dialogs/            # Dialog system
   stores/             # Zustand stores
   types/              # Shared TypeScript types
   utils/              # Shared utilities
+  styles/             # Shared Styling
+  constants/          # Shared Constants
 
-app/                   # Expo Router routes
+app/                  # Expo Router routes
 supabase/             # Database config & migrations
+cadence-docs/         # Blogging, FAQ, Developers documentation
 ```
 
 ## 🏗️ Building & Deployment
@@ -104,10 +109,6 @@ supabase/             # Database config & migrations
 3. Use TypeScript for all new code
 4. Include tests for critical functionality
 5. Update documentation for new features
-
-## 📄 License
-
-MIT License - see LICENSE file for details
 
 ---
 
