@@ -1,10 +1,11 @@
-# 🧭 Cadence.day Mobile App
+# Cadence App
 
-![Cadence Logo](assets/images/splash-icon.png)
+<img width="4800" height="1920" alt="Github Repo Banner" src="https://github.com/user-attachments/assets/e46ae404-e70f-4066-aecc-2469cf02f2fe" />
 
 A React Native mobile app for activity tracking, note-taking, and personal productivity/reflection management.
 
 Checkout more details on [cadence.day](https://cadence.day)
+Get access to FAQ/Blog and Docs on [docs.cadence.day](https://docs.cadence.day)
 
 ## 🚀 Quick Start
 
