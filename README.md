@@ -5,6 +5,7 @@
 A React Native mobile app for activity tracking, note-taking, and personal productivity/reflection management.
 
 Checkout more details on [cadence.day](https://cadence.day)
+
 Get access to FAQ/Blog and Docs on [docs.cadence.day](https://docs.cadence.day)
 
 ## 🚀 Quick Start
