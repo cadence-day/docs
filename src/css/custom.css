@@ -823,10 +823,12 @@ a[target="_blank"]::after {
 }
 
 /* Set all SVG icons to use the highlight purple color for consistency */
+/* 
 svg {
   color: #8B5CF6 !important;
   fill: #8B5CF6 !important;
 }
+*/
 
 /* Add horizontal padding to sidebar back button */
 .clean-btn.navbar-sidebar__back {
