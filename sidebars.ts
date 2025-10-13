@@ -42,6 +42,17 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
+    // Developers sidebar - API docs (work in progress)
+    developersSidebar: [
+      {
+        type: 'category',
+        label: 'Developers',
+        items: [
+          'developers/getting-started',
+          // Add more API docs here as they are completed
+        ],
+      },
+    ],
 };
 
 export default sidebars;

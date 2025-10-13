@@ -12,7 +12,7 @@ If your data isn't syncing:
 4. **Restart app**: Close completely and reopen
 5. **Update app**: Check App Store for updates
 
-If problems persist, contact ${CONTACT_EMAIL}.
+If problems persist, contact admin@cadence.day.
 
 ## I lost my data after updating
 
@@ -35,7 +35,7 @@ If Cadence crashes frequently:
 4. **Reinstall app**: Delete and reinstall from the App Store (your data is cloud-backed!)
 5. **Check iOS version**: Update to the latest iOS if possible
 
-If crashes continue, please email ${CONTACT_EMAIL} with your device model and iOS version.
+If crashes continue, please email admin@cadence.day with your device model and iOS version.
 
 ## Activities aren't saving
 
@@ -59,7 +59,7 @@ If sign-in fails:
 4. **Check email spam**: Password reset emails may be filtered
 5. **Try again**: Sometimes server issues are temporary
 
-For persistent issues, contact ${CONTACT_EMAIL}.
+For persistent issues, contact admin@cadence.day.
 
 ## Notifications aren't working
 
@@ -117,14 +117,14 @@ To delete your account:
 4. Confirm deletion
 5. All data will be permanently deleted
 
-If this option isn't working, email ${CONTACT_EMAIL} and we'll help.
+If this option isn't working, email admin@cadence.day and we'll help.
 
 ## How do I report a bug?
 
 We appreciate bug reports! Here's how:
 
 1. **In-app**: Profile > Settings > Bug Report
-2. **Email**: ${CONTACT_EMAIL}
+2. **Email**: admin@cadence.day
 3. **Include details**:
    - What you were doing
    - What went wrong
@@ -137,7 +137,7 @@ We review and address all bug reports promptly.
 
 Multiple support options:
 
-- **Email**: ${CONTACT_EMAIL} (fastest response)
+- **Email**: admin@cadence.day (fastest response)
 - **FAQ**: Browse this documentation
 - **In-app**: Profile > Settings > Customer Support
 - **GitHub**: Report technical issues at github.com/cadence-day-dev
@@ -173,6 +173,6 @@ If data export fails:
 2. **Check storage**: Ensure your device has space for the export
 3. **Wait**: Large exports can take time
 4. **Try again**: First attempt may time out
-5. **Contact support**: Email ${CONTACT_EMAIL} if problems persist
+5. **Contact support**: Email admin@cadence.day if problems persist
 
 Note: Full data export is currently in development!

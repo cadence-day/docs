@@ -210,7 +210,7 @@ As a company operating in Europe (Berlin & Copenhagen), we're committed to GDPR:
 ### For EU Users
 
 - Data can be stored in EU regions (Supabase EU servers)
-- GDPR data protection officer: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})
+- GDPR data protection officer: [admin@cadence.day](mailto:admin@cadence.day)
 - Right to file complaints with supervisory authorities
 
 ## Security Practices
@@ -269,7 +269,7 @@ Our infrastructure partners (Supabase, AWS) already maintain these certification
 
 Found a vulnerability? We appreciate responsible disclosure:
 
-1. **Email**: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}) (not public GitHub, etc.)
+1. **Email**: [admin@cadence.day](mailto:admin@cadence.day) (not public GitHub, etc.)
 2. **Encrypt (optional)**: Use our PGP key (available on request)
 3. **Include**:
    - Description of the vulnerability
@@ -297,7 +297,7 @@ We're planning annual transparency reports to share:
 
 We're here to help:
 
-- **General questions**: [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})
+- **General questions**: [admin@cadence.day](mailto:admin@cadence.day)
 
 **Full legal documentation:**
 

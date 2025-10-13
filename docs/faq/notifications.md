@@ -127,7 +127,7 @@ If notifications aren't working:
 
 4. **Restart the app**: Sometimes a restart resolves notification issues
 
-If problems persist, contact support at ${CONTACT_EMAIL}.
+If problems persist, contact support at admin@cadence.day.
 
 ## Do notifications drain my battery?
 
