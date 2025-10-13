@@ -15,4 +15,4 @@ Stay tuned for updates!
 
 ---
 
-_We are looking for contributors! If you'd like to work with creating API, SDK, or integration documentation, please reach out to us at [dev@cqdence.day](mailto:dev@cadence.day)._
+_We are looking for contributors! If you'd like to work with creating API, SDK, or integration documentation, please reach out to us at [dev@cadence.day](mailto:dev@cadence.day)._
