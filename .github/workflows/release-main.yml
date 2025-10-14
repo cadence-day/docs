@@ -1,13 +1,23 @@
 name: Main Release
 
 on:
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - build
+          - submit
+      pr_number:
+        description: 'PR number'
+        required: true
+        type: number
 
 jobs:
-  update-only:
-    if: github.event.action != 'closed'
+  build-on-pr:
+    if: github.event.action == 'opened'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,29 +27,45 @@ jobs:
       - run: npm install -g eas-cli jq
       - run: eas login --token ${{ secrets.EXPO_TOKEN }}
 
-      - name: 🔐 Install Doppler CLI
-        uses: dopplerhq/cli-action@v3
-
-      - name: Bump version and build number (pre-merge)
+      - name: Bump version and build number
         run: |
           node scripts/bump_version.js --mode=main --prTitle="${{ github.event.pull_request.title }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add app.json
-          git commit -m "ci: bump version/build (main pre-merge)"
+          git commit -m "ci: bump version/build"
           git push
 
-      - name: EAS Update (production)
-        run: doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_PRD }} --command "eas update --branch prd --message 'Automated update from PR #${{ github.event.pull_request.number }}'"
+      - name: EAS Build iOS
+        run: eas build --platform ios --profile prd --non-interactive --wait
 
-  release-on-merge:
+      - name: Get App Version & Build Number
+        id: get_version
+        run: |
+          version=$(jq -r '.expo.version' app.json)
+          build=$(jq -r '.expo.ios.buildNumber' app.json)
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "build=$build" >> $GITHUB_OUTPUT
+
+      - name: Get latest build ID
+        id: build
+        run: |
+          build_id=$(eas build:list --platform=ios --status=finished --limit=1 --json --non-interactive | jq -r '.[0].id')
+          echo "build_id=$build_id" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR with build info
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            ✅ Build completed
+            **Version:** ${{ steps.get_version.outputs.version }}
+            **Build:** ${{ steps.get_version.outputs.build }}
+            **Build ID:** ${{ steps.build.outputs.build_id }}
+
+  submit-on-merge:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: macos-latest
     env:
-      APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
-      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-      APP_STORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }}
-      APP_STORE_CONNECT_APP_ID: ${{ secrets.APP_STORE_CONNECT_APP_ID }}
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
     steps:
       - uses: actions/checkout@v4
@@ -49,38 +75,14 @@ jobs:
       - run: npm install -g eas-cli jq
       - run: eas login --token ${{ secrets.EXPO_TOKEN }}
 
-      - name: 🔐 Install Doppler CLI
-        uses: dopplerhq/cli-action@v3
-
-      - name: Bump version and build number
+      - name: Get latest build ID
+        id: build
         run: |
-          node scripts/bump_version.js --mode=main --prTitle="${{ github.event.pull_request.title }}"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add app.json
-          git commit -m "ci: bump version/build (main merged)"
-          git push --follow-tags
+          build_id=$(eas build:list --platform=ios --status=finished --limit=1 --json --non-interactive | jq -r '.[0].id')
+          echo "build_id=$build_id" >> $GITHUB_OUTPUT
 
-      - name: EAS Build iOS
-        run: doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_PRD }} --command "eas build --platform ios --profile prd --non-interactive --wait"
-
-      - name: Submit to App Store Connect
-        run: doppler run --project cadence-app --config prd --token ${{ secrets.DOPPLER_TOKEN_PRD }} --command "eas submit -p ios --asc-app-id ${{ secrets.APP_STORE_CONNECT_APP_ID }} --asc-api-key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} --asc-api-key-issuer-id ${{ secrets.APP_STORE_CONNECT_KEY_ISSUER_ID }} --asc-api-key ${{ secrets.APP_STORE_CONNECT_KEY }}"
-
-      - name: Get group id
-        id: group
-        run: |
-          group_id=$(./scripts/asc_api_beta_groups.sh get-or-create "alpha-users")
-          echo "group_id=$group_id" >> $GITHUB_OUTPUT
-
-      - name: Add build to group
-        run: ./scripts/asc_api_add_build_to_group.sh $BUILD_ID ${{ steps.group.outputs.group_id }}
-
-      - name: Get public TestFlight link
-        id: link
-        run: |
-          link=$(./scripts/asc_api_get_public_link.sh ${{ steps.group.outputs.group_id }})
-          echo "link=$link" >> $GITHUB_OUTPUT
+      - name: Submit to App Store
+        run: eas submit -p ios --id ${{ steps.build.outputs.build_id }} --non-interactive
 
       - name: Get App Version & Build Number
         id: get_version
@@ -93,24 +95,25 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ steps.get_version.outputs.version }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create Issue to Track AppStoreConnect Acceptance
+      - name: Create Issue to Track AppStore Acceptance
         uses: peter-evans/create-issue-from-file@v5
         with:
-          title: "AppStoreConnect acceptance for version ${{ steps.get_version.outputs.version }}"
+          title: "AppStore acceptance for version ${{ steps.get_version.outputs.version }}"
           content-filepath: .github/ISSUE_TEMPLATES/appstore_acceptance.md
 
-      - name: Comment on PR with TestFlight URL
+      - name: Comment on PR with submission info
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
-            🚀 TestFlight build uploaded for alpha-users  
-            **Version:** ${{ steps.get_version.outputs.version }}  
-            **Build:** ${{ steps.get_version.outputs.build }}  
-            [Open TestFlight](${{ steps.link.outputs.link }})
+            🚀 Build submitted to App Store
+            **Version:** ${{ steps.get_version.outputs.version }}
+            **Build:** ${{ steps.get_version.outputs.build }}
+            **Build ID:** ${{ steps.build.outputs.build_id }}
 
       - name: Notify Discord
         run: |
@@ -118,22 +121,29 @@ jobs:
           pr_body="${{ github.event.pull_request.body }}"
           version="${{ steps.get_version.outputs.version }}"
           build="${{ steps.get_version.outputs.build }}"
-          link="${{ steps.link.outputs.link }}"
+          build_id="${{ steps.build.outputs.build_id }}"
 
-          payload=$(jq -n             --arg title "$pr_title"             --arg body "$pr_body"             --arg ver "$version"             --arg bld "$build"             --arg url "$link"             '{
+          payload=$(jq -n \
+            --arg title "$pr_title" \
+            --arg body "$pr_body" \
+            --arg ver "$version" \
+            --arg bld "$build" \
+            --arg bid "$build_id" \
+            '{
               username: "CI/CD Bot",
               embeds: [
                 {
-                  title: "🚀 New Production TestFlight build",
+                  title: "🚀 New Production Build Submitted",
                   description: $body,
                   fields: [
                     {name: "Version", value: $ver, inline: true},
                     {name: "Build", value: $bld, inline: true},
-                    {name: "TestFlight Link", value: $url, inline: false}
+                    {name: "Build ID", value: $bid, inline: false}
                   ],
                   color: 16744192
                 }
               ]
             }')
 
-          curl -H "Content-Type: application/json"             -X POST -d "$payload" $DISCORD_WEBHOOK
+          curl -H "Content-Type: application/json" \
+            -X POST -d "$payload" $DISCORD_WEBHOOK
