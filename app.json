@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "description": "A mobile app for recording daily activities and reflections",
     "ios": {
-      "buildNumber": "130",
+      "buildNumber": "133",
       "supportsTablet": false,
       "bundleIdentifier": "day.cadence.mobile",
       "associatedDomains": [
@@ -19,7 +19,8 @@
       "icon": "./assets/images/ios-light.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSCameraUsageDescription": "This app uses the camera to scan QR codes for encryption key linking between devices."
+        "NSPhotoLibraryUsageDescription": "Cadence.day needs access to your photo library to let you attach photos to your journal entries and personalize your experience. For example, you can add photos to capture memories alongside your daily reflections. It also allows you to link new device and transfer encryption key between devices.",
+        "NSPhotoLibraryAddUsageDescription": "Cadence.day needs permission to save photos you create or edit within the app back to your photo library. Cadence.day also needs this permission to link new device and transfer encryption key between devices."
       },
       "privacyManifests": {
         "NSPrivacyCollectedDataTypes": [
