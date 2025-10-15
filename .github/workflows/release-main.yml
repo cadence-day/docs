@@ -7,8 +7,8 @@ on:
 
 jobs:
   build-on-pr:
-    if: github.event.action == 'opened'
     runs-on: macos-latest
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,9 +22,11 @@ jobs:
           node scripts/bump_version.js --mode=main --prTitle="${{ github.event.pull_request.title }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add app.json
-          git commit -m "ci: bump version/build"
-          git push
+          if [ -n "$(git status --porcelain app.json)" ]; then
+            git add app.json
+            git commit -m "ci: bump version/build"
+            git push
+          fi
 
       - name: EAS Build iOS
         run: eas build --platform ios --profile prd --non-interactive --wait
