@@ -14,8 +14,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install -g eas-cli jq
-      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
+      
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Bump version and build number
         run: |
@@ -64,8 +68,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install -g eas-cli jq
-      - run: eas login --token ${{ secrets.EXPO_TOKEN }}
+          
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Get latest build ID
         id: build
