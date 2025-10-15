@@ -4,20 +4,7 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened, closed]
-    
   workflow_dispatch:
-    inputs:
-      action:
-        description: 'Action to perform'
-        required: true
-        type: choice
-        options:
-          - build
-          - submit
-      pr_number:
-        description: 'PR number'
-        required: true
-        type: number
 
 jobs:
   build-on-pr:
