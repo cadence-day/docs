@@ -2,7 +2,7 @@
   "expo": {
     "name": "Cadence.day",
     "slug": "cadence-app",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "day.cadence",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "description": "A mobile app for recording daily activities and reflections",
     "ios": {
-      "buildNumber": "133",
+      "buildNumber": "134",
       "supportsTablet": false,
       "bundleIdentifier": "day.cadence.mobile",
       "associatedDomains": [
@@ -80,7 +80,7 @@
       "edgeToEdgeEnabled": true,
       "icon": "./assets/images/icon.png",
       "package": "day.cadence.mobile",
-      "versionCode": 120,
+      "versionCode": 121,
       "permissions": [
         "android.permission.CAMERA"
       ],
