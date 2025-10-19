@@ -12,7 +12,7 @@ Throughout human history, different cultures have grappled with time's nature.
 
 Eastern traditions saw time as cyclical, repeating cosmic cycles of creation, preservation, destruction, and renewal. Abrahamic religions introduced linear, directional history moving toward an eschatological end. Greek philosophy gave us Chronos - measurable time - and Kairos - opportune moments within the flow.
 
-Outside of the definitons, if we pause to think about conceptual division of time, a week has shaped human civilization more than any other unit and we are at 'Cadence' are fascinated with it.
+Outside of the definitons, if we pause to think about conceptual division of time, a week has shaped human civilization more than any other unit and we at 'Cadence' are fascinated with it.
 
 The seven-day week dates back to ancient Mesopotamia, tied to lunar phases and the seven visible celestial bodies: Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn. 
 
