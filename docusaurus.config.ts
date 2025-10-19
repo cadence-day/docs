@@ -11,7 +11,7 @@ const config: Config = {
     v4: true,
   },
 
-  url: process.env.CADENCE_DOCS_BASE_URL,
+  url: process.env.CADENCE_DOCS_BASE_URL || "http://localhost:3000",
 
   baseUrl: "/",
 
