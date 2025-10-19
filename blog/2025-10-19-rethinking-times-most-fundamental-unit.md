@@ -62,6 +62,8 @@ The problem is universal, it appears that majority of us are struggling with tim
 
 When users engage with Cadence, they're gaining access to a different way of perceiving the flow of time and the concept of balance.
 
-The promise is simple: Understand your actual patterns. Live in harmony with your natural rhythms. Transform your relationship with the most valuable resource availble to the individual. We invite you to try Cadence for yourself and discover your own temporal patterns and rhythms.
+The promise is simple: Understand your actual patterns. Live in harmony with your natural rhythms. Transform your relationship with the most valuable resource availble to the individual. 
+
+We invite you to try Cadence for yourself and discover your own temporal patterns and rhythms.
 
 [Download on the App Store](https://apps.apple.com/app/cadence-day/id6745115112)
