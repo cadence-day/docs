@@ -6,20 +6,19 @@ authors: [oleg]
 
 The world today is constantly remaking itself, and many of us live in a state where nothing feels stable for long.  
 
-Last October, collectively we — Andrea, Bruno, and Oleg — found ourselves in that exact place: somtimes overwhelming space between what had ended and what had not yet begun.
+Last October, collectively we — Andrea, Bruno, and Oleg — found ourselves in that exact place: the overwhelming space between what had ended and what had not yet begun.
 
 For most of us, work provides the framework around which our lives are organized. When that framework disappears, we are left floating in time, free, but disoriented.  
 
-This kind of freedom is deceptive: it seemingly offers a wealth of possibilities, yet underneath it all lurks unease and a flood of worries. Without a clear schedule, time becomes a blur, and the absence of direction begins to feel like a burden.
+This kind of freedom is deceptive: it offers a wealth of possibilities, at the same time underneath it all lurks unease and a flood of worries. Without a clear schedule, time becomes a blur, and the absence of direction begins to be a burden.
 
 Our intuition then was that structure is essential and must be both created and lived.  
-However in practice, most attempts to artificially impose an ideal schedule felt detached from real meaning, and almost impossible to follow.
+However in practice, most attempts to impose an ideal schedule felt detached, and impossible to follow.
 
-In that state of freedom and uncertainty, we began to realize that there already exists a natural rhythm unique to every person.  
-It simply isn’t universally understood, and there’s a lack of tools to help uncover it through deliberate action.
+In that state of freedom and uncertainty, we began to realize that there already exists a natural rhythm unique to every person. It simply isn’t universally understood, and there’s a lack of tools to help uncover it through deliberate action.
 
-Building something together offered a kind of salvation to us, a shared goal grounded in shared values.  
-We started moving in the direction of a product that could help us organize ourselves, give shape to our collective effort, and serve as both a tool and a test of our intuition.
+Building something together offered a salvation to us, a shared goal grounded in shared values.  
+We started moving in the direction of a product that could help us organize ourselves, and serve as both a tool and a test of our intuition.
 
 The idea resonated deeply with all three of us. We shared the same desire to transform uncertainty into an organic system that adapts to the composition of the individual, helping us discover balance rather than impose order.
 
