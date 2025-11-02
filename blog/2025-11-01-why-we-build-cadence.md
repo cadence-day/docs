@@ -23,8 +23,6 @@ The idea resonated deeply with all three of us. We shared the same desire to tra
 
 It continues to be a bidirectional process: we shape the product, and in turn, it shapes our lives. Through it, we’ve learned that rhythm emerges from attention, reflection and intentionality.
 
-Cadence came to be out of our need for tools that nurture agency specifically in the moments of uncertainty.
-
-It has been a deeply rewarding journey, and we are thrilled to share both the story and the product built around the ideas and values we’re proud to bring into the world.
+Cadence came to be out of our need for tools that nurture agency specifically in the moments of uncertainty. It has been a deeply rewarding journey, and we are thrilled to share both the story and the product built around the ideas and values we’re proud to bring into the world.
 
 [Download on the App Store](https://apps.apple.com/app/cadence-day/id6745115112)
