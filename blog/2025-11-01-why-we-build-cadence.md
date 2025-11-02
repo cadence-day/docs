@@ -21,7 +21,7 @@ Building something together offered a salvation to us, a shared goal grounded in
 
 The idea resonated deeply with all three of us. We shared the same desire to transform uncertainty into an organic system that adapts to the composition of the individual, helping us discover balance rather than impose order.
 
-Over the past year, we have collectively discovered that system, created the product, and formed the collective we now call **Cadence**.
+Over the past year, we have discovered that system, created the product, and formed the collective we now call **Cadence**.
 
 It continues to be a bidirectional process: we shape the product, and in turn, it shapes our lives. Through it, we’ve learned that rhythm emerges from attention, reflection and intentionality.
 
