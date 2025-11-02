@@ -21,8 +21,6 @@ Building something together offered a salvation to us, a shared goal grounded in
 
 The idea resonated deeply with all three of us. We shared the same desire to transform uncertainty into an organic system that adapts to the composition of the individual, helping us discover balance rather than impose order. Over the past year, we have discovered that system, created the product, and formed the collective we now call **Cadence**.
 
-It continues to be a bidirectional process: we shape the product, and in turn, it shapes our lives. Through it, we’ve learned that rhythm emerges from attention, reflection and intentionality.
-
-Cadence came to be out of our need for tools that nurture agency specifically in the moments of uncertainty. It has been a deeply rewarding journey, and we are thrilled to share both the story and the product built around the ideas and values we’re proud to bring into the world.
+It continues to be a bidirectional process: we shape the product, and in turn, it shapes our lives. Cadence came to be out of our need for tools that nurture agency specifically in the moments of uncertainty. It has been a deeply rewarding journey, and we are thrilled to share both the story and the product built around the ideas and values we’re proud to bring into the world.
 
 [Download on the App Store](https://apps.apple.com/app/cadence-day/id6745115112)
