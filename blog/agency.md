@@ -1,4 +1,4 @@
-slug: exploring-agency-and-time
+
 title: Agency and Time
 authors: [oleg]
 
