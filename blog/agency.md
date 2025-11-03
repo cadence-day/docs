@@ -5,6 +5,7 @@ authors: [oleg]
 ---
 
 Often it feels we need something called agency to make good use of this moment.
+<!-- truncate -->
 Agency is complex, not something one can just have. It seems to grow through small, consistent actions, both in the realm of the individual and the realm of the collective.
 
 Over the last year at Cadence, we've been exploring what agency means for each person and for our team as a whole.
@@ -32,6 +33,7 @@ Everyone's voice mattered. Everyone helped shape both the product and the way we
 We wanted to move away from the world's obsession with productivity and focus instead on balance — for ourselves and for the culture around us.
 Our goal, or perhaps even our mission, became to build a tool that helps us notice our broader time: to see where it goes, how it feels, and what it means.
 By paying attention to the present moment, we can see patterns in our days, weeks, and months emerge.
+[Download on the App Store](https://apps.apple.com/app/cadence-day/id6745115112)
 
 Once these patterns appear, we can make small changes to shape them - little by little — until our time starts to reflect our vision and values represented in the way life flows.
 
