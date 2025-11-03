@@ -1,6 +1,8 @@
-
-title: Agency and Time
+---
+slug: agency-and-time
+title: Agency and time
 authors: [oleg]
+---
 
 Often it feels we need something called agency to make good use of this moment.
 Agency is complex, not something one can just have. It seems to grow through small, consistent actions, both in the realm of the individual and the realm of the collective.
