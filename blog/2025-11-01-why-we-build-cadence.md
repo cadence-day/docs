@@ -4,11 +4,13 @@ title: Finding Cadence
 authors: [oleg]
 ---
 
-The world today is constantly remaking itself, and many of us live in a state where nothing feels stable for long.  
+The world today is constantly remaking itself, and many of us live in a state where nothing feels stable for long.
+
+<!-- truncate -->
 
 Last October, collectively we — Andrea, Bruno, and Oleg — found ourselves in that exact place: the overwhelming space between what had ended and what had not yet begun.
 
-For most of us, work provides the framework around which our lives are organized. When that framework disappears, we are left floating in time, free, but disoriented.  
+For most of us, work provides the framework around which our lives are organized. When that framework disappears, we are left floating in time, free, but disoriented.
 
 This kind of freedom is deceptive: it offers a wealth of possibilities, at the same time underneath it all lurks unease and a flood of worries. Without a clear schedule, time becomes a blur, and the absence of direction begins to be a burden.
 

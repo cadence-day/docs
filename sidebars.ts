@@ -1,4 +1,4 @@
-import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
+import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 
 /**
  * Creating a sidebar enables you to:
@@ -14,17 +14,16 @@ const sidebars: SidebarsConfig = {
   // FAQ sidebar - all FAQ pages
   faqSidebar: [
     {
-      type: 'category',
-      label: 'Frequently Asked Questions',
+      type: "category",
+      label: "Frequently Asked Questions",
       items: [
-        'faq/general',
-        'faq/activities',
-        'faq/notes',
-        'faq/encryption',
-        'faq/calendar',
-        'faq/notifications',
-        'faq/subscription',
-        'faq/troubleshooting',
+        "faq/general",
+        "faq/activities",
+        "faq/notes",
+        "faq/encryption",
+        "faq/calendar",
+        "faq/notifications",
+        "faq/troubleshooting",
       ],
     },
   ],
@@ -32,27 +31,27 @@ const sidebars: SidebarsConfig = {
   // Features sidebar - feature guides
   featuresSidebar: [
     {
-      type: 'category',
-      label: 'Feature Guides',
+      type: "category",
+      label: "Feature Guides",
       items: [
-        'features/activity-tracking',
-        'features/note-taking',
-        'features/reflections',
-        'features/privacy-security',
+        "features/activity-tracking",
+        "features/note-taking",
+        "features/reflections",
+        "features/privacy-security",
       ],
     },
   ],
-    // Developers sidebar - API docs (work in progress)
-    developersSidebar: [
-      {
-        type: 'category',
-        label: 'Developers',
-        items: [
-          'developers/getting-started',
-          // Add more API docs here as they are completed
-        ],
-      },
-    ],
+  // Developers sidebar - API docs (work in progress)
+  developersSidebar: [
+    {
+      type: "category",
+      label: "Developers",
+      items: [
+        "developers/getting-started",
+        // Add more API docs here as they are completed
+      ],
+    },
+  ],
 };
 
 export default sidebars;
