@@ -30,12 +30,14 @@ We liked the idea of changing the expected axis of time from vertical to horizon
 Our first prototype was quite exciting. During the process of realizing our schematic sketches, a shared agency began to appear.
 Everyone's voice mattered. Everyone helped shape both the product and the way we worked.
 
-We wanted to move away from the world's obsession with productivity and focus instead on balance — for ourselves and for the culture around us.
+We wanted to move away from the world's obsession with productivity and focus instead on balance, for ourselves and for the culture around us.
 Our goal, or perhaps even our mission, became to build a tool that helps us notice our broader time: to see where it goes, how it feels, and what it means.
 By paying attention to the present moment, we can see patterns in our days, weeks, and months emerge.
-[Download on the App Store](https://apps.apple.com/app/cadence-day/id6745115112)
+
 
 Once these patterns appear, we can make small changes to shape them - little by little — until our time starts to reflect our vision and values represented in the way life flows.
 
 For us, it's all about balance: learning to orchestrate a life where every part: family, rest, work, care get the time it deserves.
 For us, it's about a tool that helps us feel more agency over our lives.
+
+[Download on the App Store](https://apps.apple.com/app/cadence-day/id6745115112)
