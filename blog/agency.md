@@ -19,7 +19,7 @@ We often talked about time broadly: how it defined, how it moves, and how it can
 Somehow there was often a tone of unease around the topic. Personally, the wish was to feel calm instead of stressed when it came to this central question.
 
 Modern life is built around time, but not really with it.
-Most tools we use only show some of time — quite often linked to a list of tasks or meetings or productivity broadly.
+Most tools we use only show some of time, quite often linked to a list of tasks or meetings or productivity broadly.
 They are made to plan the future, to synchronize people, but not to help us understand how we live.
 
 It was apparent the culture didn't need another productivity app.
