@@ -17,24 +17,7 @@
   font-family: "Founders Grotesk";
   src: url("/fonts/FoundersGrotesk-Medium-BF66175e972d694.otf")
     format("opentype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Founders Grotesk";
-  src: url("/fonts/FoundersGrotesk-Semibold-BF66175e972c958.otf")
-    format("opentype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Founders Grotesk";
-  src: url("/fonts/FoundersGrotesk-Bold-BF66175e9700615.otf") format("opentype");
-  font-weight: 700;
+  font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
@@ -145,7 +128,7 @@
 .button--outline,
 button {
   border-radius: var(--ifm-button-border-radius);
-  font-weight: 400;
+  font-weight: 300;
   transition: all 0.2s ease;
   border: none;
 }
@@ -298,7 +281,7 @@ code {
 
 .footer__title {
   color: white;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .footer__item {
@@ -327,13 +310,13 @@ code {
 }
 
 .navbar__brand {
-  font-weight: 700;
+  font-weight: 300;
   font-size: 1.2rem;
   color: var(--ifm-font-color-base);
 }
 
 .navbar__item {
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .navbar__link {
@@ -355,7 +338,7 @@ code {
     rgba(102, 70, 236, 0.15) 0%,
     rgba(139, 92, 246, 0.15) 100%
   );
-  font-weight: 600;
+  font-weight: 300;
   color: var(--ifm-font-color-base);
 }
 
@@ -393,7 +376,7 @@ code {
 }
 
 .hero__title {
-  font-weight: 700;
+  font-weight: 300;
   background: linear-gradient(135deg, #6646ec 0%, #8b5cf6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -475,7 +458,7 @@ code {
 }
 
 .tabs__item--active {
-  font-weight: 600;
+  font-weight: 300;
   background: rgba(102, 70, 236, 0.1);
 }
 
