@@ -15,7 +15,7 @@ Our rhythm was three meetings a week, each one hour long: some for planning, som
 Deciding what to do and looking back at what we had done became a structure for how we worked.
 It wasn't anything new process-wise, but slowly we started to find our own way with it.
 
-We often talked about time broadly: how it feels, how it moves, and how it can make us feel.
+We often talked about time broadly: how it defined, how it moves, and how it can make us feel.
 Somehow there was often a tone of unease around the topic. Personally, the wish was to feel calm instead of stressed when it came to this central question.
 
 Modern life is built around time, but not really with it.
