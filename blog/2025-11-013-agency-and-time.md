@@ -7,11 +7,11 @@ authors: [oleg]
 Often it feels we need something called agency to make good use of this historical moment with all of the advanced tools and opportunities.
 
 Agency is complex, not something one can just have. It seems to grow through small, consistent actions, both in the realm of the individual and the realm of the collective.
-<!-- truncate -->
+
 Over the last year at Cadence, we've been exploring what agency means for each person and for our team as a whole.
 At first, our actions were simple. We started meeting regularly, talking, and thinking out loud together, working on a set of prototypes.
 Our rhythm was three meetings a week, each one hour long: some for planning, some for reflecting, and some just for spending time together.
-
+<!-- truncate -->
 Deciding what to do and looking back at what we had done became a structure for how we worked.
 It wasn't anything new process-wise, but slowly we started to find our own way with it.
 
