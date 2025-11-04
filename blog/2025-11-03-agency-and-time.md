@@ -1,6 +1,6 @@
 ---
 slug: agency-and-time
-title: Agency and time
+title: Agency through action
 authors: [oleg]
 ---
 
