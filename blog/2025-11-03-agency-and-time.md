@@ -17,7 +17,7 @@ Deciding what to do and looking back at what we had done became a structure for 
 It wasn't anything new process-wise, but slowly we started to find our own way with it.
 
 We often talked about time broadly: how it is defined, how it moves, and how it can make us feel.
-Somehow there was often a tone of unease around the topic. Personally for us, the wish was to feel calm instead of stressed when it came to this central question.
+Somehow there was often a tone of unease around the topic. Personally for us, the wish was to feel calm instead of stressed when it came to this central subject.
 
 Modern life is built around time, but not really with it.
 Most tools we use only show some of time, quite often linked to a list of tasks or meetings or productivity broadly.
