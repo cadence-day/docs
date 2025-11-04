@@ -128,7 +128,12 @@ INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR 
 (c) All provisions of this Agreement which by their nature should survive termination shall survive, including but not limited to warranty disclaimers, indemnity, and limitations of liability.
 
 ## DEVELOPER NAME AND CONTACT INFORMATION
-Company Name: Cadence.day CEO: Oleg Moshkovich Team: Bruno Adam, Oleg Moshkovich, Andrea Lausevic Address: Danziger Str. 2, 10435 Berlin, Germany Email: admin@cadence.day Website: docs.cadence.day
+- **Company Name:** Cadence.day
+- **CEO:** Oleg Moshkovich
+- **Team:** Bruno Adam, Oleg Moshkovich, Andrea Lausevic
+- **Address:** Danziger Str. 2, 10435 Berlin, Germany
+- **Email:** admin@cadence.day
+- **Website:** [docs.cadence.day](https://docs.cadence.day)
 For any questions, complaints, or claims with respect to the Licensed Application, please contact us at the above email address.
 
 ## INDEMNIFICATION
