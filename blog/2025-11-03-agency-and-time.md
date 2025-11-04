@@ -26,7 +26,7 @@ They are made to plan the future, to synchronize people, but not to help us unde
 It was apparent the culture didn't need another productivity app.
 What we need as a collective is a way to see and understand how our actions unfold over time, a way to notice patterns and learn from them.
 
-This led us to the first version of Cadence, which showed bars that represented 30-minute blocks of time, scrolling sideways like a river of hours moving forward in a straight line.
+This led us to the first version of Cadence, which showed bars that represented 30-minute blocks of time that could contain information like a note and a mood, scrolling sideways like a river of hours moving forward in a straight line.
 We liked the idea of changing the expected axis of time from vertical to horizontal.
 Our first prototype was quite exciting. During the process of realizing our schematic sketches, a shared agency began to appear.
 Everyone's voice mattered. All three of us helped shape both the product and the way we worked.
