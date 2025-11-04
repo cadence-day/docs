@@ -27,7 +27,7 @@ By downloading, installing, accessing, or using the Licensed Application, you ag
 (f) Interfere with or disrupt the integrity or performance of the Licensed Application;
 (g) Use the Licensed Application for any unlawful or unauthorized purpose.
 2.3. Violations of the obligations mentioned above, as well as the attempt of such infringement, may be subject to prosecution and damages.
-TECHNICAL REQUIREMENTS AND APP FUNCTIONALITY
+## 3. TECHNICAL REQUIREMENTS AND APP FUNCTIONALITY
 3.1. The Licensed Application is a visual time tracking tool that allows you to create time entries, track tasks, and manage your time visually.
 3.2. The Licensed Application requires a compatible Apple device and may require an internet connection for certain features such as cloud sync.
 3.3. All data is stored locally on your device by default. Cloud sync is optional and requires explicit opt-in.
