@@ -35,7 +35,7 @@ Our goal, or perhaps even our mission, became to build a tool that helps us noti
 By paying attention to the present moment and capturing it in the consistent format, we can see patterns in our days, weeks, and months emerge as the record accumilate.
 
 
-Once these patterns appear, we can make small changes to shape them - little by little — until our time starts to reflect our vision and values represented in the way life flows.
+Once these patterns bacome available as a tool of reflection, we can make small changes to shape them - little by little — until our time starts to reflect our vision and values represented in the way life flows.
 
 For us, it's all about balance: learning to orchestrate a life where every part: family, rest, work, care get the time it deserves.
 For us, it's about a tool that helps us feel more agency over our lives.
