@@ -28,7 +28,7 @@ What we need as a collective is a way to see and understand how our actions unfo
 This led us to the first version of Cadence, which showed bars that represented 30-minute blocks of time, scrolling sideways like a river of hours moving forward in a straight line.
 We liked the idea of changing the expected axis of time from vertical to horizontal.
 Our first prototype was quite exciting. During the process of realizing our schematic sketches, a shared agency began to appear.
-Everyone's voice mattered. Everyone helped shape both the product and the way we worked.
+Everyone's voice mattered. All three of us helped shape both the product and the way we worked.
 
 We wanted to move away from the world's obsession with productivity and focus instead on balance, for ourselves and for the culture around us.
 Our goal, or perhaps even our mission, became to build a tool that helps us notice our broader time: to see where it goes, how it feels, and what it means.
