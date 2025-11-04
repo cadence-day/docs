@@ -32,7 +32,7 @@ Everyone's voice mattered. All three of us helped shape both the product and the
 
 We wanted to move away from the world's obsession with productivity and focus instead on balance, for ourselves and for the culture around us.
 Our goal, or perhaps even our mission, became to build a tool that helps us notice our broader time: to see where it goes, how it feels, and what it means.
-By paying attention to the present moment, we can see patterns in our days, weeks, and months emerge.
+By paying attention to the present moment and capturing it in the consistent format, we can see patterns in our days, weeks, and months emerge as the record accumilate.
 
 
 Once these patterns appear, we can make small changes to shape them - little by little — until our time starts to reflect our vision and values represented in the way life flows.
