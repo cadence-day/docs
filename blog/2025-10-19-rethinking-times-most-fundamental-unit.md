@@ -1,6 +1,6 @@
 ---
 slug: why-the-week-matters
-title: Why the Week Matters?
+title: Why the week matters?
 authors: [oleg]
 ---
 
