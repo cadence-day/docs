@@ -3,7 +3,7 @@ slug: future-of-work
 title: The future of work is personal
 authors: [oleg]
 ---
-<!-- truncate -->
+
 
 When we think about the future of work, the subjects of time and agency are central to the conversation. In our experience, workplaces in general do not take into consideration the personal natural rhythms of energy, focus, and creativity that vary between individuals and across days.
 The recent experiments with remote work gave us a glimpse of how work could be more fluid and nuanced, but that necessary 'work from homw' shift in the early 20s happened too rapidly, and it is safe to say that we as a society were completely unprepared for it.
@@ -11,7 +11,7 @@ The recent experiments with remote work gave us a glimpse of how work could be m
 In the new reality that is rapidly approaching with the next wave of tools, there is a constant conversation about traditional job loss, and we are starting to feel the dynamics of this new reality. More and more people are actually losing their traditional jobs.
 
 At the same time it is without a doubt that we live in a moment of extraordinary opportunity. Current tools amplify our capabilities, and the barriers to creating and building have never been lower. The opportunities are real, but realizing them requires the ability to organize ourselves in time without the crude framework of the traditional workday. Cadence is our attempt to address this systemic issue.
-
+<!-- truncate -->
 Most time tools or time trackers such as Toggle still reflect the old paradigm, they treat time as currency and the users in the somewhat mecahnical way, with the stopwatch being the central feature the tools is organized around.
 
 Cadence takes a different approach. It's built around a simple premise: productivity isn't the goal presence and balance is. By listening to time rather than controlling it we can find the natural cadence. You capture how our time actually unfolds in 30-minute blocks what we did, how it felt, and what it meant. Over time, we begin to see when we are most focused, when we need rest, when creative work flows naturally.
