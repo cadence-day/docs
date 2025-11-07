@@ -13,8 +13,7 @@ In this new reality that is rapidly approaching with the next wave of tools, the
 <!-- truncate -->
 
 At the same time it is without a doubt that we live in a moment of extraordinary opportunity. Current tools amplify our capabilities, and the barriers to creating and building have never been lower.
-The fact that we in cadence have experienced first hand is that possibility without agency are paralyzing. The opportunities are real, but seizing them requires the ability to organize ourselves in time without the crude framework of the traditional workday.
-Cadence is our attempt to address this systemic issue.
+The opportunities are real, but realizing them requires the ability to organize ourselves in time without the crude framework of the traditional workday. Cadence is our attempt to address this systemic issue.
 
 Most time tools or time trackers such as Toggle still reflect the old paradigm, they treat time as currency and the users in the somewhat mecahnical way, with the stopwatch being the central feature the tools is organized around.
 
