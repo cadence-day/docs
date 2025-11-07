@@ -4,9 +4,9 @@ title: The future of work is personal
 authors: [oleg]
 ---
 
-The 9-to-5 workday was designed for industrial efficiency rather then personal flourishing. It treated time as uniform blocks, ignoring the natural rhythms of energy, focus, and creativity that vary between individuals and across days.
-The pandemic's experiment with remote work gave us a glimpse of how work could be more fluid, more nuanced, more aligned. But that shift happened too rapidly and it did not seem we as a society we fully prepared for it, most of us found this new reality slightly confusing, even thought it was connected to work, so in a sense the structure remained unchnaged as least in principle.
-In this new reality that is rapidly approaching with the next wave of tools, there is a constanrt conversation about the traditional job loss, and we are stating to actually feel the dynamics of this new reality, more and more people are actually loosing the traditional jobs.
+When we think about the future of work, the concepts of time and agency come to mind. In our experience, workplaces in general do not take into consideration the personal natural rhythms of energy, focus, and creativity that vary between individuals and across days.
+The pandemic's experiment with remote work gave us a glimpse of how work could be more fluid, more nuanced, more aligned. But that shift happened too rapidly, and it did not seem we as a society were fully prepared for it. Most of us found this new reality slightly confusing, even though it was connected to work, so in a sense the structure remained unchanged, at least in principle.
+In this new reality that is rapidly approaching with the next wave of tools, there is a constant conversation about traditional job loss, and we are starting to actually feel the dynamics of this new reality. More and more people are actually losing their traditional jobs.
 
 <!-- truncate -->
 
