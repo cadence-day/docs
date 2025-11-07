@@ -8,7 +8,7 @@ When we think about the future of work, the subjects of time and agency are cent
 
 The recent experiments with remote work gave us a glimpse of how work could be more fluid and nuanced, but that necessary 'work from homw' shift in the early 20s happened too rapidly, and it is safe to say that we as a society were completely unprepared for it.
 
-In this new reality that is rapidly approaching with the next wave of tools, there is a constant conversation about traditional job loss, and we are starting to feel the dynamics of this new reality. More and more people are actually losing their traditional jobs.
+In the new reality that is rapidly approaching with the next wave of tools, there is a constant conversation about traditional job loss, and we are starting to feel the dynamics of this new reality. More and more people are actually losing their traditional jobs.
 
 <!-- truncate -->
 
