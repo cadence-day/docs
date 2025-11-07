@@ -4,8 +4,10 @@ title: The future of work is personal
 authors: [oleg]
 ---
 
-When we think about the future of work, the concepts of time and agency are central to the conversation. In our experience, workplaces in general do not take into consideration the personal natural rhythms of energy, focus, and creativity that vary between individuals and across days.
-The pandemic's experiment with remote work gave us a glimpse of how work could be more fluid and nuanced. But that shift happened too rapidly, and it did not seem we as a society were fully prepared for it. Most of us found this new reality slightly confusing, even though it was connected to work, so in a sense the structure remained unchanged, at least in principle.
+When we think about the future of work, the subjects of time and agency are central to the conversation. In our experience, workplaces in general do not take into consideration the personal natural rhythms of energy, focus, and creativity that vary between individuals and across days.
+
+The recent experiments with remote work gave us a glimpse of how work could be more fluid and nuanced, but that necessary 'work from homw' shift in the early 20s happened too rapidly, and it is safe to say that we as a society were completely unprepared for it.
+
 In this new reality that is rapidly approaching with the next wave of tools, there is a constant conversation about traditional job loss, and we are starting to actually feel the dynamics of this new reality. More and more people are actually losing their traditional jobs.
 
 <!-- truncate -->
