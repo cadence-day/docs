@@ -4,17 +4,18 @@ title: The Future of Work is Personal
 authors: [oleg]
 ---
 
-The 9-to-5 workday was never designed for human flourishing — it was designed for industrial efficiency. It treated time as uniform blocks to be filled with labor, ignoring the natural rhythms of energy, focus, and creativity that vary between individuals and across days.
-The pandemic's experiment with remote work gave us a glimpse of something different: work could be more fluid, more nuanced, more aligned with who we actually are. But that glimpse came without instructions, and most of us found ourselves floating in unstructured time, free but disoriented.
-The world feels like it lost its scaffolding.
+The 9-to-5 workday was designed for industrial efficiency rather then personal flourishing. It treated time as uniform blocks, ignoring the natural rhythms of energy, focus, and creativity that vary between individuals and across days.
+The pandemic's experiment with remote work gave us a glimpse of how work could be more fluid, more nuanced, more aligned. But that shift happened too rapidly and it did not seem we as a society we fully prepared for it, most of us found this new reality slightly confusing, even thought it was connected to work, so in a sense the structure remained unchnaged as least in principle.
+In this new reality that is rapidly approaching with the next wave of tools, there is a constanrt conversation about the traditional job loss, and we are stating to actually feel the dynamics of this new reality, more and more people are actually loosing the traditional jobs.
 
 <!-- truncate -->
 
-We live in a moment of extraordinary opportunity. AI tools amplify our capabilities. Remote work lets us design our days. The barriers to creating and building have never been lower.
-Yet possibility without agency is paralyzing. The opportunities are real, but seizing them requires something fundamental: the ability to organize ourselves in time without the crude framework of the traditional workday. We need to discover our own rhythm, not impose someone else's.
-This is why Cadence exists.
+At the same time it is without a doubt that we live in a moment of extraordinary opportunity. Current tools amplify our capabilities, and the barriers to creating and building have never been lower.
+The fact that we in cadence have experienced first hand is that possibility without agency are paralyzing. The opportunities are real, but seizing them requires the ability to organize ourselves in time without the crude framework of the traditional workday.
+Cadence is our attempt to address this systemic issue.
 
-Most time tools still reflect the old paradigm — tasks to complete, meetings to attend, hours to optimize. They treat you as a machine to be calibrated rather than a person to be understood.
+Most time tools or time trackers such as Toggle still reflect the old paradigm, they treat time as currency and the users in the somewhat mecahnical way, with the stopwatch being the central feature the tools is organized around.
+
 Cadence takes a different approach. It's built around a simple premise: productivity isn't the goal — presence is. By listening to time rather than controlling it, you can find your natural cadence.
 You capture how your time actually unfolds in 30-minute blocks: not just what you planned to do, but what you did, how it felt, and what it meant. Over time, patterns emerge. You begin to see when you're most focused, when you need rest, when creative work flows naturally.
 This isn't about optimizing every hour. It's about understanding your rhythm so you can orchestrate a life where everything that matters gets the time it deserves.
