@@ -1,6 +1,6 @@
 ---
 slug: future-of-work
-title: The Future of Work is Personal
+title: The future of work is personal
 authors: [oleg]
 ---
 
@@ -16,11 +16,13 @@ Cadence is our attempt to address this systemic issue.
 
 Most time tools or time trackers such as Toggle still reflect the old paradigm, they treat time as currency and the users in the somewhat mecahnical way, with the stopwatch being the central feature the tools is organized around.
 
-Cadence takes a different approach. It's built around a simple premise: productivity isn't the goal — presence is. By listening to time rather than controlling it, you can find your natural cadence.
-You capture how your time actually unfolds in 30-minute blocks: not just what you planned to do, but what you did, how it felt, and what it meant. Over time, patterns emerge. You begin to see when you're most focused, when you need rest, when creative work flows naturally.
-This isn't about optimizing every hour. It's about understanding your rhythm so you can orchestrate a life where everything that matters gets the time it deserves.
+Cadence takes a different approach. It's built around a simple premise: productivity isn't the goal presence and balance is. By listening to time rather than controlling it we can find the natural cadence.
+You capture how our time actually unfolds in 30-minute blocks what we did, how it felt, and what it meant. Over time, we begin to see when we are most focused, when we need rest, when creative work flows naturally.
 
-The collapse of traditional work structures isn't a crisis — it's an invitation. An invitation to discover how you actually work best, to respect the complexity of human energy and attention, to build systems that serve you rather than the other way around.
-Agency doesn't arrive fully formed. It grows through small, consistent actions: noticing how you spend your time, reflecting on what works, making adjustments, and noticing again. Cadence is designed for exactly this iterative process.
-In a world where traditional structures continue to dissolve, self-knowledge becomes essential. The opportunities are vast, but they require us to shape our own scaffolding. We need to understand our rhythms, honor our needs, and build lives that reflect our values.
-The future of work is personal. Cadence helps you discover yours.
+The main goal is to understand our rhythm so we can orchestrate a life where everything that matters gets the time it deserves.
+
+The collapse of traditional work structures seems to be approaching, but perhaps it is not al that bad, perhaps it is  nn invitation to discover how we can respect the complexity of human energy and attention, to build systems that serve us rather than the other way around.
+
+In this new world that is approaching self-knowledge is essential. The opportunities are vast, but they require us to shape our own scaffolding and invent our own systems. 
+
+We need to understand our rhythms, honor our needs, and build lives that reflect our values.
