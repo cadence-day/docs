@@ -4,7 +4,7 @@ title: Intuitive opportunity
 authors: [oleg]
 ---
 
-Most of these thoughts are raw and intuitive, they are based mostly on experience, and we are in the middle of it as we have not yet managed to create a sustainable company, but we feel like we are on the way, and we are experiencing the reality of work that we wish to share with many people as there is an opportunity to build the future in which one does work that provides security, independence and meaning.
+Most of these thoughts are raw and intuitive, they are based on experience, and we are in the middle of the process and accumulation of the experince of building as we have not yet managed to create a sustainable company, but we feel like we are on the way. Currently we are experiencing the reality of work that we wish to share with many people as there is an opportunity in the present moment to build the future in which one does work that provides security, independence and meaning.
 <!-- truncate -->
 Cadence started as the continuation of previous experience like most things in life. 
 The reality that we are living and experiencing at the moment - accumulated in the past which creatd the very moment. 
