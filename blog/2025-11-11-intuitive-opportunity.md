@@ -1,6 +1,8 @@
+---
 slug: intuitive opportunity
 title: Intuitive opportunity
 authors: [oleg]
+---
 
 Most of these thoughts are raw and intuitive, based on experience and the ongoing process of building. We're in the middle of accumulating this knowledge as we haven't yet created a sustainable company, but we feel like we're on the way. Currently we're living the reality of work that we wish to share with many people, as there's an opportunity in the present moment to build a future where work provides security, independence, and meaning.
 <!-- truncate -->
