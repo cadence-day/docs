@@ -1,31 +1,42 @@
----
-slug: opportunity
+lug: opportunity
 title: Intuitive opportunity
 authors: [oleg]
----
 
-Most of these thoughts are raw and intuitive, they are based on experience, and we are in the middle of the process and accumulation of the experince of building as we have not yet managed to create a sustainable company, but we feel like we are on the way. Currently we are experiencing the reality of work that we wish to share with many people as there is an opportunity in the present moment to build the future in which one does work that provides security, independence and meaning.
+Most of these thoughts are raw and intuitive, based on experience and the ongoing process of building. We're in the middle of accumulating this knowledge as we haven't yet created a sustainable company, but we feel like we're on the way. Currently we're living the reality of work that we wish to share with many people, as there's an opportunity in the present moment to build a future where work provides security, independence, and meaning.
 <!-- truncate -->
-Cadence started as the continuation of previous experience like most things in life. 
-The reality that we are living and experiencing at the moment - accumulated in the past which creatd the very moment. 
-It just so happened that life brought us together and our collective threads intersected in just the right time for us to form the team, but the reason we were able to do that is because we had the accumulated knowledge of the organizational tools that allowed us to structure the process and to move forward collectively. Conceptual understanding of how to take a big task of developing the product and building a company and break it into a structure that made it manageable and actionable, and practival technical understanding of the tools.
+Cadence started as a continuation of previous threads, like most things in life. The reality we're living now accumulated in the past, creating this very moment.
+It just so happened that life brought us together and our collective paths intersected at just the right time to form a team. The reason we were able to achieve that is because we had accumulated knowledge of organizational tools that allowed us to structure the process and move forward collectively. We had both the conceptual understanding of how to take a big messy tasks and break them into a manageable, actionable structure, and the practical technical understanding of the tools to organize daily operations.
 
-Most of the modern enterprises are converging on the same structure and the same tool stack that makes collective operations organized so the team could achieve a state of flow and function as a cohesive unit. 
+Most modern enterprises are converging on the same structure and tool stack that makes collective operations organized, so teams can achieve a state of flow and function as cohesive units.
+Most of these modern tools and methods come from the tech industry, but the principles are applicable across pretty much all human endeavors. The principles are simple:
 
-Most of the modern tools and methods are coming from the tech industry but the principles are applicable across pretty much all human endeavors. The principles are simple: create a rhythm of weekly cycles, break down big pieces of work into small manageable units and execute sequentially. As with any human endeavors clear communication becomes central and therefore in order to achieve clarity things need to be written as much as possible, only the trail of clearly articulated captured thoughts allows for the team to achieve cohesion.
+Create a rhythm of weekly cycles
+Break down big pieces of work into small manageable units
+Execute sequentially
 
-The documents that are created are created for different purposes but one category of documents that are key are Product Requirement Documents, a well articulated collection of those enables the team to break down and align on all of the different aspects of the product and the product can be anything in this context. It is clear that the PRD should be in Google Docs since that tool allows for the team to collaborate in the comments, achieve the maximum clarity and alignment. 
+As always effective communication becomes central. To achieve clarity, things need to be written down as much as possible. Only a trail of clearly articulated, captured thoughts allows a team to achieve cohesion.
 
-The day to day communication usually takes place in Discord, it is free to create and really it is a wonderful product that enables to capture all of the different conversations pertaining to operations in the form of channels. The beauty of these tools is the flexibility and the structure of a specific organization reveals itself intuitively as the company grows the work happens, the channels provide a context and create an interesting situation where the mind adjusts to the subject of conversation as it moves across different channels. 
+Product Requirement Documents are a key category of documents. A well-articulated collection of PRDs enables the team to break down and align on all the different aspects of the product and the product can be anything in this context. It's clear that PRDs should be in Google Docs, since that tool allows teams to collaborate in the comments and achieve maximum alignment.
 
-Figma, oh wonderful Figma provides a canvas for sketching, in our case we have one project for design with three different channels one for references, one for the sketches and one for the finished result, we also have one file for development where we capture all of the diagrams that describe our system, and also one narrative file that contains bits and pieces of information that are easy to move around and assemble in whatever structure necessary. 
+Day-to-day communication usually takes place in Discord. It's free to use and really is a wonderful product that enables capturing all the different conversations pertaining to operations in the form of channels. The beauty of these tools is their flexibility and the structure of a specific organization reveals itself intuitively as the company grows and the work happens. The channels provide context and create an interesting situation where the mind adjusts to the subject of conversation as it moves across different channels.
 
-The cornerstone of any successful enterprise is the issue tracking system and Linear has created the most wonderful system for that, it is intuitive and beautiful, well structured and combines all the latest tools, continuing to evolve into the most advanced product in the space. The issue tracking system is basically a giant to do list that has different organizational constructs to break down the work in a unique way, it has hierarchy of teams, projects, states, labels to name the major ones, and enables the team to effectively manage all that needs to be done. 
+Figma provides a canvas for sketching. In our case we have one project for design with three different pages: one for references, one for sketches, and one for the finished result. We also have one file for development where we capture all the diagrams that describe our system, and one narrative file that contains bits and pieces of information that are easy to move around and assemble in whatever structure necessary.
 
-Of course there is GitHub for code, which is a versioning system, but it is relevant only for the digital world and therefore let's skip the details in the context of this conversation, one thing to mention however is that using issue names for GitHub branches is super helpful as it creates a clear link between the description of work and the output. 
+The issue tracking system is the cornerstone of any successful enterprise, and Linear has created the most wonderful system for that. It's intuitive and beautiful, well structured, and combines all the latest tools while continuing to evolve into the most advanced product in the space. The issue tracking system is basically a giant to-do list that has different organizational constructs to break down work in a unique way. It has a hierarchy of teams, projects, states, and labels to name the major ones, and enables the team to effectively manage all that needs to be done.
 
-When we started Cadence we felt that a robust and humane time tracker was missing from the stack, we tried many products but nothing really worked for us, so we built Cadence to complete this stack because at the end of the day in order to build a successful company one needs to find and allocate time clearly and consistently, therefore in a way that becomes the start of any operations. 
+GitHub is of course there for code as a versioning system, but it's relevant only for the digital world, so let's skip the details in this context. One thing to mention however: using issue names for GitHub branches is super helpful as it creates a clear link between the description of work and the output.
 
-So our current view on building companies is to initially allocate a small amount of time each weekly cycle towards building a company and the product, watch the pattern emerge with organic action of small amounts of hours, do that for about a month using all the mentioned tools, and then start designing the time intentionally, in about two months the structure will start emerging which will pull the individual and the team into the successful future.
+When we started Cadence, we felt that a robust and humane time tracker was missing from the stack. We tried many products but nothing really worked for us, so we built Cadence to complete this stack.
 
-The future is bright and the moment is bright and there are truly great opportunities all around us, we just need to organize ourselves and seize the moment.
+At the end of the day, to build a successful company one needs to find and allocate time clearly and consistently. In a way, that becomes the start of any operations.
+
+Our current view on building companies:
+
+Initially allocate a small amount of time each weekly cycle toward building a company and the product
+Watch the pattern emerge with the organic action of small amounts of hours
+Do that for about a month using all the mentioned tools
+Then start designing the time intentionally
+In about two months, the structure will start emerging, which will pull the individual and the team into a successful future
+
+The future is bright and the moment is bright.
+There are truly great opportunities all around us we just need to organize ourselves and seize the moment.
