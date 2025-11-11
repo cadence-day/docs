@@ -6,7 +6,9 @@ authors: [oleg]
 
 Most of these thoughts are raw and intuitive, they are based mostly on experience, and we are in the middle of it as we have not yet managed to create a sustainable company, but we feel like we are on the way, and we are experiencing the reality of work that we wish to share with many people as there is an opportunity to build the future in which one does work that provides security, independence and meaning.
 <!-- truncate -->
-Cadence started as the continuation of previous experience like most things in life, the reality that we are living and experiencing at the moment accumulated in the past, and enabled this moment. It just so happened that life brought us together and our collective threads intersected in time just at the right moment for us to form the team, but the reason that we were able to do that is because in a way we had the accumulated knowledge of the organizational tools that allowed us to structure the process and to move forward collectively understanding how to take a big task of developing the product and building a company and break it into a structure that made it manageable and actionable. 
+Cadence started as the continuation of previous experience like most things in life. 
+The reality that we are living and experiencing at the moment - accumulated in the past which creatd the very moment. 
+It just so happened that life brought us together and our collective threads intersected in just the right time for us to form the team, but the reason we were able to do that is because we had the accumulated knowledge of the organizational tools that allowed us to structure the process and to move forward collectively. Conceptual understanding of how to take a big task of developing the product and building a company and break it into a structure that made it manageable and actionable, and practival technical understanding of the tools.
 
 Most of the modern enterprises are converging on the same structure and the same tool stack that makes collective operations organized so the team could achieve a state of flow and function as a cohesive unit. 
 
