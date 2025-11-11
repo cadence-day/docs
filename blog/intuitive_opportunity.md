@@ -1,4 +1,4 @@
-lug: opportunity
+slug: intuitive opportunity
 title: Intuitive opportunity
 authors: [oleg]
 
