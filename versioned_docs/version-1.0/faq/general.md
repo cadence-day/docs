@@ -8,12 +8,14 @@ Cadence.day is a mobile app that helps you track your daily activities and disco
 
 ## Is Cadence free?
 
-Yes! Cadence is a free app with core features available to everyone. We also offer optional premium tiers to support development:
+Yes! Cadence offers a free plan with core features. We also offer subscription plans that help fund development and unlock premium features:
 
-- **Free**: Core activity tracking, basic timeline view, notes, and reflections
-- **Premium options**: Available for users who want to support development
+- **Free Explorer**: Core activity tracking, basic timeline view, notes, and reflections
+- **Supporter ($4.99/mo)**: Support development + early access to beta features
+- **Premium Supporter ($9.99/mo)**: All Supporter benefits + advanced insights + priority support
+- **Feature Sponsor**: Help fund specific features and influence the roadmap
 
-Learn more about our plans in the app settings.
+See [Subscription & Pricing](/docs/faq/subscription) for more details.
 
 ## What platforms does Cadence support?
 
@@ -61,7 +63,7 @@ Cadence is developed by a distributed team based in:
 We're here to help! You can:
 
 - Browse this FAQ documentation
-- Contact us at [admin@cadence.day](mailto:admin@cadence.day)
+- Contact us at [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})
 - Report bugs through the app (Profile → Customer Support → Bug Report)
 - Request features through the app (Profile → Customer Support → Feature Request)
 
@@ -73,7 +75,7 @@ Yes! Cadence works offline. Your data will sync automatically when you're back o
 
 ## How do I delete my account?
 
-To delete your account, please contact our support team at [admin@cadence.day](mailto:admin@cadence.day). They will help you with the account deletion process and ensure all your data is properly removed.
+To delete your account, please contact our support team at [${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL}). They will help you with the account deletion process and ensure all your data is properly removed.
 
 ## What languages does Cadence support?
 

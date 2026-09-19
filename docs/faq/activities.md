@@ -12,40 +12,76 @@ Activities are the building blocks of your day in Cadence. They represent how yo
 
 ## How do I create an activity?
 
-1. Tap on **"Edit"** on the **Activities** dialog on **Today** screen.
-2. Tap the **"+"** button on the top right of the **"Edit Activities"** dialog
-3. Enter an activity name
-4. Choose a category
-5. Pick a color
-6. Tap **"Save"** on the top right.
+There are multiple ways to create activities:
 
-You can also create activities during onboarding.
+**During Onboarding:**
+1. Select from pre-made activity templates
+2. Customize names, colors, and categories
+3. Start with 8-12 core activities
+
+**From the Activities Dialog:**
+1. Open the **Today** screen
+2. Tap **"Edit"** on the **Activities** dialog
+3. Tap the **"+"** button on the top right
+4. Enter an activity name
+5. Choose a category
+6. Pick a color
+7. Tap **"Save"**
+
+**Quick Creation (Coming Soon):**
+- Create activities on-the-fly while logging time
+- Suggested activities based on patterns
 
 ## Can I edit or delete activities?
 
-Yes! To edit or delete activities:
+Yes! Activities are fully manageable:
 
+**To Edit:**
 1. Tap **"Edit Activities"** on the main screen
 2. Tap on the activity you want to modify
-3. Make your changes or tap **"Delete"** to remove it
-4. There will be a confirmation dialog when deleting an activity
-   - Tap **"Confirm"** to proceed with deletion
-   - Tap **"Cancel"** to abort
-5. If you pressed **"Confirm"**, the activity will be deleted from your list, except if you haved logged time with it
-   - If you have logged time with the activity, you will see a message indicating that you need to reassign those time blocks before deletion to a new activity.
+3. Update the name, category, or color
+4. Tap **"Save"**
 
-**Note:** Deleting an activity won't delete your historical data - it just hides the activity from your current list.
+**To Delete:**
+1. Tap **"Edit Activities"**
+2. Tap on the activity you want to remove
+3. Tap **"Delete"**
+4. A confirmation dialog will appear
+5. Review the warning about reassigning logged time
+6. Tap **"Confirm"** to proceed or **"Cancel"** to abort
+
+**Important Notes:**
+- If you have logged time with an activity, you must reassign those timeslices to a different activity before deletion
+- Deleting an activity doesn't delete historical data—it just requires reassignment
+- Consider temporarily disabling instead of deleting if you might use it again
 
 ## Can I temporarily disable an activity?
 
-Yes! You can temporarily disable activities you're not using:
+Yes! Temporarily disabling is perfect for seasonal or occasional activities:
 
+**To Disable:**
 1. Go to **"Edit Activities"**
 2. Tap on the activity
-3. Enable **"Temporarily disable activity"**
+3. Toggle **"Temporarily disable activity"** to ON
 4. Tap **"Save"**
 
-Disabled activities won't appear when logging time, but you can re-enable them anytime.
+**Effects of Disabling:**
+- Activity won't appear in the selection list when logging time
+- Historical data remains intact
+- Can be re-enabled anytime
+- Activity still visible in past timeslices
+
+**To Re-enable:**
+1. Go to **"Edit Activities"**
+2. Tap on the disabled activity
+3. Toggle **"Temporarily disable activity"** to OFF
+4. Tap **"Save"**
+
+**Use Cases:**
+- Seasonal activities (e.g., "Skiing" in summer, "Swimming" in winter)
+- Project-based activities that come and go
+- Reducing clutter without losing history
+- Activities you're taking a break from
 
 ## How many activities can I create?
 
@@ -93,11 +129,29 @@ You can add, remove, or modify any of these to fit your lifestyle.
 
 ## How do I log an activity?
 
-1. On the main timeline view, find the time slot you want to log
-2. Tap on the time slot
+Logging activities is quick and intuitive:
+
+**Basic Logging:**
+1. Navigate to the date you want to log (Today screen by default)
+2. Tap on a time slot on the timeline
 3. Select the activity from the list
-4. (Optional) Add a note to capture thoughts or details
-5. The activity is automatically saved
+4. (Optional) Add a note for context
+5. The activity saves automatically
+
+**Timeline Views:**
+- **Circular Timeline**: Tap on the circular clock face at the appropriate time
+- **Linear Timeline**: Tap on the vertical timeline at the desired time slot
+
+**Editing Logged Activities:**
+1. Tap on an already-logged time slot
+2. Change to a different activity or clear it
+3. Modify or add notes
+4. Changes save automatically
+
+**Batch Logging (Coming Soon):**
+- Drag across multiple time slots
+- Apply the same activity to a range
+- Faster logging for extended activities
 
 ## Can I log activities in the past?
 
@@ -109,13 +163,63 @@ Yes! You can log activities for any past date:
 
 ## How do I view my activity history?
 
-Navigate to the **Reflection** screen to see:
+Cadence offers multiple ways to review your activity history:
 
-- Daily cadence view with color-coded time blocks
-- Weekly patterns and rhythms
-- Total time spent on each activity
-- Your notes and reflections
+**Reflection Screen:**
+- Navigate to the **Reflection** tab
+- See weekly cadence view with color-coded time blocks
+- View total time spent on each activity
+- Access your notes and reflections
+- Swipe between weeks
+
+**Timeline Navigation:**
+- Use the calendar icon to select any past date
+- Swipe left/right to move between days
+- View individual day timelines with full detail
+
+**Calendar View:**
+- Monthly calendar with completion gauges
+- Visual representation of tracking consistency
+- Quick navigation to specific dates
+- See patterns across weeks
+
+**Insights (Premium Supporters):**
+- Advanced analytics and visualizations
+- Activity distribution charts
+- Time analysis and trends
+- Pattern detection
+
+**Sage AI Chat:**
+- Ask conversational questions about your history
+- "What did I do last Tuesday?"
+- "How much time did I spend working last month?"
+- "Show me my exercise patterns"
 
 ## Can I export my activity data?
 
-Data export is coming soon! This feature will allow you to export your activities and notes for backup or analysis.
+Yes! Data export is available for **Premium Supporters**:
+
+**Current Export Features:**
+- Activity data export
+- Notes and reflections
+- Time tracking statistics
+- Custom date ranges
+
+**How to Export (Premium Supporters):**
+1. Go to **Profile** → **Settings**
+2. Navigate to **Data Export**
+3. Select date range and data types
+4. Choose export format (CSV, JSON)
+5. Download or share via email/cloud storage
+
+**Export Formats:**
+- **CSV**: Spreadsheet-compatible for analysis in Excel, Google Sheets
+- **JSON**: Developer-friendly format for custom integrations
+- **PDF Reports** (Coming Soon): Beautiful visual summaries
+
+**Free Plan:**
+- Basic export coming soon
+- Limited to recent data
+- Standard formats only
+
+**Note**: All exports are encrypted during transmission to protect your privacy.
