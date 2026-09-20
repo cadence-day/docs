@@ -17,19 +17,24 @@ Cadence uses **end-to-end encryption** for your most sensitive data:
 
 **Encryption method:**
 
-- **AES-256-GCM**: Industry-standard encryption algorithm
-- **Unique keys**: Each user has their own encryption key
-- **Encrypted at rest**: Data is encrypted before leaving your device
+- **AES-256-GCM** for activity names and note bodies stored with the `cdv1:` prefix (HKDF-derived key from your device encryption secret; implemented with audited `@noble/ciphers` / `@noble/hashes`).
+- **Legacy `enc:`** rows used an older XOR-based encoding; the app still decrypts them and **automatically rewrites** them to `cdv1:` when loaded.
 - **Encrypted in transit**: All network communications use HTTPS/TLS
 
-Your encryption key is derived from your authentication credentials and never leaves your device in plain text.
+Your device encryption secret is stored in the secure keystore (Expo SecureStore) and is not sent to our servers in plaintext.
+
+## Optional: sharing with friends
+
+**Friend groups:** you create a group, add members, then choose which **activities** (full rows, with **timeslices only for those activities**) and which **trackers** (and their entries) appear in that group’s shared catalog. Everyone in the group sees the **same** catalog; it is not customized per individual friend. Row access is enforced in the database (RLS), not by friendship alone.
+
+Each user can still publish a **versioned X25519 public key** for future hybrid payloads; private keys stay on device (older versions are retained locally after rotation). See Settings → **ENCRYPTION** in the app.
 
 ## What data is NOT encrypted?
 
 To provide core functionality, some data is stored in a structured (non-encrypted) format:
 
 - **Activity logs**: Time, duration, and activity type
-- **Activity metadata**: Colors, emojis, custom names
+- **Activity metadata**: Colors, emojis, IDs (activity **titles** you enter are encrypted as above)
 - **User profile**: Email, username, preferences
 
 This allows us to provide fast timeline views, pattern analysis, and sync across devices.
