@@ -96,17 +96,36 @@ At Cadence, we believe:
 - Processed through Sentry for error tracking
 - Used only for improvement, never sold
 
+## Health and Location Data — Device-Only Storage
+
+**What we collect:**
+
+- **Location data**: Precise location (latitude, longitude, altitude) as you move throughout your day
+- **Health data**: Heart rate (hourly averages) and step counts from Apple HealthKit
+
+**How it's stored:**
+
+- **Stored only on your device** — never transmitted to our servers or iCloud
+- Excluded from device backups (App Store Guideline 5.1.3), so it won't restore to a new device
+- Protected by iOS file protection
+- Data is organized as location segments (stays and journeys) and hourly health summaries, not raw sample streams
+
+**Why it's safe:**
+
+- No app privacy declaration needed: Health and Location are honestly **Data Not Collected** from an App Privacy perspective, because neither ever leaves your device
+- You control capture: toggle extensions on/off in Settings → Extensions
+- You can delete: separate controls delete location history and health history without affecting other data
+- You can export: use Settings → Extensions → Export to create a password-protected file you can move to another device
+
 ## What We DON'T Collect
 
 We explicitly **do not** collect:
 
-- ❌ **Location data** (we don't track where you are)
 - ❌ **Contacts** (we don't access your address book)
 - ❌ **Photos or media** (only the logo you choose for the app)
 - ❌ **Other app usage** (we only see Cadence activity)
 - ❌ **Browsing history** (we don't track your web activity)
 - ❌ **Device identifiers** (beyond what's needed for push notifications)
-- ❌ **Biometric data** (face, fingerprint, health data from other apps)
 
 ## Encryption Deep Dive
 
@@ -171,14 +190,16 @@ We use trusted partners for specific functions:
 You can:
 
 - **View all data**: In the app at any time
-- **Export data**: Download all activities, notes, reflections (coming soon!)
+- **Export data**: Download all activities, notes, reflections, and extensions data as an encrypted file (Settings → Extensions → Export)
 
 ### Delete Your Data
 
 You can:
 
 - **Delete notes**: Remove individual notes anytime
-- **Delete account**: Permanently delete all data
+- **Delete location history**: Clear all stored location data from Settings → Extensions
+- **Delete health history**: Clear all stored health data from Settings → Extensions
+- **Delete account**: Permanently delete all data (Settings → Account Management)
 
 To delete your account:
 
