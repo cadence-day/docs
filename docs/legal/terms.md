@@ -10,7 +10,7 @@ By accessing or using our website, application, or services ("Terms"), you agree
 
 ## Eligibility
 
-You must be at least 18 years old and legally capable of entering into a binding contract to use our Services. By using the Services, you represent and warrant that you meet these requirements.
+You must be at least 16 years old to use our Services. If you are under the age of legal majority where you live, you may use the Services only with the consent of a parent or legal guardian. By using the Services, you represent and warrant that you meet these requirements.
 
 ## Modifications
 

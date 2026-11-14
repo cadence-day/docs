@@ -86,7 +86,7 @@ The App does not access your contacts or microphone, and it does not record audi
 
 ### Product analytics (PostHog)
 
-To understand how the App is used and improve it, the iPhone App can send usage events to PostHog: for example that the App was opened or moved to the background, and which screens were viewed, together with device and app information (device model, operating system and version, app version, language, and a random identifier created by PostHog on your device). The App does not send your name, email, Cadence account identifier, activity names, notes or any content you record, and it does not record your screen. These analytics are only active when the App build includes our PostHog configuration, and are not used in the web app.
+To understand how the App is used and improve it, the iPhone App can send usage events to PostHog: for example that the App was opened or moved to the background, and which screens were viewed, together with device and app information (device model, operating system and version, app version, language, and a random identifier created by PostHog on your device). The App does not send your name, email, Cadence account identifier, activity names, notes or any content you record, and it does not record your screen. These analytics are only active when the App build includes our PostHog configuration, and are not used in the web app. We use PostHog's EU cloud, which stores this data in the EU (Frankfurt, Germany).
 
 ### Encryption diagnostics (Sentry)
 
@@ -106,19 +106,40 @@ We use your information to:
 
 We do not sell, rent or share your personal data for advertising or marketing, and we do not track you across other companies' apps or websites. We may disclose data only when legally required (for example, to comply with a valid court order).
 
+## Legal bases
+
+Under the EU General Data Protection Regulation (GDPR), we rely on these legal bases:
+
+- **To provide the service you signed up for (performance of a contract):** your account and sign-in, encryption keys and device linking, Cloud sync and the web app, and account deletion.
+- **Our legitimate interest in keeping Cadence working and improving it:** encryption diagnostics (Sentry), product analytics (PostHog) and performance measurements (Expo). These never include the content you record.
+- **Your consent:** Location, Motion & Fitness and Apple Health. You turn them on yourself, iOS asks for your permission, and you can withdraw it at any time in Settings > Extensions, iOS Settings or the Health app. Withdrawing doesn't affect what was recorded before; use the delete options to remove it.
+- **Legal obligations:** where we must keep or disclose information by law.
+
 ## Service providers
 
 We rely on the following providers to run Cadence. Each processes data only to provide its service to us, under its own privacy policy:
 
 - **Clerk**: sign-in and account management (email, name, profile photo, Apple or Google account identifier, account settings). [Clerk Privacy Policy](https://clerk.com/privacy)
 - **Supabase**: our database and server functions (your account's synced data when Cloud sync is on, encryption public keys, account deletion). [Supabase Privacy Policy](https://supabase.com/privacy)
-- **PostHog**: product analytics, as described above. [PostHog Privacy Policy](https://posthog.com/privacy)
+- **PostHog**: product analytics, as described above, in its EU cloud. [PostHog Privacy Policy](https://posthog.com/privacy)
 - **Sentry**: encryption diagnostics, as described above. [Sentry Privacy Policy](https://sentry.io/privacy/)
 - **Expo**: app updates and performance measurements, as described above. [Expo Privacy Policy](https://expo.dev/privacy)
 - **Apple**: the App Store, Sign in with Apple, Apple Health, Apple Maps and iCloud Backup, under your agreement with Apple.
 - **Google**: Sign in with Google, if you use it.
 
-Some of these providers process data outside the European Union, including in the United States.
+## International data transfers
+
+We aim to have your data processed in the European Union, which is our main market. For example, our product analytics are stored in PostHog's EU cloud in Frankfurt, Germany. Some of our providers are based in, or use infrastructure in, other countries. Clerk, Sentry and Expo, for instance, are United States companies. We also serve users in the United States and in Asia (Singapore), so your data may also be processed there.
+
+Where personal data from the EU is transferred outside the EU, our providers state in their own public documentation that they protect the transfer as follows:
+
+- **Clerk**: EU Standard Contractual Clauses, and self-certification under the EU-U.S. Data Privacy Framework ([Clerk DPA](https://clerk.com/legal/dpa)).
+- **Supabase**: EU Standard Contractual Clauses ([Supabase DPA](https://supabase.com/legal/dpa)).
+- **Sentry**: the EU-U.S. Data Privacy Framework, with EU Standard Contractual Clauses as a fallback ([Sentry DPA](https://sentry.io/legal/dpa/)).
+- **Expo**: the EU-U.S. Data Privacy Framework, and Standard Contractual Clauses or other appropriate mechanisms where required ([Expo Privacy Policy](https://expo.dev/privacy)).
+- **PostHog**: data is stored in its EU cloud ([PostHog GDPR guide](https://posthog.com/docs/privacy/gdpr-compliance)).
+
+You can ask us for more information about these safeguards at [admin@cadence.day](mailto:admin@cadence.day).
 
 ## Data security
 
@@ -175,6 +196,6 @@ This Privacy Policy is governed by the laws of Germany. All disputes shall be su
 
 We update this policy when the App changes how it handles data. The "Last updated" date at the top shows when it last changed. When a change is significant (for example, a new kind of data or a new service provider), we will tell you in the App or by email before it takes effect. Earlier versions are available on request at [admin@cadence.day](mailto:admin@cadence.day).
 
-**What changed on 14.11.2026:** this version describes local storage and Cloud sync, Location and Apple Health, camera and photo access, PostHog, Sentry and Expo, which data is end-to-end encrypted, and account deletion; and removes RevenueCat, which the App does not use.
+**What changed on 14.11.2026:** this version describes local storage and Cloud sync, Location and Apple Health, camera and photo access, PostHog, Sentry and Expo, which data is end-to-end encrypted, account deletion, the legal bases we rely on and international data transfers; and removes RevenueCat, which the App does not use.
 
 </div>

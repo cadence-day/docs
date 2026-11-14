@@ -4,7 +4,7 @@ title: End User License Agreement (EULA)
 sidebar_label: EULA
 ---
 # END-USER LICENSE AGREEMENT FOR CADENCE
-_Last Updated: October 13, 2025_
+_Last Updated: November 14, 2026_
 
 IMPORTANT – READ CAREFULLY: This End-User License Agreement ("Agreement" or "EULA") is a legal agreement between you ("End-User" or "you") and Cadence.day ("Company," "we," "us," or "our") for the Cadence Visual Time Tracking mobile application ("Licensed Application" or "App"), which you have downloaded from the Apple App Store.
 By downloading, installing, accessing, or using the Licensed Application, you agree to be bound by the terms of this Agreement. If you do not agree to the terms of this Agreement, do not download, install, access, or use the Licensed Application.
@@ -35,7 +35,7 @@ By downloading, installing, accessing, or using the Licensed Application, you ag
 3.5. You acknowledge that it is your responsibility to confirm and ensure that the Licensed Application is compatible with your device.
 
 ## ELIGIBILITY
-4.1. You must be at least 18 years old and legally capable of entering into a binding contract to use the Licensed Application.
+4.1. You must be at least 16 years old to use the Licensed Application. If you are under the age of legal majority where you live, you may use the Licensed Application only with the consent of a parent or legal guardian.
 4.2. By using the Licensed Application, you represent and warrant that you meet these requirements.
 4.3. The Licensed Application is not intended for children under 16 years of age. We do not knowingly collect or store personal information from children.
 
@@ -100,7 +100,7 @@ INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR 
 (b) ANY CONDUCT OR CONTENT OF ANY THIRD PARTY ON THE LICENSED APPLICATION;
 (c) ANY CONTENT OBTAINED FROM THE LICENSED APPLICATION;
 (d) UNAUTHORIZED ACCESS, USE, OR ALTERATION OF YOUR TRANSMISSIONS OR CONTENT.
-11.2. IN NO EVENT SHALL THE COMPANY'S AGGREGATE LIABILITY EXCEED THE AMOUNT YOU PAID FOR THE LICENSED APPLICATION IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM, OR ONE HUNDRED DOLLARS ($100), WHICHEVER IS GREATER.
+11.2. IN NO EVENT SHALL THE COMPANY'S AGGREGATE LIABILITY EXCEED ONE HUNDRED DOLLARS ($100).
 11.3. Some jurisdictions do not allow the exclusion or limitation of certain warranties or liabilities, so the above limitations may not apply to you.
 
 ## LEGAL COMPLIANCE
