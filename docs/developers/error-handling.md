@@ -43,7 +43,7 @@ The `environment` tag comes from the EAS update channel: `production` is
 client) is `development` (`sentryConfig.ts:16`). `release` is
 `<bundle id>@<version>+<build>` (`sentryConfig.ts:49`).
 
-Only four things produce an event:
+Only five things produce an event:
 
 1. **A render error** caught by `ErrorBoundary`: `ErrorBoundary.tsx:34` logs
    `ErrorBoundary.componentDidCatch` and `:40` calls `captureRenderError`
@@ -51,6 +51,14 @@ Only four things produce an event:
    2000 characters). The screen shows "App Error" / "An error occurred. Please
    close and re-open the app." (`ErrorBoundary.tsx:47-49`).
 2. **A native crash.** `enableNativeCrashHandling: true` (`sentryClient.ts:108`).
+2b. **An uncaught JS error or an unhandled promise rejection.** Verified in
+   the installed `@sentry/react-native@8.28.0` package (`npm pack`, files
+   `dist/js/integrations/default.js:16-19` and `reactnativeerrorhandlers.js:21`):
+   on native, `reactNativeErrorHandlersIntegration` is a default integration with
+   `onerror: true`, `onunhandledrejection: true` and `patchGlobalPromise: true`.
+   It installs `ErrorUtils.setGlobalHandler` and Hermes promise-rejection
+   tracking, and the app's `sentryClient.ts` does not turn it off. These events
+   carry no `area` tag and pass through the same `beforeSend` scrubbing.
 3. **A `Logger.logError` or `Logger.logWarning` whose `context` contains
    `ENCRYPT`, `DECRYPT` or `CDV2`, in any case** (`encryptionSentry.ts:24`,
    called from `errorHandler.ts:75` and `:112`). Every other context stays on
@@ -100,10 +108,30 @@ To prove on a dev build that an event arrives, open
 
 Cadence has no Supabase sign-up. Clerk creates the user. Every Supabase and
 GraphQL request then carries the current Clerk session token
-(`shared/api/supabase/client.ts:19-42`, `shared/graphql/client.ts:30-48`). I
-found no step in the app that creates a Supabase user row after sign-up: rows
-are created by the first write of each table. The "bootstrap" the app does is
-the onboarding gate plus key generation.
+(`shared/api/supabase/client.ts:19-42`, `shared/graphql/client.ts:30-48`).
+
+### Server side: Clerk to Supabase (repo `supabase`, `origin/main`)
+
+The user row is created by a Clerk webhook, not by the app. None of these steps
+runs in the app, so **none reaches Sentry**: their output is in Supabase
+dashboard, Edge Functions, Logs, and (for the webhook) in Clerk's webhook
+delivery log.
+
+| # | Step | Errors it produces | Where it surfaces |
+| --- | --- | --- | --- |
+| a | Clerk sends `user.*` and `session.*` events to the Edge Function `clerk_users` (`functions/clerk_users/index.ts`, `config.toml:1-4`, `verify_jwt = false`, authenticated by svix signature) | Missing svix headers: HTTP 400 "Missing svix headers" (`:19`). Bad signature: `console.error("❌ Invalid webhook signature:", err)` then 400 "Invalid signature" (`:32-33`) | Function logs; Clerk delivery log shows 400 |
+| b | `user.*`: RPC `upsert_clerk_user` writes `clerk.clerk_users` (id, email, names, public and private metadata) (`index.ts:50`; `upsert_clerk_user` in `migrations/20260929130000_backfill_states_into_tracker_entries.sql:1854`, `SECURITY DEFINER`) | `console.error("❌ DB error updating user:", error)` then 500 "DB error" (`:61-62`) | Function logs; Clerk delivery log shows 500 |
+| c | `session.*`: update `last_active_session_at`, `last_session_id` (`index.ts:74-82`) | `console.error("❌ DB error updating session:", error)` then 500 (`:85-86`) | Same |
+| d | Any other event type | HTTP 200 "Ignored" (`:92`) | nothing |
+| e | App reads or writes Clerk private metadata through `update_clerk_user_metadata` (`functions/update_clerk_user_metadata/index.ts`; called from `features/settings/db/functions.ts:61`) | JSON `{ success: false, error }`: 500 "CLERK_SECRET_KEY is not configured" (`:57`), 401 "Unauthorized" (`:66`), 400 "private_metadata object is required" (`:93`), 500 with "Failed to fetch Clerk user: &lt;status&gt; ..." or "Failed to update Clerk private metadata: &lt;status&gt; ..." (`:26`, `:48`, `:111`). The function itself writes no log line. On the app, `functions.ts:66-67` rethrows `error.message` or `data.error`, and `clerkUserMetadata.ts` turns it into the `CLERK_METADATA_*` warnings of step 8 below | Only the HTTP status in Edge Function logs; the message text reaches the device console, not Sentry |
+| f | Token check for e and g: `verifiedClerkUserId` (`functions/_shared/clerk_auth.ts:18`) | Returns `null` on any failure, including a bad signature or wrong issuer, with no log (`:29-31`) | A 401 with no reason anywhere |
+| g | Account deletion: `request_user_deletion` (`functions/request_user_deletion/index.ts`; app `features/settings/db/functions.ts:27`) | `console.error("Authentication failed - no userId found")` (`:108`); 502 "Failed to delete auth user" (`:157`); `console.error("Failed to delete user from Clerk: <status> ...")` and `"Error deleting user from Clerk:"`, both non-fatal (`:26`, `:37`); `console.error("Error deleting user storage objects:", error)`, non-fatal (`:78`); 500 "Failed to enqueue deletion" with `console.error("Failed to enqueue deletion:", ...)` (`:195`). App side: error `REQUEST_USER_DELETION_ERROR` (`functions.ts:32`, console only) | Function logs; the response still says `deleted.clerk: true` even when the Clerk delete failed (`:223-227`) |
+
+Support looks for: a user who signed up in Clerk but has no `clerk.clerk_users`
+row means the webhook failed or was never delivered (check Clerk delivery log
+for non-2xx on that user's `user.created`). Everything the app does after
+sign-up works from the Clerk JWT alone, so a missing row does not stop sign-in;
+the other tables' rows are created by the first write to each.
 
 | # | Step | Log (level, `file:line`) | Sentry | Support looks for |
 | --- | --- | --- | --- | --- |
@@ -233,7 +261,7 @@ For the deep-fix agent. Each item is a candidate issue, with what is missing.
 7. **Sign-up, sign-in, verification, password reset, SSO**: every `AUTH_*` context (`shared/auth/utils/errorHandler.ts:201`, `:219`) is below the `ENCRYPT|DECRYPT|CDV2` filter. Failed sign-ups and Clerk outages are invisible in Sentry.
 8. **Onboarding gate and Clerk metadata sync**: `POST_AUTH_ONBOARDING`, `CLERK_METADATA_*`, `CLERK_APP_VERSION_SYNC` (`postAuthOnboardingGate.ts:32`, `:47`; `clerkUserMetadata.ts:36-241`) and `OnboardingProvider.tsx:49` are console only.
 9. **All API failures**: `DB_ERROR`, `DB_ERROR_<ctx>`, `DB_RETRY_<ctx>`, `GQL_ERROR`, `GQL_NETWORK_ERROR`, `GQL_RETRY_<ctx>` (`call.ts:126-141`, `gqlCall.ts:126-136`, `graphql/client.ts:50-58`) never reach Sentry. A broken RLS policy or a pg_graphql schema mismatch shows up only in user reports.
-10. **Handled JS exceptions generally**: the filter is the Logger context's name, not severity. `Logger.logError` with any other context is console only. Whether the SDK's default global handlers report unhandled promise rejections is an SDK default and was not verified in app code.
+10. **Handled JS exceptions generally**: the filter is the Logger context's name, not severity. `Logger.logError` with any other context is console only. Uncaught JS errors and unhandled promise rejections are the exception: the SDK's default `reactNativeErrorHandlersIntegration` reports them (see "What reaches Sentry", item 2b), so a thrown error that nobody catches is captured but a caught-and-logged one is not.
 11. `KEY_SLOT_DEACTIVATION_READ` (`core.ts:115`) and `Error checking onboarding status` (`OnboardingProvider.tsx:49`) are failures in encryption and onboarding paths that miss the filter by name.
 
 ### Messages a support person cannot act on
@@ -254,3 +282,7 @@ For the deep-fix agent. Each item is a candidate issue, with what is missing.
 22. Sentry: `error` strings in extras and exception messages are only regex-scrubbed. A name or note quoted inside a third-party error message that matches none of the patterns (email, UUID, token, ciphertext, 48+ character blob) would pass. Examples: `core.ts:186` and `cdv2Bridge.ts:75` forward `error.message` as is.
 23. Console only, but it reaches anyone who attaches a device log: `AUTH_SIGNUP_ATTEMPT` logs `email` and `fullName` (`SignUp.tsx:118-122`); `AUTH_SIGNIN_ATTEMPT` logs `email` (`EmailSignIn.tsx:156`); `AUTH_EMAIL_VERIFICATION_ATTEMPT` logs `userEmail` and the verification `code` (`EmailVerification.tsx:130-134`); `AUTH_PASSWORD_RESET_CODE_ATTEMPT` logs `email` and `code` (`PasswordReset.tsx:174`); `SSO_SIGNIN_METADATA` logs `userId` and the full Clerk `metadata` (`SignIn.tsx:101`, debug, development only). Production console output includes the others through `Extra context:` (`errorHandler.ts:68-71`). If these ever enter the Sentry filter by renaming, the scrubber drops `email`, `user*`, `code` is not in its key list and would pass.
 24. Sentry `context` tag value is the raw Logger context. Any future context built from user input would be an unscrubbed tag value (the tag is scrubbed as a string but its content is not constrained).
+25. Server side, no Sentry or alerting anywhere: `clerk_users` (`index.ts:61`, `:85`), `update_clerk_user_metadata` and `request_user_deletion` only write `console.error` to Supabase function logs. A failing webhook means users without a `clerk.clerk_users` row, noticed only through Clerk's delivery log.
+26. `functions/_shared/clerk_auth.ts:29-31` returns `null` for every verification failure (expired, wrong issuer, bad signature, JWKS fetch failure) with no log, so every 401 from `update_clerk_user_metadata` and `request_user_deletion` is indistinguishable.
+27. `functions/update_clerk_user_metadata/index.ts` logs nothing, and returns Clerk's raw error text (`:26`, `:48`, `:113`) to the client, which the app puts in a warning's `error` extra.
+28. `functions/request_user_deletion/index.ts:223-227` always reports `deleted.clerk: true`, even when `deleteUserFromClerk` failed (`:26-30`, non-fatal), and logs the raw `userId` (`:105`, `:179`).
