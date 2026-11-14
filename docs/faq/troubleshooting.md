@@ -44,6 +44,10 @@ Delete it in **Settings → Account → Delete account**, with a connection. If 
 
 **Export all data** (Settings → General) exports your Cadence account. If Cloud sync is off, data that is only on your iPhone isn't in it. Location and Health history are exported separately from **Settings → Extensions → Export data**.
 
+## What do the errors in the app mean?
+
+Developers and support can look up the log line, the Sentry event and what to check for each step of sign-up, data requests and encryption in [Error handling, logs and Sentry](../developers/error-handling.md).
+
 ## How do I report a bug?
 
 Email [admin@cadence.day](mailto:admin@cadence.day) with what happened, what you expected, your iPhone model and the app version (Settings → About & Legal), or post in the [Cadence Discord](https://discord.gg/cW9gCRA6Kn).
