@@ -4,49 +4,53 @@ Common questions about Cadence.day and getting started.
 
 ## What is Cadence.day?
 
-Cadence.day is a mobile app that helps you track your daily activities and discover patterns in how you spend your time. It's designed to help you become more aware of your daily rhythm without pressure or judgment.
+Cadence.day is an iPhone app that helps you see how you spend your time. You log each hour of your day into an activity, and Cadence shows your days, weeks and year in color, so you can notice your rhythms without pressure or judgment.
 
 ## Is Cadence free?
 
-Yes! Cadence is a free app with core features available to everyone. We also offer optional premium tiers to support development:
-
-- **Free**: Core activity tracking, basic timeline view, notes, and reflections
-- **Premium options**: Available for users who want to support development
-
-Learn more about our plans in the app settings.
+Yes. Cadence has no subscriptions and no in-app purchases.
 
 ## What platforms does Cadence support?
 
-Cadence is available for:
+Cadence is an **iPhone** app. A web version is in early development. There is no Android app.
 
-- **iOS**: iPhone and iPad (iOS 16+)
-- **Android**: Android phones and tablets (Android 8+)
+## Do I need an account?
 
-The app is built with React Native and Expo for a consistent cross-platform experience.
+Yes. You sign up with **Sign in with Apple**, **Google**, or your **email and a password**. Your account is used for sign-in and for your encryption keys. Your data itself stays on your iPhone unless you turn on [Cloud sync](/docs/faq/sync-and-devices).
 
-## Do I need an account to use Cadence?
+## How do I get started?
 
-Yes, an account is required to:
+1. [Download Cadence](https://apps.apple.com/app/cadence-day/id6745115112) and create an account.
+2. Onboarding asks for a username and lets you pick up to 9 starter activities.
+3. Log a few hours of today or yesterday.
+4. Open **Log** each day to record your hours. See [Logging Your Time](/docs/features/activity-tracking).
 
-- Sync your data across devices
-- Back up your activities and notes
-- Enable end-to-end encryption
+## What are the tabs in the app?
 
-You can sign up with:
+- **Calendar** (labelled **Year**, **Week** or **Day**): your history at three scales. See [Calendar](/docs/features/timeline-calendar).
+- **Log**: record your day, hour by hour.
+- **Analytics**: charts of your time. See [Analytics](/docs/features/analytics).
+- **Profile**: your stats and [moments](/docs/features/trackers), and the way into Settings.
 
-- Email and password
-- Apple ID
-- Google account
+## Can I plan my day ahead?
+
+No. Cadence records what happened. Today is always the newest day, and you can only log hours that have passed.
 
 ## Is my data private?
 
-Absolutely! Cadence takes your privacy seriously:
+Your data is stored on your iPhone by default. Activity names and notes are encrypted on your device. We don't sell your data or show ads. See [Encryption & Security](/docs/faq/encryption) and the [Privacy Policy](/docs/legal/privacy).
 
-- All sensitive data is encrypted end-to-end
-- Your notes and activities are only accessible to you
-- We don't sell or share your personal information
-- No ads or tracking
-- Learn more in our [Privacy & Security](/docs/faq/encryption) section
+## Can I use Cadence offline?
+
+Yes. Everything is saved on your iPhone first. You need a connection to sign in, and for Cloud sync if you use it.
+
+## How do I delete my account?
+
+In the app: **Settings → Account → Delete account**. See [How do I delete my data?](/docs/faq/sync-and-devices#how-do-i-delete-my-data)
+
+## What languages does Cadence support?
+
+English.
 
 ## Where is Cadence based?
 
@@ -58,31 +62,6 @@ Cadence is developed by a distributed team based in:
 
 ## How do I get support?
 
-We're here to help! You can:
-
-- Browse this FAQ documentation
-- Contact us at [admin@cadence.day](mailto:admin@cadence.day)
-- Report bugs through the app (Profile → Customer Support → Bug Report)
-- Request features through the app (Profile → Customer Support → Feature Request)
-
-We typically respond within 24 hours.
-
-## Can I use Cadence offline?
-
-Yes! Cadence works offline. Your data will sync automatically when you're back online.
-
-## How do I delete my account?
-
-To delete your account, please contact our support team at [admin@cadence.day](mailto:admin@cadence.day). They will help you with the account deletion process and ensure all your data is properly removed.
-
-## What languages does Cadence support?
-
-Cadence is available in:
-
-- 🇬🇧 English
-- 🇩🇪 German (Deutsch)
-- 🇩🇰 Danish (Dansk)
-- 🇪🇸 Spanish (Español)
-- 🇫🇷 French (Français)
-
-You can change your language in the app settings.
+- Browse this documentation (in the app: **Settings → General → FAQ**).
+- Email us at [admin@cadence.day](mailto:admin@cadence.day).
+- Join the [Cadence Discord](https://discord.gg/cW9gCRA6Kn).

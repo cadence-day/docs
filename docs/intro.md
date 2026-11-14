@@ -10,40 +10,42 @@ Cadence is a mindful time-tracking app that helps you understand how you spend y
 
 ## What is Cadence?
 
-Cadence is more than just a time tracker—it's a tool for self-awareness:
+Cadence is an iPhone app for seeing how you spend your time, one hour at a time:
 
-- **Visual Timeline**: See your entire day at a glance with color-coded activities
-- **Mindful Notes**: Capture reflections and thoughts with end-to-end encryption
-- **Pattern Recognition**: Discover your natural rhythms and energy patterns
-- **Privacy First**: Your data is encrypted and never shared
+- **Log**: record each hour of your day as an activity
+- **Calendar**: see your days, weeks and year in color
+- **Analytics**: charts and a 12-week heatmap of your time
+- **Local-first and private**: your data stays on your iPhone unless you turn on Cloud sync, and activity names and notes are encrypted on your device
+
+![Calendar in the Year scale: each day is a row of 24 colored hours](/img/app/calendar-year.webp)
 
 ## Quick Start
 
 ### 1. Download the App
 
-Get Cadence for iOS:
+Get Cadence for iPhone:
 
 📱 [Download on the App Store](https://apps.apple.com/app/cadence-day/id6745115112)
 
-### 2. Create Your First Activity
+### 2. Log Your First Hours
 
-1. Open the app and sign up
-2. Complete the onboarding tutorial
-3. Tap any time slot on the timeline
-4. Choose an activity (Work, Exercise, Social, etc.)
-5. Customize with colors.
-6. See your day - week - month come to life!
+1. Open the app and sign up with Apple, Google, or email
+2. Choose a username and up to 9 starter activities
+3. Log a few hours of today or yesterday
+4. Open **Log** each day, scroll to an hour and tap what you did
+5. Watch your week and year fill with color in the **Calendar**
 
 ### 3. Explore Features
 
-- **📝 Notes**: Add reflections to any activity
-- **📊 Reflections**: Review your week at a glance
+- **📝 Notes**: swipe up in Log to add a note to an hour
+- **📊 Modules & Moments**: track mood, sleep, films, books and more
+- **📍 Location & Health**: optional, on-device context for each hour
 
 ## What Makes Cadence Different?
 
 ### 🧘 Mindfulness Over Productivity
 
-Cadence isn't about squeezing more into your day. It's about understanding how you already spend your time and making conscious choices.
+Cadence isn't about squeezing more into your day. It's about understanding how you already spend your time and making conscious choices. It records what happened; it doesn't plan ahead.
 
 ### 🎨 Beautiful & Intuitive
 
@@ -51,31 +53,27 @@ A clean, color-coded interface that makes time tracking feel natural, not like a
 
 ### 🔐 Privacy by Design
 
-End-to-end encryption for notes and activities. Your data belongs to you, not to us or advertisers.
-
-### 🌍 Built for Humans
-
-Available in 5 languages: English, Deutsch, Dansk, Español, and Français.
+Your data lives on your iPhone first. Activity names and notes are end-to-end encrypted. Location and Health data never leave your phone. Your data belongs to you, not to us or advertisers.
 
 ## Learn More
 
 ### Frequently Asked Questions
 
-Get answers to common questions:
-
-- [General Questions](/docs/faq/general) - Pricing, platforms, getting started
+- [General Questions](/docs/faq/general) - Platforms, accounts, getting started
 - [Activities](/docs/faq/activities) - Creating and managing activities
-- [Notes & Reflections](/docs/faq/notes) - Capturing thoughts and insights
-- [Security & Privacy](/docs/faq/encryption) - How we protect your data
+- [Cloud Sync & Devices](/docs/faq/sync-and-devices) - Local mode, sync, several devices
+- [Location & Health](/docs/faq/location-health) - What is recorded and why
+- [Encryption & Security](/docs/faq/encryption) - What is encrypted and how
 
 ### Feature Guides
 
-Deep dives into Cadence's core features:
-
-- [Activity Tracking](/docs/features/activity-tracking) - Visual timeline and time logging
-- [Note Taking](/docs/features/note-taking) - Reflections and journaling
-- [Weekly Reflections](/docs/features/reflections) - Pattern discovery
-- [Privacy & Security](/docs/features/privacy-security) - Encryption and data protection
+- [Logging Your Time](/docs/features/activity-tracking) - The Log tab and activities
+- [Calendar](/docs/features/timeline-calendar) - Year, Week and Day
+- [Notes](/docs/features/note-taking) - Adding context to an hour
+- [Modules & Moments](/docs/features/trackers) - Tracking beyond activities
+- [Analytics](/docs/features/analytics) - Charts of your time
+- [Location & Apple Health](/docs/features/extensions) - Optional extensions
+- [Privacy & Security](/docs/features/privacy-security) - Storage, encryption and your controls
 
 ## Need Help?
 

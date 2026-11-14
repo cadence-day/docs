@@ -1,63 +1,33 @@
-# Notes & Reflections
+# Notes
 
-Learn how to capture thoughts and insights with Cadence's note-taking features.
+## How do I add a note?
 
-## How do I add notes?
-
-You can add notes in several ways:
-
-**While logging an activity:**
-1. Tap on a time slot to log an activity
-2. After selecting the activity, you'll see a note input field
-3. Type to add your note
-4. The note is saved automatically with the activity
-
-**From the Reflection screen:**
-1. Navigate to the **Reflection** tab
-2. View your activities for any day
-3. Tap on an activity to add or edit notes
+In **Log**, swipe up on the wheel of hours or tap **+**. In the Calendar's Day scale, swipe left on an hour. Or open an hour's details and tap **Write a note**. See [Notes](/docs/features/note-taking).
 
 ## Are my notes encrypted?
 
-Yes! All notes are encrypted using AES-256 encryption before being stored. Your notes are private and secure. Learn more in our [Encryption & Privacy](/docs/faq/encryption) section.
+Yes. Note text is encrypted on your device before it is saved or synced. Only your linked devices can read it. The time a note belongs to is not encrypted.
 
-## Can I edit or delete notes?
+## How long can a note be?
 
-Yes! To edit or delete a note:
+Up to 3,000 characters.
 
-1. Go to the **Reflection** screen
-2. Tap on the activity with the note
-3. Edit the text or tap **"Delete"** to remove it
-4. Changes are saved automatically
+## Where do I read my notes?
 
-## How long can my notes be?
-
-Notes can be as long as you need! There's no character limit, so feel free to capture detailed thoughts, insights, or context about your activities.
+In the details of the hour they belong to: tap the hour in the Calendar's Day scale.
 
 ## Can I search my notes?
 
-Note search is coming soon! This feature will allow you to search across all your notes to find specific insights or reflections.
+Not yet.
 
-## What's the difference between notes and reflections?
+## Can I add notes to past hours?
 
-- **Notes**: Short thoughts or context added to individual activities (e.g., "Great energy during this workout")
-- **Reflections**: Longer-form insights about your day, patterns, or overall well-being.
-
-Both are valuable for understanding your rhythms and growth over time.
-
-## Can I add notes to past activities?
-
-Yes! You can add or edit notes for any past activity:
-
-1. Use the calendar to navigate to a past date
-2. Tap on the activity you want to annotate
-3. Add or edit your note
-4. Changes are saved automatically
+Yes, to any hour up to now.
 
 ## Are notes backed up?
 
-Yes! All notes are automatically synced to the cloud and backed up. You won't lose your reflections if you switch devices or reinstall the app.
+They're stored on your iPhone and included in your iPhone's backup. With [Cloud sync](/docs/faq/sync-and-devices) on, they are also copied, still encrypted, to your Cadence account.
 
-## Can I share my notes?
+## Why does a note say "Unable to decrypt"?
 
-Individual notes are private by default. However, you can manually copy and share specific notes if you choose. We're exploring features to make sharing insights easier while maintaining your privacy.
+That device doesn't have the key the note was written with, usually because it hasn't been linked yet. See [Encryption & Security](/docs/faq/encryption#why-do-i-see-unable-to-decrypt).
