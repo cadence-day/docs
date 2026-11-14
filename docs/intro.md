@@ -17,7 +17,7 @@ Cadence is an iPhone app for seeing how you spend your time, one hour at a time:
 - **Analytics**: charts and a 12-week heatmap of your time
 - **Local-first and private**: your data stays on your iPhone unless you turn on Cloud sync, and activity names and notes are encrypted on your device
 
-<!-- screenshot: NN-calendar-year -->
+![Calendar in the Year scale: each day is a row of 24 colored hours](/img/app/calendar-year.webp)
 
 ## Quick Start
 

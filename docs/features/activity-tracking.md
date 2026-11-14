@@ -6,7 +6,7 @@ Cadence works in hours. For each hour of your day, you pick the activity that be
 
 **Log** is where you record your day.
 
-<!-- screenshot: NN-log -->
+![Log: the wheel of hours with the activity list below, asking "What did you do at 3?"](/img/app/log-select-hour.webp)
 
 - At the top is the date. Tap it to pick another day (up to today).
 - In the middle is a wheel of the day's hours.
@@ -27,7 +27,7 @@ Activities are the categories you log your hours into, such as Work, Sleep, Exer
 
 Go to **Settings → Tracking → Activities**:
 
-<!-- screenshot: NN-settings-activities -->
+![Settings, Activities: the list of active activities with drag handles](/img/app/settings-activities.webp)
 
 - **Add** an activity: give it a name, a **Color** and an **Icon**.
 - **Edit** one: tap it to see its hours and weekly pattern, and change its name, color or icon.
@@ -47,8 +47,6 @@ Tap an hour in the Calendar's Day scale to see everything about it:
 - **Trackers**: entries for that hour, such as mood (swipe a row to delete it);
 - your **notes**, with **Write a note** to add one;
 - **Health** readings (heart rate, steps) and a **map** of where you were, if you turned on those [extensions](/docs/features/extensions).
-
-<!-- screenshot: NN-timeslice-detail-sheet -->
 
 ## Where to go next
 

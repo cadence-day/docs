@@ -2,15 +2,13 @@
 
 Extensions add context to your hours from your iPhone itself: where you were, and what your body was doing. Both are optional and off until you turn them on in **Settings → Extensions**.
 
-<!-- screenshot: NN-settings-extensions -->
+![Settings, Extensions: Location, Health and the delete-history rows](/img/app/settings-extensions.webp)
 
 **Location and Health data stay on your iPhone. They are never uploaded to Cadence**, and they are not part of Cloud sync.
 
 ## Location
 
 Turn on **Location** to record where each hour of your day happened. With **Show the map on a timeslice** on, an hour's details show a small map, and you can open a full-screen map of your days.
-
-<!-- screenshot: NN-timeslice-map -->
 
 ### Permissions
 

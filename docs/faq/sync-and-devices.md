@@ -12,7 +12,7 @@ Copying that data to your Cadence account is optional. That is what **Cloud sync
 
 **Cloud sync** copies your activities, notes, trackers and time slices to your Cadence account and keeps them up to date. You find it in **Settings → General → Cloud sync**.
 
-<!-- screenshot: NN-settings-general-cloud-sync -->
+![Settings, General: the Cloud sync section with the "Sync to the cloud" toggle](/img/app/settings-general-cloud-sync.webp)
 
 It is **off by default**.
 
@@ -31,8 +31,6 @@ This is "local mode":
 2. Everything you recorded while sync was off is **uploaded** to your account.
 3. Your account's existing history is **copied onto your iPhone**.
 4. A **Syncing your data** screen shows the progress, step by step. You can tap **Continue in background** and keep using the app.
-
-<!-- screenshot: NN-sync-upload -->
 
 After that, new changes upload in the background. Nothing is deleted, and encrypted text (activity names and notes) stays encrypted exactly as before.
 

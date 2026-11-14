@@ -6,9 +6,11 @@ Activities tell you what each hour was for. Modules and moments let you track th
 
 A module is something you track day by day, such as mood, energy, sleep or water. Turn modules on in **Settings → Tracking → Modules**, under **Select modules**.
 
-<!-- screenshot: NN-settings-modules -->
+![Settings, Modules: switches for Mood, Energy, Steps, Sleep, Water and more](/img/app/settings-modules.webp)
 
 The **Show cards in** section decides where module cards appear, for example under the day strip in **Log**. In the Calendar's Week scale, open the **Modules** drawer to see your modules next to each day.
+
+![Calendar Week scale with the Modules drawer open, showing Mood and Energy for each day](/img/app/calendar-week-modules-drawer.webp)
 
 Entries you make for an hour also appear under **Trackers** in that hour's details.
 
@@ -21,7 +23,7 @@ You add and browse moments in the **Profile** tab:
 - pick a moment, then tap **Add** to record an entry (for example a title, a rating and a few notes);
 - tap **View all** to see this year's entries for that moment.
 
-<!-- screenshot: NN-profile-moments -->
+![Profile: the Moments section with a list of books and the Add button](/img/app/profile-moments.webp)
 
 The Profile tab also shows your total **Hours**, **Moments** and **Day streak**.
 

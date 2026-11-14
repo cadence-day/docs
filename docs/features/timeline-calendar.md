@@ -2,7 +2,7 @@
 
 The Calendar tab shows everything you've logged, from a whole year down to a single day. Its label in the tab bar follows the scale you're looking at: **Year**, **Week** or **Day**.
 
-<!-- screenshot: NN-calendar-year -->
+![Calendar in the Year scale: each day is a row of 24 colored hours](/img/app/calendar-year.webp)
 
 ## Three scales: Year, Week, Day
 
@@ -10,9 +10,7 @@ The Calendar tab shows everything you've logged, from a whole year down to a sin
 - **Week**: the same weeks, taller, with week headings and weekday labels. Here you can open the **Modules** drawer (**Show modules**) to see your daily modules, such as mood or steps, next to each day.
 - **Day**: one day as a list of hours, with a strip of the week's dates on top.
 
-<!-- screenshot: NN-calendar-week -->
-
-<!-- screenshot: NN-calendar-day -->
+![Calendar in the Week scale: one row per day, one column per hour](/img/app/calendar-week.webp)
 
 ### Switching scales
 

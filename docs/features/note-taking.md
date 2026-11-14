@@ -11,7 +11,7 @@ Every note belongs to an hour. You can write one:
 - **In the Calendar's Day scale, swipe left** on an hour.
 - **In an hour's details**, tap **Write a note**.
 
-<!-- screenshot: NN-note-sheet -->
+![The Note sheet, opened from Log](/img/app/log-note-editor.webp)
 
 A note can be up to 3,000 characters.
 

@@ -33,7 +33,7 @@ When Cloud sync is on, this data is sent over an encrypted connection (TLS) and 
 
 You can see your keys, this device's fingerprint and how it works in **Settings → Privacy → Encryption**.
 
-<!-- screenshot: NN-settings-encryption -->
+![Settings, Encryption: the "This device" section with Link new device](/img/app/settings-encryption.webp)
 
 ### Linking a new device
 
@@ -43,7 +43,7 @@ A new device can't read your encrypted names and notes until you link it:
 2. On a device that already has your data, go to **Settings → Encryption → Link new device** and scan the code.
 3. Check that the code shown on both devices matches, then tap **Confirm & link**.
 
-<!-- screenshot: NN-encryption-link -->
+![Link new device: paste the code or scan the QR code shown on the new device](/img/app/encryption-link-new-device.webp)
 
 If you skip linking (**Continue without linking**), encrypted names and notes from your other devices may show as "Unable to decrypt" on the new device until you link it.
 

@@ -2,8 +2,6 @@
 
 The **Analytics** tab turns your logged hours into charts, so you can see where your time goes and how it changes.
 
-<!-- screenshot: NN-analytics -->
-
 ## Choosing a period
 
 At the top, pick the period to look at: **Week**, **Month**, **Quarter**, **Year**, or **Custom** with your own start and end dates. Use the arrows or swipe to move to the previous or next period. Pull down to refresh.
@@ -18,9 +16,9 @@ The tab is made of widgets:
 - **Time Share by Activity**: a pie chart of your time.
 - **Days with Activity**: a heatmap of the **past 12 weeks**. Darker cells mean more hours logged. This one always shows the last 12 weeks, whatever period you pick.
 
-Tap **Customize widgets** to add, remove and reorder them.
+Tap **Customize widgets** to add, remove and reorder them, and to choose how each one is drawn (for example as a bar chart or a pie chart).
 
-<!-- screenshot: NN-analytics-customize -->
+![Customize widgets: turn widgets on or off, choose how each is drawn, and reorder them](/img/app/analytics-customize-widgets.webp)
 
 Below the widgets you'll find your top activities compared with the previous period, **What replaced what** (how your time shifted between activities), your **Longest streak** and **Days filled**.
 
