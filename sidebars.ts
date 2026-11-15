@@ -53,6 +53,7 @@ const sidebars: SidebarsConfig = {
       label: "Developers",
       items: [
         "developers/getting-started",
+        "developers/error-handling",
         // Add more API docs here as they are completed
       ],
     },
